@@ -1,0 +1,9 @@
+//
+// backgrounds.scss
+//
+
+@each $color, $value in $theme-colors {
+    .bg-subtle-#{$color} {
+        background-color: rgba(($value), 0.25) !important;
+    }
+}

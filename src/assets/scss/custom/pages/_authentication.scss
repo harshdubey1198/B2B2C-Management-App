@@ -1,0 +1,19 @@
+// 
+// authentication.scss
+//
+.bg-pattern {
+    // background-image: url("../images/bg.jpg");
+    background-image: url("../../../images/logo-light.png");
+    background-size: cover;
+    background-position: center;
+}
+
+.auth-logo {
+    &.logo-light {
+        display: $display-none !important;
+    }
+
+    &.logo-dark {
+        display: $display-block !important;
+    }
+}

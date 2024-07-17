@@ -1,0 +1,85 @@
+//
+// _buttons.scss
+//
+
+button,
+a {
+    outline: none !important;
+}
+
+.btn-light {
+    border: 1px solid var(--#{$prefix}border-color);
+    color: var(--#{$prefix}body-color) !important;
+}
+
+// Rounded Buttons
+.btn-rounded {
+    border-radius: 30px;
+}
+
+// .btn-dark,
+// .btn-secondary {
+//     color: var(--#{$prefix}emphasis-color) !important;
+// }
+.btn-outline-dark { 
+    color: var(--#{$prefix}emphasis-color);
+}
+
+.btn-outline-light {
+    color: var(--#{$prefix}emphasis-color);
+}
+
+//
+// Soft Buttons
+//
+
+@mixin button-variant-subtle($bg) {
+    color: $bg;
+    background-color: rgba($bg, 0.1);
+    border-color: transparent;
+
+    &:hover,
+    &:focus,
+    &:active {
+        color: $white;
+        background-color: $bg;
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .btn-subtle-#{$color} {
+        @include button-variant-subtle($value);
+    }
+}
+
+.btn-group-vertical {
+    label {
+        margin-bottom: 0;
+    }
+}
+
+@mixin btn($bg) {
+    color: $white;
+    border-color: transparent;
+    &:hover,
+    &:focus,
+    &:active {
+        color: $white;
+        background-color: $bg;
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.15rem rgba($bg, 0.5);
+    }
+}
+
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        @include btn($value);
+    }
+}
+
+.btn{
+    &:active, &.active{
+        border: 0;
+    }
+}

@@ -1,0 +1,116 @@
+//
+// Form editors.scss
+//
+
+.ql-container {
+    border-bottom-right-radius: 0.25rem !important;
+    border-bottom-left-radius: 0.25rem !important;
+    font-family: $font-family-base;
+
+    &.ql-snow {
+        border-color: $input-border-color;
+    }
+}
+
+.ql-bubble {
+    border: $input-border-width solid $input-border-color;
+    border-radius: $input-border-radius;
+}
+
+.ql-toolbar {
+    border-top-left-radius: 0.25rem !important;
+    border-top-right-radius: 0.25rem !important;
+    font-family: $font-family-base !important;
+    span {
+        outline: none !important;
+        color: var(--#{$prefix}body-color);
+
+        &:hover {
+            color: $primary !important;
+        }
+    }
+
+    &.ql-snow {
+        border-color: $input-border-color;
+
+        .ql-picker.ql-expanded {
+            .ql-picker-label {
+                border-color: transparent;
+            }
+        }
+    }
+}
+
+.ql-editing {
+    right: 0 !important;
+    top: 0 !important;
+    left: auto !important;
+}
+
+.ql-snow .ql-tooltip {
+    background-color: $dropdown-bg;
+    color: $dropdown-link-color;
+    box-shadow: $dropdown-box-shadow;
+    border: $dropdown-border-width solid $dropdown-border-color;
+
+    input {
+        background: $input-bg;
+        color: $input-color;
+        border-color: $input-focus-border-color !important;
+    }
+}
+.ql-snow {
+    .ql-stroke,
+    .ql-script,
+    .ql-strike svg {
+        stroke: var(--#{$prefix}body-color);
+    }
+    .ql-fill {
+        fill: var(--#{$prefix}body-color);
+    }
+}
+
+.ql-snow {
+    .ql-picker-options {
+        background-color: $dropdown-bg;
+        border-color: $dropdown-border-color !important;
+    }
+}
+
+.rdw-editor-toolbar {
+    border-color: var(--#{$prefix}border-color) !important;
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+}
+
+.rdw-option-wrapper {
+    border-color: var(--#{$prefix}border-color) !important;
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+    color: var(--#{$prefix}body-color) !important;
+
+    &:hover,
+    &:active,
+    &.active {
+        box-shadow: none !important;
+    }
+}
+
+.rdw-dropdown-wrapper {
+    background-color: var(--#{$prefix}tertiary-bg) !important;
+    border-color: var(--#{$prefix}border-color) !important;
+    color: var(--#{$prefix}body-color) !important;
+
+    &:hover {
+        box-shadow: none !important;
+    }
+
+    .rdw-dropdown-optionwrapper {
+        background-color: var(--#{$prefix}tertiary-bg) !important;
+        border-color: var(--#{$prefix}border-color) !important;
+        color: var(--#{$prefix}body-color) !important;
+    }
+}
+
+
+.rdw-embedded-modal{
+    background-color: var(--#{$prefix}secondary-bg) !important;
+}
