@@ -29,7 +29,7 @@ import { facebook, google } from "../../config";
 import { createSelector } from 'reselect';
 
 const Login = props => {
-  document.title = "Login | Magnifying India - React Admin & Dashboard Template";
+  document.title = "Login | aaMOBee - React Admin & Dashboard Template";
 
   const dispatch = useDispatch();
 
@@ -136,7 +136,7 @@ const { error } = useSelector(loginpage);
                     Welcome Back !
                   </h4>
                   <p className="mb-5 text-center">
-                    Sign in to continue to Upzet.
+                    Sign in to continue to aaMOBee.
                   </p>
                   <Form
                     className="form-horizontal"
@@ -276,8 +276,8 @@ const { error } = useSelector(loginpage);
                 </Link>{" "}
               </p>
               <p className="text-white-50">
-                © {new Date().getFullYear()} Upzet. Crafted with{" "}
-                <i className="mdi mdi-heart text-danger"></i> by Harsh Dubey
+                © {new Date().getFullYear()} aaMOBee. Crafted with{" "}
+                <i className="mdi mdi-heart text-danger"></i> by Themesdesign
               </p>
             </div>
           </Col>

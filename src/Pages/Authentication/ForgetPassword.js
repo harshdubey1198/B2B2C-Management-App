@@ -23,7 +23,7 @@ import logo from "../../assets/images/logo-sm.png";
 
 const ForgetPasswordPage = props => {
   const dispatch = useDispatch();
-  document.title = "Forget Password | Upzet - React Admin & Dashboard Template";
+  document.title = "Forget Password | aaMOBee - React Admin & Dashboard Template";
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -62,7 +62,7 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
                     <Col xs={7}>
                       <div className="text-primary p-4">
                         <h5 className="text-primary">Welcome Back !</h5>
-                        <p>Sign in to continue to Upzet.</p>
+                        <p>Sign in to continue to aaMOBee.</p>
                       </div>
                     </Col>
                     <Col className="col-5 align-self-end">
@@ -140,12 +140,12 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
               <div className="mt-5 text-center">
                 <p>
                   Go back to{" "}
-                  <Link to="/login" className="font-weight-medium text-primary">
+                  <Link to="login" className="font-weight-medium text-primary">
                     Login
                   </Link>{" "}
                 </p>
                 <p>
-                  © {new Date().getFullYear()} Upzet. Crafted with{" "}
+                  © {new Date().getFullYear()} aaMOBee. Crafted with{" "}
                   <i className="mdi mdi-heart text-danger" /> by Themesdesign
                 </p>
               </div>

@@ -37,7 +37,6 @@
     z-index: 1001;
     background: var(--#{$prefix}sidebar-bg);
     bottom: 0;
-    left: 0;
     margin-top: 0;
     position: fixed;
     top: var(--#{$prefix}header-height);
@@ -522,10 +521,10 @@ body[data-sidebar-size="small"] {
 
     #sidebar-menu {
         ul li {
-            // &.menu-title {
-            //     // background-color: lighten($sidebar-dark-bg, 2%);
-            // }
-            a{
+            &.menu-title {
+                // background-color: lighten($sidebar-dark-bg, 2%);
+            }
+            a {
                 i {
                     display: block;
                 }

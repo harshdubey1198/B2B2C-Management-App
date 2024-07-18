@@ -39,7 +39,7 @@ const LanguageDropdown = () => {
         <DropdownToggle className="btn header-item waves-effect" tag="button">
           <img
             src={languages[selectLang].flag}
-            alt="Upzet"
+            alt="aaMOBee"
             height="16"
             className="me-1"
           />
@@ -55,7 +55,7 @@ const LanguageDropdown = () => {
             >
               <img
                 src={languages[key].flag}
-                alt="Upzet"
+                alt="aaMOBee"
                 className="me-1"
                 height="12"
               />

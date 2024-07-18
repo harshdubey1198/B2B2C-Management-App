@@ -44,7 +44,7 @@ const { topbarTheme, layoutWidth, showRightSidebar, layoutModeTypes } = useSelec
     const title = props.router.location.pathname;
     let currentage = title.charAt(1).toUpperCase() + title.slice(2);
 
-    document.title = currentage + " | Upzet - React Admin & Dashboard Template";
+    document.title = currentage + " | aaMOBee";
   }, [props.router.location.pathname]);
 
   useEffect(() => {

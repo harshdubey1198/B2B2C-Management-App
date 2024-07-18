@@ -3,6 +3,8 @@ import { combineReducers } from "redux";
 // Front
 import Layout from "./layout/reducer";
 
+// Calendar
+import calendar from "./calendar/reducer";
 
 // Authentication
 import forgetPassword from "./auth/forgetpwd/reducer";
@@ -13,6 +15,7 @@ import account from "./auth/register/reducer";
 const rootReducer = combineReducers({
   // public
   Layout,
+  calendar,
   forgetPassword,
   login,
   profile,

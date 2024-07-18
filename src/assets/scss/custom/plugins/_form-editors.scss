@@ -114,3 +114,37 @@
 .rdw-embedded-modal{
     background-color: var(--#{$prefix}secondary-bg) !important;
 }
+
+.flatpickr-innerContainer {
+    border-bottom: var(--#{$prefix}border-color) !important;
+}
+.flatpickr-calendar {
+    border-color: var(--#{$prefix}border-color) !important;
+    color: var(--#{$prefix}body-color) !important;
+}
+.flatpickr-days {
+    background-color: var(--#{$prefix}secondary-bg) !important;
+    color: var(--#{$prefix}body-color) !important;
+    border-color: var(--#{$prefix}border-color) !important;
+}
+.flatpickr-day.today {
+    border-color: var(--#{$prefix}border-color) !important;
+    color: var(--#{$prefix}body-color) !important;
+    &:hover,
+    &:focus {
+        border-color: var(--#{$prefix}border-color) !important;
+        background: var(--#{$prefix}tertiary-bg) !important;
+        color: var(--#{$prefix}body-color) !important;
+    }
+}
+.flatpickr-day {
+    color: var(--#{$prefix}body-color) !important;
+    &:hover {
+        border-color: var(--#{$prefix}border-color) !important;
+        background: var(--#{$prefix}tertiary-bg) !important;
+        color: var(--#{$prefix}body-color) !important;
+    }
+}
+.dayContainer {
+    border-color: var(--#{$prefix}border-color) !important;
+}

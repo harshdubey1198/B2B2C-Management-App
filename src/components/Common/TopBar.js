@@ -1,25 +1,19 @@
 import React from "react";
+
 import logosm from "../../assets/images/logo-sm.png";
 import logodark from "../../assets/images/logo-dark.png";
 import logolight from "../../assets/images/logo-light.png";
 
-// import components
+// import component
 import ProfileMenu from "./TopbarDropdown/ProfileMenu";
+
 import NotificationDropdown from "./TopbarDropdown/NotificationDropdown";
+
 import LanguageDropdown from "./TopbarDropdown/LanguageDropdown";
+
 import AppsDropdown from "./TopbarDropdown/AppsDropdown";
 
 const TopBar = () => {
-  const handleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
   return (
     <React.Fragment>
       <header id="page-topbar">
@@ -52,23 +46,42 @@ const TopBar = () => {
             >
               <i className="ri-menu-2-line align-middle"></i>
             </button>
-           {/* <AppsDropdown /> */}
 
+            <form className="app-search d-none d-lg-block">
+              <div className="position-relative">
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Search..."
+                />
+                <span className="ri-search-line"></span>
+              </div>
+            </form>
           </div>
 
           <div className="d-flex">
             <LanguageDropdown />
+            <AppsDropdown />
             <div className="dropdown d-none d-lg-inline-block ms-1">
               <button
                 type="button"
                 className="btn header-item noti-icon waves-effect"
-                onClick={handleFullscreen}
+                data-toggle="fullscreen"
               >
                 <i className="ri-fullscreen-line"></i>
               </button>
             </div>
             <NotificationDropdown />
             <ProfileMenu />
+
+            <div className="dropdown d-inline-block">
+              <button
+                type="button"
+                className="btn header-item noti-icon right-bar-toggle waves-effect"
+              >
+                <i className="mdi mdi-cog"></i>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -77,12 +90,3 @@ const TopBar = () => {
 };
 
 export default TopBar;
-
-//  <div className="dropdown d-inline-block">
-//   <button
-//     type="button"
-//     className="btn header-item noti-icon right-bar-toggle waves-effect"
-//   >
-//     <i className="mdi mdi-cog"></i>
-//   </button>
-// </div> 

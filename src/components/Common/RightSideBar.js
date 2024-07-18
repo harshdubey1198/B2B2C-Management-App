@@ -20,15 +20,15 @@ import { Link } from "react-router-dom";
 
 import "./rightbar.scss";
 
-//Import images
-import layout1 from "../../assets/images/layouts/layout-1.png";
-import layout2 from "../../assets/images/layouts/layout-2.png";
-import layout3 from "../../assets/images/layouts/layout-3.png";
+// //Import images
+// import layout1 from "../../assets/images/layouts/layout-1.png";
+// import layout2 from "../../assets/images/layouts/layout-2.png";
+// import layout3 from "../../assets/images/layouts/layout-3.png";
 
 //constants
 import {
   layoutTypes,
-  layoutWidthTypes,
+  // layoutWidthTypes,
   topBarThemeTypes,
   leftSidebarTypes,
   leftSideBarThemeTypes,
@@ -126,7 +126,7 @@ const RightSidebar = props => {
 
 
 
-              <div className="radio-toolbar">
+              {/* <div className="radio-toolbar">
                 <span className="mb-2 d-block" id="radio-title">
                   Layout Width
                 </span>
@@ -158,7 +158,7 @@ const RightSidebar = props => {
                 <label htmlFor="radioBoxed" className="me-2">
                   Boxed
                 </label>
-              </div>
+              </div> */}
               <hr className="mt-1" />
 
               <div className="radio-toolbar">
@@ -213,7 +213,7 @@ const RightSidebar = props => {
                       }}
                     />
                     <label className="me-1" htmlFor="sidebarDefault">Default</label>
-                    <input
+                    {/* <input
                       type="radio"
                       id="sidebarCompact"
                       name="sidebarType"
@@ -225,7 +225,7 @@ const RightSidebar = props => {
                         }
                       }}
                     />
-                    <label className="me-1" htmlFor="sidebarCompact">Compact</label>
+                    <label className="me-1" htmlFor="sidebarCompact">Compact</label> */}
                     <input
                       type="radio"
                       id="sidebarIcon"
@@ -278,33 +278,7 @@ const RightSidebar = props => {
                 </React.Fragment>
               ) : null}
 
-              <h6 className="text-center">Choose Layouts</h6>
-
-              <div className="mb-2">
-                <Link to="#" target="_blank">
-                  <img src={layout1} className="img-fluid img-thumbnail" alt="" />
-                </Link>
-              </div>
-
-              <div className="mb-2">
-                <Link to="#" target="_blank">
-                  <img src={layout2} className="img-fluid img-thumbnail" alt="" />
-                </Link>
-              </div>
-
-              <div className="mb-2">
-                <Link to="#" target="_blank">
-                  <img src={layout3} className="img-fluid img-thumbnail" alt="" />
-                </Link>
-              </div>
-
-              <Link
-                to="#"
-                className="btn btn-primary btn-block mt-3"
-                target="_blank"
-              >
-                <i className="mdi mdi-cart ms-1" /> Purchase Now
-              </Link>
+             
             </div>
           </div>
         </SimpleBar>
