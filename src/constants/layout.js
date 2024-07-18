@@ -25,6 +25,7 @@ const leftSidebarTypes = {
 }
 
 const leftSideBarThemeTypes = {
+  DEFAULT:"light",
   LIGHT: "light",
   DARK: "dark",
 }

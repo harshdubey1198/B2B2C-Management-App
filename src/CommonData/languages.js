@@ -6,6 +6,10 @@ import russia from "../assets/images/flags/russia.jpg";
 
 
 const languages = {
+  en: {
+    label: "English",
+    flag: usFlag,
+  },
   sp: {
     label: "Spanish",
     flag: spain,
@@ -22,10 +26,7 @@ const languages = {
     label: "Italian",
     flag: italy,
   },
-  en: {
-    label: "English",
-    flag: usFlag,
-  },
+ 
 }
 
 export default languages;

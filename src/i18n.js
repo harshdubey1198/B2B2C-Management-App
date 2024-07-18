@@ -10,6 +10,9 @@ import translationENG from "./locales/en/translation.json"
 
 // the translations
 const resources = {
+  eng: {
+    translation: translationENG,
+  },
   gr: {
     translation: translationGr,
   },
@@ -22,9 +25,7 @@ const resources = {
   sp: {
     translation: translationSP,
   },
-  eng: {
-    translation: translationENG,
-  },
+ 
 }
 
 const language = localStorage.getItem("I18N_LANGUAGE")

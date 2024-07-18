@@ -99,7 +99,7 @@ const Header = (props) => {
               <i className="ri-menu-2-line align-middle"></i>
             </button>
 
-            <form className="app-search d-none d-lg-block">
+            {/* <form className="app-search d-none d-lg-block">
               <div className="position-relative">
                 <input
                   type="text"
@@ -108,7 +108,7 @@ const Header = (props) => {
                 />
                 <span className="ri-search-line"></span>
               </div>
-            </form>
+            </form> */}
           </div>
 
           <div className="d-flex">
@@ -152,6 +152,19 @@ const Header = (props) => {
             </div>
 
             <LanguageDropdown />
+            <div
+              className="dropdown d-inline-block"
+              onClick={() => {
+                props.showRightSidebarAction(!props.showRightSidebar);
+              }}
+            >
+              <button
+                type="button"
+                className="btn header-item noti-icon right-bar-toggle waves-effect"
+              >
+            <i className="mdi mdi-white-balance-sunny"></i>
+              </button>
+            </div>
             <AppsDropdown />
 
             <div className="dropdown d-none d-lg-inline-block ms-1">
@@ -170,7 +183,7 @@ const Header = (props) => {
             <NotificationDropdown />
 
             <ProfileMenu />
-
+          
             <div
               className="dropdown d-inline-block"
               onClick={() => {

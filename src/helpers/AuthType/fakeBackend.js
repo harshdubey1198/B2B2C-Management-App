@@ -7,10 +7,38 @@ import { calenderDefaultCategories, events } from "../../CommonData/Data";
 let users = [
   {
     uid: 1,
-    username: "admin",
-    role: "admin",
-    password: "123456",
-    email: "admin@Themesdesign.com",
+    username: "Master User",
+    role: "Master",
+    password: "1",
+    email: "Master@gmail.com",
+  },
+  {
+    uid: 2,
+    username: "Client Admin",
+    role: "Client_Admin",
+    password: "1",
+    email: "Client@gmail.com",
+  },
+  {
+    uid: 3,
+    username: "Firm Admin",
+    role: "Firm_admin",
+    password: "1",
+    email: "FirmA@gmail.com",
+  },
+  {
+    uid: 4,
+    username: "Accountant",
+    role: "Accountant",
+    password: "1",
+    email: "Accountant@gmail.com",
+  },
+  {
+    uid: 5,
+    username: "General-Emp",
+    role: "GE",
+    password: "1",
+    email: "GE123@gmail.com",
   },
 ];
 

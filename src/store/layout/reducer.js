@@ -25,7 +25,7 @@ const INIT_STATE = {
   layoutType: layoutTypes.VERTICAL,
   layoutModeTypes: layoutModeTypes.LIGHTMODE,
   layoutWidth: layoutWidthTypes.FLUID,
-  leftSideBarTheme: leftSideBarThemeTypes.DARK,
+  leftSideBarTheme: leftSideBarThemeTypes.DEFAULT,
   leftSideBarType: leftSidebarTypes.DEFAULT,
   topbarTheme: topBarThemeTypes.LIGHT,
   showRightSidebar: false,
