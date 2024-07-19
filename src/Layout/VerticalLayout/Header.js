@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
@@ -24,7 +24,7 @@ import ProfileMenu from "../../components/Common/TopbarDropdown/ProfileMenu";
 import AppsDropdown from "../../components/Common/TopbarDropdown/AppsDropdown";
 
 const Header = (props) => {
-  const [search, setsearch] = useState(false);
+  // const [search, setsearch] = useState(false);
 
   function toggleFullscreen() {
     if (
@@ -112,7 +112,7 @@ const Header = (props) => {
           </div>
 
           <div className="d-flex">
-            <div className="dropdown d-inline-block d-lg-none ms-2">
+            {/* <div className="dropdown d-inline-block d-lg-none ms-2">
               <button
                 onClick={() => {
                   setsearch(!search);
@@ -149,10 +149,10 @@ const Header = (props) => {
                   </div>
                 </form>
               </div>
-            </div>
+            </div> */}
 
             <LanguageDropdown />
-            <div
+            {/* <div
               className="dropdown d-inline-block"
               onClick={() => {
                 props.showRightSidebarAction(!props.showRightSidebar);
@@ -164,7 +164,7 @@ const Header = (props) => {
               >
             <i className="mdi mdi-white-balance-sunny"></i>
               </button>
-            </div>
+            </div> */}
             <AppsDropdown />
 
             <div className="dropdown d-none d-lg-inline-block ms-1">

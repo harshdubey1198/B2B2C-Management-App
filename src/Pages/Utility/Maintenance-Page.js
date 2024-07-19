@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom';
 
 
 const Maintenance = () => {
-    document.title = "Maintenance  | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Maintenance  | aaMOBee";
 
     return (
         <React.Fragment>

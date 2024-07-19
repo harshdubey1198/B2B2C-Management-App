@@ -22,7 +22,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 import classnames from "classnames";
 function UiTabs(props) {
-  document.title = "Tabs & Accordions | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Tabs & Accordions | aaMOBee";
 
   const [activeTab, setactiveTab] = useState("1");
   const [activeTab1, setactiveTab1] = useState("5");

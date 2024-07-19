@@ -1,19 +1,19 @@
 import React from "react";
-import UsePanel from "./UserPanel";
-import OrderStatus from "./OrderStatus";
-import Notifications from "./Notifications";
-import SocialSource from "./SocialSource";
-import OverView from "./OverView";
-import RevenueByLocation from "./RevenueByLocation";
-import LatestTransation from "./LatestTransation";
+// import UsePanel from "./UserPanel";
+// import OrderStatus from "./OrderStatus";
+// import Notifications from "./Notifications";
+// import SocialSource from "./SocialSource";
+// import OverView from "./OverView";
+// import RevenueByLocation from "./RevenueByLocation";
+// import LatestTransation from "./LatestTransation";
 
-import { Row, Container } from "reactstrap";
+// import { Row, Container } from "reactstrap";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const Dashboard = () => {
-  document.title = "Dashboard | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Dashboard | aaMOBee";
   return (
     <React.Fragment>
       <div className="page-content">

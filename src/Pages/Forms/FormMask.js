@@ -16,7 +16,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import InputMask from "react-input-mask";
 
 const FormMask = () => {
-  document.title = "Form Mask | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Form Mask | aaMOBee";
 
 
   const DateStyle1 = (props) => (

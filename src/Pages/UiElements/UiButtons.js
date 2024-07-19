@@ -20,7 +20,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 const UiButtons = () => {
   const [drp_link, setdrp_link] = useState(false);
   const [drp_link1, setdrp_link1] = useState(false);
-  document.title = "Buttons | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Buttons | aaMOBee";
 
   return (
     <React.Fragment>

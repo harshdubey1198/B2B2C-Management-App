@@ -25,7 +25,7 @@ import InboxSidebar from "./Sidebar";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const Inbox = () => {
-  document.title = "Inbox  | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Inbox  | aaMOBee";
 
   const [customActiveTab, setcustomActiveTab] = useState("1");
 

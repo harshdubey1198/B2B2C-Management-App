@@ -40,7 +40,7 @@ const UiCards = () => {
     700: 2,
     500: 1
   };
-  document.title = "Cards | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Cards | aaMOBee";
 
   return (
     <React.Fragment>

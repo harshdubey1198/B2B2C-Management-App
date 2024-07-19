@@ -20,7 +20,7 @@ import logolight from '../../assets/images/logo-light.png';
 import logodark from '../../assets/images/logo-dark.png';
 
 const Register = props => {
-    document.title = "Register | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Register | aaMOBee";
 
   const dispatch = useDispatch();
 
@@ -167,7 +167,7 @@ const { user, registrationError } = useSelector(registerpage);
                     </Card>
                     <div className="mt-5 text-center">
                         <p className="text-white-50">Already have an account ?<Link to="/login" className="fw-medium text-primary"> Login </Link> </p>
-                        <p className="text-white-50">© {new Date().getFullYear()} aaMOBee. Crafted with <i className="mdi mdi-heart text-danger"></i> by Themesdesign</p>
+                        <p className="text-white-50">© {new Date().getFullYear()} aaMOBee.</p>
                     </div>
                 </Col>
             </Row>

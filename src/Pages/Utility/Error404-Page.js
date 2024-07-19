@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 
 const Error404 = () => {
-    document.title = "404 Error  | aaMOBee - React Admin & Dashboard Template";
+    document.title = "404 Error  | aaMOBee";
     return (
         <React.Fragment>
             <div className="my-5 pt-5">

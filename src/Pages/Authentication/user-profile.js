@@ -33,12 +33,13 @@ import { editProfile, resetProfileFlag } from "../../store/actions";
 import { createSelector } from 'reselect';
 
 const UserProfile = () => {
-  document.title = "Profile | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Profile | aaMOBee";
 
   const dispatch = useDispatch();
 
   const [email, setemail] = useState("");
   const [name, setname] = useState("");
+  const [role, setrole] = useState("");
   const [idx, setidx] = useState(1);
 
   const userprofilepage = createSelector(
@@ -58,6 +59,7 @@ const { error, success } = useSelector(userprofilepage);
         setname(obj.displayName);
         setemail(obj.email);
         setidx(obj.uid);
+        setrole(obj.role);
       } else if (
         process.env.REACT_APP_DEFAULTAUTH === "fake" ||
         process.env.REACT_APP_DEFAULTAUTH === "jwt"
@@ -65,6 +67,7 @@ const { error, success } = useSelector(userprofilepage);
         setname(obj.username);
         setemail(obj.email);
         setidx(obj.uid);
+        setrole(obj.role);
       }
       setTimeout(() => {
         dispatch(resetProfileFlag());
@@ -121,6 +124,7 @@ const { error, success } = useSelector(userprofilepage);
                         <div className="text-muted">
                           <h5>{name}</h5>
                           <p className="mb-1">{email}</p>
+                          <p className="mb-1">{role}</p>
                           <p className="mb-0">Id no: #{idx}</p>
                         </div>
                       </div>

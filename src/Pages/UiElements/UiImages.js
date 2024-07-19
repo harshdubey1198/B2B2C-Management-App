@@ -24,7 +24,7 @@ import avatar5 from "../../assets/images/users/avatar-5.jpg";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const UiImages = () => {
-    document.title = "Images | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Images | aaMOBee";
 
     return (
         <React.Fragment>

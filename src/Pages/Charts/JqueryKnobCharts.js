@@ -7,7 +7,7 @@ import Knob from "../AllCharts/knob/knob";
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 
 const JknobCharts = () => {
-    document.title = "Jquery Knob charts | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Jquery Knob charts | aaMOBee";
     const [value, setvalue] = useState(65)
     const [value_cur, setvalue_cur] = useState(54)
     const [value_prev, setvalue_prev] = useState(72)

@@ -6,7 +6,7 @@ import { Container, Col, Row, Card, CardBody, CardTitle, CardSubtitle, Uncontrol
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const UiAlerts = () => {
-  document.title = "Alerts | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Alerts | aaMOBee";
 
   const alertPlaceholderRef = useRef(null);
 

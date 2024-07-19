@@ -58,7 +58,7 @@ const PricingData = [
 ];
 
 const Pricing = () => {
-  document.title = "Pricing  | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Pricing  | aaMOBee";
   return (
     <React.Fragment>
       <div className="page-content">

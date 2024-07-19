@@ -29,7 +29,7 @@ import { facebook, google } from "../../config";
 import { createSelector } from 'reselect';
 
 const Login = props => {
-  document.title = "Login | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Login | aaMOBee";
 
   const dispatch = useDispatch();
 
@@ -276,9 +276,7 @@ const { error } = useSelector(loginpage);
                 </Link>{" "}
               </p>
               <p className="text-white-50">
-                © {new Date().getFullYear()} aaMOBee. Crafted with{" "}
-                <i className="mdi mdi-heart text-danger"></i> by Themesdesign
-              </p>
+                © {new Date().getFullYear()} aaMOBee.</p>
             </div>
           </Col>
         </Row>

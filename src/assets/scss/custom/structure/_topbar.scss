@@ -20,12 +20,6 @@
     margin: 0 auto;
     height: $header-height;
     padding: 0 calc(#{$grid-gutter-width} / 2) 0 0;
-
-    .dropdown {
-        .show.header-item {
-            // background-color: darken($header-bg, 2%);
-        }
-    }
 }
 
 .navbar-brand-box {

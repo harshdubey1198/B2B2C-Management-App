@@ -24,7 +24,7 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const FormWizard = () => {
-  document.title = "Form Wizard | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Form Wizard | aaMOBee";
   const [activeTab, setactiveTab] = useState(1);
   const [activeTabwiz, setoggleTabwiz] = useState(1);
 

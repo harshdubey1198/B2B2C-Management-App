@@ -13,7 +13,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import "./TimeLine.css";
 
 const AsNavFor = () => {
-  document.title = "Time Line  | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Time Line  | aaMOBee";
 
   const [nav1, setNav1] = useState();
   const [nav2, setNav2] = useState();

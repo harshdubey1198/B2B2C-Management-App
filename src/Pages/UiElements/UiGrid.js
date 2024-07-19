@@ -5,7 +5,7 @@ import { Container, Col, Row, Card, CardBody } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const UiGrid = () => {
-    document.title = "Grid | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Grid | aaMOBee";
     return (
         <React.Fragment>
 

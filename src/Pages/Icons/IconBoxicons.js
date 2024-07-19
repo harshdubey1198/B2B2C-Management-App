@@ -14,7 +14,7 @@ var regularIcon = "";
 var logos = "";
 
 const IconBoxicons = (props) => {
-  document.title = "Boxicons | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Boxicons | aaMOBee";
 
   useEffect(() => {
     icons.data.forEach(function (val) {

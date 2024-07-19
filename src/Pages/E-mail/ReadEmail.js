@@ -28,7 +28,7 @@ import img4 from "../../assets/images/small/img-4.jpg";
 
 
 const ReadEmail = () => {
-    document.title = "Read Email  | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Read Email  | aaMOBee";
     const [folderbtn, setfolderbtn] = useState(false);
     const [tagbtn, settagbtn] = useState(false);
     const [menubtn, setmenubtn] = useState(false);

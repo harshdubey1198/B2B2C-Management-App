@@ -4,7 +4,7 @@ import { Card, CardBody, Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const BasicTable = () => {
-  document.title = "Basic Tables | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Basic Tables | aaMOBee";
 
   return (
     <React.Fragment>

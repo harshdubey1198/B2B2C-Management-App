@@ -270,7 +270,7 @@ const Calender = (props) => {
     }
   };
 
-  document.title = "Calendar | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Calendar | aaMOBee";
   return (
     <React.Fragment>
       <DeleteModal

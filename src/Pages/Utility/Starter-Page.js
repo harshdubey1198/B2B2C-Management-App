@@ -7,7 +7,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 
 const StarterPage = () => {
-    document.title = "Starter  | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Starter  | aaMOBee";
 
     return (
         <React.Fragment>

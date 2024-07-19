@@ -23,7 +23,7 @@ import logo from "../../assets/images/logo-sm.png";
 
 const ForgetPasswordPage = props => {
   const dispatch = useDispatch();
-  document.title = "Forget Password | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Forget Password | aaMOBee";
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -145,8 +145,7 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
                   </Link>{" "}
                 </p>
                 <p>
-                  © {new Date().getFullYear()} aaMOBee. Crafted with{" "}
-                  <i className="mdi mdi-heart text-danger" /> by Themesdesign
+                  © {new Date().getFullYear()} aaMOBee.
                 </p>
               </div>
             </Col>

@@ -6,7 +6,7 @@ import { Card, CardBody, CardTitle, Col, Container, Row } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const IconDripicons = () => {
-  document.title = "Drip Icons | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Drip Icons | aaMOBee";
   return (
     <React.Fragment>
       <div className="page-content">

@@ -9,7 +9,7 @@ import Rating from "react-rating";
 import RatingTooltip from "react-rating-tooltip";
 
 const UiRating = () => {
-  document.title = "Rating | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Rating | aaMOBee";
 
   const [def, setdef] = useState("");
   const [stopRate, setStopRate] = useState("");

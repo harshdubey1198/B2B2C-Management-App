@@ -31,7 +31,7 @@ let users = [
     username: "Accountant",
     role: "Accountant",
     password: "1",
-    email: "Accountant@gmail.com",
+    email: "CA@gmail.com",
   },
   {
     uid: 5,

@@ -6,7 +6,7 @@ import { Card, CardBody, CardSubtitle, CardTitle, Col, Container, Row } from "re
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const UiVideo = () => {
-    document.title = "Video | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Video | aaMOBee";
 
     return (
         <React.Fragment>

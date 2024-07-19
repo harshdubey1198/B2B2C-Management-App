@@ -6,7 +6,7 @@ import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const FAQs = () => {
-    document.title = "FAQs  | aaMOBee - React Admin & Dashboard Template";
+    document.title = "FAQs  | aaMOBee";
 
     return (
         <React.Fragment>

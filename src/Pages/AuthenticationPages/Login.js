@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 // import
 
 const Login = () => {
-  document.title = "Login | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Login | aaMOBee";
     useEffect(() => {
         document.body.className = "bg-pattern";
         // remove classname when component will unmount
@@ -131,9 +131,7 @@ const Login = () => {
                   </Link>{" "}
                 </p>
                 <p className="text-white-50">
-                  © {new Date().getFullYear()} aaMOBee. Crafted with{" "}
-                  <i className="mdi mdi-heart text-danger"></i> by Themesdesign
-                </p>
+                  © {new Date().getFullYear()} aaMOBee.</p>
               </div>
             </Col>
           </Row>

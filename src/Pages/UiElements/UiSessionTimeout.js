@@ -22,7 +22,7 @@ useEffect(() => {
     return () => clearTimeout(redirectTimeout);
   }, []);
 
-  document.title = "Session Timeout | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Session Timeout | aaMOBee";
 
   return (
     <React.Fragment>

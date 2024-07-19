@@ -15,7 +15,7 @@ import {
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 const FormElements = () => {
-  document.title = "Form Elements | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Form Elements | aaMOBee";
   const [toggleSwitch, settoggleSwitch] = useState(true);
 
   return (

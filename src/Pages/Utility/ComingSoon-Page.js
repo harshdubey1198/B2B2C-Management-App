@@ -9,7 +9,7 @@ import Countdown from "react-countdown";
 import { Link } from "react-router-dom";
 
 const ComingSoon = () => {
-  document.title = "Cooming Soon  | aaMOBee - React Admin & Dashboard Template";
+  document.title = "Cooming Soon  | aaMOBee";
   // const renderer = ({ days, hours, minutes, seconds, completed }) => {
   //   if (completed) {
   //     // Render a completed state

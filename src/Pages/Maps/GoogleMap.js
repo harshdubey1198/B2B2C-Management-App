@@ -13,7 +13,7 @@ const mapStyles = {
 const LoadingContainer = () => <div>Loading...</div>
 
 const GoogleMap = (props) => {
-    document.title = "Google Maps | aaMOBee - React Admin & Dashboard Template";
+    document.title = "Google Maps | aaMOBee";
     return (
         <React.Fragment>
 

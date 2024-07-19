@@ -27,10 +27,10 @@ import "./rightbar.scss";
 
 //constants
 import {
-  layoutTypes,
+  // layoutTypes,
   // layoutWidthTypes,
   topBarThemeTypes,
-  leftSidebarTypes,
+  // leftSidebarTypes,
   leftSideBarThemeTypes,
   layoutModeTypes,
 } from "../../constants/layout";
@@ -54,11 +54,12 @@ const RightSidebar = props => {
               </Link>
               <h5 className="m-0">Settings</h5>
             </div>
+            <hr className="mt-1" />
 
-            <hr className="my-0" />
+            {/* <hr className="my-0" /> */}
 
             <div className="p-4">
-              <div className="radio-toolbar">
+              {/* <div className="radio-toolbar">
                 <span className="mb-2 d-block">Layouts</span>
                 <input
                   type="radio"
@@ -86,9 +87,9 @@ const RightSidebar = props => {
                   }}
                 />
                 <label htmlFor="radioHorizontal">Horizontal</label>
-              </div>
+              </div> */}
 
-              <hr className="mt-1" />
+              {/* <hr className="mt-1" /> */}
 
               {/* Layout Mode */}
               <div className="radio-toolbar">
@@ -122,7 +123,7 @@ const RightSidebar = props => {
                 <label htmlFor="radioDarkMode">Dark</label>
               </div>
 
-              <hr className="mt-1" />
+              {/* <hr className="mt-1" /> */}
 
 
 
@@ -195,7 +196,7 @@ const RightSidebar = props => {
 
               {props.layoutType === "vertical" ? (
                 <React.Fragment>
-                  <hr className="mt-1" />
+                  {/* <hr className="mt-1" />
                   <div className="radio-toolbar">
                     <span className="mb-2 d-block" id="radio-title">
                       Left Sidebar Type{" "}
@@ -213,7 +214,7 @@ const RightSidebar = props => {
                       }}
                     />
                     <label className="me-1" htmlFor="sidebarDefault">Default</label>
-                    {/* <input
+                    <input
                       type="radio"
                       id="sidebarCompact"
                       name="sidebarType"
@@ -225,7 +226,7 @@ const RightSidebar = props => {
                         }
                       }}
                     />
-                    <label className="me-1" htmlFor="sidebarCompact">Compact</label> */}
+                    <label className="me-1" htmlFor="sidebarCompact">Compact</label>
                     <input
                       type="radio"
                       id="sidebarIcon"
@@ -239,7 +240,7 @@ const RightSidebar = props => {
                       }}
                     />
                     <label className="me-1" htmlFor="sidebarIcon">Icon</label>
-                  </div>
+                  </div> */}
 
                   <hr className="mt-1" />
 
