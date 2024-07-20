@@ -26,7 +26,7 @@ import withRouter from "../../components/Common/withRouter";
 //Import Breadcrumb
 import Breadcrumb from "../../components/Common/Breadcrumb";
 
-import avatar from "../../assets/images/users/avatar-1.jpg";
+import avatar from "../../assets/images/users/avatar-2.jpg";
 // actions
 import { editProfile, resetProfileFlag } from "../../store/actions";
 
@@ -41,6 +41,8 @@ const UserProfile = () => {
   const [name, setname] = useState("");
   const [role, setrole] = useState("");
   const [idx, setidx] = useState(1);
+  const [userImage, setuserImage] = useState(avatar);
+
 
   const userprofilepage = createSelector(
     (state ) => state.profile,
@@ -60,6 +62,8 @@ const { error, success } = useSelector(userprofilepage);
         setemail(obj.email);
         setidx(obj.uid);
         setrole(obj.role);
+        setuserImage(obj.userImage);
+
       } else if (
         process.env.REACT_APP_DEFAULTAUTH === "fake" ||
         process.env.REACT_APP_DEFAULTAUTH === "jwt"
@@ -68,6 +72,8 @@ const { error, success } = useSelector(userprofilepage);
         setemail(obj.email);
         setidx(obj.uid);
         setrole(obj.role);
+        setuserImage(obj.userImage);
+
       }
       setTimeout(() => {
         dispatch(resetProfileFlag());
@@ -115,7 +121,7 @@ const { error, success } = useSelector(userprofilepage);
                     <div className="d-flex">
                       <div className="ms-3">
                         <img
-                          src={avatar}
+                          src={userImage}
                           alt=""
                           className="avatar-md rounded-circle img-thumbnail"
                         />

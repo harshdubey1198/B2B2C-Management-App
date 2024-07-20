@@ -21,7 +21,7 @@ import {
   changeSidebarType,
 } from "../../store/actions";
 import ProfileMenu from "../../components/Common/TopbarDropdown/ProfileMenu";
-import AppsDropdown from "../../components/Common/TopbarDropdown/AppsDropdown";
+// import AppsDropdown from "../../components/Common/TopbarDropdown/AppsDropdown";
 
 const Header = (props) => {
   // const [search, setsearch] = useState(false);
@@ -165,7 +165,7 @@ const Header = (props) => {
             <i className="mdi mdi-white-balance-sunny"></i>
               </button>
             </div> */}
-            <AppsDropdown />
+            {/* <AppsDropdown /> */}
 
             <div className="dropdown d-none d-lg-inline-block ms-1">
               <button

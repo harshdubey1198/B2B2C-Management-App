@@ -93,12 +93,15 @@ import IconBoxicons from "../Pages/Icons/IconBoxicons"
 // Import Map Pages
 import VectorMaps from "../Pages/Maps/VectorMap";
 import GoogleMap from "../Pages/Maps/GoogleMap";
+import ClientManagement from "../Pages/ClientsManagement/index.js";
 
 
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
-
+  
+  { path: "/clients-management", component: <ClientManagement /> },
+  
   // Calender
   { path: "/calendar", component: <Calender /> },
 
@@ -198,6 +201,7 @@ const publicRoutes = [
 
   // Utility Pages
   { path: "/pages-404", component: <Error404 /> },
+  { path: "/*", component: <Error404 /> },
   { path: "/pages-500", component: <Error500 /> },
   { path: "/pages-maintenance", component: <Maintenance /> },
   { path: "/pages-comingsoon", component: <ComingSoon /> },

@@ -10,7 +10,8 @@ let users = [
     username: "Master User",
     role: "Master",
     password: "1",
-    email: "Master@gmail.com",
+    email: "master@gmail.com",
+    userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/spbcrsxe6q34utqx6m9m.jpg"
   },
   {
     uid: 2,
@@ -18,6 +19,7 @@ let users = [
     role: "Client_Admin",
     password: "1",
     email: "Client@gmail.com",
+    userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"
   },
   {
     uid: 3,
@@ -25,13 +27,15 @@ let users = [
     role: "Firm_admin",
     password: "1",
     email: "FirmA@gmail.com",
+    userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/hopbqozew5pq9lsfhlke.jpg"
   },
   {
     uid: 4,
-    username: "Accountant",
+    username: "Acc-123",
     role: "Accountant",
     password: "1",
-    email: "CA@gmail.com",
+    email: "ca@gmail.com",
+    userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/uxmbr3wecndv2sd1ceuj.jpg"
   },
   {
     uid: 5,
@@ -39,6 +43,7 @@ let users = [
     role: "GE",
     password: "1",
     email: "GE123@gmail.com",
+    userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/rs7c9ielkgvb1qydl8of.jpg"
   },
 ];
 

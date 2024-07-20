@@ -24,7 +24,7 @@ const Maintenance = () => {
                                     <img src={img1} alt="" height="24" className="auth-logo logo-dark mx-auto" />
                                     <img src={img2} alt="" height="24" className="auth-logo logo-light mx-auto" />
                                 </Link>
-                                <p className="mt-3">Responsive Bootstrap 5 Admin Dashboard</p>
+                                <p className="mt-3">aaMOBee</p>
 
                                 <div className="mt-5">
                                     <div className="mb-4">

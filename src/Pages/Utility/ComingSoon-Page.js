@@ -89,7 +89,7 @@ const ComingSoon = () => {
                   </Link>
 
                   <h5 className="font-size-16 text-white-50 mb-4">
-                    Responsive Bootstrap 5 Admin Dashboard
+                    aaMOBee
                   </h5>
 
                   <h4 className="text-white mt-5">

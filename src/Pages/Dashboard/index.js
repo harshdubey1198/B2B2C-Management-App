@@ -1,46 +1,48 @@
 import React from "react";
-// import UsePanel from "./UserPanel";
-// import OrderStatus from "./OrderStatus";
-// import Notifications from "./Notifications";
-// import SocialSource from "./SocialSource";
-// import OverView from "./OverView";
-// import RevenueByLocation from "./RevenueByLocation";
-// import LatestTransation from "./LatestTransation";
+import UsePanel from "./UserPanel";
+import OrderStatus from "./OrderStatus";
+import Notifications from "./Notifications";
+import SocialSource from "./SocialSource";
+import OverView from "./OverView";
+import RevenueByLocation from "./RevenueByLocation";
+import LatestTransation from "./LatestTransation";
 
-// import { Row, Container } from "reactstrap";
+import { Row, Container } from "reactstrap";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import RolewiseDashboard from "./RolewiseDashboard";
 
 const Dashboard = () => {
   document.title = "Dashboard | aaMOBee";
   return (
     <React.Fragment>
       <div className="page-content">
-        {/* <Container fluid={true}> */}
+        <Container fluid={true}>
           <Breadcrumbs title="aaMOBee" breadcrumbItem="Dashboard" />
           {/* User Panel Charts */}
-          {/* <UsePanel /> */}
+          <RolewiseDashboard/>
+          <UsePanel />
 
-          {/* <Row> */}
+          <Row>
             {/* Overview Chart */}
-            {/* <OverView /> */}
+            <OverView />
             {/* Social Source Chart */}
-            {/* <SocialSource /> */}
-          {/* </Row> */}
+            <SocialSource />
+          </Row>
 
-          {/* <Row> */}
+          <Row>
             {/* Order Stats */}
-            {/* <OrderStatus /> */}
+            <OrderStatus />
             {/* Notifications */}
-            {/* <Notifications /> */}
+            <Notifications />
             {/* Revenue by Location Vector Map */}
-            {/* <RevenueByLocation /> */}
-          {/* </Row> */}
+            <RevenueByLocation />
+          </Row>
 
           {/* Latest Transaction Table */}
-          {/* <LatestTransation /> */}
-        {/* </Container> */}
+          <LatestTransation />
+        </Container>
       </div>
     </React.Fragment>
   );

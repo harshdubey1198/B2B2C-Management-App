@@ -15,25 +15,32 @@ import { Link } from "react-router-dom";
 import withRouter from "../withRouter";
 
 // users
-import user1 from "../../../assets/images/users/avatar-1.jpg";
+import user1 from "../../../assets/images/users/avatar-2.jpg";
+// import { set } from "lodash";
 
 const ProfileMenu = props => {
   // Declare a new state variable, which we'll call "menu"
   const [menu, setMenu] = useState(false);
 
   const [username, setusername] = useState("Admin");
+  const [userImage, setuserImage] = useState(user1);
 
+  // const [role, setrole] = useState("");
   useEffect(() => {
     if (localStorage.getItem("authUser")) {
       if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
         const obj = JSON.parse(localStorage.getItem("authUser"));
         setusername(obj.displayName);
+        setuserImage(obj.userImage);
+        // setrole(obj.role);
       } else if (
         process.env.REACT_APP_DEFAULTAUTH === "fake" ||
         process.env.REACT_APP_DEFAULTAUTH === "jwt"
       ) {
         const obj = JSON.parse(localStorage.getItem("authUser"));
         setusername(obj.username);
+        setuserImage(obj.userImage);
+        // setrole(obj.role);
       }
     }
   }, [props.success]);
@@ -52,7 +59,7 @@ const ProfileMenu = props => {
         >
           <img
             className="rounded-circle header-profile-user"
-            src={user1}
+            src={userImage}
             alt="Header Avatar"
           />
           <span className="d-none d-xl-inline-block ms-2 me-2">{username}</span>
@@ -68,11 +75,11 @@ const ProfileMenu = props => {
             <i className="ri-wallet-2-line align-middle me-2" />
             {props.t("My Wallet")}
           </DropdownItem>
-          <DropdownItem tag="a" href="#">
+          {/* <DropdownItem tag="a" href="#">
             <span className="badge bg-success float-end mt-1">11</span>
             <i className="ri-settings-2-line align-middle me-2" />
             {props.t("Settings")}
-          </DropdownItem>
+          </DropdownItem> */}
           <DropdownItem tag="a" href="auth-lock-screen">
             <i className="ri-lock-unlock-line align-middle me-2" />
             {props.t("Lock screen")}
