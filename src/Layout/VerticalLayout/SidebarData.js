@@ -1,3 +1,35 @@
+
+
+/*
+    if user == admin {
+        const sidebardata= {
+            all button
+            client management
+        }
+    }
+
+    if user == accountant {
+        const sidebardata= {
+            all button
+            invoicing
+            taxation
+            no client management
+        }
+    }
+
+
+
+    if user (user!=admin && user!=accountant) {
+        permission= {
+            read only 
+        }
+    }
+*/
+/*
+middle ware will be deciding the flow according to the user 
+
+*/
+
 const SidebarData = [
     {
         label: "Menu",

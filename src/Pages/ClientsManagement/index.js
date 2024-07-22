@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardBody, Col } from "reactstrap";
+import {Card, CardBody, Col } from "reactstrap";
+import Breadcrumbs from '../../components/Common/Breadcrumb';
 
 const clientData = [
   {
@@ -67,7 +68,7 @@ function ClientManagement() {
   return (
     <React.Fragment>
       <div className="page-content">
-        <h3>Client Management</h3>
+        <Breadcrumbs title="aaMOBee" breadcrumbItem="Client Management" />
         <p className='mm-active'>
           This is the Client Management page.
           Here the client data table will be fetched and CRUD and permissions can be set by master admin.
@@ -135,14 +136,14 @@ function ClientManagement() {
           </Card>
         </Col>
       </div>
-      <style jsx>{`
+      <style>{`
         .hover-details {
           position: absolute;
           background: white;
           border: 1px solid #ccc;
           padding: 10px;
-          bottom:4px;
-          right:0px;
+          bottom: 4px;
+          right: 0px;
           box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
         }
       `}</style>
