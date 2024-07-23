@@ -1,117 +1,79 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import PropTypes from "prop-types";
-import sidebarData from "./SidebarData";
-//Simple bar
+import { Link } from "react-router-dom";
 import SimpleBar from "simplebar-react";
-// MetisMenu
 import MetisMenu from "metismenujs";
 import withRouter from "../../components/Common/withRouter";
-import { Link } from "react-router-dom";
-//i18n
 import { withTranslation } from "react-i18next";
+import {  userRolesSidebarData } from "./SidebarData";
+
 const Sidebar = (props) => {
   const ref = useRef();
-  const activateParentDropdown = useCallback(item => {
+
+  const role = JSON.parse(localStorage.getItem('authUser'))?.role || 'default';
+  const sidebarItems = userRolesSidebarData(role);
+
+  const activateParentDropdown = useCallback((item) => {
     item.classList.add("active");
-    const parent = item.parentElement;
-    const parent2El = parent.childNodes[1];
-    if (parent2El && parent2El.id !== "side-menu") {
-      parent2El.classList.add("mm-show");
-    }
-    if (parent) {
-      parent.classList.add("mm-active");
-      const parent2 = parent.parentElement;
-      if (parent2) {
-        parent2.classList.add("mm-show"); // ul tag
-        const parent3 = parent2.parentElement; // li tag
-        if (parent3) {
-          parent3.classList.add("mm-active"); // li
-          parent3.childNodes[0].classList.add("mm-active"); //a
-          const parent4 = parent3.parentElement; // ul
-          if (parent4) {
-            parent4.classList.add("mm-show"); // ul
-            const parent5 = parent4.parentElement;
-            if (parent5) {
-              parent5.classList.add("mm-show"); // li
-              parent5.childNodes[0].classList.add("mm-active"); // a tag
-            }
-          }
-        }
+    let parent = item.parentElement;
+    while (parent) {
+      if (parent.tagName === 'LI') {
+        parent.classList.add("mm-active");
+        parent = parent.parentElement;
+      } else if (parent.tagName === 'UL') {
+        parent.classList.add("mm-show");
+        parent = parent.parentElement;
+      } else {
+        break;
       }
-      scrollElement(item);
-      return false;
     }
     scrollElement(item);
-    return false;
   }, []);
-  const removeActivation = items => {
-    for (var i = 0; i < items.length; ++i) {
-      var item = items[i];
-      const parent = items[i].parentElement;
-      if (item && item.classList.contains("active")) {
-        item.classList.remove("active");
-      }
-      if (parent) {
-        const parent2El =
-          parent.childNodes && parent.childNodes.length && parent.childNodes[1]
-            ? parent.childNodes[1]
-            : null;
-        if (parent2El && parent2El.id !== "side-menu") {
-          parent2El.classList.remove("mm-show");
-        }
-        parent.classList.remove("mm-active");
-        const parent2 = parent.parentElement;
-        if (parent2) {
-          parent2.classList.remove("mm-show");
-          const parent3 = parent2.parentElement;
-          if (parent3) {
-            parent3.classList.remove("mm-active"); // li
-            parent3.childNodes[0].classList.remove("mm-active");
-            const parent4 = parent3.parentElement; // ul
-            if (parent4) {
-              parent4.classList.remove("mm-show"); // ul
-              const parent5 = parent4.parentElement;
-              if (parent5) {
-                parent5.classList.remove("mm-show"); // li
-                parent5.childNodes[0].classList.remove("mm-active"); // a tag
-              }
-            }
-          }
+
+  // Remove activation from menu items
+  const removeActivation = (items) => {
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      item.classList.remove("active");
+      let parent = item.parentElement;
+      while (parent) {
+        if (parent.tagName === 'LI') {
+          parent.classList.remove("mm-active");
+          parent = parent.parentElement;
+        } else if (parent.tagName === 'UL') {
+          parent.classList.remove("mm-show");
+          parent = parent.parentElement;
+        } else {
+          break;
         }
       }
     }
   };
+
+  // Activate the menu based on the current path
   const activeMenu = useCallback(() => {
     const pathName = props.router.location.pathname;
-    const fullPath = pathName;
-    let matchingMenuItem = null;
     const ul = document.getElementById("side-menu-item");
     const items = ul.getElementsByTagName("a");
     removeActivation(items);
-    for (let i = 0; i < items.length; ++i) {
-      if (fullPath === items[i].pathname) {
-        matchingMenuItem = items[i];
+    for (let i = 0; i < items.length; i++) {
+      if (pathName === items[i].pathname) {
+        activateParentDropdown(items[i]);
         break;
       }
     }
-    if (matchingMenuItem) {
-      activateParentDropdown(matchingMenuItem);
-    }
-  }, [
-    props.router.location.pathname,
-    activateParentDropdown,
-  ]);
+  }, [props.router.location.pathname, activateParentDropdown]);
+
   useEffect(() => {
     ref.current.recalculate();
   }, []);
+
   useEffect(() => {
-    new MetisMenu("#side-menu-item");
+    const metisMenu = new MetisMenu("#side-menu-item");
     activeMenu();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  useEffect(() => {
-    activeMenu();
+    return () => metisMenu.dispose();
   }, [activeMenu]);
+
   function scrollElement(item) {
     if (item) {
       const currentPosition = item.offsetTop;
@@ -120,60 +82,56 @@ const Sidebar = (props) => {
       }
     }
   }
+
   return (
     <React.Fragment>
       <div className="vertical-menu">
         <SimpleBar className="h-100" ref={ref}>
           <div id="sidebar-menu">
             <ul className="metismenu list-unstyled" id="side-menu-item">
-              {(sidebarData || []).map((item, key) => (
+              {sidebarItems.map((item, key) => (
                 <React.Fragment key={key}>
                   {item.isMainMenu ? (
                     <li className="menu-title">{props.t(item.label)}</li>
                   ) : (
-                    <li key={key}>
+                    <li>
                       <Link
-                        to={item.url ? item.url : "/#"}
-                        className={
-                          (item.issubMenubadge || item.isHasArrow)
-                            ? " "
-                            : "has-arrow"
-                        }
+                        to={item.url || "/#"}
+                        className={item.subItem ? "has-arrow" : ""}
                       >
                         <i
                           className={item.icon}
                           style={{ marginRight: "5px" }}
                         ></i>
-                        {item.issubMenubadge && (
+                        {item.subItem && (
                           <span
                             className={
                               "badge rounded-pill float-end " + item.bgcolor
                             }
                           >
-                            {" "}
-                            {item.badgeValue}{" "}
+                            {item.badgeValue}
                           </span>
                         )}
                         <span>{props.t(item.label)}</span>
                       </Link>
                       {item.subItem && (
                         <ul className="sub-menu">
-                          {item.subItem.map((item, key) => (
+                          {item.subItem.map((subItem, key) => (
                             <li key={key}>
                               <Link
-                                to={item.link}
+                                to={subItem.link}
                                 className={
-                                  item.subMenu && "has-arrow waves-effect"
+                                  subItem.subMenu ? "has-arrow waves-effect" : ""
                                 }
                               >
-                                {props.t(item.sublabel)}
+                                {props.t(subItem.sublabel)}
                               </Link>
-                              {item.subMenu && (
+                              {subItem.subMenu && (
                                 <ul className="sub-menu">
-                                  {item.subMenu.map((item, key) => (
+                                  {subItem.subMenu.map((subSubItem, key) => (
                                     <li key={key}>
-                                      <Link to="#">
-                                        {props.t(item.title)}
+                                      <Link to={subSubItem.link || "#"}>
+                                        {props.t(subSubItem.title)}
                                       </Link>
                                     </li>
                                   ))}
@@ -194,8 +152,10 @@ const Sidebar = (props) => {
     </React.Fragment>
   );
 };
+
 Sidebar.propTypes = {
   location: PropTypes.object,
-  t: PropTypes.any,
+  t: PropTypes.func,
 };
+
 export default withRouter(withTranslation()(Sidebar));

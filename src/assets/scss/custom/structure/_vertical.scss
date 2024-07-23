@@ -53,80 +53,81 @@
     }
 }
 
-#sidebar-menu {
-    padding: 10px 0 30px 0;
+    #sidebar-menu {
+        padding: 10px 0 30px 0;
 
-    .mm-active {
-        > .has-arrow {
-            &:after {
-                transform: rotate(-180deg);
+        .mm-active {
+            > .has-arrow {
+                &:after {
+                    transform: rotate(-180deg);
+                }
             }
         }
-    }
 
-    .has-arrow {
-        &:after {
-            content: "\F0140";
-            font-family: "Material Design Icons";
-            display: block;
-            float: right;
-            transition: transform 0.2s;
-            font-size: 1rem;
-        }
-    }
-
-    ul {
-        li {
-            a {
+        .has-arrow {
+            &:after {
+                content: "\F0140";
+                font-family: "Material Design Icons";
                 display: block;
-                padding: 0.625rem 1.5rem;
-                color: var(--#{$prefix}sidebar-menu-item-color);
-                position: relative;
-                font-size: 0.92rem;
-                transition: all 0.4s;
-                font-family: var(--#{$prefix}font-family-secondary);
+                float: right;
+                transition: transform 0.2s;
+                font-size: 1rem;
+            }
+        }
 
-                i {
-                    display: inline-block;
-                    min-width: 1.5rem;
-                    font-size: 1.1rem;
-                    line-height: 1.40625rem;
-                    vertical-align: middle;
-                    color: var(--#{$prefix}sidebar-menu-item-icon-color);
+        ul {
+            li {
+                a {
+                    display: block;
+                    padding: 0.625rem 1.5rem;
+                    color: var(--#{$prefix}sidebar-menu-item-color);
+                    position: relative;
+                    font-size: 0.92rem;
                     transition: all 0.4s;
-                    opacity: 0.75;
-                }
-
-                &:hover {
-                    color: var(--#{$prefix}sidebar-menu-item-hover-color) !important;
+                    font-family: var(--#{$prefix}font-family-secondary);
 
                     i {
-                        color: var(--#{$prefix}sidebar-menu-item-hover-color);
+                        display: inline-block;
+                        min-width: 1.5rem;
+                        font-size: 1.1rem;
+                        line-height: 1.40625rem;
+                        vertical-align: middle;
+                        color: var(--#{$prefix}sidebar-menu-item-icon-color);
+                        transition: all 0.4s;
+                        opacity: 0.75;
+                    }
+
+                    &:hover {
+                        color: var(--#{$prefix}sidebar-menu-item-hover-color) !important;
+
+                        i {
+                            color: var(--#{$prefix}sidebar-menu-item-hover-color);
+                        }
                     }
                 }
-            }
 
-            .badge {
-                margin-top: 4px;
-            }
+                .badge {
+                    margin-top: 4px;
+                }
 
-            ul.sub-menu {
-                padding: 0;
+                ul.sub-menu {
+                    padding: 0;
 
-                li {
-                    a {
-                        padding: 0.4rem 1.5rem 0.4rem 3.2rem;
-                        font-size: 14px;
-                        color: var(--#{$prefix}sidebar-menu-sub-item-color);
-                    }
+                    li {
+                        a {
+                            padding: 0.4rem 1.5rem 0.4rem 3.2rem;
+                            font-size: 14px;
+                            color: var(--#{$prefix}sidebar-menu-sub-item-color);
+                        }
 
-                    ul.sub-menu {
-                        padding: 0;
+                        ul.sub-menu {
+                            padding: 0;
 
-                        li {
-                            a {
-                                padding: 0.4rem 1.5rem 0.4rem 4.2rem;
-                                font-size: 14px;
+                            li {
+                                a {
+                                    padding: 0.4rem 1.5rem 0.4rem 4.2rem;
+                                    font-size: 14px;
+                                }
                             }
                         }
                     }
@@ -134,7 +135,6 @@
             }
         }
     }
-}
 
 .menu-title {
     padding: 12px 20px !important;
@@ -275,7 +275,7 @@
                             position: relative;
                             width: calc(190px + #{var(--#{$prefix}sidebar-collapsed-width)});
                             color: $primary;
-                            // background-color: darken(var(--#{$prefix}sidebar-bg), 4%);
+                            background-color: var(--bs-header-bg);
                             transition: none;
 
                             i {
@@ -521,9 +521,9 @@ body[data-sidebar-size="small"] {
 
     #sidebar-menu {
         ul li {
-            &.menu-title {
-                // background-color: lighten($sidebar-dark-bg, 2%);
-            }
+            // &.menu-title {
+            //     // background-color: lighten($sidebar-dark-bg, 2%);
+            // }
             a {
                 i {
                     display: block;
