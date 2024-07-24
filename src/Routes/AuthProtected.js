@@ -8,7 +8,6 @@ const AuthProtected = (props) => {
   const location = useLocation();
 
   if (loading) {
-    // Add a loading state if needed
     return <div>Loading...</div>;
   }
 
@@ -16,24 +15,19 @@ const AuthProtected = (props) => {
     return <Navigate to={{ pathname: "/login", state: { from: location } }} />;
   }
 
-  // Get allowed routes for the user's role
   const allowedRoutes = getAllowedRoutes(userProfile.role);
 
-  // Check if the current path is in the allowed routes
   const currentPath = location.pathname;
   if (!allowedRoutes.includes(currentPath)) {
-    // Redirect to the dashboard if not allowed
     return <Navigate to="/dashboard" />;
   }
 
   return <>{props.children}</>;
 };
 
-// Helper function to extract allowed routes from sidebar data
 const getAllowedRoutes = (role) => {
   const sidebarData = userRolesSidebarData(role);
 
-  // Flatten the sidebar data to get a list of all URLs and subItem links
   const flattenRoutes = (data) => {
     return data.reduce((acc, item) => {
       if (item.url) acc.push(item.url);
@@ -48,3 +42,9 @@ const getAllowedRoutes = (role) => {
 };
 
 export default AuthProtected;
+
+
+
+
+//master ->  sidebar data || user routes defined { limited routes  -> output  }
+// master -> restrictions || routes defined === accessed route -> /dashboard 

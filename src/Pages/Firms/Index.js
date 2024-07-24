@@ -2,7 +2,18 @@ import React from 'react'
 
 function Index() {
   return (
-    <div>Index</div>
+    <React.Fragment>
+        <div className="page-content">
+             firms 
+
+            {/* 
+            <component1/>
+            <component2/>
+            
+            */}
+
+            </div>
+    </React.Fragment>
   )
 }
 
