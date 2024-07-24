@@ -66,6 +66,12 @@ export const masterAdminSidebarData = () => [
       isHasArrow: true,
     },
     {
+      label:"Pricing",
+      icon:"mdi mdi-cash-multiple",
+      url:"/pages-pricing",
+      isHasArrow:true
+    },
+    {
       label:"Firms",
       icon:"mdi mdi-account-multiple-outline",
       url:"/firms",
