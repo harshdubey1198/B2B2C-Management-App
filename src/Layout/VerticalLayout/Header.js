@@ -19,12 +19,45 @@ import {
   showRightSidebarAction,
   toggleLeftmenu,
   changeSidebarType,
+  changeLayout,
+  changeLayoutMode,
+  changeSidebarTheme,
+  changeTopbarTheme,
 } from "../../store/actions";
 import ProfileMenu from "../../components/Common/TopbarDropdown/ProfileMenu";
 // import AppsDropdown from "../../components/Common/TopbarDropdown/AppsDropdown";
 
+// import redux reducers from layout 
+import {
+  // layoutTypes,
+  // layoutWidthTypes,
+  topBarThemeTypes,
+  // leftSidebarTypes,
+  leftSideBarThemeTypes,
+  layoutModeTypes,
+} from "../../constants/layout";
+
 const Header = (props) => {
-  // const [search, setsearch] = useState(false);
+  // const [search, setsearch] = useState(false);.
+
+  // function for toggle the theme of application
+  const handleThemeToggle = (mode) => {
+    // Determine which action to dispatch based on the mode
+    switch (mode) {
+      case 'light':
+        props.changeLayoutMode(layoutModeTypes.LIGHTMODE);
+        props.changeTopbarTheme(topBarThemeTypes.LIGHT);
+        props.changeSidebarTheme(leftSideBarThemeTypes.LIGHT);
+        break;
+      case 'dark':
+        props.changeLayoutMode(layoutModeTypes.DARKMODE);
+        props.changeTopbarTheme(topBarThemeTypes.DARK);
+        props.changeSidebarTheme(leftSideBarThemeTypes.DARK);
+        break;
+      default:
+        break;
+    }
+  };
 
   function toggleFullscreen() {
     if (
@@ -183,8 +216,10 @@ const Header = (props) => {
             <NotificationDropdown />
 
             <ProfileMenu />
+
+            
           
-            <div
+            {/* <div
               className="dropdown d-inline-block"
               onClick={() => {
                 props.showRightSidebarAction(!props.showRightSidebar);
@@ -196,7 +231,23 @@ const Header = (props) => {
               >
                 <i className="mdi mdi-cog"></i>
               </button>
-            </div>
+            </div> */}
+
+            {/* Button for toggling the theme */}
+            <button
+              type="button"
+              className="btn header-item noti-icon right-bar-toggle waves-effect"
+              onClick={() => {
+                const currentMode = props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? 'dark' : 'light';
+                handleThemeToggle(currentMode);
+              }}
+            >
+              {props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? (
+                <i className="mdi mdi-white-balance-sunny"></i>
+              ) : (
+                <i className="mdi mdi-brightness-4"></i>
+              )}
+            </button>
           </div>
         </div>
       </header>
@@ -205,13 +256,17 @@ const Header = (props) => {
 };
 
 const mapStatetoProps = (state) => {
-  const { layoutType, showRightSidebar, leftMenu, leftSideBarType } =
+  const { layoutType, showRightSidebar, leftMenu, leftSideBarType,layoutModeTypes } =
     state.Layout;
-  return { layoutType, showRightSidebar, leftMenu, leftSideBarType };
+  return { layoutType, showRightSidebar, leftMenu, leftSideBarType,layoutModeTypes };
 };
 
 export default connect(mapStatetoProps, {
   showRightSidebarAction,
   toggleLeftmenu,
   changeSidebarType,
+  changeLayout,
+  changeLayoutMode,
+  changeSidebarTheme,
+  changeTopbarTheme
 })(withTranslation()(Header));
