@@ -27,15 +27,15 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Reports", link: "/reports" },
       ],
     },
-    {
-      label: "Taxation",
-      icon: "mdi mdi-file-document-outline",
-      subItem: [
-        { sublabel: "Create Tax", link: "/create-tax" },
-        { sublabel: "View Taxes", link: "/view-taxes" },
-        { sublabel: "Reports", link: "/reports" },
-      ],
-    },
+    // {
+    //   label: "Taxation",
+    //   icon: "mdi mdi-file-document-outline",
+    //   subItem: [
+    //     { sublabel: "Create Tax", link: "/create-tax" },
+    //     { sublabel: "View Taxes", link: "/view-taxes" },
+    //     { sublabel: "Reports", link: "/reports" },
+    //   ],
+    // },
     {
       label: "Authentication",
       icon: "mdi mdi-account-circle-outline",
@@ -66,6 +66,13 @@ export const masterAdminSidebarData = () => [
       isHasArrow: true,
     },
     {
+      label:"Firms",
+      icon:"mdi mdi-account-multiple-outline",
+      url:"/firms",
+      isHasArrow:true
+    },
+
+    {
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
@@ -76,15 +83,15 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Reports", link: "/reports" },
       ],
     },
-    {
-      label: "Taxation",
-      icon: "mdi mdi-file-document-outline",
-      subItem: [
-        { sublabel: "Create Tax", link: "/create-tax" },
-        { sublabel: "View Taxes", link: "/view-taxes" },
-        { sublabel: "Reports", link: "/reports" },
-      ],
-    },
+    // {
+    //   label: "Taxation",
+    //   icon: "mdi mdi-file-document-outline",
+    //   subItem: [
+    //     { sublabel: "Create Tax", link: "/create-tax" },
+    //     { sublabel: "View Taxes", link: "/view-taxes" },
+    //     { sublabel: "Reports", link: "/reports" },
+    //   ],
+    // },
     {
       label: "Authentication",
       icon: "mdi mdi-account-circle-outline",

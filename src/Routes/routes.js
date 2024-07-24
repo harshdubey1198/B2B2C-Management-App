@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 //Dashboard
 import Dashboard from "../Pages/Dashboard";
 
+import Firm from "../Pages/Firms/Index";
 // Import Calender
 import Calender from "../Pages/Calender";
 
@@ -102,6 +103,8 @@ const authProtectedRoutes = [
   
   { path: "/clients-management", component: <ClientManagement /> },
   
+  // firm
+  {path:"/firms", component: <Firm />},
   // Calender
   { path: "/calendar", component: <Calender /> },
 

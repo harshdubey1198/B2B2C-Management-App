@@ -11,7 +11,7 @@ import { layoutTypes } from "../constants/layout";
 import NonAuthLayout from "../Layout/NonAuthLayout";
 import VerticalLayout from "../Layout/VerticalLayout/index";
 import HorizontalLayout from "../Layout/HorizontalLayout/index";
-import { AuthProtected } from "./AuthProtected";
+import AuthProtected from "./AuthProtected"; // Updated import
 
 import { authProtectedRoutes, publicRoutes } from "./routes";
 
@@ -35,46 +35,46 @@ const getLayout = (layoutType) => {
 const Index = () => {
 
   const routepage = createSelector(
-    (state ) => state.Layout,
+    (state) => state.Layout,
     (state) => ({
-        layoutType: state.layoutType,
+      layoutType: state.layoutType,
     })
   );
-// Inside your component
-const { layoutType } = useSelector(routepage);
+
+  // Inside your component
+  const { layoutType } = useSelector(routepage);
 
   const Layout = getLayout(layoutType);
 
   return (
     <Routes>
-      <Route>
-        {publicRoutes.map((route, idx) => (
-          <Route
-            path={route.path}
-            element={
-              <NonAuthLayout>
-                  {route.component}
-              </NonAuthLayout>
+      {/* Public Routes */}
+      {publicRoutes.map((route, idx) => (
+        <Route
+          path={route.path}
+          element={
+            <NonAuthLayout>
+              {route.component}
+            </NonAuthLayout>
           }
-            key={idx}
-            exact={true}
-          />
-        ))}
-      </Route>
+          key={idx}
+          exact={true}
+        />
+      ))}
 
-      <Route>
-          {authProtectedRoutes.map((route, idx) => (
-            <Route
-              path={route.path}
-              element={
-                <AuthProtected>
-                    <Layout>{route.component}</Layout>
-                </AuthProtected>}
-              key={idx}
-              exact={true}
-            />
-          ))}
-      </Route>
+      {/* Auth Protected Routes */}
+      {authProtectedRoutes.map((route, idx) => (
+        <Route
+          path={route.path}
+          element={
+            <AuthProtected>
+              <Layout>{route.component}</Layout>
+            </AuthProtected>
+          }
+          key={idx}
+          exact={true}
+        />
+      ))}
     </Routes>
   );
 };

@@ -42,7 +42,7 @@ let users = [
     username: "General-Emp",
     role: "GE",
     password: "1",
-    email: "GE123@gmail.com",
+    email: "user@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/rs7c9ielkgvb1qydl8of.jpg"
   },
 ];
