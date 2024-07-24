@@ -34,7 +34,7 @@ const Register = () => {
                                                 <Col md={12}>
                                                     <div className="mb-4">
                                                         <label className="form-label" htmlFor="username">Username</label>
-                                                        <input type="text" className="form-control" id="username" placeholder="Enter username" defaultValue="admin@themesbrand.com" />
+                                                        <input type="text" className="form-control" id="username" placeholder="Enter username"  />
                                                     </div>
                                                     <div className="mb-4">
                                                         <label className="form-label" htmlFor="useremail">Email</label>
@@ -42,7 +42,7 @@ const Register = () => {
                                                     </div>
                                                     <div className="mb-4">
                                                         <label className="form-label" htmlFor="userpassword">Password</label>
-                                                        <input type="password" className="form-control" id="userpassword" placeholder="Enter password" defaultValue="123456" />
+                                                        <input type="password" className="form-control" id="userpassword" placeholder="Enter password"  />
                                                     </div>
                                                     <div className="form-check">
                                                         <input type="checkbox" className="form-check-input" id="term-conditionCheck" />

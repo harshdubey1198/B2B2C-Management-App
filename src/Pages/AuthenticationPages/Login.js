@@ -60,7 +60,6 @@ const Login = () => {
                               className="form-control"
                               id="username"
                               placeholder="Enter username"
-                              defaultValue="admin@themesbrand.com"
                             />
                           </div>
                           <div className="mb-4">
@@ -75,7 +74,6 @@ const Login = () => {
                               className="form-control"
                               id="userpassword"
                               placeholder="Enter password"
-                              defaultValue="123456"
                             />
                           </div>
 
