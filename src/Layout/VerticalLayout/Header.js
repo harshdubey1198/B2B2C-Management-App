@@ -185,6 +185,20 @@ const Header = (props) => {
             </div> */}
 
             <LanguageDropdown />
+            <button
+              type="button"
+              className="btn header-item noti-icon right-bar-toggle waves-effect"
+              onClick={() => {
+                const currentMode = props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? 'dark' : 'light';
+                handleThemeToggle(currentMode);
+              }}
+            >
+              {props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? (
+                <i className="mdi mdi-white-balance-sunny"></i>
+              ) : (
+                <i className="mdi mdi-brightness-4"></i>
+              )}
+            </button>
             {/* <div
               className="dropdown d-inline-block"
               onClick={() => {
@@ -234,20 +248,7 @@ const Header = (props) => {
             </div> */}
 
             {/* Button for toggling the theme */}
-            <button
-              type="button"
-              className="btn header-item noti-icon right-bar-toggle waves-effect"
-              onClick={() => {
-                const currentMode = props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? 'dark' : 'light';
-                handleThemeToggle(currentMode);
-              }}
-            >
-              {props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? (
-                <i className="mdi mdi-white-balance-sunny"></i>
-              ) : (
-                <i className="mdi mdi-brightness-4"></i>
-              )}
-            </button>
+           
           </div>
         </div>
       </header>
