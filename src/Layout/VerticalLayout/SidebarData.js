@@ -116,6 +116,86 @@ export const masterAdminSidebarData = () => [
         isHasArrow: true,
       }
   ];
+  export const accountantSidebarData = () => [
+    {
+      label: "Menu",
+      isMainMenu: true,
+    },
+    {
+      label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+      isHasArrow: true,
+    },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "View Invoices", link: "/view-invoices" },
+        { sublabel: "Payments", link: "/payments" },
+        { sublabel: "Reports", link: "/reports-invoice" },
+      ],
+    },
+    {
+      label: "Clients",
+      icon: "mdi mdi-account-multiple-outline",
+      url: "/clients-management",
+      isHasArrow: true,
+    },
+    {
+      label: "Settings",
+      icon: "mdi mdi-cog-outline",
+      url: "/settings",
+      isHasArrow: true,
+    },
+  ];
+  
+  export const generalEmployeeSidebarData = () => [
+    {
+      label: "Menu",
+      isMainMenu: true,
+    },
+    {
+      label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+      isHasArrow: true,
+    },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "View Invoices", link: "/view-invoices" },
+        { sublabel: "Payments", link: "/payments" },
+      ],
+    },
+    {
+      label: "Settings",
+      icon: "mdi mdi-cog-outline",
+      url: "/settings",
+      isHasArrow: true,
+    },
+  ];
+  
+  export const viewerSidebarData = () => [
+    {
+      label: "Menu",
+      isMainMenu: true,
+    },
+    {
+      label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+      isHasArrow: true,
+    },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "View Invoices", link: "/view-invoices" },
+      ],
+    },
+  ];
   
   export const readOnlySidebarData = () => [
     {
@@ -157,6 +237,12 @@ export const masterAdminSidebarData = () => [
         return clientAdminSidebarData();
       case 'readOnly':
         return readOnlySidebarData();
+      case 'Accountant':
+        return accountantSidebarData();
+      case 'General-employee':
+        return generalEmployeeSidebarData();
+      case 'Viewer':
+        return viewerSidebarData();
       default:
         return defaultSidebarData();
     }

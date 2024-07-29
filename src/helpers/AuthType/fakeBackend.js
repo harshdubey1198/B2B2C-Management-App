@@ -40,7 +40,7 @@ let users = [
   {
     uid: 5,
     username: "General-Emp",
-    role: "GE",
+    role: "General-employee",
     password: "1",
     email: "user@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/rs7c9ielkgvb1qydl8of.jpg"

@@ -4,10 +4,10 @@ import { Navigate } from "react-router-dom";
 //Dashboard
 import Dashboard from "../Pages/Dashboard";
 // Invoicing routes
-import CreateInvoice from "../Pages/Invoicing/ClientAdmin/index";
-import ViewInvoice from "../Pages/Invoicing/ClientAdmin/view.jsx";
-import PaymentsInvoice from "../Pages/Invoicing/ClientAdmin/payments.jsx";
-import ReportsInvoice from "../Pages/Invoicing/ClientAdmin/reports.jsx";
+import CreateInvoice from "../Pages/Invoicing/index";
+import ViewInvoice from "../Pages/Invoicing/view.jsx";
+import PaymentsInvoice from "../Pages/Invoicing/payments.jsx";
+import ReportsInvoice from "../Pages/Invoicing/reports.jsx";
 
 
 import Firm from "../Pages/Firms/Index";
