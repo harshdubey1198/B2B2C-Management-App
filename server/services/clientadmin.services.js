@@ -2,9 +2,12 @@ const ClientAdmin = require("../schemas/clientadminschemajs");
 const PasswordService = require('./password.services')
 
 let services = {}
-services.clietRegistration = clietRegistration
+services.clientRegistration = clientRegistration
+services.clientLogin = clientLogin
+services.getRegiteredUser = getRegiteredUser
 
-async function clietRegistration(body){
+// REGITER CLIENT
+async function clientRegistration(body){
     try {
         const existingUser = await ClientAdmin.findOne({email: body.email});
         if (existingUser){
@@ -18,6 +21,20 @@ async function clietRegistration(body){
     } catch (error) {
         return Promise.reject("Unable to create User")
     }
+}
+
+// GETTING ALL REGITER CLIENTS
+async function getRegiteredUser(){
+    try {
+        const data = await ClientAdmin.find().select('-password')
+        return data
+    } catch (error) {
+        return Promise.reject("Unable to get registered client")
+    }
+}
+
+async function clientLogin(body){
+    
 }
 
 module.exports = services
