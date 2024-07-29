@@ -18,7 +18,7 @@ let users = [
     username: "Client Admin",
     role: "Client_Admin",
     password: "1",
-    email: "Client@gmail.com",
+    email: "client@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"
   },
   {
