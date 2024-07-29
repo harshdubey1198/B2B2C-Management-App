@@ -15,6 +15,9 @@ mongoose.connect(process.env.MONGO_URI).then(resp => {
     console.log("Database Connected!")
 }).catch(error => console.log("Unable to connect to DB!" + error));
 
+// CLIENT ROUTES
+app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
+
 app.get("/", (req, res) => {
     res.send("Welcome to HRMS Servers!");
 })

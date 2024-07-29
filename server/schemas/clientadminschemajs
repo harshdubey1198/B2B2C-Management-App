@@ -17,5 +17,5 @@ const clientAdminSchema = new Schema({
     permission: {}
 }, { timestamps: true });
 
-const SuperAdmin = mongoose.model('SuperAdmin', clientAdminSchema);
-module.exports = SuperAdmin;
+const ClientAdmin = mongoose.model('ClientAdmin', clientAdminSchema);
+module.exports = ClientAdmin;
