@@ -3,6 +3,12 @@ import { Navigate } from "react-router-dom";
 
 //Dashboard
 import Dashboard from "../Pages/Dashboard";
+// Invoicing routes
+import CreateInvoice from "../Pages/Invoicing/index";
+import ViewInvoice from "../Pages/Invoicing/view";
+import PaymentsInvoice from "../Pages/Invoicing/payments";
+import ReportsInvoice from "../Pages/Invoicing/reports";
+
 
 import Firm from "../Pages/Firms/Index";
 // Import Calender
@@ -102,6 +108,12 @@ const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   
   { path: "/clients-management", component: <ClientManagement /> },
+  // invoicing
+  { path: "/create-invoice", component: <CreateInvoice/> },
+  { path: "/view-invoices", component: <ViewInvoice /> },
+  { path: "/payments-invoice", component: < PaymentsInvoice /> },
+  { path: "/reports-invoice", component: < ReportsInvoice /> },
+
   
   // firm
   {path:"/firms", component: <Firm />},
