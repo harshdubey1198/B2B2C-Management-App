@@ -5,7 +5,7 @@ import SimpleBar from "simplebar-react";
 import MetisMenu from "metismenujs";
 import withRouter from "../../components/Common/withRouter";
 import { withTranslation } from "react-i18next";
-import {  userRolesSidebarData } from "./SidebarData";
+import { userRolesSidebarData } from "./SidebarData";
 
 const Sidebar = (props) => {
   const ref = useRef();
@@ -16,6 +16,7 @@ const Sidebar = (props) => {
   const activateParentDropdown = useCallback((item) => {
     item.classList.add("active");
     let parent = item.parentElement;
+
     while (parent) {
       if (parent.tagName === 'LI') {
         parent.classList.add("mm-active");
@@ -30,7 +31,6 @@ const Sidebar = (props) => {
     scrollElement(item);
   }, []);
 
-  // Remove activation from menu items
   const removeActivation = (items) => {
     for (let i = 0; i < items.length; i++) {
       const item = items[i];
@@ -50,7 +50,6 @@ const Sidebar = (props) => {
     }
   };
 
-  // Activate the menu based on the current path
   const activeMenu = useCallback(() => {
     const pathName = props.router.location.pathname;
     const ul = document.getElementById("side-menu-item");
