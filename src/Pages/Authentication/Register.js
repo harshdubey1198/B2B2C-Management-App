@@ -1,284 +1,353 @@
-import React, { useEffect } from "react";
-import { Row, Col, CardBody, Card, Alert, Container, Input, Label, Form, FormFeedback } from "reactstrap";
+import React, { useEffect, useState } from "react";
+import {
+  Row,
+  Col,
+  CardBody,
+  Card,
+  Alert,
+  Container,
+  Input,
+  Label,
+  Form,
+  FormFeedback,
+} from "reactstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { createSelector } from "reselect";
+import {
+  registerUser,
+  registerUserSuccessful,
+  registerUserFailed,
+  apiError,
+} from "../../store/actions";
+import logolight from "../../assets/images/logo-light.png";
+import logodark from "../../assets/images/logo-dark.png";
+import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
+import { PostRequest } from "../Utility/Request";
 
-import * as Yup from "yup";
-import { useFormik } from "formik";
+const Register = (props) => {
+  document.title = "Register | aaMOBee";
 
-import { registerUser, apiError } from "../../store/actions";
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const registrationError = useSelector(
+    (state) => state.account.registrationError
+  );
 
-import { useSelector, useDispatch } from "react-redux";
+  // Default formInput for role and status
+  const defaultRole = "Client_Admin";
+  const defaultStatus = "requested";
 
-import { Link } from "react-router-dom";
+  // State to manage form formInput and validation
+  const [formInput, setFormInput] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    username: "",
+    password: '',
+    companyMobile: "",
+    mobile: "",
+    dob: "",
+    address: "",
+    role: defaultRole,
+    status: defaultStatus,
+  });
 
-import { createSelector } from 'reselect';
-
-import logolight from '../../assets/images/logo-light.png';
-import logodark from '../../assets/images/logo-dark.png';
-
-const Register = props => {
-    document.title = "Register | aaMOBee";
-
-    const dispatch = useDispatch();
-
-    const defaultRole = 'client-admin';
-    const defaultStatus = 'requested';
-
-    const validation = useFormik({
-        enableReinitialize: true,
-
-        initialValues: {
-            firstName: '',
-            lastName: '',
-            email: '',
-            username: '',
-            password: '',
-            companyMobile: '',
-            mobile: '',
-            dob: '',
-            address: '',
-            role: defaultRole,     
-            status: defaultStatus, 
-        },
-        validationSchema: Yup.object({
-            firstName: Yup.string().required("Please Enter Your First Name"),
-            lastName: Yup.string().required("Please Enter Your Last Name"),
-            email: Yup.string().email("Invalid email address").required("Please Enter Your Email"),
-            username: Yup.string().required("Please Enter Your Username"),
-            password: Yup.string().required("Please Enter Your Password"),
-            companyMobile: Yup.string().required("Please Enter Your Company Mobile"),
-            mobile: Yup.string().required("Please Enter Your Mobile"),
-            dob: Yup.date().required("Please Enter Your Date of Birth"),
-            address: Yup.string().required("Please Enter Your Address"),
-        
-        }),
-        onSubmit: (values) => {
-            dispatch(registerUser(values));
-        }
-    });
-
-    const registerpage = createSelector(
-        (state) => state.account,
-        (state) => ({
-            user: state.user,
-            registrationError: state.registrationError,
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    // Validate the form
+    dispatch(registerUserFailed(""));
+    if (checkEmptyFields(formInput)) {
+      dispatch(registerUserFailed("Fields must not be empty!"));
+    } else if (!validateEmail(formInput.email)) {
+      dispatch(registerUserFailed("Email is invalid!"));
+    } else {
+      PostRequest(
+        `${process.env.REACT_APP_URL}/clientadmin/register`,
+        formInput
+      )
+        .then((response) => {
+          if (response) {
+            dispatch(registerUserSuccessful(formInput));
+            navigate('/login')
+          } else {
+            dispatch(registerUserFailed("Registration failed"));
+          }
         })
-    );
+        .catch((err) => {
+          console.log("API Error", err);
+          dispatch(registerUserFailed(err || "An error occurred"));
+        });
+    }
+  };
 
-    const { user, registrationError } = useSelector(registerpage);
+  // NAME HANDLER
+  const nameHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(/[^A-Za-z]/g, "");
+    setFormInput((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    dispatch(registerUserFailed(""));
+  };
 
-    useEffect(() => {
-        dispatch(apiError(""));
-    }, [dispatch]);
+  // USERNAME HANDLER
+  const userNameHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(" ", "");
+    setFormInput((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    dispatch(registerUserFailed(""));
+  };
 
-    return (
-        <div className="bg-pattern" style={{height:"100%"}}>
-            <div className="bg-overlay"></div>
-            <div className="account-pages pt-0">
-                <Container>
-                    <Row className="justify-content-center">
-                        <Col lg={8} md={10} xl={8}>
-                            <Card className='mt-3'>
-                                <CardBody className="p-4">
-                                    <div className="text-center">
-                                        <Link to="/" className="">
-                                            <img src={logodark} alt="" height="24" className="auth-logo logo-dark mx-auto" />
-                                            <img src={logolight} alt="" height="24" className="auth-logo logo-light mx-auto" />
-                                        </Link>
-                                    </div>
+  // EMAIL HANDLER
+  const emailHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(/\s/g, "");
+    setFormInput((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    dispatch(registerUserFailed(""));
+  };
 
-                                    <h4 className="font-size-18 text-muted text-center mt-2">Free Register</h4>
-                                    <p className="text-muted text-center mb-4">Get your free aaMOBee account now.</p>
-                                    <Form
-                                        className="form-horizontal"
-                                        onSubmit={(e) => {
-                                            e.preventDefault();
-                                            validation.handleSubmit();
-                                            return false;
-                                        }}
-                                    >
-                                        {user && user ? (
-                                            <Alert color="success">
-                                                Register User Successfully
-                                            </Alert>
-                                        ) : null}
+  // PHONE HANDLER
+  const phoneHandler = (e) => {
+    const { name, value } = e.target;
+    const numericValue = value.replace(/\D/g, "");
+    if (numericValue.length <= 10) {
+      setFormInput((prevState) => ({
+        ...prevState,
+        [name]: numericValue,
+      }));
+      dispatch(registerUserFailed(""));
+    }
+  };
 
-                                        {registrationError && registrationError ? (
-                                            <Alert color="danger"><div>{registrationError}</div></Alert>
-                                        ) : null}
+  // PASSWORD HANDLER
+  const passwordHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(/\s/g, "");
+    setFormInput((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    dispatch(registerUserFailed(""));
+  };
 
-                                        <Row>
-                                            <Col md={6}>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">First Name</Label>
-                                                    <Input
-                                                        name="firstName"
-                                                        type="text"
-                                                        placeholder="Enter First Name"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.firstName || ""}
-                                                        invalid={
-                                                            validation.touched.firstName && validation.errors.firstName ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.firstName && validation.errors.firstName ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.firstName}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Email</Label>
-                                                    <Input
-                                                        id="email"
-                                                        name="email"
-                                                        type="email"
-                                                        placeholder="Enter email"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.email || ""}
-                                                        invalid={
-                                                            validation.touched.email && validation.errors.email ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.email && validation.errors.email ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.email}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Company Mobile</Label>
-                                                    <Input
-                                                        name="companyMobile"
-                                                        type="text"
-                                                        placeholder="Enter Company Mobile"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.companyMobile || ""}
-                                                        invalid={
-                                                            validation.touched.companyMobile && validation.errors.companyMobile ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.companyMobile && validation.errors.companyMobile ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.companyMobile}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Date of Birth</Label>
-                                                    <Input
-                                                        name="dob"
-                                                        type="date"
-                                                        placeholder="Enter Date of Birth"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.dob || ""}
-                                                        invalid={
-                                                            validation.touched.dob && validation.errors.dob ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.dob && validation.errors.dob ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.dob}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <Input
-                                                    name="role"
-                                                    type="hidden"
-                                                    value={validation.values.role || defaultRole}
-                                                />
-                                                <Input
-                                                    name="status"
-                                                    type="hidden"
-                                                    value={validation.values.status || defaultStatus}
-                                                />
-                                            </Col>
-                                            <Col md={6}>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Last Name</Label>
-                                                    <Input
-                                                        name="lastName"
-                                                        type="text"
-                                                        placeholder="Enter Last Name"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.lastName || ""}
-                                                        invalid={
-                                                            validation.touched.lastName && validation.errors.lastName ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.lastName && validation.errors.lastName ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.lastName}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Username</Label>
-                                                    <Input
-                                                        name="username"
-                                                        type="text"
-                                                        placeholder="Enter username"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.username || ""}
-                                                        invalid={
-                                                            validation.touched.username && validation.errors.username ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.username && validation.errors.username ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.username}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Mobile</Label>
-                                                    <Input
-                                                        name="mobile"
-                                                        type="text"
-                                                        placeholder="Enter Mobile"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.mobile || ""}
-                                                        invalid={
-                                                            validation.touched.mobile && validation.errors.mobile ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.mobile && validation.errors.mobile ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.mobile}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                                <div className="mb-4">
-                                                    <Label className="form-label">Address</Label>
-                                                    <Input
-                                                        name="address"
-                                                        type="text"
-                                                        placeholder="Enter Address"
-                                                        onChange={validation.handleChange}
-                                                        onBlur={validation.handleBlur}
-                                                        value={validation.values.address || ""}
-                                                        invalid={
-                                                            validation.touched.address && validation.errors.address ? true : false
-                                                        }
-                                                    />
-                                                    {validation.touched.address && validation.errors.address ? (
-                                                        <FormFeedback type="invalid"><div>{validation.errors.address}</div></FormFeedback>
-                                                    ) : null}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        <div className="form-check">
-                                            <Input type="checkbox" className="form-check-input" id="term-conditionCheck" />
-                                            <Label className="form-check-label fw-normal" htmlFor="term-conditionCheck">I accept <Link to="#" className="text-primary">Terms and Conditions</Link></Label>
-                                        </div>
-                                        <div className="d-grid mt-3">
-                                            <button className="btn btn-primary waves-effect waves-light" type="submit">Register</button>
-                                        </div>
-                                    </Form>
-                                </CardBody>
-                            </Card>
-                            <div className="mt-5 text-center">
-                                <p className="text-white-50">Already have an account ?<Link to="/login" className="fw-medium text-primary"> Login </Link> </p>
-                                <p className="text-white-50">© {new Date().getFullYear()} aaMOBee.</p>
-                            </div>
-                        </Col>
+  useEffect(() => {
+    if (registrationError) {
+      console.log("Registration Error:", registrationError);
+    }
+  }, [registrationError]);
+
+  const registerpage = createSelector(
+    (state) => state.account,
+    (state) => ({
+      user: state.user,
+      registrationError: state.registrationError,
+    })
+  );
+
+  const { user } = useSelector(registerpage);
+
+  return (
+    <div className="bg-pattern" style={{ height: "100%" }}>
+      <div className="bg-overlay"></div>
+      <div className="account-pages pt-0">
+        <Container>
+          <Row className="justify-content-center">
+            <Col lg={8} md={10} xl={8}>
+              <Card className="mt-3">
+                <CardBody className="p-4">
+                  <div className="text-center">
+                    <Link to="/" className="">
+                      <img
+                        src={logodark}
+                        alt=""
+                        height="24"
+                        className="auth-logo logo-dark mx-auto"
+                      />
+                      <img
+                        src={logolight}
+                        alt=""
+                        height="24"
+                        className="auth-logo logo-light mx-auto"
+                      />
+                    </Link>
+                  </div>
+
+                  <h4 className="font-size-18 text-muted text-center mt-2">
+                    Free Register
+                  </h4>
+                  <p className="text-muted text-center mb-4">
+                    Get your free aaMOBee account now.
+                  </p>
+                  <Form className="form-horizontal" onSubmit={handleSubmit}>
+                    {user && (
+                      <Alert color="success">Register User Successfully</Alert>
+                    )}
+
+                    {registrationError && (
+                      <Alert color="danger">{registrationError}</Alert>
+                    )}
+
+                    <Row>
+                      <Col md={6}>
+                        <div className="mb-4">
+                          <Label className="form-label">First Name</Label>
+                          <Input
+                            name="firstName"
+                            type="text"
+                            placeholder="Enter First Name"
+                            onChange={nameHandler}
+                            value={formInput.firstName}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Email</Label>
+                          <Input
+                            name="email"
+                            type="email"
+                            placeholder="Enter email"
+                            onChange={emailHandler}
+                            value={formInput.email}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Password</Label>
+                          <Input
+                            name="password"
+                            type="passwrod"
+                            placeholder="Enter Password"
+                            onChange={passwordHandler}
+                            value={formInput.password}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Company Mobile</Label>
+                          <Input
+                            name="companyMobile"
+                            type="text"
+                            placeholder="Enter Company Mobile"
+                            onChange={phoneHandler}
+                            value={formInput.companyMobile}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Date of Birth</Label>
+                          <Input
+                            name="dob"
+                            type="date"
+                            placeholder="Enter Date of Birth"
+                            onChange={(e) => {
+                              setFormInput((prevState) => ({
+                                ...prevState,
+                                dob: e.target.value,
+                              }));
+                              dispatch(registerUserFailed(""));
+                            }}
+                            value={formInput.dob}
+                          />
+                        </div>
+                      </Col>
+                      <Col md={6}>
+                        <div className="mb-4">
+                          <Label className="form-label">Last Name</Label>
+                          <Input
+                            name="lastName"
+                            type="text"
+                            placeholder="Enter Last Name"
+                            onChange={nameHandler}
+                            value={formInput.lastName}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Username</Label>
+                          <Input
+                            name="username"
+                            type="text"
+                            placeholder="Enter username"
+                            onChange={userNameHandler}
+                            value={formInput.username}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Mobile</Label>
+                          <Input
+                            name="mobile"
+                            type="text"
+                            placeholder="Enter Mobile"
+                            onChange={phoneHandler}
+                            value={formInput.mobile}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Address</Label>
+                          <Input
+                            name="address"
+                            type="text"
+                            placeholder="Enter Address"
+                            onChange={(e) => {
+                              setFormInput((prevState) => ({
+                                ...prevState,
+                                address: e.target.value,
+                              }));
+                              dispatch(registerUserFailed(""));
+                            }}
+                            value={formInput.address}
+                          />
+                        </div>
+                      </Col>
                     </Row>
-                </Container>
-            </div>
-        </div>
-    );
+                    <div className="form-check">
+                      <Input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="term-conditionCheck"
+                      />
+                      <Label
+                        className="form-check-label fw-normal"
+                        htmlFor="term-conditionCheck"
+                      >
+                        I accept{" "}
+                        <Link to="#" className="text-primary">
+                          Terms and Conditions
+                        </Link>
+                      </Label>
+                    </div>
+                    <div className="d-grid mt-3">
+                      <button
+                        className="btn btn-primary waves-effect waves-light"
+                        type="submit"
+                      >
+                        Register
+                      </button>
+                    </div>
+                  </Form>
+                </CardBody>
+              </Card>
+              <div className="mt-5 text-center">
+                <p className="text-white-50">
+                  Already have an account ?
+                  <Link to="/login" className="fw-medium text-primary">
+                    {" "}
+                    Login{" "}
+                  </Link>{" "}
+                </p>
+                <p className="text-white-50">
+                  © {new Date().getFullYear()} aaMOBee.
+                </p>
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </div>
+    </div>
+  );
 };
 
 export default Register;
