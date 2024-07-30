@@ -2,7 +2,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, FormGroup, Label, Input, Row, Col, Alert } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 
-// Updated fakeItems with prices
+const countries = {
+    India: { currency: 'INR', gst: 18 }, // GST as 18% for India
+    Malaysia: { currency: 'MYR', gst: 6 }, // GST as 6% for Malaysia
+    Dubai: { currency: 'AED', gst: 5 }, // VAT as 5% for Dubai
+    Indonesia: { currency: 'IDR', gst: 10 } // VAT as 10% for Indonesia
+};
+
 const fakeItems = [
     { id: 1, name: 'Item A', price: 10.00 },
     { id: 2, name: 'Item B', price: 20.00 },
@@ -13,16 +19,16 @@ const Index = () => {
     const [invoiceData, setInvoiceData] = useState({
         customerName: '',
         date: '',
+        country: 'India', 
         items: [{ description: '', quantity: 1, price: 0 }]
     });
     const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
-        // Fetch user role from local storage
         const authUser = localStorage.getItem('authUser');
         if (authUser) {
             const user = JSON.parse(authUser);
-            setUserRole(user.role); // Set user role based on local storage data
+            setUserRole(user.role); 
         }
     }, []);
 
@@ -34,7 +40,7 @@ const Index = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updatedItems = [...invoiceData.items];
-        updatedItems[index][name] = parseFloat(value) || 0; // Convert to number
+        updatedItems[index][name] = parseFloat(value) || 0; 
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
 
@@ -46,7 +52,7 @@ const Index = () => {
             updatedItems[index] = {
                 ...updatedItems[index],
                 description: selectedItem.name,
-                price: selectedItem.price // Set price based on selected item
+                price: selectedItem.price 
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
@@ -67,38 +73,47 @@ const Index = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         console.log('Invoice data submitted:', invoiceData);
-        // Validation and submission logic here
-        // e.g., axios.post('/api/invoices', invoiceData);
     };
 
-    const PrintInvoice = React.forwardRef((props, ref) => (
-        <div ref={ref} className="invoice p-4 bg-white border rounded">
-            <h2>Invoice</h2>
-            <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
-            <p><strong>Date:</strong> {invoiceData.date}</p>
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {invoiceData.items.map((item, index) => (
-                        <tr key={index}>
-                            <td>{item.description}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.price.toFixed(2)}</td>
-                            <td>{(item.quantity * item.price).toFixed(2)}</td>
+    const PrintInvoice = React.forwardRef((props, ref) => {
+        const { country } = invoiceData;
+        const taxRate = countries[country]?.gst || 0;
+        const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+        const taxAmount = (totalAmount * taxRate) / 100;
+
+        return (
+            <div ref={ref} className="invoice p-4 bg-white border rounded">
+                <h2>Invoice</h2>
+                <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
+                <p><strong>Date:</strong> {invoiceData.date}</p>
+                <p><strong>Country:</strong> {country}</p>
+                <p><strong>Currency:</strong> {countries[country]?.currency || 'Unknown'}</p>
+                <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
-            <p><strong>Total:</strong> {invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0).toFixed(2)}</p>
-        </div>
-    ));
+                    </thead>
+                    <tbody>
+                        {invoiceData.items.map((item, index) => (
+                            <tr key={index}>
+                                <td>{item.description}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.price.toFixed(2)}</td>
+                                <td>{(item.quantity * item.price).toFixed(2)}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
+                <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
+                <p><strong>Total:</strong> {(totalAmount + taxAmount).toFixed(2)}</p>
+            </div>
+        );
+    });
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
@@ -135,6 +150,21 @@ const Index = () => {
                                             onChange={handleInputChange}
                                             required
                                         />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="country">Country</Label>
+                                        <Input
+                                            type="select"
+                                            name="country"
+                                            id="country"
+                                            value={invoiceData.country}
+                                            onChange={handleInputChange}
+                                            required
+                                        >
+                                            {Object.keys(countries).map((country) => (
+                                                <option key={country} value={country}>{country}</option>
+                                            ))}
+                                        </Input>
                                     </FormGroup>
                                     <h4>Items</h4>
                                     {invoiceData.items.map((item, index) => (
