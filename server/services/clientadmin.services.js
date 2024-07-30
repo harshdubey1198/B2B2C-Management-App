@@ -6,7 +6,7 @@ services.clientRegistration = clientRegistration
 services.clientLogin = clientLogin
 services.getRegiteredUser = getRegiteredUser
 
-// REGITER CLIENT
+// CLIENT REGISTRATION
 async function clientRegistration(body){
     try {
         const existingUser = await ClientAdmin.findOne({email: body.email});
