@@ -19,6 +19,7 @@ async function clientRegistration(body){
             return user;
         }
     } catch (error) {
+        console.log(error)
         return Promise.reject("Unable to create User")
     }
 }

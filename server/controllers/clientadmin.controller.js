@@ -3,8 +3,8 @@ const router = express.Router()
 
 const ClientServices = require('../services/clientadmin.services')
 
-router.post('/', async (req, res) => {
-    ClientServices.clietRegistration(req.body).then((response) => {
+router.post('/register', async (req, res) => {
+    ClientServices.clientRegistration(req.body).then((response) => {
         res.status(200).send(response)
     }).catch((error) => {
         console.log(error, "err")
@@ -12,7 +12,7 @@ router.post('/', async (req, res) => {
     })
 });
 
-router.get("/", async (req,res) => {
+router.get("/getclients", async (req,res) => {
     ClientServices.getRegiteredUser().then((response) => {
         res.status(200).send(response)
     }).catch((error) => {
