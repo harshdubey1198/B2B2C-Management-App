@@ -1,21 +1,17 @@
 import React, { useEffect } from "react";
 import { Row, Col, CardBody, Card, Alert, Container, Input, Label, Form, FormFeedback } from "reactstrap";
 
-// Formik Validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
 
-// action
 import { registerUser, apiError } from "../../store/actions";
 
-// redux
 import { useSelector, useDispatch } from "react-redux";
 
 import { Link } from "react-router-dom";
 
 import { createSelector } from 'reselect';
 
-// import images
 import logolight from '../../assets/images/logo-light.png';
 import logodark from '../../assets/images/logo-dark.png';
 
@@ -24,7 +20,6 @@ const Register = props => {
 
     const dispatch = useDispatch();
 
-    // Default values for role and status
     const defaultRole = 'client-admin';
     const defaultStatus = 'requested';
 
@@ -41,8 +36,8 @@ const Register = props => {
             mobile: '',
             dob: '',
             address: '',
-            role: defaultRole,     // Default role value
-            status: defaultStatus, // Default status value
+            role: defaultRole,     
+            status: defaultStatus, 
         },
         validationSchema: Yup.object({
             firstName: Yup.string().required("Please Enter Your First Name"),
@@ -54,7 +49,7 @@ const Register = props => {
             mobile: Yup.string().required("Please Enter Your Mobile"),
             dob: Yup.date().required("Please Enter Your Date of Birth"),
             address: Yup.string().required("Please Enter Your Address"),
-            // No validation needed for role and status as they're hidden
+        
         }),
         onSubmit: (values) => {
             dispatch(registerUser(values));
@@ -182,13 +177,11 @@ const Register = props => {
                                                         <FormFeedback type="invalid"><div>{validation.errors.dob}</div></FormFeedback>
                                                     ) : null}
                                                 </div>
-                                                {/* Hidden Role Field */}
                                                 <Input
                                                     name="role"
                                                     type="hidden"
                                                     value={validation.values.role || defaultRole}
                                                 />
-                                                {/* Hidden Status Field */}
                                                 <Input
                                                     name="status"
                                                     type="hidden"
