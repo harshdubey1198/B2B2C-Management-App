@@ -22,13 +22,13 @@ import {
 } from "../../store/actions";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
+import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
 import { PostRequest } from "../Utility/Request";
 
 const Register = (props) => {
   document.title = "Register | aaMOBee";
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const registrationError = useSelector(
     (state) => state.account.registrationError
@@ -44,13 +44,20 @@ const Register = (props) => {
     lastName: "",
     email: "",
     username: "",
-    password: '',
+    password: "",
+    confirmPassword: "",
     companyMobile: "",
+    companyName: "",
     mobile: "",
     dob: "",
     address: "",
     role: defaultRole,
     status: defaultStatus,
+  });
+
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
   });
 
   const handleSubmit = async (e) => {
@@ -61,7 +68,11 @@ const Register = (props) => {
       dispatch(registerUserFailed("Fields must not be empty!"));
     } else if (!validateEmail(formInput.email)) {
       dispatch(registerUserFailed("Email is invalid!"));
-    } else {
+    } else if (!validatePassword(formInput.password)) {
+        dispatch(registerUserFailed("Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"));
+    } else if (formInput.password !== formInput.confirmPassword) {
+        dispatch(registerUserFailed("Confirm Password should be same as Password!"));
+    }else {
       PostRequest(
         `${process.env.REACT_APP_URL}/clientadmin/register`,
         formInput
@@ -69,7 +80,7 @@ const Register = (props) => {
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
-            navigate('/login')
+            navigate("/login");
           } else {
             dispatch(registerUserFailed("Registration failed"));
           }
@@ -217,14 +228,43 @@ const Register = (props) => {
                             value={formInput.email}
                           />
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 position-relative">
                           <Label className="form-label">Password</Label>
                           <Input
                             name="password"
-                            type="passwrod"
+                            type={show.password ? "text" : "password"}
                             placeholder="Enter Password"
                             onChange={passwordHandler}
                             value={formInput.password}
+                          />
+                          <button
+                            className="cursor btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            onClick={() =>
+                              setShow((prevState) => ({
+                                ...prevState,
+                                password: !prevState.password,
+                              }))
+                            }
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                          </button>
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Company Name</Label>
+                          <Input
+                            name="companyName"
+                            type="text"
+                            placeholder="Enter Company Name"
+                            onChange={(e) => {
+                              setFormInput((prevState) => ({
+                                ...prevState,
+                                companyName: e.target.value,
+                              }));
+                              dispatch(registerUserFailed(""));
+                            }}
+                            value={formInput.companyName}
                           />
                         </div>
                         <div className="mb-4">
@@ -274,6 +314,26 @@ const Register = (props) => {
                             onChange={userNameHandler}
                             value={formInput.username}
                           />
+                        </div>
+                        <div className="mb-4 position-relative">
+                          <Label className="form-label">Confirm Password</Label>
+                          <Input
+                            name="confirmPassword"
+                            type={show.confirmPassword ? "text" : "password"}
+                            placeholder="Enter Confirm Password"
+                            onChange={passwordHandler}
+                            value={formInput.confirmPassword}
+                          />
+                          <button
+                            onClick={() => setShow((prevState) => ({
+                                ...prevState, confirmPassword: !prevState.confirmPassword
+                            }))}
+                            className="btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
+                          </button>
                         </div>
                         <div className="mb-4">
                           <Label className="form-label">Mobile</Label>

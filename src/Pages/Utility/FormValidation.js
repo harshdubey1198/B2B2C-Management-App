@@ -26,7 +26,7 @@ export function validatePhone(phone){
 }
 
 export function validatePassword(password){
-    const validRegex = /^(?=.?[A-Z])(?=.?[a-z])(?=.?[0-9])(?=.?[#?!@$%^&*-]).{8,}$/;
+    const validRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
     if (password.length < 8) {
         return false;
     } else if (password.match(validRegex)){
