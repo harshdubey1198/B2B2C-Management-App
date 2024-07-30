@@ -8,6 +8,7 @@ const clientAdminSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     companyMobile: { type: String },
+    companyName: { type: String},
     mobile: { type: String },
     dob: { type: Date },
     address: { type: String },
