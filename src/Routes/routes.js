@@ -29,7 +29,7 @@ import UserProfile from "../Pages/Authentication/user-profile";
 
 // Import Authentication Inner Pages
 import Login1 from "../Pages/AuthenticationPages/Login";
-import Register1 from "../Pages/AuthenticationPages/Register";
+// import Register1 from "../Pages/AuthenticationPages/Register";
 import RecoverPassword from "../Pages/AuthenticationPages/RecoverPassword";
 import LockScreen from "../Pages/AuthenticationPages/LockScreen";
 
@@ -210,7 +210,7 @@ const publicRoutes = [
 
   // Authentication Inner Pages
   { path: "/auth-login", component: <Login1 /> },
-  { path: "/auth-register", component: <Register1 /> },
+  { path: "/auth-register", component: <Register /> },
   { path: "/auth-recoverpw", component: <RecoverPassword /> },
   { path: "/auth-lock-screen", component: <LockScreen /> },
 

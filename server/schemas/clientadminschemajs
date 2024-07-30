@@ -12,7 +12,7 @@ const clientAdminSchema = new Schema({
     dob: { type: Date },
     address: { type: String },
     role: {type: String, required: true},
-    status: { type: String, enum: ['accepted', 'rejected', 'requested'], default: 'Request' },
+    status: { type: String, enum: ['accepted', 'rejected', 'requested'], default: 'requested' },
     task_assigned: {},
     permission: {}
 }, { timestamps: true });
