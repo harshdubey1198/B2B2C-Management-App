@@ -49,7 +49,7 @@ const Register = (props) => {
     companyMobile: "",
     companyName: "",
     mobile: "",
-    dob: "",
+    // dob: "",
     address: "",
     role: defaultRole,
     status: defaultStatus,
@@ -80,6 +80,7 @@ const Register = (props) => {
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
+            dispatch(registerUserFailed(""));
             navigate("/login");
           } else {
             dispatch(registerUserFailed("Registration failed"));
@@ -277,7 +278,7 @@ const Register = (props) => {
                             value={formInput.companyMobile}
                           />
                         </div>
-                        <div className="mb-4">
+                        {/* <div className="mb-4">
                           <Label className="form-label">Date of Birth</Label>
                           <Input
                             name="dob"
@@ -292,7 +293,7 @@ const Register = (props) => {
                             }}
                             value={formInput.dob}
                           />
-                        </div>
+                        </div> */}
                       </Col>
                       <Col md={6}>
                         <div className="mb-4">
