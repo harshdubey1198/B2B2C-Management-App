@@ -82,7 +82,7 @@ const Index = () => {
         const taxAmount = (totalAmount * taxRate) / 100;
 
         return (
-            <div ref={ref} className="invoice p-4 bg-white border rounded">
+            <div ref={ref} className="card p-4  border rounded">
                 <h2>Invoice</h2>
                 <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
                 <p><strong>Date:</strong> {invoiceData.date}</p>
@@ -126,7 +126,7 @@ const Index = () => {
             <div className='page-content'>
                 {userRole && (
                     <div>
-                        {['Master', 'client_admin', 'firm_admin', 'accountant'].includes(userRole) ? (
+                        {['super_admin', 'client_admin', 'firm_admin', 'accountant'].includes(userRole) ? (
                             <div>
                                 <Form onSubmit={handleSubmit}>
                                     <FormGroup>
