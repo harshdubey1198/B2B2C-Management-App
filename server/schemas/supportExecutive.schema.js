@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const supportTeamSchema = new Schema({
+const supportExecutiveSchema = new Schema({
   email: { type: String, required: true},
   password: { type: String, required: true },
   name: { type: String, required: true },
@@ -12,6 +12,6 @@ const supportTeamSchema = new Schema({
   }]
 }, { timestamps: true });
 
-const SupportTeam = mongoose.model('SupportTeam', supportTeamSchema);
+const SupportExecutive = mongoose.model('SupportExecutive', supportExecutiveSchema);
 
-module.exports = SupportTeam;
+module.exports = SupportExecutive;
