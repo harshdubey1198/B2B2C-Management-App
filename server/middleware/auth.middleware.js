@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken')
 
 const middleware = {}
-middleware.superadminVerification = superadminVerification
+middleware.UserVerification = UserVerification
 
-async function superadminVerification () {
+async function UserVerification () {
     
 }
