@@ -101,6 +101,7 @@ import IconBoxicons from "../Pages/Icons/IconBoxicons"
 import VectorMaps from "../Pages/Maps/VectorMap";
 import GoogleMap from "../Pages/Maps/GoogleMap";
 import ClientManagement from "../Pages/ClientsManagement/index.js";
+import ProfileSettings from "../Pages/Settings/ProfileSettings.jsx";
 
 
 const authProtectedRoutes = [
@@ -122,6 +123,9 @@ const authProtectedRoutes = [
 
   // Profile
   { path: "/userprofile", component: <UserProfile /> },
+
+  //Settings
+  {path:"/profile-settings", component: <ProfileSettings />}, 
 
   // E-mail
   { path: "/inbox", component: <Inbox /> },

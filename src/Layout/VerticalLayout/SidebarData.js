@@ -49,9 +49,12 @@ export const masterAdminSidebarData = () => [
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",
-        url: "/settings",
-        isHasArrow: true,
-      }
+       
+          subItem: [
+            { sublabel: "Profile Settings", link: "/profile-settings" },
+            { sublabel: "Accounts Settings", link: "/accounts-setting" },
+          ],
+        },
   ];
   
   export const clientAdminSidebarData = () => [
@@ -112,8 +115,12 @@ export const masterAdminSidebarData = () => [
     {
         label: "Settings",
         icon: "mdi mdi-settings-outline",
-        url: "/settings",
-        isHasArrow: true,
+        subItem: [
+          { sublabel: "Profile Settings", link: "/profile-settings" },
+          { sublabel: "Accounts Settings", link: "/accounts-setting" },
+          // { sublabel: "Recover Password", link: "/auth-recoverpw" },
+          // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
+        ],
       }
   ];
   export const accountantSidebarData = () => [
@@ -231,15 +238,15 @@ export const masterAdminSidebarData = () => [
   
   export const userRolesSidebarData = (role) => {
     switch (role) {
-      case 'Master':
+      case 'super_admin':
         return masterAdminSidebarData();
-      case 'Client_Admin':
+      case 'client_admin':
         return clientAdminSidebarData();
       case 'readOnly':
         return readOnlySidebarData();
-      case 'Accountant':
+      case 'accountant':
         return accountantSidebarData();
-      case 'General-employee':
+      case 'g_emp':
         return generalEmployeeSidebarData();
       case 'Viewer':
         return viewerSidebarData();

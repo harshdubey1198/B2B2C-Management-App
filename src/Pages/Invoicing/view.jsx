@@ -44,7 +44,7 @@ const ViewInvoices = () => {
         if (!invoice) return null; // Handle case when invoice is undefined
 
         return (
-            <div ref={ref} className="invoice p-4 bg-white border rounded mb-4">
+            <div ref={ref} className="invoice p-4  border rounded mb-4">
                 <h2>Invoice</h2>
                 <p><strong>Customer Name:</strong> {invoice.customerName}</p>
                 <p><strong>Date:</strong> {invoice.date}</p>

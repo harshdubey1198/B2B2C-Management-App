@@ -8,7 +8,7 @@ let users = [
   {
     uid: 1,
     username: "Master User",
-    role: "Master",
+    role: "super_admin",
     password: "1",
     email: "master@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/spbcrsxe6q34utqx6m9m.jpg"
@@ -16,7 +16,7 @@ let users = [
   {
     uid: 2,
     username: "Client Admin",
-    role: "Client_Admin",
+    role: "client_admin",
     password: "1",
     email: "client@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"
@@ -24,7 +24,7 @@ let users = [
   {
     uid: 3,
     username: "Firm Admin",
-    role: "Firm_admin",
+    role: "firm_admin",
     password: "1",
     email: "FirmA@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475587/dummy-userImages/hopbqozew5pq9lsfhlke.jpg"
@@ -32,7 +32,7 @@ let users = [
   {
     uid: 4,
     username: "Acc-123",
-    role: "Accountant",
+    role: "accountant",
     password: "1",
     email: "ca@gmail.com",
     userImage:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/uxmbr3wecndv2sd1ceuj.jpg"
