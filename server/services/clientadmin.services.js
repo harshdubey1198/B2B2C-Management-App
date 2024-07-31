@@ -34,7 +34,8 @@ async function getRegiteredUser(){
     }
 }
 
-async function clientLogin(body){
+// LOGIN USER BASED ON THIER ROLE
+async function userLogin(body){
     
 }
 

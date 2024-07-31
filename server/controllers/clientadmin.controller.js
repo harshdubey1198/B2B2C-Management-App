@@ -21,7 +21,7 @@ router.get("/getclients", async (req,res) => {
     })
 })
 
-router.post("/", async (req,res) => {
+router.post("/login", async (req,res) => {
     ClientServices.clientLogin(req.body).then((response) => {
         res.status(200).send(response)
     }).catch((error) => {
