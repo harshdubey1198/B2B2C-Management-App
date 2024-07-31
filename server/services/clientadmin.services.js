@@ -1,9 +1,14 @@
-const ClientAdmin = require("../schemas/clientadminschemajs");
+const Accountant = require("../schemas/accountant.schema");
+const ClientAdmin = require("../schemas/clientadmin.schema");
+const FirmAdmin = require("../schemas/firmadmin.schema");
+const GeneralEmployee = require("../schemas/generalEmployee.schema");
+const SupportExecutive = require("../schemas/supportExecutive.schema");
+const Viewer = require("../schemas/viewersshema");
 const PasswordService = require('./password.services')
 
 let services = {}
 services.clientRegistration = clientRegistration
-services.clientLogin = clientLogin
+services.userLogin = userLogin
 services.getRegiteredUser = getRegiteredUser
 
 // CLIENT REGISTRATION
@@ -36,6 +41,49 @@ async function getRegiteredUser(){
 
 // LOGIN USER BASED ON THIER ROLE
 async function userLogin(body){
+    try {
+        const {email, password, role} = body
+        let userModel
+
+        switch(role){
+            case 'Client Admin':
+                userModel = ClientAdmin
+                break;
+            case 'Firm Manager':
+                userModel = FirmAdmin
+                break;
+            case 'Accountant':
+                userModel = Accountant
+                break;
+            case 'Employee':
+                userModel = GeneralEmployee
+                break;
+            case 'Support Executive':
+                userModel = SupportExecutive
+                break;
+            case 'Viewer':
+                userModel = Viewer
+                break;
+            default:
+                return Promise.reject('Invalid Role')
+        }
+
+        const user = await userModel.findOne({email: email})
+        if(!user){
+            return Promise.reject('Account Not Found')
+        }else{
+            const decryptedPassword = await PasswordService.passwordDecryption(user.password);
+            if (decryptedPassword === password) {
+                const userData  = await userModel.findOne({ _id: user._id }).select("-password")
+                return userData;
+            } else {
+                return Promise.reject("Incorrect Password");
+            }
+        }
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Login failed');
+    }
     
 }
 
