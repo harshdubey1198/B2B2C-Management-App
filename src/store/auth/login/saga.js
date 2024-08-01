@@ -11,6 +11,7 @@ import {
   postJwtLogin,
   postSocialLogin,
 } from "../../../helpers/fakebackend_helper";
+import axios from "axios";
 
 const fireBaseBackend = getFirebaseBackend();
 
@@ -24,9 +25,10 @@ function* loginUser({ payload: { user, history } }) {
       );
       yield put(loginSuccess(response));
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      const response = yield call(postJwtLogin, {
+      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/clientadmin/login`, {
         email: user.email,
         password: user.password,
+        role: user.role
       });
       localStorage.setItem("authUser", JSON.stringify(response));
       yield put(loginSuccess(response));
