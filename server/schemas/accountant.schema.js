@@ -13,6 +13,13 @@ const accountantSchema = new Schema({
   permissions: [{
     route: { type: String },
     sub_permissions: [{ type: String }]
+  }],
+  logs: [{
+    date: { type: Date, required: true },
+    time: { type: String, required: true },
+    page_history: [{ type: String }],
+    ip_address: { type: String, required: true },
+    country: { type: String, required: true }
   }]
 }, {timestamps: true});
 

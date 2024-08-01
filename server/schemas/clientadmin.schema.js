@@ -12,11 +12,21 @@ const clientAdminSchema = new Schema({
     mobile: { type: String },
     dob: { type: Date },
     address: { type: String },
-    role: {type: String, required: true},
+    role: {type: String, required: true, default: 'client_admin'},
     avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
     status: { type: String, enum: ['accepted', 'rejected', 'requested'], default: 'requested' },
     task_assigned: {},
-    permission: {}
+    permissions: [{
+        route: { type: String, required: true },
+        sub_permissions: [{ type: String }]
+    }],
+    logs: [{
+        date: { type: Date, required: true },
+        time: { type: String, required: true },
+        page_history: [{ type: String }],
+        ip_address: { type: String, required: true },
+        country: { type: String, required: true }
+    }]
 }, { timestamps: true });
 
 const ClientAdmin = mongoose.model('ClientAdmin', clientAdminSchema);
