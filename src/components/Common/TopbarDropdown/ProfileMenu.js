@@ -38,13 +38,12 @@ const ProfileMenu = props => {
         process.env.REACT_APP_DEFAULTAUTH === "jwt"
       ) {
         const obj = JSON.parse(localStorage.getItem("authUser"));
-        setusername(obj.username);
-        setuserImage(obj.userImage);
+        setusername(obj?.response?.firstName);
+        setuserImage(obj?.response?.avatar);
         // setrole(obj.role);
       }
     }
   }, [props.success]);
-
   return (
     <React.Fragment>
       <Dropdown
