@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert, Card, CardBody, FormText } from 'reactstrap';
 
 const ProfileSettings = () => {
+  const [logoPreview, setLogoPreview] = useState(null);
   const [formData, setFormData] = useState({
     name: 'Super Admin',
     email: 'master@gmail.com',
@@ -11,7 +12,8 @@ const ProfileSettings = () => {
     confirmEmail: '',
     newPassword: '',
     confirmPassword: '',
-    otp: ''
+    otp: '',
+    emailOtp: ''  // Add state for email OTP
   });
 
   const [editMode, setEditMode] = useState({
@@ -35,24 +37,40 @@ const ProfileSettings = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        profilePicture: file
-      });
-      setPreview(URL.createObjectURL(file));
+      if (e.target.name === "profilePicture") {
+        setFormData({
+          ...formData,
+          profilePicture: file
+        });
+        setPreview(URL.createObjectURL(file));
+      } else if (e.target.name === "companyLogo") {
+        setFormData({
+          ...formData,
+          companyLogo: file
+        });
+        setLogoPreview(URL.createObjectURL(file));
+      }
+    }
+  };
+  const handleEmailOtpSubmit = (e) => {
+    e.preventDefault();
+    if (formData.emailOtp) {
+      setSuccessMessage('Email OTP verified successfully!');
+      setErrorMessage('');
+    } else {
+      setSuccessMessage('');
+      setErrorMessage('Invalid OTP!');
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle form submission logic here
     setSuccessMessage('Profile updated successfully!');
     setErrorMessage('');
   };
 
   const handleEmailChange = (e) => {
     e.preventDefault();
-    // Handle email change logic here
     if (formData.newEmail === formData.confirmEmail) {
       setSuccessMessage('Verification email sent for email change!');
       setErrorMessage('');
@@ -64,7 +82,6 @@ const ProfileSettings = () => {
 
   const handlePasswordChange = (e) => {
     e.preventDefault();
-    // Handle password change logic here
     if (formData.newPassword === formData.confirmPassword) {
       setSuccessMessage('Password change requested. Please check your email for the OTP.');
       setErrorMessage('');
@@ -96,32 +113,33 @@ const ProfileSettings = () => {
                     <FormGroup>
                       <Label for="name">Name</Label>
                       {editMode.name ? (
-                       <> <Input
-                          type="text"
-                          name="name"
-                          id="name"
-                          value={formData.name}
-                          onChange={handleChange}
-                          placeholder="Enter your name"
-                        />
-                        <Button color="info" onClick={() => toggleEditMode('name')}>
+                        <div className='d-flex align-items-center'>
+                          <Input
+                            type="text"
+                            name="name"
+                            id="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="Enter your name"
+                            className='flex-grow-1'
+                          />
+                          <Button color="info" onClick={() => toggleEditMode('name')} className='ml-2'>
                             Save
-                            </Button>
-                        </>
+                          </Button>
+                        </div>
                       ) : (
-                        <Row md={12} className='flex'>
-                        <div className='d-flex p-0 col-md-8 text-center align-items-center justify-content-center'>{formData.name || 'No name set'}</div>
-                        <Button className="col-md-4" color="info" onClick={() => toggleEditMode('name')}>
+                        <div className='d-flex align-items-center'>
+                          <div className='flex-grow-1'>{formData.name || 'No name set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('name')}>
                             Edit
                           </Button>
-                        </Row>
+                        </div>
                       )}
-                     
                     </FormGroup>
                     <FormGroup>
                       <Label for="email">Email</Label>
                       {editMode.email ? (
-                        <>
+                        <div className='d-flex align-items-center'>
                           <Input
                             type="email"
                             name="email"
@@ -129,44 +147,45 @@ const ProfileSettings = () => {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter your email"
+                            className='flex-grow-1'
                           />
-                          <Button color="info" onClick={() => toggleEditMode('email')}>
+                          <Button color="info" onClick={() => toggleEditMode('email')} className='ml-2'>
                             Save
                           </Button>
-                        </>
+                        </div>
                       ) : (
-                        <Row md={12} className='flex'>
-                          <div className='d-flex p-0 col-md-8 text-center align-items-center justify-content-center' >{formData.email || 'No email set'}</div>
-                          <Button className="col-md-4" color="info" onClick={() => toggleEditMode('email')}>
+                        <div className='d-flex align-items-center'>
+                          <div className='flex-grow-1'>{formData.email || 'No email set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('email')}>
                             Edit
                           </Button>
-                        </Row>
+                        </div>
                       )}
                     </FormGroup>
                     <FormGroup>
                       <Label for="phone">Phone</Label>
                       {editMode.phone ? (
-                        <Row md={12} className='flex'>
+                        <div className='d-flex align-items-center'>
                           <Input
                             type="text"
                             name="phone"
                             id="phone"
-                            className='col-md-8'
                             value={formData.phone}
                             onChange={handleChange}
                             placeholder="Enter your phone number"
+                            className='flex-grow-1'
                           />
-                          <Button color="info"  className="col-md-4" onClick={() => toggleEditMode('phone')}>
+                          <Button color="info" onClick={() => toggleEditMode('phone')} className='ml-2'>
                             Save
                           </Button>
-                        </Row>
+                        </div>
                       ) : (
-                        <Row md={12} className='flex'>
-                          <div className='d-flex p-0 col-md-8 text-center align-items-center justify-content-center' >{formData.phone || 'No phone number set'}</div>
-                          <Button className="col-md-4" color="info" onClick={() => toggleEditMode('phone')}>
+                        <div className='d-flex align-items-center'>
+                          <div className='flex-grow-1'>{formData.phone || 'No phone number set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('phone')}>
                             Edit
                           </Button>
-                        </Row>
+                        </div>
                       )}
                     </FormGroup>
                   </Form>
@@ -214,34 +233,63 @@ const ProfileSettings = () => {
             </Col>
           </Row>
           <Row>
-            <Col md={12}>
-              <Card>
-                <CardBody>
-                  <h2>Profile Picture</h2>
-                  <Form>
-                    <FormGroup>
-                      <Label for="profilePicture">Upload Profile Picture</Label>
-                      <Input
-                        type="file"
-                        name="profilePicture"
-                        id="profilePicture"
-                        onChange={handleFileChange}
-                      />
-                      {preview && (
-                        <div className="mt-2 d-flex justify-content-center">
-                          <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
-                        </div>
-                      )}
-                      <FormText color="muted">
-                        Choose a profile picture to upload.
-                      </FormText>
-                    </FormGroup>
-                    <Button color="primary" onClick={() => alert('Profile picture updated!')}>Update Profile Picture</Button>
-                  </Form>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+  <Col md={6}>
+    <Card>
+      <CardBody>
+        <h2>Profile Picture</h2>
+        <Form>
+          <FormGroup>
+            <Label for="profilePicture">Upload Profile Picture</Label>
+            <Input
+              type="file"
+              name="profilePicture"
+              id="profilePicture"
+              onChange={handleFileChange}
+            />
+            {preview && (
+              <div className="mt-2 d-flex justify-content-center">
+                <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
+              </div>
+            )}
+            <FormText color="muted">
+              Choose a profile picture to upload.
+            </FormText>
+          </FormGroup>
+          <Button color="primary" onClick={() => alert('Profile picture updated!')}>Update Profile Picture</Button>
+        </Form>
+      </CardBody>
+    </Card>
+  </Col>
+
+  <Col md={6}>
+    <Card>
+      <CardBody>
+        <h2>Company Logo</h2>
+        <Form>
+          <FormGroup>
+            <Label for="companyLogo">Upload Company Logo</Label>
+            <Input
+              type="file"
+              name="companyLogo"
+              id="companyLogo"
+              onChange={handleFileChange}
+            />
+            {logoPreview && (
+              <div className="mt-2 d-flex justify-content-center">
+                <img src={logoPreview} alt="Company Logo Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
+              </div>
+            )}
+            <FormText color="muted">
+              Choose a company logo to upload.
+            </FormText>
+          </FormGroup>
+          <Button color="primary" onClick={() => alert('Company logo updated!')}>Update Company Logo</Button>
+        </Form>
+      </CardBody>
+    </Card>
+  </Col>
+</Row>
+
           <Row>
             <Col md={6}>
               <Card>
@@ -271,6 +319,28 @@ const ProfileSettings = () => {
                       />
                     </FormGroup>
                     <Button color="primary" type="submit">Send OTP to New Email</Button>
+                  </Form>
+                  {/* OTP Verification Form */}
+                  <Form onSubmit={handleEmailOtpSubmit} className="mt-3">
+                    <FormGroup>
+                      <Label for="emailOtp">Enter OTP</Label>
+                      <Row>
+                        <Col xs={9}>
+                          <Input
+                            type="text"
+                            name="emailOtp"
+                            id="emailOtp"
+                            value={formData.emailOtp}
+                            onChange={handleChange}
+                            placeholder="Enter the OTP sent to your new email"
+                            className="otp-input"
+                          />
+                        </Col>
+                        <Col xs={3}>
+                          <Button color="secondary" className="otp-button" type="submit">Verify</Button>
+                        </Col>
+                      </Row>
+                    </FormGroup>
                   </Form>
                 </CardBody>
               </Card>
@@ -304,14 +374,22 @@ const ProfileSettings = () => {
                     </FormGroup>
                     <FormGroup>
                       <Label for="otp">OTP</Label>
-                      <Input
-                        type="text"
-                        name="otp"
-                        id="otp"
-                        value={formData.otp}
-                        onChange={handleChange}
-                        placeholder="Enter the OTP sent to your email"
-                      />
+                      <Row>
+                        <Col xs={9}>
+                          <Input
+                            type="text"
+                            name="otp"
+                            id="otp"
+                            value={formData.otp}
+                            onChange={handleChange}
+                            placeholder="Enter the OTP sent to your email"
+                            className="otp-input"
+                          />
+                        </Col>
+                        <Col xs={3}>
+                          <Button color="secondary" className="otp-button" type="submit">Verify</Button>
+                        </Col>
+                      </Row>
                     </FormGroup>
                     <Button color="primary" type="submit">Change Password</Button>
                   </Form>
