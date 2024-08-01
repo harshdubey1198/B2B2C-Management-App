@@ -26,10 +26,7 @@ router.post("/login", (req,res) => {
     ClientServices.userLogin(req.body).then(async (response) => {
         try {
             const token = createSecretToken(response._id)
-            console.log(response, "resposne")
-            console.log(token , "token")
-            response.token = token
-            res.status(200).send(response)
+            res.status(200).send({response,token})
         } catch (error) {
             console.log('first error', error)
             res.status(400).send(error)

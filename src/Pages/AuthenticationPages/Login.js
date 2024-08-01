@@ -2,41 +2,38 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-
-import { Row, Col, CardBody, Card, Alert, Container, Form, Input, FormFeedback, Label } from "reactstrap";
-
+import {
+  Row,
+  Col,
+  CardBody,
+  Card,
+  Alert,
+  Container,
+  Form,
+  Input,
+  Label,
+} from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
-
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
-
 import { GoogleLogin } from "react-google-login";
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-
 import { loginUser, socialLogin } from "../../store/actions";
-
 import { facebook, google } from "../../config";
+import { createSelector } from "reselect";
+import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
 
-import { createSelector } from 'reselect';
-
-const Login = props => {
+const Login = (props) => {
   document.title = "Login | aaMOBee";
 
   const dispatch = useDispatch();
-
   const [formValues, setFormValues] = useState({
-    email: '',
-    password: '',
-    userType: '' // New state for user type
+    email: "",
+    password: "",
+    role: "", // New state for user type
   });
 
-  const [formErrors, setFormErrors] = useState({
-    email: '',
-    password: '',
-    userType: '' // New state for user type errors
-  });
-
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const loginpage = createSelector(
     (state) => state.login,
@@ -53,42 +50,44 @@ const Login = props => {
     }
   }, [reduxError]);
 
-  const validate = () => {
-    const errors = {};
-    if (!formValues.email) {
-      errors.email = "Please Enter Your Email";
-    }
-    if (!formValues.password) {
-      errors.password = "Please Enter Your Password";
-    }
-    if (!formValues.userType) {
-      errors.userType = "Please Select Your User Type";
-    }
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validate()) {
+    if (checkEmptyFields(formValues)) {
+      setError("Fields must not be empty!");
+    } else if (!validateEmail(formValues.email)) {
+      setError("Email is invalid!");
+    } else {
       dispatch(loginUser(formValues, props.router.navigate));
     }
+  };
+
+  const emailHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(/\s/g, "");
+    setFormValues((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    setError("");
+  };
+
+  const passwordHandler = (e) => {
+    const { name, value } = e.target;
+    const cleanedValue = value.replace(/\s/g, "");
+    setFormValues((prevState) => ({
+      ...prevState,
+      [name]: cleanedValue,
+    }));
+    setError("");
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({
       ...formValues,
-      [name]: value
+      [name]: value,
     });
-  };
-
-  const handleFocus = (e) => {
-    const { name } = e.target;
-    setFormErrors({
-      ...formErrors,
-      [name]: ''
-    });
+    setError("");
   };
 
   const signIn = (res, type) => {
@@ -111,11 +110,11 @@ const Login = props => {
     }
   };
 
-  const googleResponse = response => {
+  const googleResponse = (response) => {
     signIn(response, "google");
   };
 
-  const facebookResponse = response => {
+  const facebookResponse = (response) => {
     signIn(response, "facebook");
   };
 
@@ -158,11 +157,8 @@ const Login = props => {
                     <p className="mb-3 text-center">
                       Sign in to continue to aaMOBee.
                     </p>
-                    <Form
-                      className="form-horizontal"
-                      onSubmit={handleSubmit}
-                    >
-                      {error ? <Alert color="danger"><div>{error}</div></Alert> : null}
+                    <Form className="form-horizontal" onSubmit={handleSubmit}>
+                      {error && <Alert color="danger">{error}</Alert>}
                       <Row>
                         <Col md={12}>
                           <div className="mb-4">
@@ -172,39 +168,27 @@ const Login = props => {
                               className="form-control"
                               placeholder="Enter email"
                               type="email"
-                              onChange={handleChange}
-                              onFocus={handleFocus}
+                              onChange={emailHandler}
                               value={formValues.email}
-                              invalid={formErrors.email ? true : false}
                             />
-                            {formErrors.email ? (
-                              <FormFeedback type="invalid"><div>{formErrors.email}</div></FormFeedback>
-                            ) : null}
                           </div>
                           <div className="mb-4">
                             <Label className="form-label">Password</Label>
                             <Input
                               name="password"
-                              value={formValues.password}
                               type="password"
                               placeholder="Enter Password"
-                              onChange={handleChange}
-                              onFocus={handleFocus}
-                              invalid={formErrors.password ? true : false}
+                              onChange={passwordHandler}
+                              value={formValues.password}
                             />
-                            {formErrors.password ? (
-                              <FormFeedback type="invalid"><div> {formErrors.password} </div></FormFeedback>
-                            ) : null}
                           </div>
                           <div className="mb-4">
                             <Label className="form-label">User Type</Label>
                             <Input
-                              name="userType"
+                              name="role"
                               type="select"
                               onChange={handleChange}
-                              onFocus={handleFocus}
-                              value={formValues.userType}
-                              invalid={formErrors.userType ? true : false}
+                              value={formValues.role}
                             >
                               <option value="">Select User Type</option>
                               <option value="super_admin">Super Admin</option>
@@ -215,25 +199,21 @@ const Login = props => {
                               <option value="viewer">Demo User</option>
                               <option value="customer_sp">Support Executive</option>
                             </Input>
-                            {formErrors.userType ? (
-                              <FormFeedback type="invalid"><div> {formErrors.userType} </div></FormFeedback>
-                            ) : null}
                           </div>
-
                           <Row>
                             <Col>
                               <div className="form-check">
-                                <input
+                                <Input
                                   type="checkbox"
                                   className="form-check-input"
                                   id="customControlInline"
                                 />
-                                <label
+                                <Label
                                   className="form-label form-check-label"
                                   htmlFor="customControlInline"
                                 >
                                   Remember me
-                                </label>
+                                </Label>
                               </div>
                             </Col>
                             <Col className="col-7">
@@ -258,14 +238,13 @@ const Login = props => {
                           </div>
                           <div className="mt-4 text-center">
                             <h5 className="font-size-14 mb-3">Sign in with</h5>
-
                             <ul className="list-inline">
                               <li className="list-inline-item">
                                 <FacebookLogin
                                   appId={facebook.APP_ID}
                                   autoLoad={false}
                                   callback={facebookResponse}
-                                  render={renderProps => (
+                                  render={(renderProps) => (
                                     <Link
                                       to="#"
                                       className="social-list-item bg-primary text-white border-primary"
@@ -276,11 +255,10 @@ const Login = props => {
                                   )}
                                 />
                               </li>
-
                               <li className="list-inline-item">
                                 <GoogleLogin
                                   clientId={google.CLIENT_ID}
-                                  render={renderProps => (
+                                  render={(renderProps) => (
                                     <Link
                                       to="#"
                                       className="social-list-item bg-danger text-white border-danger"
@@ -290,12 +268,11 @@ const Login = props => {
                                     </Link>
                                   )}
                                   onSuccess={googleResponse}
-                                  onFailure={() => { }}
+                                  onFailure={() => {}}
                                 />
                               </li>
                             </ul>
                           </div>
-
                         </Col>
                       </Row>
                     </Form>
@@ -311,7 +288,8 @@ const Login = props => {
                   </Link>{" "}
                 </p>
                 <p className="text-white-50">
-                  © {new Date().getFullYear()} aaMOBee.</p>
+                  © {new Date().getFullYear()} aaMOBee.
+                </p>
               </div>
             </Col>
           </Row>
@@ -321,8 +299,8 @@ const Login = props => {
   );
 };
 
-export default withRouter(Login);
-
 Login.propTypes = {
   history: PropTypes.object,
 };
+
+export default withRouter(Login);

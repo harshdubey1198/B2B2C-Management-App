@@ -2,6 +2,7 @@ const Accountant = require("../schemas/accountant.schema");
 const ClientAdmin = require("../schemas/clientadmin.schema");
 const FirmAdmin = require("../schemas/firmadmin.schema");
 const GeneralEmployee = require("../schemas/generalEmployee.schema");
+const SuperAdmin = require("../schemas/superadmin.schema");
 const SupportExecutive = require("../schemas/supportExecutive.schema");
 const Viewer = require("../schemas/viewersshema");
 const PasswordService = require('./password.services')
@@ -46,22 +47,25 @@ async function userLogin(body){
         let userModel
 
         switch(role){
-            case 'Client Admin':
+            case 'super_admin':
+                userModel = SuperAdmin
+                break;
+            case 'client_admin':
                 userModel = ClientAdmin
                 break;
-            case 'Firm Manager':
+            case 'firm_admin':
                 userModel = FirmAdmin
                 break;
-            case 'Accountant':
+            case 'accountant':
                 userModel = Accountant
                 break;
-            case 'Employee':
+            case 'g_emp':
                 userModel = GeneralEmployee
                 break;
-            case 'Support Executive':
+            case 'customer_sp':
                 userModel = SupportExecutive
                 break;
-            case 'Viewer':
+            case 'viewer':
                 userModel = Viewer
                 break;
             default:

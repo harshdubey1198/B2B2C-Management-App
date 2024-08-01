@@ -10,6 +10,7 @@ import { userRolesSidebarData } from "./SidebarData";
 const Sidebar = (props) => {
   const ref = useRef();
 
+  // const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || 'default';
   const role = JSON.parse(localStorage.getItem('authUser'))?.role || 'default';
   const sidebarItems = userRolesSidebarData(role);
 
