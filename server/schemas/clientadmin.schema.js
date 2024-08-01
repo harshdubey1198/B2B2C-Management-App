@@ -13,6 +13,7 @@ const clientAdminSchema = new Schema({
     dob: { type: Date },
     address: { type: String },
     role: {type: String, required: true},
+    avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
     status: { type: String, enum: ['accepted', 'rejected', 'requested'], default: 'requested' },
     task_assigned: {},
     permission: {}
