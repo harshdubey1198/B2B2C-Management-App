@@ -7,10 +7,19 @@ const AuthProtected = (props) => {
   const { userProfile, loading } = useProfile();
   const location = useLocation();
 
+  // Check if authUser is present in localStorage
+  const authUser = JSON.parse(localStorage.getItem('authUser'));
+
   if (loading) {
-    return <div>Loading...</div>;
+    return  <Navigate to={{ pathname: "/login", state: { from: location } }} />;
   }
 
+  // Redirect to login if authUser is not found
+  if (!authUser) {
+    return <Navigate to={{ pathname: "/login", state: { from: location } }} />;
+  }
+
+  // Check if userProfile is present
   if (!userProfile) {
     return <Navigate to={{ pathname: "/login", state: { from: location } }} />;
   }
@@ -42,9 +51,6 @@ const getAllowedRoutes = (role) => {
 };
 
 export default AuthProtected;
-
-
-
 
 //master ->  sidebar data || user routes defined { limited routes  -> output  }
 // master -> restrictions || routes defined === accessed route -> /dashboard 

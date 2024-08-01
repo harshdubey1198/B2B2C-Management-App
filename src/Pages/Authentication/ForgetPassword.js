@@ -1,57 +1,53 @@
+import React, { useState } from "react";
 import PropTypes from "prop-types";
-import React from "react";
 import { Row, Col, Alert, Card, CardBody, Container, FormFeedback, Input, Label, Form } from "reactstrap";
-
-//redux
 import { useSelector, useDispatch } from "react-redux";
-
-import { createSelector } from 'reselect';
-
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
-
-// Formik Validation
-import * as Yup from "yup";
-import { useFormik } from "formik";
-
-// action
 import { userForgetPassword } from "../../store/actions";
-
-// import images
 import profile from "../../assets/images/bg.png";
 import logo from "../../assets/images/logo-sm.png";
 
-const ForgetPasswordPage = props => {
+const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
   document.title = "Forget Password | aaMOBee";
 
-  const validation = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
-    enableReinitialize: true,
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [forgetSuccessMsg, setForgetSuccessMsg] = useState('');
+  const [forgetError, setForgetError] = useState('');
 
-    initialValues: {
-      email: '',
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().required("Please Enter Your Email"),
-    }),
-    onSubmit: (values) => {
-      dispatch(userForgetPassword(values, props.router.navigate));
+  const { forgetSuccessMsg: successMsg, forgetError: error } = useSelector(state => ({
+    forgetSuccessMsg: state.forgetPassword.forgetSuccessMsg,
+    forgetError: state.forgetPassword.forgetError,
+  }));
+
+  // Update success or error messages from Redux store
+  React.useEffect(() => {
+    setForgetSuccessMsg(successMsg);
+    setForgetError(error);
+  }, [successMsg, error]);
+
+  const validateEmail = (email) => {
+    // Simple email validation
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailPattern.test(email);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!validateEmail(email)) {
+      setEmailError("Please enter a valid email address.");
+      return;
     }
-  });
 
-  const forgetpass = createSelector(
-    (state ) => state.forgetPassword,
-    (layout) => ({
-        forgetSuccessMsg: layout.forgetSuccessMsg,
-    })
-  );
-// Inside your component
-const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
+    setEmailError('');
+    dispatch(userForgetPassword({ email }, props.router.navigate));
+  };
 
   return (
     <React.Fragment>
-      
       <div className="account-pages my-5 pt-sm-5">
         <Container>
           <Row className="justify-content-center">
@@ -86,24 +82,20 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
                     </Link>
                   </div>
                   <div className="p-2">
-                    {forgetError && forgetError ? (
+                    {forgetError && (
                       <Alert color="danger" style={{ marginTop: "13px" }}>
                         {forgetError}
                       </Alert>
-                    ) : null}
-                    {forgetSuccessMsg ? (
+                    )}
+                    {forgetSuccessMsg && (
                       <Alert color="success" style={{ marginTop: "13px" }}>
                         {forgetSuccessMsg}
                       </Alert>
-                    ) : null}
+                    )}
 
                     <Form
                       className="form-horizontal"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        validation.handleSubmit();
-                        return false;
-                      }}
+                      onSubmit={handleSubmit}
                     >
                       <div className="mb-3">
                         <Label className="form-label">Email</Label>
@@ -112,21 +104,20 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
                           className="form-control"
                           placeholder="Enter email"
                           type="email"
-                          onChange={validation.handleChange}
-                          onBlur={validation.handleBlur}
-                          value={validation.values.email || ""}
-                          invalid={
-                            validation.touched.email && validation.errors.email ? true : false
-                          }
+                          onChange={(e) => setEmail(e.target.value)}
+                          value={email}
+                          invalid={!!emailError}
                         />
-                        {validation.touched.email && validation.errors.email ? (
-                          <FormFeedback type="invalid"><div>{validation.errors.email}</div></FormFeedback>
-                        ) : null}
+                        {emailError && (
+                          <FormFeedback type="invalid">
+                            <div>{emailError}</div>
+                          </FormFeedback>
+                        )}
                       </div>
                       <Row className="mb-3">
                         <Col className="text-end">
                           <button
-                            className="btn btn-primary w-md "
+                            className="btn btn-primary w-md"
                             type="submit"
                           >
                             Reset
@@ -140,7 +131,7 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
               <div className="mt-5 text-center">
                 <p>
                   Go back to{" "}
-                  <Link to="login" className="font-weight-medium text-primary">
+                  <Link to="/login" className="font-weight-medium text-primary">
                     Login
                   </Link>{" "}
                 </p>
@@ -157,7 +148,7 @@ const { forgetSuccessMsg, forgetError } = useSelector(forgetpass);
 };
 
 ForgetPasswordPage.propTypes = {
-  history: PropTypes.object,
+  router: PropTypes.object,
 };
 
 export default withRouter(ForgetPasswordPage);

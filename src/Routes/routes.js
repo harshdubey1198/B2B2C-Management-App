@@ -21,8 +21,9 @@ import ReadEmail from "../Pages/E-mail/ReadEmail";
 import EmailCompose from "../Pages/E-mail/EmailCompose";
 
 // Import Authentication pages
+
 // import Login from "../Pages/Authentication/Login";
-import ForgetPasswordPage from "../Pages/Authentication/ForgetPassword";
+// import ForgetPasswordPage from "../Pages/Authentication/ForgetPassword";
 import Logout from "../Pages/Authentication/Logout";
 import Register from "../Pages/Authentication/Register";
 import UserProfile from "../Pages/Authentication/user-profile";
@@ -209,7 +210,7 @@ const publicRoutes = [
   // Authentication Page
   { path: "/logout", component: <Logout /> },
   { path: "/login", component: <Login1 /> },
-  { path: "/forgot-password", component: <ForgetPasswordPage /> },
+  { path: "/forgot-password", component: <RecoverPassword /> },
   { path: "/register", component: <Register /> },
 
   // Authentication Inner Pages
