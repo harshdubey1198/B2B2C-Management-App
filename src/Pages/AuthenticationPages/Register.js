@@ -35,7 +35,7 @@ const Register = (props) => {
   );
 
   // Default formInput for role and status
-  const defaultRole = "Client_Admin";
+  const defaultRole = "client_admin";
   const defaultStatus = "requested";
 
   // State to manage form formInput and validation
