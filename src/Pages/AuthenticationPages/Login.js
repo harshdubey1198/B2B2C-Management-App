@@ -219,7 +219,7 @@ const Login = (props) => {
                             <Col className="col-7">
                               <div className="text-md-end mt-3 mt-md-0">
                                 <Link
-                                  to="/auth-recoverpw"
+                                  to="/recover-password"
                                   className="text-muted"
                                 >
                                   <i className="mdi mdi-lock"></i> Forgot your

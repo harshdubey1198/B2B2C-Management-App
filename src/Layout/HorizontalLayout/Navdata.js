@@ -263,7 +263,7 @@ const Navdata = () => {
           subItem: [
             { link: "/auth-login", title: "Login" },
             { link: "/auth-register", title: "Register" },
-            { link: "/auth-recoverpw", title: "Recover Password" },
+            { link: "/recover-password", title: "Recover Password" },
             { link: "/auth-lock-screen", title: "Lock Screen" },
           ],
         },
