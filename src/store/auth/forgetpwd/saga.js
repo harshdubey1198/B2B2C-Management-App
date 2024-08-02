@@ -11,6 +11,7 @@ import {
   postFakeForgetPwd,
   postJwtForgetPwd,
 } from "../../../helpers/fakebackend_helper"
+import axios from "axios";
 
 
 const fireBaseBackend = getFirebaseBackend()
@@ -20,16 +21,15 @@ function* forgetUser({ payload: { user, history } }) {
   try {
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       const response = yield call(fireBaseBackend.forgetPassword, user.email)
-      if (response) {
-        yield put(
-          userForgetPasswordSuccess(
-            "Reset link are sended to your mailbox, check there first"
-          )
-        )
+      if (response.status === 200) {
+        yield put(userForgetPasswordSuccess("Reset link has been sent to your email."));
+      } else {
+        yield put(userForgetPasswordError("Failed to send reset link. Please try again."));
       }
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      const response = yield call(postJwtForgetPwd, "/jwt-forget-pwd", {
+      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/clientadmin/forget-password`,{
         email: user.email,
+        role: user.role
       })
       if (response) {
         yield put(

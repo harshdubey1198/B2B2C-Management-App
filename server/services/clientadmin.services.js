@@ -135,9 +135,7 @@ async function UserForgetPassword(body) {
 
         // Generate and hash the temporary password
         const temporaryPassword = generateTemporaryPassword();
-        console.log('Generated temporary password:', temporaryPassword);
         const hashedPassword = await PasswordService.passwordEncryption(temporaryPassword);
-        console.log('Hashed password:', hashedPassword);
 
         // Update user's password
         await userModel.updateOne({ email }, { $set: { password: hashedPassword } });
@@ -168,6 +166,59 @@ async function UserForgetPassword(body) {
     }
 }
 
+async function resetPassword(body){
+    try {
+        const {email, role, temporaryPassword, password} = body
+        let userModel;
 
+        // Map role to user model
+        switch(role) {
+            case 'super_admin':
+                userModel = SuperAdmin;
+                break;
+            case 'client_admin':
+                userModel = ClientAdmin;
+                break;
+            case 'firm_admin':
+                userModel = FirmAdmin;
+                break;
+            case 'accountant':
+                userModel = Accountant;
+                break;
+            case 'g_emp':
+                userModel = GeneralEmployee;
+                break;
+            case 'customer_sp':
+                userModel = SupportExecutive;
+                break;
+            case 'viewer':
+                userModel = Viewer;
+                break;
+            default:
+                throw new Error('Invalid Role');
+        }
+
+        // Find the user
+        const user = await userModel.findOne({ email: email });
+        if (!user) {
+            throw new Error('Account Not Found');
+        }else{
+            // Match the Password
+            const decryptedPassword = await PasswordService.passwordDecryption(user.password)
+            if(decryptedPassword === temporaryPassword){
+                // Update the password
+                const updatedPassword = await PasswordService.passwordEncryption(password);
+                user.password = updatedPassword
+                await user.save()
+                return 'Password Updated Successfully'
+            }else{
+                throw new Error('Invalid Temporary Password');
+            }
+        } 
+    } catch (error) {
+        console.log(error)
+        throw new Error('An error occurred while processing the request.');
+    }
+}
 
 module.exports = services

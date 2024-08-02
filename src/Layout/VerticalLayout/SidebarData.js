@@ -42,7 +42,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Login", link: "/auth-login" },
         { sublabel: "Register", link: "/auth-register" },
-        { sublabel: "Recover Password", link: "/auth-recoverpw" },
+        { sublabel: "Recover Password", link: "/recover-password" },
         { sublabel: "Lock Screen", link: "/auth-lock-screen" },
       ],
     },
@@ -108,7 +108,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Login", link: "/auth-login" },
         { sublabel: "Register", link: "/auth-register" },
-        { sublabel: "Recover Password", link: "/auth-recoverpw" },
+        { sublabel: "Recover Password", link: "/recover-password" },
         { sublabel: "Lock Screen", link: "/auth-lock-screen" },
       ],
     },
@@ -118,7 +118,7 @@ export const masterAdminSidebarData = () => [
         subItem: [
           { sublabel: "Profile Settings", link: "/profile-settings" },
           { sublabel: "Accounts Settings", link: "/accounts-setting" },
-          // { sublabel: "Recover Password", link: "/auth-recoverpw" },
+          // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
       }
