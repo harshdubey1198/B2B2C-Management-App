@@ -36,4 +36,16 @@ router.post("/login", (req,res) => {
         res.status(400).send(error)
     })
 })
+
+router.post('/forgot-password', async (req, res) => {
+    ClientServices.UserForgetPassword(req.body).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
+    })
+});
+
+
+
 module.exports = router
