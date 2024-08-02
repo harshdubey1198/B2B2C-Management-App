@@ -27,6 +27,7 @@ import EmailCompose from "../Pages/E-mail/EmailCompose";
 import Logout from "../Pages/Authentication/Logout";
 import Register from "../Pages/Authentication/Register";
 import UserProfile from "../Pages/Authentication/user-profile";
+import ResetPassword from "../Pages/Authentication/ResetPassword.jsx";
 
 // Import Authentication Inner Pages
 import Login1 from "../Pages/AuthenticationPages/Login";
@@ -212,6 +213,8 @@ const publicRoutes = [
   { path: "/login", component: <Login1 /> },
   { path: "/forgot-password", component: <RecoverPassword /> },
   { path: "/register", component: <Register /> },
+  {path:"/reset-password/:token", component: <ResetPassword />},
+  {path:"/reset-password", component: <Navigate to ="/login" />},
 
   // Authentication Inner Pages
   { path: "/auth-login", component: <Login1 /> },
