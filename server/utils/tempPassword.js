@@ -1,6 +1,6 @@
 const generateTemporaryPassword = (length = 8) => {
     // Define the characters that can be used in the password
-    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+[]{}|;:,.<>?";
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     let password = "";
 
     // Generate the password

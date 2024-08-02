@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   Row,
@@ -32,6 +32,9 @@ const RecoverPassword = () => {
   });
 
   const [error, setError] = useState(""); // Local error state
+  const [isSubmitting, setIsSubmitting] = useState(false); // Submitting state
+  const [canSubmit, setCanSubmit] = useState(true); // Check if we can submit
+  const timeoutRef = useRef(null); // Use ref for timeout
 
   const roles = [
     { value: "", label: "Select User Type" },
@@ -49,23 +52,52 @@ const RecoverPassword = () => {
       ...prevValues,
       [id]: value
     }));
+    setError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Reset local error state
+    if (!canSubmit) return; 
+
     setError("");
-    // Validate form fields
+    setIsSubmitting(true);
+    setCanSubmit(false);
+
     if (checkEmptyFields(formValues)) {
       setError("Fields must not be empty!");
+      setIsSubmitting(false);
+      setCanSubmit(true);
       return;
     } else if (!validateEmail(formValues.email)) {
       setError("Email is invalid!");
+      setIsSubmitting(false);
+      setCanSubmit(true);
       return;
     }
-    // Dispatch the action to trigger the API call
+
     dispatch(userForgetPassword(formValues));
+
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+    timeoutRef.current = setTimeout(() => {
+      setCanSubmit(true);
+      setIsSubmitting(false);
+    }, 9000);
   };
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (forgetSuccessMsg || forgetError) {
+      setError(forgetError || "");
+      setIsSubmitting(false);
+      setCanSubmit(true);
+    }
+  }, [forgetSuccessMsg, forgetError]);
 
   return (
     <React.Fragment>
@@ -103,30 +135,29 @@ const RecoverPassword = () => {
                       <form className="form-horizontal" onSubmit={handleSubmit}>
                         <Row>
                           <Col md={12}>
-                            {error && (
-                              <Alert color="danger" className="alert-dismissible">
-                                <button type="button" className="btn-close" aria-label="Close"></button>
-                                {error}
-                              </Alert>
-                            )}
-                            {forgetError && (
-                              <Alert color="danger" className="alert-dismissible">
-                                <button type="button" className="btn-close" aria-label="Close"></button>
-                                {forgetError}
-                              </Alert>
-                            )}
-                            {forgetSuccessMsg && (
-                              <Alert color="success" className="alert-dismissible">
-                                <button type="button" className="btn-close" aria-label="Close"></button>
-                                {forgetSuccessMsg}
+                            {(error || forgetError || forgetSuccessMsg) && (
+                              <Alert
+                                color={forgetError ? "danger" : "success"}
+                                className="alert-dismissible"
+                              >
+                                <button
+                                  type="button"
+                                  className="btn-close"
+                                  aria-label="Close"
+                                  onClick={() => {
+                                    setError("");
+                                  }}
+                                ></button>
+                                {error || forgetError || forgetSuccessMsg}
                               </Alert>
                             )}
                             <div className="mt-4">
                               <FormGroup>
-                                <Label className="form-label" htmlFor="email">Email</Label>
+                                <Label className="form-label" htmlFor="email">
+                                  Email
+                                </Label>
                                 <Input
                                   type="email"
-                                  name="email"
                                   className="form-control"
                                   id="email"
                                   placeholder="Enter email"
@@ -135,10 +166,11 @@ const RecoverPassword = () => {
                                 />
                               </FormGroup>
                               <FormGroup className="mt-4">
-                                <Label className="form-label" htmlFor="role">Role</Label>
+                                <Label className="form-label" htmlFor="role">
+                                  Role
+                                </Label>
                                 <Input
                                   type="select"
-                                  name="role"
                                   className="form-control"
                                   id="role"
                                   value={formValues.role}
@@ -152,8 +184,12 @@ const RecoverPassword = () => {
                                 </Input>
                               </FormGroup>
                               <div className="d-grid mt-4">
-                                <Button color="primary" type="submit">
-                                  Send Email
+                                <Button
+                                  color="primary"
+                                  type="submit"
+                                  disabled={!canSubmit || isSubmitting}
+                                >
+                                  {isSubmitting ? "Sending..." : "Send Email"}
                                 </Button>
                               </div>
                             </div>
