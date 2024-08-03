@@ -20,7 +20,7 @@ async function passwordHash(password) {
 
 // Compare the password with the hash
 async function comparePassword(password, hashedPassword) {
-    console.log(password, hashedPassword)
+    // console.log(password, hashedPassword)
     try {
         // Compare the password with the hashed password
         const match = await bcrypt.compare(password, hashedPassword);
