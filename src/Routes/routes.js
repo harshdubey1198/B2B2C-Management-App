@@ -29,6 +29,14 @@ import Register from "../Pages/Authentication/Register";
 import UserProfile from "../Pages/Authentication/user-profile";
 import ResetPassword from "../Pages/Authentication/ResetPassword.jsx";
 
+
+// inventory mngmnt
+
+import InventoryTable from "../Pages/Inventory-MNG/InventoryTable.jsx";
+import TableForm from "../Pages/Inventory-MNG/TableForm.jsx";
+import TableTaxation from "../Pages/Inventory-MNG/TableTaxation.jsx";
+import ItemConfiguration from "../Pages/Inventory-MNG/ItemConfiguration.jsx";
+
 // Import Authentication Inner Pages
 import Login1 from "../Pages/AuthenticationPages/Login";
 // import Register1 from "../Pages/AuthenticationPages/Register";
@@ -117,7 +125,12 @@ const authProtectedRoutes = [
   { path: "/payments-invoice", component: < PaymentsInvoice /> },
   { path: "/reports-invoice", component: < ReportsInvoice /> },
 
-  
+  // Inventory MNG
+  {path:"/inventory-table", component: <InventoryTable />},
+  {path:"/table-form", component: <TableForm />},
+  {path:"/table-taxation", component: <TableTaxation />},
+  {path:"/item-configuration", component: <ItemConfiguration />},
+
   // firm
   {path:"/firms", component: <Firm />},
   // Calender

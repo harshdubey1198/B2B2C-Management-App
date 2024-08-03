@@ -93,6 +93,16 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Reports", link: "/reports" },
       ],
     },
+    {
+      label: "Inventory",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "Inventory Table", link: "/inventory-table" },
+        { sublabel: "Table Form", link: "/table-form" },
+        { sublabel: "Table Taxation", link: "/table-taxation" },
+        { sublabel: "Item Config", link: "/item-configuration" },
+      ],
+    },
     // {
     //   label: "Taxation",
     //   icon: "mdi mdi-file-document-outline",
@@ -114,7 +124,7 @@ export const masterAdminSidebarData = () => [
     },
     {
         label: "Settings",
-        icon: "mdi mdi-settings-outline",
+        icon: "mdi mdi-cog-outline",
         subItem: [
           { sublabel: "Profile Settings", link: "/profile-settings" },
           { sublabel: "Accounts Settings", link: "/accounts-setting" },
