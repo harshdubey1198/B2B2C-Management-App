@@ -18,20 +18,20 @@ services.UserForgetPassword = UserForgetPassword
 services.resetPassword = resetPassword
 
 // CLIENT REGISTRATION
-async function clientRegistration(body){
+async function clientRegistration(body) {
     try {
-        const existingUser = await ClientAdmin.findOne({email: body.email});
-        if (existingUser){
-            return Promise.reject("Account already exists!");
-        }else{
-            const encryptedPassword = PasswordService.passwordEncryption(body.password);
-            body.password = encryptedPassword;
+        const existingUser = await ClientAdmin.findOne({ email: body.email });
+        if (existingUser) {
+            return Promise.reject('Account already exists!');
+        } else {
+            const hashedPassword = await PasswordService.passwordHash(body.password);
+            body.password = hashedPassword;
             const user = await ClientAdmin.create(body);
             return user;
         }
     } catch (error) {
-        console.log(error)
-        return Promise.reject("Unable to create User")
+        console.log(error);
+        return Promise.reject('Unable to create User');
     }
 }
 
@@ -46,47 +46,47 @@ async function getRegiteredUser(){
 }
 
 // LOGIN USER BASED ON THIER ROLE
-async function userLogin(body){
+async function userLogin(body) {
     try {
-        const {email, password, role} = body
-        let userModel
+        const { email, password, role } = body;
+        let userModel;
 
-        switch(role){
+        switch (role) {
             case 'super_admin':
-                userModel = SuperAdmin
+                userModel = SuperAdmin;
                 break;
             case 'client_admin':
-                userModel = ClientAdmin
+                userModel = ClientAdmin;
                 break;
             case 'firm_admin':
-                userModel = FirmAdmin
+                userModel = FirmAdmin;
                 break;
             case 'accountant':
-                userModel = Accountant
+                userModel = Accountant;
                 break;
             case 'g_emp':
-                userModel = GeneralEmployee
+                userModel = GeneralEmployee;
                 break;
             case 'customer_sp':
-                userModel = SupportExecutive
+                userModel = SupportExecutive;
                 break;
             case 'viewer':
-                userModel = Viewer
+                userModel = Viewer;
                 break;
             default:
-                return Promise.reject('Invalid Role')
+                return Promise.reject('Invalid Role');
         }
 
-        const user = await userModel.findOne({email: email})
-        if(!user){
-            return Promise.reject('Account Not Found')
-        }else{
-            const decryptedPassword = await PasswordService.passwordDecryption(user.password);
-            if (decryptedPassword === password) {
-                const userData  = await userModel.findOne({ _id: user._id }).select("-password")
+        const user = await userModel.findOne({ email: email });
+        if (!user) {
+            return Promise.reject('Account Not Found');
+        } else {
+            const match = await PasswordService.comparePassword(password, user.password);
+            if (match) {
+                const userData = await userModel.findOne({ _id: user._id }).select('-password');
                 return userData;
             } else {
-                return Promise.reject("Incorrect Password");
+                return Promise.reject('Incorrect Password');
             }
         }
     } catch (error) {
@@ -100,8 +100,7 @@ async function UserForgetPassword(body) {
         const { email, role } = body;
         let userModel;
 
-        // Map role to user model
-        switch(role) {
+        switch (role) {
             case 'super_admin':
                 userModel = SuperAdmin;
                 break;
@@ -127,20 +126,16 @@ async function UserForgetPassword(body) {
                 throw new Error('Invalid Role');
         }
 
-        // Find the user
         const user = await userModel.findOne({ email: email });
         if (!user) {
             throw new Error('Account Not Found');
         }
 
-        // Generate and hash the temporary password
         const temporaryPassword = generateTemporaryPassword();
-        const hashedPassword = await PasswordService.passwordEncryption(temporaryPassword);
+        const hashedPassword = await PasswordService.passwordHash(temporaryPassword);
 
-        // Update user's password
         await userModel.updateOne({ email }, { $set: { password: hashedPassword } });
 
-        // Create nodemailer transporter
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
@@ -156,7 +151,6 @@ async function UserForgetPassword(body) {
             text: `Your temporary password is: ${temporaryPassword}. Please use this password to login and reset your password immediately. http://localhost:3000/reset-password/${temporaryPassword}`
         };
 
-        // Send email using a promise-based approach
         await transporter.sendMail(mailOptions);
         return 'Temporary password sent to your email.';
 
@@ -166,13 +160,12 @@ async function UserForgetPassword(body) {
     }
 }
 
-async function resetPassword(body){
+async function resetPassword(body) {
     try {
-        const {email, role, temporaryPassword, password} = body
+        const { email, role, temporaryPassword, newPassword } = body;
         let userModel;
 
-        // Map role to user model
-        switch(role) {
+        switch (role) {
             case 'super_admin':
                 userModel = SuperAdmin;
                 break;
@@ -198,27 +191,27 @@ async function resetPassword(body){
                 throw new Error('Invalid Role');
         }
 
-        // Find the user
         const user = await userModel.findOne({ email: email });
         if (!user) {
             throw new Error('Account Not Found');
-        }else{
-            // Match the Password
-            const decryptedPassword = await PasswordService.passwordDecryption(user.password)
-            if(decryptedPassword === temporaryPassword){
-                // Update the password
-                const updatedPassword = await PasswordService.passwordEncryption(password);
-                user.password = updatedPassword
-                await user.save()
-                return 'Password Updated Successfully'
-            }else{
+        } else {
+            // Compare the temporary password with the hashed password
+            const match = await PasswordService.comparePassword(temporaryPassword, user.password);
+            if (match) {
+                // Hash the new password
+                const updatedPassword = await PasswordService.passwordHash(newPassword);
+                user.password = updatedPassword;
+                await user.save();
+                return 'Password Updated Successfully';
+            } else {
                 throw new Error('Invalid Temporary Password');
             }
-        } 
+        }
     } catch (error) {
-        console.log(error)
+        console.error(error);
         throw new Error('An error occurred while processing the request.');
     }
 }
+
 
 module.exports = services
