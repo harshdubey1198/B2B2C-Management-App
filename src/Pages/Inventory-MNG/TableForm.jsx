@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert } from 'reactstrap';
-import { checkEmptyFields } from '../Utility/FormValidation';
+import React, { useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  CardBody,
+  FormGroup,
+  Label,
+  Input,
+  Button,
+  Alert,
+} from "reactstrap";
+import { checkEmptyFields } from "../Utility/FormValidation";
+import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { v4 as uuidv4 } from 'uuid'
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
-    name: '',
-    description: '',
-    quantity: '',
-    price: '',
-    category: '',
-    supplier: ''
+    name: "",
+    description: "",
+    quantity: "",
+    price: "",
+    category: "",
+    supplier: "",
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -21,38 +34,56 @@ const InventoryItemForm = () => {
       ...prevState,
       [name]: value,
     }));
-    setError('');
+    setError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
-    if(checkEmptyFields(formValues)){
-      setError('Please fill in all fields');
+    if (checkEmptyFields(formValues)) {
+      setError("Please fill in all fields");
     }
 
     // Simulate API call
     setTimeout(() => {
-      setSuccess('Item added successfully.');
+      // Store form data in localStorage
+      const storedData = JSON.parse(localStorage.getItem("inventoryItems")) || [];
+      const newItems = {
+        ...formValues,
+        id: uuidv4(), // Generate a unique ID
+      }
+      storedData.push(newItems);
+      localStorage.setItem("inventoryItems", JSON.stringify(storedData));
+      setSuccess("Item added successfully.");
       setLoading(false);
-      setError('')
+      setError("");
+
+      setFormValues({
+        name: "",
+        description: "",
+        quantity: "",
+        price: "",
+        category: "",
+        supplier: "",
+      });
     }, 1000);
   };
 
-  console.log(formValues, "formvalues")
-
   return (
     <React.Fragment>
-      <div className='page-content'>
+      <div className="page-content">
+      <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
               <Card className="mt-5">
                 <CardBody>
-                  <h4 className="font-size-18 text-muted mt-2 text-center">Add Inventory Item</h4>
+                  <h4 className="font-size-18 text-muted mt-2 text-center">
+                    Add Inventory Item
+                  </h4>
                   {error && <Alert color="danger">{error}</Alert>}
                   {success && <Alert color="success">{success}</Alert>}
                   <form onSubmit={handleSubmit}>
@@ -123,7 +154,7 @@ const InventoryItemForm = () => {
                       />
                     </FormGroup>
                     <Button color="primary" type="submit" disabled={loading}>
-                      {loading ? 'Adding...' : 'Add Item'}
+                      {loading ? "Adding..." : "Add Item"}
                     </Button>
                   </form>
                 </CardBody>
@@ -134,6 +165,6 @@ const InventoryItemForm = () => {
       </div>
     </React.Fragment>
   );
-}
+};
 
 export default InventoryItemForm;
