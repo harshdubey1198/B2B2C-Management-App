@@ -11,7 +11,6 @@ const Sidebar = (props) => {
   const ref = useRef();
 
   const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || 'default';
-  // const role = JSON.parse(localStorage.getItem('authUser'))?.role || 'default';
   const sidebarItems = userRolesSidebarData(role);
 
   const activateParentDropdown = useCallback((item) => {
@@ -72,7 +71,7 @@ const Sidebar = (props) => {
     const metisMenu = new MetisMenu("#side-menu-item");
     activeMenu();
     return () => metisMenu.dispose();
-  }, [activeMenu]);
+  }, [activeMenu, props.router.location.pathname]); 
 
   function scrollElement(item) {
     if (item) {
