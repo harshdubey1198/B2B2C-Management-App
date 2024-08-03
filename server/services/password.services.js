@@ -1,18 +1,34 @@
-const CryptoJS = require("crypto-js");
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 let service = {};
-service.passwordEncryption = passwordEncryption;
-service.passwordDecryption = passwordDecryption;
+service.passwordHash = passwordHash;
+service.comparePassword = comparePassword;
 
-function passwordEncryption(password) {
-    const encryptedData = CryptoJS.AES.encrypt(password, process.env.PASSWORD_ALGORITHM).toString();
-    return encryptedData;
+// Hash the password
+async function passwordHash(password) {
+    try {
+        // Hash the password with salt rounds
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        return hashedPassword;
+    } catch (error) {
+        console.error('Error hashing password:', error);
+        throw new Error('Password hashing failed');
+    }
 }
 
-function passwordDecryption(encryptedData) {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, process.env.PASSWORD_ALGORITHM);
-    const password = bytes.toString(CryptoJS.enc.Utf8);
-    return password;
+
+// Compare the password with the hash
+async function comparePassword(password, hashedPassword) {
+    console.log(password, hashedPassword)
+    try {
+        // Compare the password with the hashed password
+        const match = await bcrypt.compare(password, hashedPassword);
+        return match;
+    } catch (error) {
+        console.error('Error comparing password:', error);
+        throw new Error('Password comparison failed');
+    }
 }
 
 module.exports = service;
