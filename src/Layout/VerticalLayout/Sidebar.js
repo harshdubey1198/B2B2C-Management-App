@@ -9,6 +9,7 @@ import { userRolesSidebarData } from "./SidebarData";
 
 const Sidebar = (props) => {
   const ref = useRef();
+  const metisMenuRef = useRef();
 
   const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || 'default';
   const sidebarItems = userRolesSidebarData(role);
@@ -18,10 +19,10 @@ const Sidebar = (props) => {
     let parent = item.parentElement;
 
     while (parent) {
-      if (parent.tagName === 'LI') {
+      if (parent.tagName === 'li') {
         parent.classList.add("mm-active");
         parent = parent.parentElement;
-      } else if (parent.tagName === 'UL') {
+      } else if (parent.tagName === 'ul') {
         parent.classList.add("mm-show");
         parent = parent.parentElement;
       } else {
@@ -37,10 +38,10 @@ const Sidebar = (props) => {
       item.classList.remove("active");
       let parent = item.parentElement;
       while (parent) {
-        if (parent.tagName === 'LI') {
+        if (parent.tagName === 'li') {
           parent.classList.remove("mm-active");
           parent = parent.parentElement;
-        } else if (parent.tagName === 'UL') {
+        } else if (parent.tagName === 'ul') {
           parent.classList.remove("mm-show");
           parent = parent.parentElement;
         } else {
@@ -52,26 +53,29 @@ const Sidebar = (props) => {
 
   const activeMenu = useCallback(() => {
     const pathName = props.router.location.pathname;
-    const ul = document.getElementById("side-menu-item");
-    const items = ul.getElementsByTagName("a");
-    removeActivation(items);
-    for (let i = 0; i < items.length; i++) {
-      if (pathName === items[i].pathname) {
-        activateParentDropdown(items[i]);
-        break;
+    const ul = metisMenuRef.current;
+    if (ul) {
+      const items = ul.getElementsByTagName("a");
+      removeActivation(items);
+      for (let i = 0; i < items.length; i++) {
+        if (pathName === items[i].pathname) {
+          activateParentDropdown(items[i]);
+          break;
+        }
       }
     }
   }, [props.router.location.pathname, activateParentDropdown]);
 
   useEffect(() => {
-    ref.current.recalculate();
-  }, []);
-
-  useEffect(() => {
-    const metisMenu = new MetisMenu("#side-menu-item");
+    const metisMenu = new MetisMenu(metisMenuRef.current);
     activeMenu();
     return () => metisMenu.dispose();
-  }, [activeMenu, props.router.location.pathname]); 
+  }, [activeMenu]);
+
+  useEffect(() => {
+    // Recalculate SimpleBar on route change
+    ref.current.recalculate();
+  }, [props.router.location.pathname]);
 
   function scrollElement(item) {
     if (item) {
@@ -87,7 +91,7 @@ const Sidebar = (props) => {
       <div className="vertical-menu">
         <SimpleBar className="h-100" ref={ref}>
           <div id="sidebar-menu">
-            <ul className="metismenu list-unstyled" id="side-menu-item">
+            <ul className="metismenu list-unstyled" ref={metisMenuRef}>
               {sidebarItems.map((item, key) => (
                 <React.Fragment key={key}>
                   {item.isMainMenu ? (
