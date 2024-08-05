@@ -15,6 +15,8 @@ import {
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { checkEmptyFields, validateEmail, validatePhone } from "../Utility/FormValidation";
 
+const predefinedPermissions = ["Admin", "User", "Add Account", "Delete Account"]; // Example permissions
+
 function CreateFirm() {
   document.title = "Firm Form";
 
@@ -24,9 +26,10 @@ function CreateFirm() {
     email: "",
     firmAdmin: "",
     action: "",
-    permissions: [], // Initialize as an array
+    permissions: [],
     startDate: "",
-    newPermission: ""
+    newPermission: "",
+    selectedPermission: ""
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -42,24 +45,28 @@ function CreateFirm() {
   };
 
   const handleAddPermission = () => {
-    if(formValues.permissions){
+    if (formValues.newPermission) {
       setFormValues((prevState) => ({
         ...prevState,
         permissions: [...prevState.permissions, prevState.newPermission],
         newPermission: "",
-      }))
+      }));
     }
-  }
+    if (formValues.selectedPermission) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        permissions: [...prevState.permissions, prevState.selectedPermission],
+        selectedPermission: "",
+      }));
+    }
+  };
 
   const handleRemovePermission = (index) => {
-    const newarr = formValues?.permissions.filter((item, i) => i !== index)
     setFormValues((prevState) => ({
       ...prevState,
-      permissions: newarr
-    }))
-  }
-
-  console.log(formValues, "formvalue")
+      permissions: prevState.permissions.filter((_, i) => i !== index),
+    }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -72,15 +79,15 @@ function CreateFirm() {
       setLoading(false);
       return;
     }
-    if(!validateEmail(formValues.email)) {
-      setError("Invalid Email")
-      setLoading(false)
-      return
+    if (!validateEmail(formValues.email)) {
+      setError("Invalid Email");
+      setLoading(false);
+      return;
     }
-    if(!validatePhone(formValues.phone)) {
-      setError("Invalid Phone Number")
-      setLoading(false)
-      return
+    if (!validatePhone(formValues.phone)) {
+      setError("Invalid Phone Number");
+      setLoading(false);
+      return;
     }
 
     // Simulate API call
@@ -104,7 +111,8 @@ function CreateFirm() {
         action: "",
         permissions: [], // Reset to an empty array
         startDate: "",
-        newPermission: ""
+        newPermission: "",
+        selectedPermission: ""
       });
     }, 1000);
   };
@@ -181,36 +189,49 @@ function CreateFirm() {
                     </FormGroup>
                     <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
-                      <div>
-                      {formValues.permissions.length > 0 ? (
+                      <div className="d-flex flex-column">
+                        {formValues.permissions.length > 0 ? (
                           formValues.permissions.map((permission, index) => (
-                            <div key={index} className="d-flex justify-content-between align-items-center mb-2">
+                            <div key={index} className="d-flex justify-content-between align-items-center mb-2 border rounded p-2">
                               <span>{permission}</span>
                               <Button
                                 color="danger"
                                 size="sm"
                                 onClick={() => handleRemovePermission(index)}
                               >
-                                Remove
+                                &times;
                               </Button>
                             </div>
                           ))
                         ) : (
                           <p>No permissions added</p>
                         )}
-                      <div className="d-flex">
+                        <div className="d-flex align-items-center mt-2">
+                          <Input
+                            type="select"
+                            id="selectedPermission"
+                            name="selectedPermission"
+                            value={formValues.selectedPermission}
+                            onChange={handleChange}
+                            className="me-2"
+                          >
+                            <option value="">Select Permission</option>
+                            {predefinedPermissions.map((perm, index) => (
+                              <option key={index} value={perm}>{perm}</option>
+                            ))}
+                          </Input>
                           <Input
                             type="text"
                             id="newPermission"
                             name="newPermission"
-                            placeholder="Add permission"
+                            placeholder="Add custom permission"
                             value={formValues.newPermission}
                             onChange={handleChange}
+                            className="me-2"
                           />
                           <Button
                             color="success"
                             onClick={handleAddPermission}
-                            className="ms-2"
                           >
                             Add
                           </Button>
