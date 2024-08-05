@@ -25,7 +25,7 @@ function CreateFirm() {
     phone: "",
     email: "",
     firmAdmin: "",
-    action: "",
+    // action: "",
     permissions: [],
     startDate: "",
     newPermission: "",
@@ -74,11 +74,11 @@ function CreateFirm() {
     setError("");
     setSuccess("");
 
-    if (checkEmptyFields(formValues)) {
-      setError("Please fill in all fields");
-      setLoading(false);
-      return;
-    }
+    // if (checkEmptyFields(formValues)) {
+    //   setError("Please fill in all fields");
+    //   setLoading(false);
+    //   return;
+    // }
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
       setLoading(false);
@@ -176,7 +176,7 @@ function CreateFirm() {
                         onChange={handleChange}
                       />
                     </FormGroup>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <Label htmlFor="action">Action</Label>
                       <Input
                         type="text"
@@ -186,7 +186,7 @@ function CreateFirm() {
                         value={formValues.action}
                         onChange={handleChange}
                       />
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
                       <div className="d-flex flex-column">
