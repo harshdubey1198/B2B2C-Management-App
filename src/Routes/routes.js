@@ -112,6 +112,7 @@ import VectorMaps from "../Pages/Maps/VectorMap";
 import GoogleMap from "../Pages/Maps/GoogleMap";
 import ClientManagement from "../Pages/ClientsManagement/index.js";
 import ProfileSettings from "../Pages/Settings/ProfileSettings.jsx";
+import FirmsSetting from "../Pages/Firms/FirmsSetting.js";
 
 
 const authProtectedRoutes = [
@@ -133,6 +134,7 @@ const authProtectedRoutes = [
 
   // firm
   {path:"/firms", component: <Firm />},
+  {path:"/firms-setting", component: <FirmsSetting />},
   // Calender
   { path: "/calendar", component: <Calender /> },
 
