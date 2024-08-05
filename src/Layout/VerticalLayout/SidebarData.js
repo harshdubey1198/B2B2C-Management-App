@@ -73,6 +73,9 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-account-multiple-outline",
       subItem: [
         { sublabel: "Firms", link: "/firms" },
+        { sublabel: "Manage Firm", link: "/manage-firm" },
+        { sublabel: "Create Firm", link: "/create-firm" },
+        { sublabel: "Switch Firm", link: "/Switch-firm" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
     },
@@ -82,17 +85,6 @@ export const masterAdminSidebarData = () => [
       url:"/pages-pricing",
       isHasArrow:true
     },
-    {
-      label: "Firms",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "Manage Firm", link: "/manage-firm" },
-        { sublabel: "Create Firm", link: "/create-firm" },
-        { sublabel: "Switch Firm", link: "/Switch-firm" },
-        // { sublabel: "Settings", link: "/expenses" },
-      ],
-    },
-
     {
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
