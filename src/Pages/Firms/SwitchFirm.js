@@ -24,7 +24,7 @@ function SwitchFirm() {
         <div className='container mt-4'>
           <div className='text-center mb-4'>
             <img
-              src={currentFirm.imageUrl}
+              src={currentFirm.image}
               alt={currentFirm.name}
               className='img-fluid mb-2 rounded-circle'
               style={{ maxWidth: '100px' }}
@@ -46,7 +46,7 @@ function SwitchFirm() {
                     <tr key={firm.id}>
                       <td className='text-center'>
                         <img
-                          src={firm.imageUrl}
+                          src={firm.image}
                           alt={firm.name}
                           className='img-fluid'
                           style={{ maxWidth: '50px' }}
