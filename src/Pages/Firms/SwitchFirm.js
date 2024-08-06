@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Col, Table } from 'reactstrap';
 
-const firms = [
-  { id: 1, name: 'Firm A', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844391/abstract-colorful-logo_1017-8753_qptgtx.avif' },
-  { id: 2, name: 'Firm B', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844388/business-logo_23-2147503133_sw5xjq.avif' },
-  { id: 3, name: 'Firm C', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844376/gradient-logo-with-abstract-shape_23-2148219550_mgiwzf.avif' },
-  { id: 4, name: 'Firm D', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844367/colorful-floral-logo_1025-262_ahzfec.avif' },
-];
+// const firms = [
+//   { id: 1, name: 'Firm A', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844391/abstract-colorful-logo_1017-8753_qptgtx.avif' },
+//   { id: 2, name: 'Firm B', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844388/business-logo_23-2147503133_sw5xjq.avif' },
+//   { id: 3, name: 'Firm C', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844376/gradient-logo-with-abstract-shape_23-2148219550_mgiwzf.avif' },
+//   { id: 4, name: 'Firm D', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844367/colorful-floral-logo_1025-262_ahzfec.avif' },
+// ];
+
+const firms = JSON.parse(localStorage.getItem("Firms")) || []
+console.log(firms, "firms")
 
 function SwitchFirm() {
   const [currentFirm, setCurrentFirm] = useState(firms[0]);
@@ -21,7 +24,7 @@ function SwitchFirm() {
         <div className='container mt-4'>
           <div className='text-center mb-4'>
             <img
-              src={currentFirm.logo}
+              src={currentFirm.imageUrl}
               alt={currentFirm.name}
               className='img-fluid mb-2 rounded-circle'
               style={{ maxWidth: '100px' }}
@@ -39,11 +42,11 @@ function SwitchFirm() {
                   </tr>
                 </thead>
                 <tbody>
-                  {firms.map(firm => (
+                  {firms && firms.map(firm => (
                     <tr key={firm.id}>
                       <td className='text-center'>
                         <img
-                          src={firm.logo}
+                          src={firm.imageUrl}
                           alt={firm.name}
                           className='img-fluid'
                           style={{ maxWidth: '50px' }}

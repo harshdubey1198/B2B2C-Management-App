@@ -21,11 +21,12 @@ function CreateFirm() {
   document.title = "Firm Form";
 
   const [formValues, setFormValues] = useState({
+    id: 0,
     name: "",
     phone: "",
     email: "",
     firmAdmin: "",
-    // action: "",
+    image: "",
     permissions: [],
     startDate: "",
     newPermission: "",
@@ -35,6 +36,15 @@ function CreateFirm() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Function to get the next available ID from local storage
+  const getNextId = () => {
+    const storedData = JSON.parse(localStorage.getItem("Firms")) || [];
+    const highestId = storedData.reduce((maxId, firm) => Math.max(maxId, firm.id), 0);
+    const newId = highestId + 1;
+    localStorage.setItem("currentFirmId", newId); // Update local storage with new ID
+    return newId;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
@@ -42,6 +52,17 @@ function CreateFirm() {
       [name]: value,
     }));
     setError("");
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        image: file,
+        imageUrl: URL.createObjectURL(file), // Create a URL for previewing
+      }));
+    }
   };
 
   const handleAddPermission = () => {
@@ -74,11 +95,6 @@ function CreateFirm() {
     setError("");
     setSuccess("");
 
-    // if (checkEmptyFields(formValues)) {
-    //   setError("Please fill in all fields");
-    //   setLoading(false);
-    //   return;
-    // }
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
       setLoading(false);
@@ -90,25 +106,34 @@ function CreateFirm() {
       return;
     }
 
+    // Get next available ID
+    const newId = getNextId();
+
+    // Prepare form data with new ID
+    const newFirmData = {
+      ...formValues,
+      id: newId // Assign the next available ID
+    };
+
     // Simulate API call
     setTimeout(() => {
-      // Store form data in localStorage
+      // Retrieve stored data from localStorage
       const storedData = JSON.parse(localStorage.getItem("Firms")) || [];
-      const newItems = {
-        ...formValues,
-      };
-      storedData.push(newItems);
+      storedData.push(newFirmData);
       localStorage.setItem("Firms", JSON.stringify(storedData));
+
       setSuccess("Firm added successfully.");
       setLoading(false);
       setError("");
 
+      // Reset form values
       setFormValues({
+        id: 0, // Reset ID for the next form submission
         name: "",
         phone: "",
         email: "",
         firmAdmin: "",
-        action: "",
+        image: "",
         permissions: [], // Reset to an empty array
         startDate: "",
         newPermission: "",
@@ -166,6 +191,23 @@ function CreateFirm() {
                       />
                     </FormGroup>
                     <FormGroup>
+                      <Label htmlFor="image">Firm Image</Label>
+                      <Input
+                        type="file"
+                        id="image"
+                        name="image"
+                        onChange={handleFileChange}
+                      />
+                      {formValues.imageUrl && (
+                        <img
+                          src={formValues.imageUrl}
+                          alt="Item Preview"
+                          className="img-fluid mt-2"
+                          style={{ maxWidth: '150px' }}
+                        />
+                      )}
+                    </FormGroup>
+                    <FormGroup>
                       <Label htmlFor="firmAdmin">Firm Admin</Label>
                       <Input
                         type="text"
@@ -176,17 +218,6 @@ function CreateFirm() {
                         onChange={handleChange}
                       />
                     </FormGroup>
-                    {/* <FormGroup>
-                      <Label htmlFor="action">Action</Label>
-                      <Input
-                        type="text"
-                        id="action"
-                        name="action"
-                        placeholder="Enter action"
-                        value={formValues.action}
-                        onChange={handleChange}
-                      />
-                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
                       <div className="d-flex flex-column">
