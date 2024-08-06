@@ -113,7 +113,6 @@ import GoogleMap from "../Pages/Maps/GoogleMap";
 import ClientManagement from "../Pages/ClientsManagement/index.js";
 import ProfileSettings from "../Pages/Settings/ProfileSettings.jsx";
 import FirmsSetting from "../Pages/Firms/FirmsSetting.js";
-import ManageFirms from "../Pages/Firms/ManageFirms.js";
 import CreateFirm from "../Pages/Firms/CreateFirm.js";
 import SwitchFirm from "../Pages/Firms/SwitchFirm.js";
 
@@ -138,7 +137,6 @@ const authProtectedRoutes = [
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firms-setting", component: <FirmsSetting />},
-  {path:"/manage-firm", component: <ManageFirms />},
   {path:"/create-firm", component: <CreateFirm />},
   {path:"/switch-firm", component: <SwitchFirm/>},
   // Calender
