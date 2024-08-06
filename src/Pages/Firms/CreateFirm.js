@@ -25,8 +25,8 @@ function CreateFirm() {
     name: "",
     phone: "",
     email: "",
-    firmAdmin: "",
-    image: "",
+    // firmAdmin: "",
+    image: "", // Base64 string for the image
     permissions: [],
     startDate: "",
     newPermission: "",
@@ -57,11 +57,14 @@ function CreateFirm() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormValues((prevState) => ({
-        ...prevState,
-        image: file,
-        imageUrl: URL.createObjectURL(file), // Create a URL for previewing
-      }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormValues((prevState) => ({
+          ...prevState,
+          image: reader.result, // Store the Base64 image string directly
+        }));
+      };
+      reader.readAsDataURL(file); // Convert image to Base64
     }
   };
 
@@ -133,7 +136,7 @@ function CreateFirm() {
         phone: "",
         email: "",
         firmAdmin: "",
-        image: "",
+        image: "", // Reset image
         permissions: [], // Reset to an empty array
         startDate: "",
         newPermission: "",
@@ -198,16 +201,16 @@ function CreateFirm() {
                         name="image"
                         onChange={handleFileChange}
                       />
-                      {formValues.imageUrl && (
+                      {formValues.image && (
                         <img
-                          src={formValues.imageUrl}
+                          src={formValues.image}
                           alt="Item Preview"
                           className="img-fluid mt-2"
                           style={{ maxWidth: '150px' }}
                         />
                       )}
                     </FormGroup>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <Label htmlFor="firmAdmin">Firm Admin</Label>
                       <Input
                         type="text"
@@ -217,7 +220,7 @@ function CreateFirm() {
                         value={formValues.firmAdmin}
                         onChange={handleChange}
                       />
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
                       <div className="d-flex flex-column">

@@ -30,7 +30,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
             active={firm.id === selectedFirmId}
           >
             <img
-              src={firm.imageUrl}
+              src={firm.image}
               alt={firm.name}
               className='img-fluid'
               style={{ maxWidth: '30px', marginRight: '10px' }}
