@@ -137,6 +137,7 @@ function Index() {
   ];
   const preRestrictions = ["Only View", "Not allow update"];
   const userRoles = ["Firm Admin", "Accountant", "Employee"];
+  const preFirms = ["Firm A", "Firm B", "Firm C", "Firm D"]
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
@@ -216,8 +217,6 @@ function Index() {
     }));
     setError("");
   };
-
-  console.log(formValues, "formvluee");
 
   const handlePermissionChange = (e) => {
     const selectedPermission = e.target.value;
@@ -343,11 +342,18 @@ function Index() {
                 <FormGroup>
                   <Label for="firmName">Firm Name</Label>
                   <Input
-                    type="text"
+                    type="select"
                     id="firmName"
                     name="firmName"
                     onChange={handleChange}
-                  />
+                  >
+                    <option value="">Select Firm</option>
+                    {preFirms.map((firm, index) => (
+                      <option key={index} value={firm}>
+                        {firm}
+                      </option>
+                    ))}
+                  </Input>
                 </FormGroup>
               </div>
             </div>
