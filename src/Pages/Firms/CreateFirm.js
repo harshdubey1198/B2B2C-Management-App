@@ -15,7 +15,7 @@ import {
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { checkEmptyFields, validateEmail, validatePhone } from "../Utility/FormValidation";
 
-const predefinedPermissions = ["Admin", "User", "Add Account", "Delete Account"]; // Example permissions
+const predefinedPermissions = ["Admin", "User", "Add Account", "Delete Account", "Edit Account"]; // Example permissions
 
 function CreateFirm() {
   document.title = "Firm Form";
