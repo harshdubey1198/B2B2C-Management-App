@@ -13,7 +13,7 @@ import {
 } from "reactstrap";
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
@@ -23,6 +23,10 @@ const InventoryItemForm = () => {
     price: "",
     category: "",
     supplier: "",
+    image: null, // For the image file
+    imageUrl: "", // For previewing the uploaded image
+    variant: "",
+    type: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -37,24 +41,40 @@ const InventoryItemForm = () => {
     setError("");
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        image: file,
+        imageUrl: URL.createObjectURL(file), // Create a URL for previewing
+      }));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
 
-    if (checkEmptyFields(formValues)) {
-      setError("Please fill in all fields");
+    if (checkEmptyFields({
+      ...formValues,
+      image: formValues.image ? 'Not Empty' : '' // Ensure image is provided
+    })) {
+      setError("Please fill in all fields and upload an image.");
+      setLoading(false);
+      return;
     }
 
     // Simulate API call
     setTimeout(() => {
-      // Store form data in localStorage
       const storedData = JSON.parse(localStorage.getItem("inventoryItems")) || [];
       const newItems = {
         ...formValues,
         id: uuidv4(), // Generate a unique ID
-      }
+        image: formValues.imageUrl // Store image URL (in practice, you might upload the image to a server)
+      };
       storedData.push(newItems);
       localStorage.setItem("inventoryItems", JSON.stringify(storedData));
       setSuccess("Item added successfully.");
@@ -68,6 +88,10 @@ const InventoryItemForm = () => {
         price: "",
         category: "",
         supplier: "",
+        image: null,
+        imageUrl: "",
+        variant: "",
+        type: "",
       });
     }, 1000);
   };
@@ -75,7 +99,7 @@ const InventoryItemForm = () => {
   return (
     <React.Fragment>
       <div className="page-content">
-      <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
+        <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
@@ -150,6 +174,45 @@ const InventoryItemForm = () => {
                         name="supplier"
                         placeholder="Enter supplier"
                         value={formValues.supplier}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="image">Item Image</Label>
+                      <Input
+                        type="file"
+                        id="image"
+                        name="image"
+                        onChange={handleFileChange}
+                      />
+                      {formValues.imageUrl && (
+                        <img
+                          src={formValues.imageUrl}
+                          alt="Item Preview"
+                          className="img-fluid mt-2"
+                          style={{ maxWidth: '150px' }}
+                        />
+                      )}
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="variant">Variant</Label>
+                      <Input
+                        type="text"
+                        id="variant"
+                        name="variant"
+                        placeholder="Enter item variant"
+                        value={formValues.variant}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="type">Type</Label>
+                      <Input
+                        type="text"
+                        id="type"
+                        name="type"
+                        placeholder="Enter inventory type"
+                        value={formValues.type}
                         onChange={handleChange}
                       />
                     </FormGroup>
