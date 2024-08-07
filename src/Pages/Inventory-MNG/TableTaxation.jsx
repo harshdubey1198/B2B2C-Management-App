@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 
@@ -18,9 +18,26 @@ const initialTaxationData = [
 ];
 
 function TaxationTable() {
-  const [taxations, setTaxations] = useState(initialTaxationData);
+  const [taxations, setTaxations] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("taxationData");
+    if (storedData) {
+      try {
+        setTaxations(JSON.parse(storedData));
+      } catch (e) {
+        console.error("Failed to parse taxation data from local storage", e);
+        setTaxations([]);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save taxation data to local storage whenever it changes
+    localStorage.setItem("taxationData", JSON.stringify(taxations));
+  }, [taxations]);
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
