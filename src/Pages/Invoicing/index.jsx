@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Container } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
+import { checkEmptyFields, validatePhone } from '../Utility/FormValidation';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -17,6 +18,9 @@ const fakeItems = [
 
 const Index = () => {
     const [invoiceData, setInvoiceData] = useState({
+        companyName: "",
+        companyAddress: "",
+        companyLogo: "",
         customerName: '',
         customerAddress: '',
         customerPhone: '',
@@ -27,6 +31,8 @@ const Index = () => {
     });
     const [userRole, setUserRole] = useState(null);
     const [logo, setLogo] = useState('');
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
 
     useEffect(() => {
         const authUser = localStorage.getItem('authUser');
@@ -50,6 +56,20 @@ const Index = () => {
         const { name, value } = e.target;
         setInvoiceData(prevState => ({ ...prevState, [name]: value }));
     };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setInvoiceData((prevState) => ({
+              ...prevState,
+              companyLogo: reader.result, // Store the Base64 image string directly
+            }));
+          };
+          reader.readAsDataURL(file); // Convert image to Base64
+        }
+      };
 
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
@@ -86,8 +106,47 @@ const Index = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log('Invoice data submitted:', invoiceData);
+        
+        // Clear previous errors
+        setError("");
+        setSuccess("");
+    
+        // Perform validation checks
+        if (checkEmptyFields(invoiceData)) {
+            setError("Please fill all the fields");
+            return;
+        }
+        if (!validatePhone(invoiceData.customerPhone)) {
+            setError("Invalid Phone Number");
+            return;
+        }
+    
+        // Store data in local storage
+        setTimeout(() => {
+            const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
+            storedData.push(invoiceData);
+            localStorage.setItem("Invoice Form", JSON.stringify(storedData));
+    
+            // Clear the form data and show success message
+            setInvoiceData({
+                companyName: "",
+                companyAddress: "",
+                companyLogo: "",
+                customerName: '',
+                customerAddress: '',
+                customerPhone: '',
+                date: '',
+                country: 'India',
+                items: [{ description: '', quantity: 1, price: 0 }],
+                paymentLink: ''
+            });
+    
+            setSuccess("Invoice Form Submitted Successfully");
+        }, 1000);
     };
+    
+
+    console.log(invoiceData, "daatatat")
 
     const PrintInvoice = React.forwardRef((props, ref) => {
         const { country, paymentLink } = invoiceData;
@@ -98,9 +157,9 @@ const Index = () => {
         return (
             <div ref={ref} className="card p-4 border rounded">
                 <div className="text-center mb-4">
-                    {logo && <img src={logo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
-                    <h3>Company Name</h3>
-                    <p>Company Address</p>
+                    {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
+                    <h3>{invoiceData?.companyName}</h3>
+                    <p>{invoiceData?.companyAddress}</p>
                 </div>
                 <h2>Invoice</h2>
                 <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
@@ -147,45 +206,90 @@ const Index = () => {
 
     return (
         <Container>
-            <div className='page-content'>
-                {userRole && (
+    <div className='page-content'>
+        {userRole && (
+            <div>
+                {['super_admin', 'client_admin', 'firm_admin', 'accountant'].includes(userRole) ? (
                     <div>
-                        {['super_admin', 'client_admin', 'firm_admin', 'accountant'].includes(userRole) ? (
-                            <div>
-                                <Form onSubmit={handleSubmit}>
+                        <Form onSubmit={handleSubmit}>
+                            {error && <Alert color='danger'>{error}</Alert>}
+                            {success && <Alert color='success'>{success}</Alert>}
+                            <Row className="mb-4">
+                                <Col md={6}>
+                                    <div className="company-info">
                                     <FormGroup>
-                                        <Label for="customerName">Customer Name</Label>
-                                        <Input
-                                            type="text"
-                                            name="customerName"
-                                            id="customerName"
-                                            value={invoiceData.customerName}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="customerAddress">Customer Address</Label>
-                                        <Input
-                                            type="text"
-                                            name="customerAddress"
-                                            id="customerAddress"
-                                            value={invoiceData.customerAddress}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="customerPhone">Customer Phone</Label>
-                                        <Input
-                                            type="text"
-                                            name="customerPhone"
-                                            id="customerPhone"
-                                            value={invoiceData.customerPhone}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </FormGroup>
+                                            <Label for="customerName">Company Logo</Label>
+                                            <Input
+                                                type="file"
+                                                name="companyLogo"
+                                                id="companyLogo"
+                                                onChange={handleFileChange}
+                                                required
+                                            />
+                                        </FormGroup>                                        <FormGroup>
+                                            <Label for="customerName">Company Name</Label>
+                                            <Input
+                                                type="text"
+                                                name="companyName"
+                                                id="companyName"
+                                                value={invoiceData.companyName}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="customerName">Comapany Address</Label>
+                                            <Input
+                                                type="text"
+                                                name="companyAddress"
+                                                id="companyAddress"
+                                                value={invoiceData.companyAddress}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </FormGroup>
+                                    </div>
+                                </Col>
+                                <Col md={6}>
+                                    <div className="customer-info">
+                                        <FormGroup>
+                                            <Label for="customerName">Customer Name</Label>
+                                            <Input
+                                                type="text"
+                                                name="customerName"
+                                                id="customerName"
+                                                value={invoiceData.customerName}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="customerAddress">Customer Address</Label>
+                                            <Input
+                                                type="text"
+                                                name="customerAddress"
+                                                id="customerAddress"
+                                                value={invoiceData.customerAddress}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <Label for="customerPhone">Customer Phone</Label>
+                                            <Input
+                                                type="text"
+                                                name="customerPhone"
+                                                id="customerPhone"
+                                                value={invoiceData.customerPhone}
+                                                onChange={handleInputChange}
+                                                required
+                                            />
+                                        </FormGroup>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row className="mb-4">
+                                <Col md={6}>
                                     <FormGroup>
                                         <Label for="date">Date</Label>
                                         <Input
@@ -197,6 +301,8 @@ const Index = () => {
                                             required
                                         />
                                     </FormGroup>
+                                </Col>
+                                <Col md={6}>
                                     <FormGroup>
                                         <Label for="country">Country</Label>
                                         <Input
@@ -212,83 +318,86 @@ const Index = () => {
                                             ))}
                                         </Input>
                                     </FormGroup>
-                                    <FormGroup>
-                                        <Label for="paymentLink">Payment Link</Label>
-                                        <Input
-                                            type="url"
-                                            name="paymentLink"
-                                            id="paymentLink"
-                                            value={invoiceData.paymentLink}
-                                            onChange={handleInputChange}
-                                            required
-                                        />
-                                    </FormGroup>
-                                    <h4>Items</h4>
-                                    {invoiceData.items.map((item, index) => (
-                                        <Row key={index} className="mb-3">
-                                            <Col md={4}>
-                                                <FormGroup>
-                                                    <Label for={`description${index}`}>Description</Label>
-                                                    <Input
-                                                        type="select"
-                                                        name="description"
-                                                        id={`description${index}`}
-                                                        value={fakeItems.find(i => i.name === item.description)?.id || ''}
-                                                        onChange={(e) => handleDescriptionChange(index, e)}
-                                                        required
-                                                    >
-                                                        <option value="">Select Item</option>
-                                                        {fakeItems.map((item) => (
-                                                            <option key={item.id} value={item.id}>{item.name}</option>
-                                                        ))}
-                                                    </Input>
-                                                </FormGroup>
-                                            </Col>
-                                            <Col md={2}>
-                                                <FormGroup>
-                                                    <Label for={`quantity${index}`}>Quantity</Label>
-                                                    <Input
-                                                        type="number"
-                                                        name="quantity"
-                                                        id={`quantity${index}`}
-                                                        value={item.quantity}
-                                                        onChange={(e) => handleItemChange(index, e)}
-                                                        required
-                                                    />
-                                                </FormGroup>
-                                            </Col>
-                                            <Col md={2}>
-                                                <FormGroup>
-                                                    <Label for={`price${index}`}>Price</Label>
-                                                    <Input
-                                                        type="number"
-                                                        name="price"
-                                                        id={`price${index}`}
-                                                        value={item.price}
-                                                        disabled
-                                                    />
-                                                </FormGroup>
-                                            </Col>
-                                            <Col md={2} className="d-flex align-items-center">
-                                                <Button color="danger" onClick={() => removeItem(index)}>Remove</Button>
-                                            </Col>
-                                        </Row>
-                                    ))}
-                                    <div className='d-flex justify-content-evenly mb-4'>
-                                        <Button color="primary" onClick={addItem}>Add Item</Button>
-                                        <Button color="success" type="submit">Submit</Button>
-                                        <Button color="info" onClick={printInvoice}>Print PDF</Button>
-                                    </div>
-                                </Form>
-                                <PrintInvoice ref={printRef} />
+                                </Col>
+                            </Row>
+                            <FormGroup>
+                                <Label for="paymentLink">Payment Link</Label>
+                                <Input
+                                    type="url"
+                                    name="paymentLink"
+                                    id="paymentLink"
+                                    value={invoiceData.paymentLink}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </FormGroup>
+                            <h4>Items</h4>
+                            {invoiceData.items.map((item, index) => (
+                                <Row key={index} className="mb-3">
+                                    <Col md={4}>
+                                        <FormGroup>
+                                            <Label for={`description${index}`}>Description</Label>
+                                            <Input
+                                                type="select"
+                                                name="description"
+                                                id={`description${index}`}
+                                                value={fakeItems.find(i => i.name === item.description)?.id || ''}
+                                                onChange={(e) => handleDescriptionChange(index, e)}
+                                                required
+                                            >
+                                                <option value="">Select Item</option>
+                                                {fakeItems.map((item) => (
+                                                    <option key={item.id} value={item.id}>{item.name}</option>
+                                                ))}
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label for={`quantity${index}`}>Quantity</Label>
+                                            <Input
+                                                type="number"
+                                                name="quantity"
+                                                id={`quantity${index}`}
+                                                value={item.quantity}
+                                                onChange={(e) => handleItemChange(index, e)}
+                                                required
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2}>
+                                        <FormGroup>
+                                            <Label for={`price${index}`}>Price</Label>
+                                            <Input
+                                                type="number"
+                                                name="price"
+                                                id={`price${index}`}
+                                                value={item.price}
+                                                disabled
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col md={2} className="d-flex align-items-center">
+                                        <Button color="danger" onClick={() => removeItem(index)}>Remove</Button>
+                                    </Col>
+                                </Row>
+                            ))}
+                            <div className='d-flex justify-content-evenly mb-4'>
+                                <Button color="primary" onClick={addItem}>Add Item</Button>
+                                <Button color="success" type="submit"  onClick={handleSubmit}>Submit</Button>
+                                <Button color="info" onClick={printInvoice}>Print PDF</Button>
                             </div>
-                        ) : (
-                            <Alert color="warning">You do not have permission to view this page.</Alert>
-                        )}
+                        </Form>
+                        <PrintInvoice ref={printRef} />
                     </div>
+                ) : (
+                    <Alert color="warning">You do not have permission to view this page.</Alert>
                 )}
             </div>
-        </Container>
+        )}
+    </div>
+</Container>
+
     );
 };
 
