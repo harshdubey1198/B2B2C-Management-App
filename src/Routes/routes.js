@@ -120,8 +120,8 @@ import SwitchFirm from "../Pages/Firms/SwitchFirm.js";
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
-  
   { path: "/clients-management", component: <ClientManagement /> },
+
   // invoicing
   { path: "/create-invoice", component: <CreateInvoice/> },
   { path: "/view-invoices", component: <ViewInvoice /> },
@@ -139,6 +139,7 @@ const authProtectedRoutes = [
   {path:"/firms-setting", component: <FirmsSetting />},
   {path:"/create-firm", component: <CreateFirm />},
   {path:"/switch-firm", component: <SwitchFirm/>},
+
   // Calender
   { path: "/calendar", component: <Calender /> },
 

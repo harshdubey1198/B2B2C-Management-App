@@ -134,6 +134,18 @@ export const masterAdminSidebarData = () => [
           // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
+      },
+      {
+        label: "Extra Pages",
+        icon: "mdi mdi-file-document-outline",
+        subItem: [
+          
+          { sublabel: "Ui Cards", link: "/ui-cards" },
+          { sublabel: "Ui Buttons", link: "/ui-buttons" },
+          { sublabel: "Ui Modals", link: "/ui-modals" },
+          { sublabel: "Ui Tabs", link: "/ui-tabs-accordions" },
+        ],
+
       }
   ];
   export const accountantSidebarData = () => [
