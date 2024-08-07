@@ -2,33 +2,33 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, Alert } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 
-const mockInvoices = [
-    {
-        id: 1,
-        customerName: 'John Doe',
-        date: '2024-07-30',
-        country: 'India',
-        items: [
-            { description: 'Item A', quantity: 2, price: 10.00 },
-            { description: 'Item B', quantity: 1, price: 20.00 }
-        ],
-        subtotal: 40.00,
-        tax: 7.20,
-        total: 47.20
-    },
-    {
-        id: 2,
-        customerName: 'Jane Smith',
-        date: '2024-07-29',
-        country: 'Malaysia',
-        items: [
-            { description: 'Item C', quantity: 3, price: 30.00 }
-        ],
-        subtotal: 90.00,
-        tax: 5.40,
-        total: 95.40
-    }
-];
+// const invoiceData = [
+//     {
+//         id: 1,
+//         customerName: 'John Doe',
+//         date: '2024-07-30',
+//         country: 'India',
+//         items: [
+//             { description: 'Item A', quantity: 2, price: 10.00 },
+//             { description: 'Item B', quantity: 1, price: 20.00 }
+//         ],
+//         subtotal: 40.00,
+//         tax: 7.20,
+//         total: 47.20
+//     },
+//     {
+//         id: 2,
+//         customerName: 'Jane Smith',
+//         date: '2024-07-29',
+//         country: 'Malaysia',
+//         items: [
+//             { description: 'Item C', quantity: 3, price: 30.00 }
+//         ],
+//         subtotal: 90.00,
+//         tax: 5.40,
+//         total: 95.40
+//     }
+// ];
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
@@ -37,8 +37,11 @@ const ViewInvoices = () => {
 
     useEffect(() => {
         // Fetch invoices data from an API or use mock data
-        setInvoices(mockInvoices);
+        const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || []
+        setInvoices(storedData);
     }, []);
+
+    console.log(invoices,"invoices")
 
     const PrintInvoice = React.forwardRef(({ invoice }, ref) => {
         if (!invoice) return null; // Handle case when invoice is undefined
@@ -98,7 +101,7 @@ const ViewInvoices = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {invoices.map(invoice => (
+                            {invoices.map((invoice,i) => (
                                 <tr key={invoice.id}>
                                     <td>{invoice.id}</td>
                                     <td>{invoice.customerName}</td>

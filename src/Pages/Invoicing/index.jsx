@@ -27,7 +27,8 @@ const Index = () => {
         date: '',
         country: 'India',
         items: [{ description: '', quantity: 1, price: 0 }],
-        paymentLink: ''
+        paymentLink: '',
+        id: ''
     });
     const [userRole, setUserRole] = useState(null);
     const [logo, setLogo] = useState('');
@@ -112,19 +113,20 @@ const Index = () => {
         setSuccess("");
     
         // Perform validation checks
-        if (checkEmptyFields(invoiceData)) {
-            setError("Please fill all the fields");
-            return;
-        }
+        
         if (!validatePhone(invoiceData.customerPhone)) {
             setError("Invalid Phone Number");
             return;
         }
     
+        const newdata = {
+            ...invoiceData,
+            id: Math.floor(Math.random() * 1000000)
+        }
         // Store data in local storage
         setTimeout(() => {
             const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
-            storedData.push(invoiceData);
+            storedData.push(newdata);
             localStorage.setItem("Invoice Form", JSON.stringify(storedData));
     
             // Clear the form data and show success message
@@ -145,9 +147,6 @@ const Index = () => {
         }, 1000);
     };
     
-
-    console.log(invoiceData, "daatatat")
-
     const PrintInvoice = React.forwardRef((props, ref) => {
         const { country, paymentLink } = invoiceData;
         const taxRate = countries[country]?.gst || 0;
