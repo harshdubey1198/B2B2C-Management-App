@@ -1,5 +1,5 @@
 // FirmSwitcher.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 // const firms = [
@@ -9,13 +9,15 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 //   { id: 4, name: 'Firm D', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844367/colorful-floral-logo_1025-262_ahzfec.avif' },
 // ];
 
-const firms = JSON.parse(localStorage.getItem("Firms")) || []
-console.log(firms, "firms")
 
 function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
+  const [firms, setFirms] = useState([])
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+  useEffect(() => {
+    setFirms(JSON.parse(localStorage.getItem("Firms")) || [])
+  }, [])
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
