@@ -1,12 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Form, FormGroup, Label, Input, Row, Col, Alert } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Container } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 
 const countries = {
-    India: { currency: 'INR', gst: 18 }, // GST as 18% for India
-    Malaysia: { currency: 'MYR', gst: 6 }, // GST as 6% for Malaysia
-    Dubai: { currency: 'AED', gst: 5 }, // VAT as 5% for Dubai
-    Indonesia: { currency: 'IDR', gst: 10 } // VAT as 10% for Indonesia
+    India: { currency: 'INR', gst: 18 },
+    Malaysia: { currency: 'MYR', gst: 6 },
+    Dubai: { currency: 'AED', gst: 5 },
+    Indonesia: { currency: 'IDR', gst: 10 }
 };
 
 const fakeItems = [
@@ -18,17 +18,31 @@ const fakeItems = [
 const Index = () => {
     const [invoiceData, setInvoiceData] = useState({
         customerName: '',
+        customerAddress: '',
+        customerPhone: '',
         date: '',
-        country: 'India', 
-        items: [{ description: '', quantity: 1, price: 0 }]
+        country: 'India',
+        items: [{ description: '', quantity: 1, price: 0 }],
+        paymentLink: ''
     });
     const [userRole, setUserRole] = useState(null);
+    const [logo, setLogo] = useState('');
 
     useEffect(() => {
         const authUser = localStorage.getItem('authUser');
         if (authUser) {
             const user = JSON.parse(authUser);
-            setUserRole(user?.response?.role); 
+            setUserRole(user?.response?.role);
+        }
+
+        // Retrieve logo from local storage
+        const firmsData = localStorage.getItem('Firms');
+        if (firmsData) {
+            const firms = JSON.parse(firmsData);
+            const currentFirm = firms.find(firm => firm.id === 1); // Change this as needed
+            if (currentFirm) {
+                setLogo(currentFirm.image || '');
+            }
         }
     }, []);
 
@@ -40,7 +54,7 @@ const Index = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updatedItems = [...invoiceData.items];
-        updatedItems[index][name] = parseFloat(value) || 0; 
+        updatedItems[index][name] = parseFloat(value) || 0;
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
 
@@ -52,7 +66,7 @@ const Index = () => {
             updatedItems[index] = {
                 ...updatedItems[index],
                 description: selectedItem.name,
-                price: selectedItem.price 
+                price: selectedItem.price
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
@@ -76,18 +90,27 @@ const Index = () => {
     };
 
     const PrintInvoice = React.forwardRef((props, ref) => {
-        const { country } = invoiceData;
+        const { country, paymentLink } = invoiceData;
         const taxRate = countries[country]?.gst || 0;
         const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
         const taxAmount = (totalAmount * taxRate) / 100;
 
         return (
-            <div ref={ref} className="card p-4  border rounded">
+            <div ref={ref} className="card p-4 border rounded">
+                <div className="text-center mb-4">
+                    {logo && <img src={logo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
+                    <h3>Company Name</h3>
+                    <p>Company Address</p>
+                </div>
                 <h2>Invoice</h2>
+                <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
                 <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
+                <p><strong>Customer Address:</strong> {invoiceData.customerAddress}</p>
+                <p><strong>Customer Phone:</strong> {invoiceData.customerPhone}</p>
                 <p><strong>Date:</strong> {invoiceData.date}</p>
                 <p><strong>Country:</strong> {country}</p>
                 <p><strong>Currency:</strong> {countries[country]?.currency || 'Unknown'}</p>
+                <p><strong>Prepared by:</strong> {userRole}</p>
                 <table className="table table-bordered">
                     <thead>
                         <tr>
@@ -111,6 +134,7 @@ const Index = () => {
                 <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
                 <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
                 <p><strong>Total:</strong> {(totalAmount + taxAmount).toFixed(2)}</p>
+                <p><strong>Payment Link:</strong> <a href={paymentLink} target="_blank" rel="noopener noreferrer">Pay Now</a></p>
             </div>
         );
     });
@@ -122,7 +146,7 @@ const Index = () => {
     const printRef = useRef();
 
     return (
-        <React.Fragment>
+        <Container>
             <div className='page-content'>
                 {userRole && (
                     <div>
@@ -136,6 +160,28 @@ const Index = () => {
                                             name="customerName"
                                             id="customerName"
                                             value={invoiceData.customerName}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="customerAddress">Customer Address</Label>
+                                        <Input
+                                            type="text"
+                                            name="customerAddress"
+                                            id="customerAddress"
+                                            value={invoiceData.customerAddress}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="customerPhone">Customer Phone</Label>
+                                        <Input
+                                            type="text"
+                                            name="customerPhone"
+                                            id="customerPhone"
+                                            value={invoiceData.customerPhone}
                                             onChange={handleInputChange}
                                             required
                                         />
@@ -165,6 +211,17 @@ const Index = () => {
                                                 <option key={country} value={country}>{country}</option>
                                             ))}
                                         </Input>
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <Label for="paymentLink">Payment Link</Label>
+                                        <Input
+                                            type="url"
+                                            name="paymentLink"
+                                            id="paymentLink"
+                                            value={invoiceData.paymentLink}
+                                            onChange={handleInputChange}
+                                            required
+                                        />
                                     </FormGroup>
                                     <h4>Items</h4>
                                     {invoiceData.items.map((item, index) => (
@@ -208,7 +265,7 @@ const Index = () => {
                                                         name="price"
                                                         id={`price${index}`}
                                                         value={item.price}
-                                                        disabled // Price is now automatically set by the dropdown
+                                                        disabled
                                                     />
                                                 </FormGroup>
                                             </Col>
@@ -218,9 +275,9 @@ const Index = () => {
                                         </Row>
                                     ))}
                                     <div className='d-flex justify-content-evenly mb-4'>
-                                      <Button color="primary" onClick={addItem}>Add Item</Button>
-                                      <Button color="success" type="submit">Submit</Button>
-                                      <Button color="info" onClick={printInvoice}>Print PDF</Button>
+                                        <Button color="primary" onClick={addItem}>Add Item</Button>
+                                        <Button color="success" type="submit">Submit</Button>
+                                        <Button color="info" onClick={printInvoice}>Print PDF</Button>
                                     </div>
                                 </Form>
                                 <PrintInvoice ref={printRef} />
@@ -231,7 +288,7 @@ const Index = () => {
                     </div>
                 )}
             </div>
-        </React.Fragment>
+        </Container>
     );
 };
 
