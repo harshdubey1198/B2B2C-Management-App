@@ -143,7 +143,10 @@ export const masterAdminSidebarData = () => [
           { sublabel: "Ui Cards", link: "/ui-cards" },
           { sublabel: "Ui Buttons", link: "/ui-buttons" },
           { sublabel: "Ui Modals", link: "/ui-modals" },
-          { sublabel: "Ui Tabs", link: "/ui-tabs-accordions" },
+          { sublabel: "Boxicons", link: "/icon-boxicon" },
+          { sublabel: "MDI", link: "/icons-materialdesign" },
+          { sublabel: "FA-Icons", link: "/icons-fontawesome" },
+          { sublabel: "Drip-Icons", link: "/icon-dripicons" },
         ],
 
       }
