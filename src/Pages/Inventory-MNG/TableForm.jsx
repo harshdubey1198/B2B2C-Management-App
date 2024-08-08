@@ -23,9 +23,9 @@ const InventoryItemForm = () => {
     price: "",
     category: "",
     supplier: "",
-    image: null, // For the image file
-    imageUrl: "", // For previewing the uploaded image
-    variant: "",
+    image: null,
+    imageUrl: "",
+    variants: [], 
     type: "",
   });
   const [error, setError] = useState("");
@@ -47,9 +47,23 @@ const InventoryItemForm = () => {
       setFormValues((prevState) => ({
         ...prevState,
         image: file,
-        imageUrl: URL.createObjectURL(file), // Create a URL for previewing
+        imageUrl: URL.createObjectURL(file),
       }));
     }
+  };
+
+  const handleVariantChange = (index, e) => {
+    const newVariants = [...formValues.variants];
+    newVariants[index] = e.target.value;
+    setFormValues({ ...formValues, variants: newVariants });
+  };
+
+  const handleAddVariant = () => {
+    setFormValues({ ...formValues, variants: [...formValues.variants, ""] });
+  };
+
+  const handleRemoveVariant = (index) => {
+    setFormValues({ ...formValues, variants: formValues.variants.filter((_, i) => i !== index) });
   };
 
   const handleSubmit = (e) => {
@@ -60,20 +74,19 @@ const InventoryItemForm = () => {
 
     if (checkEmptyFields({
       ...formValues,
-      image: formValues.image ? 'Not Empty' : '' // Ensure image is provided
+      image: formValues.image ? 'Not Empty' : ''
     })) {
       setError("Please fill in all fields and upload an image.");
       setLoading(false);
       return;
     }
 
-    // Simulate API call
     setTimeout(() => {
       const storedData = JSON.parse(localStorage.getItem("inventoryItems")) || [];
       const newItems = {
         ...formValues,
-        id: uuidv4(), // Generate a unique ID
-        image: formValues.imageUrl // Store image URL (in practice, you might upload the image to a server)
+        id: uuidv4(),
+        image: formValues.imageUrl
       };
       storedData.push(newItems);
       localStorage.setItem("inventoryItems", JSON.stringify(storedData));
@@ -90,7 +103,7 @@ const InventoryItemForm = () => {
         supplier: "",
         image: null,
         imageUrl: "",
-        variant: "",
+        variants: [],
         type: "",
       });
     }, 1000);
@@ -195,15 +208,28 @@ const InventoryItemForm = () => {
                       )}
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="variant">Variant</Label>
-                      <Input
-                        type="text"
-                        id="variant"
-                        name="variant"
-                        placeholder="Enter item variant"
-                        value={formValues.variant}
-                        onChange={handleChange}
-                      />
+                      <Label htmlFor="variants">Variants</Label>
+                      {formValues.variants.map((variant, index) => (
+                        <div key={index} className="d-flex align-items-center mb-2">
+                          <Input
+                            type="text"
+                            name="variants"
+                            placeholder={`Variant ${index + 1}`}
+                            value={variant}
+                            onChange={(e) => handleVariantChange(index, e)}
+                          />
+                          <Button
+                            color="danger"
+                            className="ml-2"
+                            onClick={() => handleRemoveVariant(index)}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ))}
+                      <Button color="success" onClick={handleAddVariant}>
+                        Add Variant
+                      </Button>
                     </FormGroup>
                     <FormGroup>
                       <Label htmlFor="type">Type</Label>

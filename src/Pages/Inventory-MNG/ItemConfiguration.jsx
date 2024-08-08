@@ -2,65 +2,53 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 
-// const initialItems = [
-//   {
-//     id: 1,
-//     name: "Item A",
-//     variants: [
-//       { id: 1, variantName: "Small", price: 10.00 },
-//       { id: 2, variantName: "Large", price: 15.00 }
-//     ],
-//     taxation: { id: 1, name: "VAT", rate: 5.00 }
-//   },
-// ];
-
-// const initialTaxations = [
-//   { id: 1, name: "VAT", rate: 5.00 },
-//   { id: 2, name: "Service Tax", rate: 10.00 },
-// ];
-
 function ItemConfiguration() {
   const [items, setItems] = useState([]);
   const [taxations, setTaxations] = useState([]);
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState({ id: null, name: '', variants: [] });
   const [modalOpen, setModalOpen] = useState(false);
 
   const toggleModal = () => setModalOpen(!modalOpen);
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("taxationData")) || []
-    setTaxations(storedData);
-  }, [])
+    const storedTaxations = JSON.parse(localStorage.getItem("taxationData")) || [];
+    setTaxations(storedTaxations);
 
-  useEffect(() => {
-    const storedData = localStorage.getItem("itemConfigData");
-    if (storedData) {
-      try {
-        setItems(JSON.parse(storedData));
-      } catch (e) {
-        console.error("Failed to parse taxation data from local storage", e);
-        setItems([]);
-      }
-    }
+    const storedItems = JSON.parse(localStorage.getItem("inventoryItems")) || [];
+    setItems(storedItems);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("itemConfigData", JSON.stringify(items))
-  },[items])
+    localStorage.setItem("inventoryItems", JSON.stringify(items));
+  }, [items]);
 
   const handleEdit = (item) => {
-    setEditingItem(item);
+    setEditingItem({
+      ...item,
+      variants: item.variants.map(v => ({
+        variantName: v.variantName || v,
+        price: v.price || 0,
+        tax: v.tax || 0
+      }))
+    });
     toggleModal();
   };
 
   const handleSave = () => {
     if (editingItem.id) {
-      setItems(items.map(item => item.id === editingItem.id ? editingItem : item));
+      setItems(items.map(item => item.id === editingItem.id ? {
+        ...editingItem,
+        variants: editingItem.variants
+      } : item));
     } else {
-      setItems([...items, { ...editingItem, id: items.length + 1 }]);
+      setItems([...items, {
+        ...editingItem,
+        id: items.length ? Math.max(items.map(item => parseInt(item.id))) + 1 : 1,
+        variants: editingItem.variants
+      }]);
     }
     toggleModal();
-    setEditingItem(null); 
+    setEditingItem({ id: null, name: '', variants: [] }); 
   };
 
   const handleInputChange = (e) => {
@@ -71,12 +59,33 @@ function ItemConfiguration() {
   const handleVariantChange = (index, e) => {
     const { id, value } = e.target;
     const updatedVariants = [...editingItem.variants];
-    updatedVariants[index] = { ...updatedVariants[index], [id]: id === 'price' ? parseFloat(value) || 0 : value };
+    updatedVariants[index] = {
+      ...updatedVariants[index],
+      [id]: id === 'price' || id === 'tax' ? parseFloat(value) || 0 : value
+    };
     setEditingItem({ ...editingItem, variants: updatedVariants });
   };
 
+  const handleTaxChange = (index, e) => {
+    const { value } = e.target;
+    const selectedTax = taxations.find(t => t.id === parseInt(value));
+    const updatedVariants = [...editingItem.variants];
+    updatedVariants[index] = {
+      ...updatedVariants[index],
+      tax: selectedTax ? selectedTax.rate : 0
+    };
+    setEditingItem({
+      ...editingItem,
+      variants: updatedVariants,
+      taxation: selectedTax
+    });
+  };
+
   const handleAddVariant = () => {
-    setEditingItem({ ...editingItem, variants: [...editingItem.variants, { id: Date.now(), variantName: '', price: 0 }] });
+    setEditingItem({
+      ...editingItem,
+      variants: [...editingItem.variants, { variantName: '', price: 0, tax: 0 }]
+    });
   };
 
   const handleRemoveVariant = (index) => {
@@ -84,9 +93,9 @@ function ItemConfiguration() {
     setEditingItem({ ...editingItem, variants: updatedVariants });
   };
 
-  const handleTaxationChange = (e) => {
-    const { value } = e.target;
-    setEditingItem({ ...editingItem, taxation: taxations.find(t => t.id === parseInt(value)) });
+  const handleDelete = (id) => {
+    const updatedItems = items.filter(item => item.id !== id);
+    setItems(updatedItems);
   };
 
   return (
@@ -96,7 +105,7 @@ function ItemConfiguration() {
         <Col lg={12}>
           <Card>
             <CardBody>
-              <Button color="primary" onClick={() => { setEditingItem({ id: null, name: '', variants: [], taxation: null }); toggleModal(); }}>
+              <Button color="primary" onClick={() => { setEditingItem({ id: null, name: '', variants: [] }); toggleModal(); }}>
                 Add New Item
               </Button>
               <Table className="table-bordered mt-3">
@@ -104,24 +113,25 @@ function ItemConfiguration() {
                   <tr>
                     <th>Name</th>
                     <th>Variants</th>
-                    <th>Taxation</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map(item => (
+                  {items.length > 0 && items.map(item => (
                     <tr key={item.id}>
                       <td>{item.name}</td>
                       <td>
                         <ul>
-                          {item.variants.map(variant => (
-                            <li key={variant.id}>{variant.variantName} - ${variant.price.toFixed(2)}</li>
-                          ))}
+                          {Array.isArray(item.variants) ? item.variants.map((variant, idx) => (
+                            <li key={idx}>
+                              {variant.variantName || variant} - ${isNaN(variant.price) ? '0.00' : parseFloat(variant.price).toFixed(2)} (Tax: {variant.tax}%)
+                            </li>
+                          )) : 'No variants'}
                         </ul>
                       </td>
-                      <td>{item.taxation ? `${item.taxation.name} (${item.taxation.rate}%)` : 'N/A'}</td>
                       <td>
-                        <Button color="warning" onClick={() => handleEdit(item)}>Edit</Button>
+                        <Button color="warning" onClick={() => handleEdit(item)} className="mr-2">Edit</Button>
+                        <Button color="danger" onClick={() => handleDelete(item.id)}>Delete</Button>
                       </td>
                     </tr>
                   ))}
@@ -149,41 +159,41 @@ function ItemConfiguration() {
           <FormGroup>
             <Label>Variants</Label>
             {editingItem?.variants.map((variant, index) => (
-              <div key={variant.id} className="d-flex mb-2">
+              <div key={index} className="d-flex mb-2" style={{ gap: '10px' }}>
                 <Input
                   type="text"
                   id="variantName"
                   placeholder="Variant Name"
-                  value={variant.variantName}
+                  value={variant.variantName || ''}
                   onChange={(e) => handleVariantChange(index, e)}
                 />
                 <Input
                   type="number"
                   id="price"
                   placeholder="Price"
-                  value={variant.price}
+                  value={variant.price || ''}
                   onChange={(e) => handleVariantChange(index, e)}
                 />
+                <FormGroup className="mx-2">
+                  <Label for={`tax-${index}`}>Tax</Label>
+                  <Input
+                    type="select"
+                    id={`tax-${index}`}
+                    value={taxations.find(t => t.rate === variant.tax)?.id || ''}
+                    onChange={(e) => handleTaxChange(index, e)}
+                  >
+                    <option value="">Select Tax</option>
+                    {taxations.map(tax => (
+                      <option key={tax.id} value={tax.id}>
+                        {tax.name} ({tax.rate}%)
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
                 <Button color="danger" onClick={() => handleRemoveVariant(index)}>Remove</Button>
               </div>
             ))}
             <Button color="success" onClick={handleAddVariant}>Add Variant</Button>
-          </FormGroup>
-          <FormGroup>
-            <Label for="taxation">Taxation</Label>
-            <Input
-              type="select"
-              id="taxation"
-              value={editingItem?.taxation ? editingItem.taxation.id : ''}
-              onChange={handleTaxationChange}
-            >
-              <option value="">Select Taxation</option>
-              {taxations.map(tax => (
-                <option key={tax.id} value={tax.id}>
-                  {tax.name} ({tax.rate}%)
-                </option>
-              ))}
-            </Input>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
