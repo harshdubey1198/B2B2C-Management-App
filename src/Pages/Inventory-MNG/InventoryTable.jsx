@@ -7,7 +7,7 @@ import Icon from '@mdi/react';
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
-  const [role, setRole] = useState([]);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
@@ -20,7 +20,7 @@ function InventoryTable() {
       })) : []
     })));
 
-    const storedRoles = JSON.parse(localStorage.getItem('role')) || [];
+    const storedRoles = JSON.parse(localStorage.getItem('role')) || "";
     setRole(storedRoles);
   }, [inventoryData]);
 
