@@ -2,21 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 
-const initialTaxationData = [
-  {
-    id: 1,
-    name: "VAT",
-    rate: 5.00,
-    description: "Value Added Tax",
-  },
-  {
-    id: 2,
-    name: "Service Tax",
-    rate: 10.00,
-    description: "Service Tax",
-  },
-];
-
 function TaxationTable() {
   const [taxations, setTaxations] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
