@@ -12,7 +12,7 @@ function InventoryTable() {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
     setInventoryData(storedData.map(item => ({
       ...item,
-      price: Number(item.price), 
+      // price: Number(item.price), 
       variants: Array.isArray(item.variants) ? item.variants.map(v => ({
         ...v,
         price: Number(v.price), 
@@ -20,6 +20,7 @@ function InventoryTable() {
       })) : [] 
     })));
   }, []);
+
 
   const handleRowClick = (id) => {
     if (selectedItemId === id) {
@@ -87,16 +88,18 @@ function InventoryTable() {
                               <td>${variant.price.toFixed(2)}</td>
                               <td>{index === 0 ? item.category : ''}</td>
                               <td>
-                                {variant.variantName} - ${calculatePriceAfterTax(variant.price, variant.tax)}
+                                {variant.name} - ${calculatePriceAfterTax(variant.price, variant.tax)}
                               </td>
                               <td>{index === 0 ? item.type : ''}</td>
                               <td>
+                                <div className='d-flex'>
                                 <Button color="warning" onClick={() => handleEditClick(item.id)} title="Edit">
                                   <Icon path={mdiPencil} size={1} />
                                 </Button>
                                 <Button color="danger" onClick={() => handleDeleteClick(item.id)} style={{ marginLeft: '5px' }} title="Delete">
                                   <Icon path={mdiDelete} size={1} />
                                 </Button>
+                                </div>
                               </td>
                             </tr>
                           ))

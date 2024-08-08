@@ -14,6 +14,8 @@ import {
   Table,
 } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { mdiPencil, mdiDelete, mdiClose } from "@mdi/js";
+import Icon from "@mdi/react";
 
 function ItemConfiguration() {
   const [items, setItems] = useState([]);
@@ -37,6 +39,8 @@ function ItemConfiguration() {
     setItems(storedItems);
   }, []);
 
+  console.log(setItems, "setitems");
+
   useEffect(() => {
     localStorage.setItem("inventoryItems", JSON.stringify(items));
   }, [items]);
@@ -45,7 +49,7 @@ function ItemConfiguration() {
     setEditingItem({
       ...item,
       variants: item.variants.map((v) => ({
-        variantName: v.variantName || v,
+        name: v.name || v,
         price: v.price || 0,
         tax: v.tax || 0,
       })),
@@ -114,10 +118,7 @@ function ItemConfiguration() {
   const handleAddVariant = () => {
     setEditingItem({
       ...editingItem,
-      variants: [
-        ...editingItem.variants,
-        { variantName: "", price: 0, tax: 0 },
-      ],
+      variants: [...editingItem.variants, { name: "", price: 0, tax: 0 }],
     });
   };
 
@@ -168,7 +169,7 @@ function ItemConfiguration() {
                             {Array.isArray(item.variants)
                               ? item.variants.map((variant, idx) => (
                                   <li key={idx}>
-                                    {variant.variantName || variant} - $
+                                    {variant.name} - $
                                     {isNaN(variant.price)
                                       ? "0.00"
                                       : parseFloat(variant.price).toFixed(
@@ -181,19 +182,21 @@ function ItemConfiguration() {
                           </ul>
                         </td>
                         <td>
-                          <Button
-                            color="warning"
-                            onClick={() => handleEdit(item)}
-                            className="mr-2"
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            color="danger"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            Delete
-                          </Button>
+                          <div className="d-flex gap-2">
+                            <Button
+                              color="warning"
+                              onClick={() => handleEdit(item)}
+                              className="mr-2"
+                            >
+                              <Icon path={mdiPencil} size={1} />
+                            </Button>
+                            <Button
+                              color="danger"
+                              onClick={() => handleDelete(item.id)}
+                            >
+                              <Icon path={mdiDelete} size={1} />
+                            </Button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -230,7 +233,7 @@ function ItemConfiguration() {
                   type="text"
                   id="variantName"
                   placeholder="Variant Name"
-                  value={variant.variantName || ""}
+                  value={variant.name || ""}
                   onChange={(e) => handleVariantChange(index, e)}
                   style={{ flex: 1 }}
                 />
@@ -266,13 +269,13 @@ function ItemConfiguration() {
                 <Button
                   color="danger"
                   onClick={() => handleRemoveVariant(index)}
-                  style={{
-                    padding: "0.5rem",
-                    minWidth: "2rem",
-                    fontSize: "1rem",
-                  }}
+                  // style={{
+                  //   padding: "0.5rem",
+                  //   minWidth: "2rem",
+                  //   fontSize: "1rem",
+                  // }}
                 >
-                  &times;
+                  <Icon path={mdiClose} size={1} />
                 </Button>
               </div>
             ))}

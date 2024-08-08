@@ -20,12 +20,11 @@ const InventoryItemForm = () => {
     name: "",
     description: "",
     quantity: "",
-    price: "",
     category: "",
     supplier: "",
     image: null,
     imageUrl: "",
-    variants: [], 
+    variants: [], // Variants now hold objects with name, price, and tax
     type: "",
   });
   const [error, setError] = useState("");
@@ -53,17 +52,24 @@ const InventoryItemForm = () => {
   };
 
   const handleVariantChange = (index, e) => {
+    const { name, value } = e.target;
     const newVariants = [...formValues.variants];
-    newVariants[index] = e.target.value;
+    newVariants[index] = { ...newVariants[index], [name]: value };
     setFormValues({ ...formValues, variants: newVariants });
   };
 
   const handleAddVariant = () => {
-    setFormValues({ ...formValues, variants: [...formValues.variants, ""] });
+    setFormValues({ 
+      ...formValues, 
+      variants: [...formValues.variants, { name: "", price: "", tax: "" }] 
+    });
   };
 
   const handleRemoveVariant = (index) => {
-    setFormValues({ ...formValues, variants: formValues.variants.filter((_, i) => i !== index) });
+    setFormValues({ 
+      ...formValues, 
+      variants: formValues.variants.filter((_, i) => i !== index) 
+    });
   };
 
   const handleSubmit = (e) => {
@@ -98,7 +104,6 @@ const InventoryItemForm = () => {
         name: "",
         description: "",
         quantity: "",
-        price: "",
         category: "",
         supplier: "",
         image: null,
@@ -158,17 +163,6 @@ const InventoryItemForm = () => {
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="price">Price</Label>
-                      <Input
-                        type="number"
-                        id="price"
-                        name="price"
-                        placeholder="Enter price"
-                        value={formValues.price}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
                       <Label htmlFor="category">Category</Label>
                       <Input
                         type="text"
@@ -213,10 +207,26 @@ const InventoryItemForm = () => {
                         <div key={index} className="d-flex align-items-center mb-2">
                           <Input
                             type="text"
-                            name="variants"
-                            placeholder={`Variant ${index + 1}`}
-                            value={variant}
+                            name="name"
+                            placeholder={`Variant Name ${index + 1}`}
+                            value={variant.name}
                             onChange={(e) => handleVariantChange(index, e)}
+                          />
+                          <Input
+                            type="number"
+                            name="price"
+                            placeholder={`Price ${index + 1}`}
+                            value={variant.price}
+                            onChange={(e) => handleVariantChange(index, e)}
+                            className="ml-2"
+                          />
+                          <Input
+                            type="number"
+                            name="tax"
+                            placeholder={`Tax ${index + 1}`}
+                            value={variant.tax}
+                            onChange={(e) => handleVariantChange(index, e)}
+                            className="ml-2"
                           />
                           <Button
                             color="danger"
