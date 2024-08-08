@@ -1,31 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 
-const initialItems = [
-  {
-    id: 1,
-    name: "Item A",
-    variants: [
-      { id: 1, variantName: "Small", price: 10.00 },
-      { id: 2, variantName: "Large", price: 15.00 }
-    ],
-    taxation: { id: 1, name: "VAT", rate: 5.00 }
-  },
-];
+// const initialItems = [
+//   {
+//     id: 1,
+//     name: "Item A",
+//     variants: [
+//       { id: 1, variantName: "Small", price: 10.00 },
+//       { id: 2, variantName: "Large", price: 15.00 }
+//     ],
+//     taxation: { id: 1, name: "VAT", rate: 5.00 }
+//   },
+// ];
 
-const initialTaxations = [
-  { id: 1, name: "VAT", rate: 5.00 },
-  { id: 2, name: "Service Tax", rate: 10.00 },
-];
+// const initialTaxations = [
+//   { id: 1, name: "VAT", rate: 5.00 },
+//   { id: 2, name: "Service Tax", rate: 10.00 },
+// ];
 
 function ItemConfiguration() {
-  const [items, setItems] = useState(initialItems);
-  const [taxations] = useState(initialTaxations);
+  const [items, setItems] = useState([]);
+  const [taxations, setTaxations] = useState([]);
   const [editingItem, setEditingItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   const toggleModal = () => setModalOpen(!modalOpen);
+
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("taxationData")) || []
+    setTaxations(storedData);
+  }, [])
+
+  useEffect(() => {
+    const storedData = localStorage.getItem("itemConfigData");
+    if (storedData) {
+      try {
+        setItems(JSON.parse(storedData));
+      } catch (e) {
+        console.error("Failed to parse taxation data from local storage", e);
+        setItems([]);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("itemConfigData", JSON.stringify(items))
+  },[items])
 
   const handleEdit = (item) => {
     setEditingItem(item);
