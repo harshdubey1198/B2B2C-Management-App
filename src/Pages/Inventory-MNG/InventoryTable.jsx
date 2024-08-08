@@ -1,42 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { mdiPencil, mdiDelete } from '@mdi/js';
+import { mdiPencil, mdiDelete, mdiCheck } from '@mdi/js';
 import Icon from '@mdi/react';
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
     setInventoryData(storedData.map(item => ({
       ...item,
-      // price: Number(item.price), 
       variants: Array.isArray(item.variants) ? item.variants.map(v => ({
         ...v,
-        price: Number(v.price), 
-        tax: Number(v.tax) 
-      })) : [] 
+        price: Number(v.price),
+        tax: Number(v.tax)
+      })) : []
     })));
-  }, []);
 
+    const storedRoles = JSON.parse(localStorage.getItem('role')) || "";
+    setRole(storedRoles);
+  }, [inventoryData]);
 
   const handleRowClick = (id) => {
     if (selectedItemId === id) {
-      setSelectedItemId(null); 
+      setSelectedItemId(null);
     } else {
       setSelectedItemId(id);
     }
   };
 
   const handleEditClick = (id) => {
-  
     console.log("Edit item:", id);
   };
 
   const handleDeleteClick = (id) => {
     const updatedData = inventoryData.filter(item => item.id !== id);
+    setInventoryData(updatedData);
+    localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
+  };
+
+  const handleApproveClick = (id) => {
+    const updatedData = inventoryData.map(item =>
+      item.id === id ? { ...item, approved: true } : item
+    );
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
   };
@@ -50,8 +59,7 @@ function InventoryTable() {
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Table" />
         <p className='mm-active'>
-          This is the Inventory Table page. 
-          Here you can view and manage your inventory items.
+          This is the Inventory Table page. Here you can view and manage your inventory items.
         </p>
         <Col lg={12}>
           <Card>
@@ -68,6 +76,7 @@ function InventoryTable() {
                       <th>Category</th>
                       <th>Variants</th>
                       <th>Type</th>
+                      <th>Status</th> {/* New column for approval status */}
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -76,8 +85,8 @@ function InventoryTable() {
                       <React.Fragment key={item.id}>
                         {item.variants.length > 0 ? (
                           item.variants.map((variant, index) => (
-                            <tr 
-                              key={`${item.id}-${index}`} 
+                            <tr
+                              key={`${item.id}-${index}`}
                               onClick={() => handleRowClick(item.id)}
                               style={{ cursor: 'pointer' }} // Pointer cursor for clickable rows
                             >
@@ -92,20 +101,32 @@ function InventoryTable() {
                               </td>
                               <td>{index === 0 ? item.type : ''}</td>
                               <td>
+                                {item.approved ? (
+                                  <span>Approved</span>
+                                ) : (
+                                  <span>Pending</span>
+                                )}
+                              </td>
+                              <td>
                                 <div className='d-flex'>
-                                <Button color="warning" onClick={() => handleEditClick(item.id)} title="Edit">
-                                  <Icon path={mdiPencil} size={1} />
-                                </Button>
-                                <Button color="danger" onClick={() => handleDeleteClick(item.id)} style={{ marginLeft: '5px' }} title="Delete">
-                                  <Icon path={mdiDelete} size={1} />
-                                </Button>
+                                  {role === "Firm_Admin" && !item.approved && (
+                                    <Button color="success" onClick={() => handleApproveClick(item.id)} style={{ marginRight: '5px' }} title="Approve">
+                                      <Icon path={mdiCheck} size={1} />
+                                    </Button>
+                                  )}
+                                  <Button color="warning" onClick={() => handleEditClick(item.id)} style={{ marginRight: '5px' }} title="Edit">
+                                    <Icon path={mdiPencil} size={1} />
+                                  </Button>
+                                  <Button color="danger" onClick={() => handleDeleteClick(item.id)} title="Delete">
+                                    <Icon path={mdiDelete} size={1} />
+                                  </Button>
                                 </div>
                               </td>
                             </tr>
                           ))
                         ) : (
                           <tr>
-                            <td colSpan="9">No variants available</td>
+                            <td colSpan="10">No variants available</td>
                           </tr>
                         )}
                       </React.Fragment>
