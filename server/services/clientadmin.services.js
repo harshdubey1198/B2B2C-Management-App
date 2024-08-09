@@ -47,7 +47,15 @@ async function getRegiteredUser(){
 }
 
 
-
+// UPDATE TEH CLIENT ADMIN
+async function updateClient(body, id) {
+    try {
+        const data = await ClientAdmin.findOneAndUpdate({_id: id}, body, {new: true})
+        return data
+    } catch (error) {
+        return Promise.reject("Unable to Update the Client")
+    }
+}
 
 // LOGIN USER BASED ON THIER ROLE
 async function userLogin(body) {
