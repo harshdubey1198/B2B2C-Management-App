@@ -66,6 +66,7 @@ const clientData = [
 function ClientManagement() {
   const [hoveredClientId, setHoveredClientId] = useState(null);
   const [requestedData, setRequestedData] = useState([])
+  const [trigger, setTrigger] = useState(0)
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClients`).then((response) => {
@@ -73,7 +74,23 @@ function ClientManagement() {
     }).catch((error) => {
       console.log(error);
     })
-  }, [])
+  }, [trigger])
+
+  const handleAccept = (id) => {
+    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Accepted"}).then((response) => {
+      setTrigger(prev => prev + 1)
+    }).catch((error) => {
+      console.log(error, "error updating data")
+    })
+  }
+
+  const handleReject = (id) => {
+    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Rejected"}).then((response) => {
+      setTrigger(prev => prev + 1)
+    }).catch((error) => {
+      console.log(error, "error updating data")
+    })
+  }
 
   console.log(requestedData, "request")
   return (
@@ -177,13 +194,16 @@ function ClientManagement() {
                 <td>{client.companyName}</td>
                 <td>{client.companyMobile}</td>
                 <td>{client.status}</td>
-                <td>
-                  {/* Add buttons or dropdowns for approval/rejection */}
-                  <div className='d-flex gap-2'>
-                  <Button color="success">Approve</Button>
-                  <Button color="danger">Reject</Button>
-                  </div>
-                </td>
+                {
+                  client.status === "Requested" ? (
+                    <td>
+                      <div className='d-flex gap-2'>
+                      <Button color="success" onClick={() => handleAccept(client?._id)}>Approve</Button>
+                      <Button color="danger" onClick={() => handleReject(client?._id)}>Reject</Button>
+                      </div>
+                    </td>
+                  ) : ""
+                }
               </tr>
             ))}
           </tbody>
