@@ -22,6 +22,15 @@ router.get("/getclients", async (req,res) => {
     })
 })
 
+router.put("/updateClient/:id", async (req,res) => {
+    ClientServices.updateClient(req.body, req.params.id).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
+    })
+})
+
 router.post("/login", (req,res) => {
     ClientServices.userLogin(req.body).then(async (response) => {
         try {
