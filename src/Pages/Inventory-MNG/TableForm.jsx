@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
@@ -30,6 +30,13 @@ const InventoryItemForm = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [taxationData, setTaxationData] = useState([]);
+
+  useEffect(() => {
+    // Retrieve taxation table from localStorage
+    const storedTaxationTable = JSON.parse(localStorage.getItem("taxationData")) || [];
+    setTaxationData(storedTaxationTable);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -221,13 +228,19 @@ const InventoryItemForm = () => {
                             className="ml-2"
                           />
                           <Input
-                            type="number"
+                            type="select"
                             name="tax"
-                            placeholder={`Tax ${index + 1}`}
                             value={variant.tax}
                             onChange={(e) => handleVariantChange(index, e)}
                             className="ml-2"
-                          />
+                          >
+                            <option value="">Select Tax</option>
+                            {taxationData.map((tax) => (
+                              <option key={tax.id} value={tax.rate}>
+                                {tax.name} ({tax.rate}%)
+                              </option>
+                            ))}
+                          </Input>
                           <Button
                             color="danger"
                             className="ml-2"
