@@ -14,6 +14,7 @@ let services = {}
 services.clientRegistration = clientRegistration
 services.userLogin = userLogin
 services.getRegiteredUser = getRegiteredUser
+services.updateClient = updateClient
 services.UserForgetPassword = UserForgetPassword
 services.resetPassword = resetPassword
 
@@ -44,6 +45,9 @@ async function getRegiteredUser(){
         return Promise.reject("Unable to get registered client")
     }
 }
+
+
+
 
 // LOGIN USER BASED ON THIER ROLE
 async function userLogin(body) {
