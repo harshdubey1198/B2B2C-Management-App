@@ -24,7 +24,11 @@ function ClientManagement() {
           </>
         );
       case 'Rejected':
-        return null;
+        return (
+          <>
+            <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>
+          </>
+        );
       default:
         return (
           <>
