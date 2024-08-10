@@ -91,7 +91,7 @@ function ClientManagement() {
       console.log(error, "error updating data")
     })
   }
-
+  
   console.log(requestedData, "request")
   return (
     <React.Fragment>
