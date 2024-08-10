@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Card, CardBody, Col,DropdownItem, Dropdown, DropdownMenu, DropdownToggle} from "reactstrap";
+import {Button, Card, CardBody, Col , Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 
@@ -9,12 +9,37 @@ function ClientManagement() {
   const [requestedData, setRequestedData] = useState([])
   const [trigger, setTrigger] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState({});
-
-const toggleDropdown = (id) => {
-  setDropdownOpen(prevState => ({ ...prevState, [id]: !prevState[id] }));
-};
-
-
+  const getDropdownItems = (status, id) => {
+    switch (status) {
+      case 'Accepted':
+        return (
+          <>
+            <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>
+          </>
+        );
+      case 'Hold':
+        return (
+          <>
+            <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
+          </>
+        );
+      case 'Rejected':
+        return null;
+      default:
+        return (
+          <>
+            <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>
+            <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
+          </>
+        );
+    }
+  };
+  const toggleDropdown = (id) => {
+    setDropdownOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClients`).then((response) => {
       setRequestedData(response)
@@ -46,24 +71,6 @@ const toggleDropdown = (id) => {
       console.log(error, "error updating data")
     })
   }
-
-  const getDropdownItems = (status, id) => {
-    const items = [];
-
-    if (status === 'Accepted') {
-      items.push(
-        <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>,
-        <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
-      );
-    } else {
-      items.push(
-        <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>,
-        <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
-      );
-    }
-
-    return items;
-  };
 
   console.log(requestedData, "request")
   return (
@@ -103,23 +110,16 @@ const toggleDropdown = (id) => {
                 <td>{client.companyMobile}</td>
                 <td>{client.status}</td>
                 
-                {/* <td>
-                  <div className='d-flex gap-2'>
-                    <Button color="success" onClick={() => handleAccept(client?._id)}>Approve</Button>
-                    <Button color="danger" onClick={() => handleReject(client?._id)}>Reject</Button>
-                    <Button color="info" onClick={() => handleHold(client?._id)}>Hold</Button>
-                  </div>
-                </td> */}
                 <td>
-                          <Dropdown isOpen={dropdownOpen[client?._id]} toggle={() => toggleDropdown(client?._id)}>
-                            <DropdownToggle caret color="secondary">
-                              Actions
-                            </DropdownToggle>
-                            <DropdownMenu>
-                              {getDropdownItems(client.status, client?._id)}
-                            </DropdownMenu>
-                          </Dropdown>
-                        </td>
+                  <Dropdown isOpen={dropdownOpen[client._id]} toggle={() => toggleDropdown(client._id)}>
+                    <DropdownToggle caret color="secondary">
+                      Actions
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      {getDropdownItems(client.status, client._id)}
+                    </DropdownMenu>
+                  </Dropdown>
+                </td>
                 
               </tr>
             ))}
