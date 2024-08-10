@@ -10,21 +10,29 @@ function ClientManagement() {
   const [trigger, setTrigger] = useState(0)
   const [dropdownOpen, setDropdownOpen] = useState({});
   const getDropdownItems = (status, id) => {
-    const items = [];
-
-    if (status === 'Accepted') {
-      items.push(
-        <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>,
-        <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
-      );
-    } else {
-      items.push(
-        <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>,
-        <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
-      );
+    switch (status) {
+      case 'Accepted':
+        return (
+          <>
+            <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>
+          </>
+        );
+      case 'Hold':
+        return (
+          <>
+            <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
+          </>
+        );
+      case 'Rejected':
+        return null;
+      default:
+        return (
+          <>
+            <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>
+            <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
+          </>
+        );
     }
-
-    return items;
   };
   const toggleDropdown = (id) => {
     setDropdownOpen((prev) => ({

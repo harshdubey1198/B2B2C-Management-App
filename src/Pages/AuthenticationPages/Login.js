@@ -21,7 +21,7 @@ import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props
 import { loginUser, socialLogin } from "../../store/actions";
 import { facebook, google } from "../../config";
 import { createSelector } from "reselect";
-import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
+import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
 
 const Login = (props) => {
   document.title = "Login | aaMOBee";
@@ -30,9 +30,10 @@ const Login = (props) => {
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
-    role: "", // New state for user type
+    role: "",
   });
 
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
   const loginpage = createSelector(
@@ -50,6 +51,18 @@ const Login = (props) => {
     }
   }, [reduxError]);
 
+  useEffect(() => {
+    const savedCredentials = JSON.parse(localStorage.getItem("userCredentials"));
+    if (savedCredentials) {
+      setFormValues({
+        email: savedCredentials.email,
+        password: savedCredentials.password,
+        role: "",
+      });
+      setRememberMe(true);
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (checkEmptyFields(formValues)) {
@@ -57,26 +70,32 @@ const Login = (props) => {
     } else if (!validateEmail(formValues.email)) {
       setError("Email is invalid!");
     } else {
+      if (rememberMe) {
+        localStorage.setItem("userCredentials", JSON.stringify({
+          email: formValues.email,
+          password: formValues.password,
+        }));
+      } else {
+        localStorage.removeItem("userCredentials");
+      }
       dispatch(loginUser(formValues, props.router.navigate));
     }
   };
 
   const emailHandler = (e) => {
     const { name, value } = e.target;
-    const cleanedValue = value.replace(/\s/g, "");
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: cleanedValue,
+      [name]: value.trim(),
     }));
     setError("");
   };
 
   const passwordHandler = (e) => {
     const { name, value } = e.target;
-    const cleanedValue = value.replace(/\s/g, "");
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: cleanedValue,
+      [name]: value.trim(),
     }));
     setError("");
   };
@@ -88,6 +107,10 @@ const Login = (props) => {
       [name]: value,
     });
     setError("");
+  };
+
+  const handleCheckboxChange = (e) => {
+    setRememberMe(e.target.checked);
   };
 
   const signIn = (res, type) => {
@@ -168,6 +191,7 @@ const Login = (props) => {
                               className="form-control"
                               placeholder="Enter email"
                               type="email"
+                              autoComplete="email"
                               onChange={emailHandler}
                               value={formValues.email}
                             />
@@ -177,6 +201,7 @@ const Login = (props) => {
                             <Input
                               name="password"
                               type="password"
+                              autoComplete="current-password"
                               placeholder="Enter Password"
                               onChange={passwordHandler}
                               value={formValues.password}
@@ -207,6 +232,8 @@ const Login = (props) => {
                                   type="checkbox"
                                   className="form-check-input"
                                   id="customControlInline"
+                                  checked={rememberMe}
+                                  onChange={handleCheckboxChange}
                                 />
                                 <Label
                                   className="form-label form-check-label"
