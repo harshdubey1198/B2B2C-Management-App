@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Card, CardBody, Col } from "reactstrap";
+import {Button, Card, CardBody, Col , Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 
@@ -8,7 +8,30 @@ import axios from 'axios';
 function ClientManagement() {
   const [requestedData, setRequestedData] = useState([])
   const [trigger, setTrigger] = useState(0)
+  const [dropdownOpen, setDropdownOpen] = useState({});
+  const getDropdownItems = (status, id) => {
+    const items = [];
 
+    if (status === 'Accepted') {
+      items.push(
+        <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>,
+        <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
+      );
+    } else {
+      items.push(
+        <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>,
+        <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
+      );
+    }
+
+    return items;
+  };
+  const toggleDropdown = (id) => {
+    setDropdownOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClients`).then((response) => {
       setRequestedData(response)
@@ -80,11 +103,14 @@ function ClientManagement() {
                 <td>{client.status}</td>
                 
                 <td>
-                  <div className='d-flex gap-2'>
-                    <Button color="success" onClick={() => handleAccept(client?._id)}>Approve</Button>
-                    <Button color="danger" onClick={() => handleReject(client?._id)}>Reject</Button>
-                    <Button color="info" onClick={() => handleHold(client?._id)}>Hold</Button>
-                  </div>
+                  <Dropdown isOpen={dropdownOpen[client._id]} toggle={() => toggleDropdown(client._id)}>
+                    <DropdownToggle caret color="secondary">
+                      Actions
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      {getDropdownItems(client.status, client._id)}
+                    </DropdownMenu>
+                  </Dropdown>
                 </td>
                 
               </tr>
