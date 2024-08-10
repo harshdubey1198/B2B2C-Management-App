@@ -1,76 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Card, CardBody, Col } from "reactstrap";
+import {Button, Card, CardBody, Col,DropdownItem, Dropdown, DropdownMenu, DropdownToggle} from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 
-const clientData = [
-  {
-    id: 1,
-    name: "John Doe",
-    phone: "123-456-7890",
-    email: "john.doe@example.com",
-    address: "123 Main St, Anytown, USA",
-    actions: "Edit/Delete",
-    permissions: "Admin/User",
-    subscriptions: [
-      {
-        product: "Product A",
-        status: "Active",
-        startDate: "01/01/23",
-        endDate: "31/12/23"
-      },
-      {
-        product: "Product B",
-        status: "Inactive",
-        startDate: "01/05/23",
-        endDate: "31/10/23"
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    phone: "098-765-4321",
-    email: "jane.smith@example.com",
-    address: "456 Elm St, Othertown, USA",
-    actions: "Edit/Delete",
-    permissions: "Admin/User",
-    subscriptions: [
-      {
-        product: "Product C",
-        status: "Active",
-        startDate: "15/02/23",
-        endDate: "14/02/24"
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: "Alice Johnson",
-    phone: "555-123-4567",
-    email: "alice.johnson@example.com",
-    address: "789 Oak St, Sometown, USA",
-    actions: "Edit/Delete",
-    permissions: "Admin/User",
-    subscriptions: [
-      {
-        product: "Product D",
-        status: "Active",
-        startDate: "10/10/23",
-        endDate: "10/10/24"
-      }
-    ]
-  }
-];
+
 
 function ClientManagement() {
-  const [hoveredClientId, setHoveredClientId] = useState(null);
   const [requestedData, setRequestedData] = useState([])
   const [trigger, setTrigger] = useState(0)
+  const [dropdownOpen, setDropdownOpen] = useState({});
+
+const toggleDropdown = (id) => {
+  setDropdownOpen(prevState => ({ ...prevState, [id]: !prevState[id] }));
+};
+
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClients`).then((response) => {
       setRequestedData(response)
+      console.log(response, "response")
     }).catch((error) => {
       console.log(error);
     })
@@ -91,7 +39,32 @@ function ClientManagement() {
       console.log(error, "error updating data")
     })
   }
-  
+  const handleHold = (id) => {
+    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Hold"}).then((response) => {
+      setTrigger(prev => prev + 1)
+    }).catch((error) => {
+      console.log(error, "error updating data")
+    })
+  }
+
+  const getDropdownItems = (status, id) => {
+    const items = [];
+
+    if (status === 'Accepted') {
+      items.push(
+        <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>,
+        <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
+      );
+    } else {
+      items.push(
+        <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>,
+        <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
+      );
+    }
+
+    return items;
+  };
+
   console.log(requestedData, "request")
   return (
     <React.Fragment>
@@ -101,68 +74,7 @@ function ClientManagement() {
           This is the Client Management page.
           Here the client data table will be fetched and CRUD and permissions can be set by master admin.
         </p>
-        <Col lg={12}>
-          <Card>
-            <CardBody>
-              <div className="table-responsive">
-                <table className="table table-bordered mb-0">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Phone</th>
-                      <th>Email</th>
-                      <th>Address</th>
-                      <th>Actions</th>
-                      <th>Permissions</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {clientData.map(client => (
-                      <tr 
-                        key={client.id} 
-                        onMouseEnter={() => setHoveredClientId(client.id)}
-                        onMouseLeave={() => setHoveredClientId(null)}
-                      >
-                        <td>{client.name}</td>
-                        <td>{client.phone}</td>
-                        <td>{client.email}</td>
-                        <td>{client.address}</td>
-                        <td>{client.actions}</td>
-                        <td>{client.permissions}</td>
-                        <td>
-                          {client.subscriptions.map(subscription => (
-                            <div key={subscription.product}>
-                              <div>{subscription.startDate}</div>
-                            </div>
-                          ))}
-                        </td>
-                        <td>
-                          {client.subscriptions.map(subscription => (
-                            <div key={subscription.product}>
-                              <div>{subscription.endDate}</div>
-                            </div>
-                          ))}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {hoveredClientId && (
-                <div className="hover-details">
-                  <h5>Products:</h5>
-                  <ul>
-                    {clientData.find(client => client.id === hoveredClientId).subscriptions.map(subscription => (
-                      <li key={subscription.product}>{subscription.product}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </CardBody>
-          </Card>
-        </Col>
+    
 
         <p className='mm-active'>
           Request Generated by Clients 
@@ -179,31 +91,36 @@ function ClientManagement() {
               <th>Company Name</th>
               <th>Company Phone</th>
               <th>Status</th>
-              <th>Actions</th> {/* Added for approval/rejection actions */}
+              <th>Actions</th> 
             </tr>
           </thead>
           <tbody>
             {requestedData && requestedData.map(client => (
-              <tr 
-                key={client.id} 
-                onMouseEnter={() => setHoveredClientId(client.id)}
-                // onMouseLeave={() => setHoveredClientId(null)}
-              >
+              <tr key={client.id} >
                 <td>{client.firstName + " " + client.lastName}</td>
                 <td>{client.email}</td>
                 <td>{client.companyName}</td>
                 <td>{client.companyMobile}</td>
                 <td>{client.status}</td>
-                {
-                  client.status === "Requested" ? (
-                    <td>
-                      <div className='d-flex gap-2'>
-                      <Button color="success" onClick={() => handleAccept(client?._id)}>Approve</Button>
-                      <Button color="danger" onClick={() => handleReject(client?._id)}>Reject</Button>
-                      </div>
-                    </td>
-                  ) : ""
-                }
+                
+                {/* <td>
+                  <div className='d-flex gap-2'>
+                    <Button color="success" onClick={() => handleAccept(client?._id)}>Approve</Button>
+                    <Button color="danger" onClick={() => handleReject(client?._id)}>Reject</Button>
+                    <Button color="info" onClick={() => handleHold(client?._id)}>Hold</Button>
+                  </div>
+                </td> */}
+                <td>
+                          <Dropdown isOpen={dropdownOpen[client?._id]} toggle={() => toggleDropdown(client?._id)}>
+                            <DropdownToggle caret color="secondary">
+                              Actions
+                            </DropdownToggle>
+                            <DropdownMenu>
+                              {getDropdownItems(client.status, client?._id)}
+                            </DropdownMenu>
+                          </Dropdown>
+                        </td>
+                
               </tr>
             ))}
           </tbody>
