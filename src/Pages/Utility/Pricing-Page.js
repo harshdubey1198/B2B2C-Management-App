@@ -1,88 +1,67 @@
 import React from "react";
-//Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-
 import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import { Link } from "react-router-dom";
 
 const PricingData = [
-  
   {
-    title: "Starter",
-    caption: "Neque quis est",
+    title: "Basic",
+    caption: "Essential features for starters to get off the ground",
     icon: "fas fa-cube",
     price: "19",
-    isChild: [
-      { id: "1", features: "Free Live Support" },
-      { id: "2", features: "Unlimited User" },
-      { id: "3", features: "No Time Tracking" },
-      { id: "4", features: "Free Setup" },
+    features: [
+      "Dashboard",
+      "Profile Settings",
+      "Inventory Management",
+      "Firm Management"
     ],
   },
   {
     title: "Professional",
-    caption: "Quis autem iure",
+    caption: "Advanced features for growing businesses",
     icon: "fas fa-trophy",
     price: "29",
-    isChild: [
-      { id: "1", features: "Free Live Support" },
-      { id: "2", features: "Unlimited User" },
-      { id: "3", features: "No Time Tracking" },
-      { id: "4", features: "Free Setup" },
+    features: [
+      "Tier 1 Features",
+      "Taxation",
+      "User Management",
+      "Item Configuration"
     ],
   },
   {
     title: "Enterprise",
-    caption: "Sed neque unde",
+    caption: "Comprehensive features for large enterprises",
     icon: "fas fa-shield-alt",
     price: "39",
-    isChild: [
-      { id: "1", features: "Free Live Support" },
-      { id: "2", features: "Unlimited User" },
-      { id: "3", features: "No Time Tracking" },
-      { id: "4", features: "Free Setup" },
-    ],
-  },
-  {
-    title: "Unlimited",
-    caption: "Itque eam rerum",
-    icon: "fas fa-headset",
-    price: "49",
-    isChild: [
-      { id: "1", features: "Free Live Support" },
-      { id: "2", features: "Unlimited User" },
-      { id: "3", features: "No Time Tracking" },
-      { id: "4", features: "Free Setup" },
+    features: [
+      "Tier 2 Features",
+      "Invoice Templates",
+      "Multilingual Support",
+      "Reports & Log Generation"
     ],
   },
 ];
 
 const Pricing = () => {
-  document.title = "Pricing  | aaMOBee";
+  document.title = "Pricing | aaMOBee";
   return (
     <React.Fragment>
       <div className="page-content">
         <Container fluid>
           <Breadcrumbs title="Utility" breadcrumbItem="Pricing" />
-
-
-
           <Row className="justify-content-center">
             <Col lg={5}>
               <div className="text-center mb-5">
                 <h4>Choose your Pricing plan</h4>
                 <p className="text-muted">
-                  To achieve this, it would be necessary to have uniform
-                  grammar, pronunciation and more common words If several
-                  languages coalesce
+                  To achieve this, it would be necessary to have uniform grammar, pronunciation and more common words. If several languages coalesce.
                 </p>
               </div>
             </Col>
           </Row>
-
           <Row>
             {PricingData.map((item, key) => (
-              <Col xl={3} md={60} key={key}>
+              <Col xl={4} md={6} key={key}>
                 <Card>
                   <CardBody className="p-4">
                     <div className="d-flex mb-1">
@@ -118,10 +97,10 @@ const Pricing = () => {
                       <h5 className="text-center font-size-15 mb-4">
                         Plan Features :
                       </h5>
-                      {item.isChild.map((subitem, key) => (
-                        <p key={key}>
+                      {item.features.map((feature, index) => (
+                        <p key={index}>
                           <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>{" "}
-                          {subitem.features}
+                          {feature}
                         </p>
                       ))}
                     </div>
