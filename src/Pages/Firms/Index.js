@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -22,88 +22,88 @@ import {
   validatePhone,
 } from "../Utility/FormValidation";
 
-const clientData = {
-  1: [
-    {
-      id: 1,
-      name: "John Doe",
-      phone: "123-456-7890",
-      email: "john.doe@example.com",
-      address: "123 Main St, Anytown, USA",
-      actions: "Edit/Pause",
-      firmAdmin: "John",
-      permissions: "Admin/User",
-      subscriptions: [
-        {
-          product: "Product A",
-          status: "Active",
-          startDate: "01/01/23",
-          endDate: "31/12/23",
-        },
-      ],
-    },
-  ],
-  2: [
-    {
-      id: 1,
-      name: "Jane Smith",
-      phone: "098-765-4321",
-      email: "jane.smith@example.com",
-      address: "456 Elm St, Othertown, USA",
-      actions: "Edit/Pause",
-      firmAdmin: "Jane",
-      permissions: "Admin/User",
-      subscriptions: [
-        {
-          product: "Product B",
-          status: "Active",
-          startDate: "15/02/23",
-          endDate: "14/02/24",
-        },
-      ],
-    },
-  ],
-  3: [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      phone: "555-123-4567",
-      email: "alice.johnson@example.com",
-      address: "789 Oak St, Sometown, USA",
-      actions: "Edit/Pause",
-      firmAdmin: "Alice",
-      permissions: "Admin/User",
-      subscriptions: [
-        {
-          product: "Product C",
-          status: "Active",
-          startDate: "10/10/23",
-          endDate: "10/10/24",
-        },
-      ],
-    },
-  ],
-  4: [
-    {
-      id: 1,
-      name: "Alice Johnson",
-      phone: "555-123-4567",
-      email: "alice.johnson@example.com",
-      address: "789 Oak St, Sometown, USA",
-      actions: "Edit/Pause",
-      firmAdmin: "Alice",
-      permissions: "Admin/User",
-      subscriptions: [
-        {
-          product: "Product C",
-          status: "Active",
-          startDate: "10/10/23",
-          endDate: "10/10/24",
-        },
-      ],
-    },
-  ],
-};
+// const clientData = {
+//   1: [
+//     {
+//       id: 1,
+//       name: "John Doe",
+//       phone: "123-456-7890",
+//       email: "john.doe@example.com",
+//       address: "123 Main St, Anytown, USA",
+//       actions: "Edit/Pause",
+//       firmAdmin: "John",
+//       permissions: "Admin/User",
+//       subscriptions: [
+//         {
+//           product: "Product A",
+//           status: "Active",
+//           startDate: "01/01/23",
+//           endDate: "31/12/23",
+//         },
+//       ],
+//     },
+//   ],
+//   2: [
+//     {
+//       id: 1,
+//       name: "Jane Smith",
+//       phone: "098-765-4321",
+//       email: "jane.smith@example.com",
+//       address: "456 Elm St, Othertown, USA",
+//       actions: "Edit/Pause",
+//       firmAdmin: "Jane",
+//       permissions: "Admin/User",
+//       subscriptions: [
+//         {
+//           product: "Product B",
+//           status: "Active",
+//           startDate: "15/02/23",
+//           endDate: "14/02/24",
+//         },
+//       ],
+//     },
+//   ],
+//   3: [
+//     {
+//       id: 1,
+//       name: "Alice Johnson",
+//       phone: "555-123-4567",
+//       email: "alice.johnson@example.com",
+//       address: "789 Oak St, Sometown, USA",
+//       actions: "Edit/Pause",
+//       firmAdmin: "Alice",
+//       permissions: "Admin/User",
+//       subscriptions: [
+//         {
+//           product: "Product C",
+//           status: "Active",
+//           startDate: "10/10/23",
+//           endDate: "10/10/24",
+//         },
+//       ],
+//     },
+//   ],
+//   4: [
+//     {
+//       id: 1,
+//       name: "Alice Johnson",
+//       phone: "555-123-4567",
+//       email: "alice.johnson@example.com",
+//       address: "789 Oak St, Sometown, USA",
+//       actions: "Edit/Pause",
+//       firmAdmin: "Alice",
+//       permissions: "Admin/User",
+//       subscriptions: [
+//         {
+//           product: "Product C",
+//           status: "Active",
+//           startDate: "10/10/23",
+//           endDate: "10/10/24",
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 
 function Index() {
@@ -113,6 +113,8 @@ function Index() {
   const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [firms, SetFirms] = useState([])
+  const [clientData, setClientData] = useState([])
 
   const [formValues, setFormValues] = useState({
     firmId: "",
@@ -137,8 +139,16 @@ function Index() {
   ];
   const preRestrictions = ["Only View", "Not allow update"];
   const userRoles = ["Firm Admin", "Accountant", "Employee"];
-  const preFirms = ["Firm A", "Firm B", "Firm C", "Firm D"]
 
+  useEffect(() => {
+    const storedData = JSON.parse(localStorage.getItem("Firms")) || []
+    SetFirms(storedData)
+
+    const storedUsers = JSON.parse(localStorage.getItem("Create User")) || []
+    setClientData(storedUsers)
+  },[])
+
+  console.log(clientData, "firms")
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
@@ -230,6 +240,8 @@ function Index() {
     setError("");
   };
 
+  const filteredClients = clientData.filter(client => client?.firmId === String(selectedFirmId));
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -258,30 +270,34 @@ function Index() {
                     <tr>
                       <th>Firm Id</th>
                       <th>Firm Name</th>
+                      <th>User Name</th>
                       <th>Phone</th>
                       <th>Email</th>
-                      <th>Firm Admin</th>
+                      {/* <th>Firm Admin</th> */}
                       <th>Actions</th>
                       <th>Permissions</th>
-                      <th>Start Date</th>
-                      <th>End Date</th>
+                      {/* <th>Start Date</th>
+                      <th>End Date</th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {clientData[selectedFirmId]?.map((client) => (
+                    {clientData && filteredClients.map((client) => (
                       <tr
                         key={client.id}
                         onMouseEnter={() => setHoveredClientId(client.id)}
                         onMouseLeave={() => setHoveredClientId(null)}
                       >
-                        <td>{client.id}</td>
+                        <td>{client.firmId}</td>
+                        <td>{client.firmName}</td>
                         <td>{client.name}</td>
                         <td>{client.phone}</td>
                         <td>{client.email}</td>
-                        <td>{client.firmAdmin}</td>
-                        <td>{client.actions}</td>
-                        <td>{client.permissions}</td>
-                        <td>
+                        {/* <td>{client.firmAdmin}</td> */}
+                        <td>Edit/Pause</td>
+                        <td>{client.permissions.map((permission) => (
+                          <span key={permission}>{permission}, </span>
+                        ))}</td>
+                        {/* <td>
                           {client.subscriptions.map((subscription) => (
                             <div key={subscription.product}>
                               <div>{subscription.startDate}</div>
@@ -294,7 +310,7 @@ function Index() {
                               <div>{subscription.endDate}</div>
                             </div>
                           ))}
-                        </td>
+                        </td> */}
                       </tr>
                     ))}
                   </tbody>
@@ -348,9 +364,9 @@ function Index() {
                     onChange={handleChange}
                   >
                     <option value="">Select Firm</option>
-                    {preFirms.map((firm, index) => (
-                      <option key={index} value={firm}>
-                        {firm}
+                    {firms && firms.map((firm, index) => (
+                      <option key={index} value={firm?.name}>
+                        {firm?.name}
                       </option>
                     ))}
                   </Input>
