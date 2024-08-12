@@ -21,6 +21,7 @@ import {
   validatePassword,
   validatePhone,
 } from "../Utility/FormValidation";
+import { setDefaultNamespace } from "i18next";
 
 // const clientData = {
 //   1: [
@@ -115,6 +116,7 @@ function Index() {
   const [success, setSuccess] = useState("");
   const [firms, SetFirms] = useState([])
   const [clientData, setClientData] = useState([])
+  const [defaultFirm, setDefaultFirm] = useState()
 
   const [formValues, setFormValues] = useState({
     firmId: "",
@@ -146,7 +148,36 @@ function Index() {
 
     const storedUsers = JSON.parse(localStorage.getItem("Create User")) || []
     setClientData(storedUsers)
+
+    const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm")) || {};
+    setDefaultFirm(defaultFirm)
+
+    if (defaultFirm.id) {
+      setSelectedFirmId(defaultFirm.id);
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        firmId: defaultFirm.id,
+        firmName: defaultFirm.name
+      }));
+    }
   },[])
+
+  useEffect(() => {
+    if (selectedFirmId) {
+      console.log(firms, "firmsfirms")
+      const selectedFirm = firms.find(firm => firm.id === selectedFirmId) || ''
+      console.log(selectedFirm, "selectedfirm")
+      localStorage.setItem("defaultFirm", JSON.stringify({
+        id: selectedFirmId,
+        name: selectedFirm.name
+      }));
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        firmId: selectedFirm.id,
+        firmName: selectedFirm.name
+      }));
+    }
+  }, [selectedFirmId, firms]);
 
   console.log(clientData, "firms")
   const toggleModal = () => {
@@ -240,7 +271,15 @@ function Index() {
     setError("");
   };
 
-  const filteredClients = clientData.filter(client => client?.firmId === String(selectedFirmId));
+  const handleFirmNameChange = (e) => {
+    const selectedFirmName = e.target.value;
+    const selectedFirm = firms.find(firm => firm.name === selectedFirmName);
+    if (selectedFirm) {
+      setSelectedFirmId(selectedFirm.id);
+    }
+  };  
+
+  const filteredClients = clientData.filter(client => client?.firmId === (selectedFirmId));
 
   return (
     <React.Fragment>
@@ -344,33 +383,35 @@ function Index() {
           <div>
             <div className="row">
               <div className="col-md-6">
-                <FormGroup>
-                  <Label for="firmId">FirmId</Label>
-                  <Input
-                    type="text"
-                    id="firmId"
-                    name="firmId"
-                    onChange={handleChange}
-                  />
-                </FormGroup>
+              <FormGroup>
+                <Label for="firmId">FirmId</Label>
+                <Input
+                  type="text"
+                  id="firmId"
+                  name="firmId"
+                  value={formValues.firmId}
+                  readOnly
+                />
+              </FormGroup>
               </div>
               <div className="col-md-6">
-                <FormGroup>
-                  <Label for="firmName">Firm Name</Label>
-                  <Input
-                    type="select"
-                    id="firmName"
-                    name="firmName"
-                    onChange={handleChange}
-                  >
-                    <option value="">Select Firm</option>
-                    {firms && firms.map((firm, index) => (
-                      <option key={index} value={firm?.name}>
-                        {firm?.name}
-                      </option>
-                    ))}
-                  </Input>
-                </FormGroup>
+              <FormGroup>
+              <Label for="firmName">Firm Name</Label>
+              <Input
+                  type="select"
+                  id="firmName"
+                  name="firmName"
+                  value={formValues.firmName}
+                  onChange={handleFirmNameChange}
+              >
+                  <option value="">Select Firm</option>
+                  {firms && firms.map((firm, index) => (
+                  <option key={index} value={firm.name}>
+                      {firm.name}
+                  </option>
+                  ))}
+              </Input>
+              </FormGroup>
               </div>
             </div>
 

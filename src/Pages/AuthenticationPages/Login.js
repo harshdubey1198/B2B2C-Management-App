@@ -32,7 +32,7 @@ const Login = (props) => {
     password: "",
     role: "",
   });
-
+  const [show, setShow] = useState(false)
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
 
@@ -196,16 +196,24 @@ const Login = (props) => {
                               value={formValues.email}
                             />
                           </div>
-                          <div className="mb-4">
+                          <div className="mb-4 position-relative">
                             <Label className="form-label">Password</Label>
                             <Input
                               name="password"
-                              type="password"
+                              type={show ? "text" : "password"}
                               autoComplete="current-password"
                               placeholder="Enter Password"
                               onChange={passwordHandler}
                               value={formValues.password}
                             />
+                            <button
+                              onClick={() => setShow(!show)}
+                              className="btn btn-link position-absolute end-0"
+                              style={{ top: "74%", transform: "translateY(-50%)" }}
+                              type="button"
+                            >
+                              <i className={`mdi mdi-eye${show ? "-off" : ""}`}></i>
+                            </button>
                           </div>
                           <div className="mb-4">
                             <Label className="form-label">User Type</Label>
