@@ -1,16 +1,35 @@
-// FirmSwitcher.js
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
-
 function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
-  const [firms, setFirms] = useState([])
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [firms, setFirms] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
+
   useEffect(() => {
-    setFirms(JSON.parse(localStorage.getItem("Firms")) || [])
-  }, [])
+    // Load firms from localStorage
+    const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
+    setFirms(storedFirms);
+
+    // Set the default firm if selectedFirmId is not provided
+    const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
+    if (defaultFirm && !selectedFirmId) {
+      onSelectFirm(defaultFirm.id);
+    }
+  }, [selectedFirmId, onSelectFirm]);
+
+  useEffect(() => {
+    if (selectedFirmId) {
+      const selectedFirm = firms.find(firm => firm.id === selectedFirmId);
+      if (selectedFirm) {
+        localStorage.setItem("defaultFirm", JSON.stringify({
+          id: selectedFirm.id,
+          name: selectedFirm.name
+        }));
+      }
+    }
+  }, [selectedFirmId, firms]);
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
@@ -18,7 +37,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
         {firms.find(firm => firm.id === selectedFirmId)?.name || 'Select Firm'}
       </DropdownToggle>
       <DropdownMenu>
-        {firms && firms.map(firm => (
+        {firms.map(firm => (
           <DropdownItem
             key={firm.id}
             onClick={() => onSelectFirm(firm.id)}
