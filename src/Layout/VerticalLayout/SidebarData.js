@@ -18,7 +18,7 @@ export const masterAdminSidebarData = () => [
    
     {
       label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-printer",
       subItem: [
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "Create Invoice", link: "/create-invoice" },
@@ -27,6 +27,20 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Reports", link: "/reports-invoice" },
       ],
     },
+    {
+      label:"Maintenance",
+      icon:"mdi mdi-tools",
+      url:"/maintenance",
+      isHasArrow:true
+    }
+    ,
+    {
+      label:"Pricing",
+      icon:"mdi mdi-cash-multiple",
+      url:"/pages-pricing",
+      isHasArrow:true
+    }
+,
     // {
     //   label: "Taxation",
     //   icon: "mdi mdi-file-document-outline",

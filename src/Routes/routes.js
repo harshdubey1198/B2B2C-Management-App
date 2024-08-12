@@ -246,7 +246,7 @@ const publicRoutes = [
   { path: "/pages-404", component: <Error404 /> },
   { path: "/*", component: <Error404 /> },
   { path: "/pages-500", component: <Error500 /> },
-  { path: "/pages-maintenance", component: <Maintenance /> },
+  { path: "/maintenance", component: <Maintenance /> },
   { path: "/pages-comingsoon", component: <ComingSoon /> },
 ];
 
