@@ -2,13 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
-// const firms = [
-//   { id: 1, name: 'Firm A', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844391/abstract-colorful-logo_1017-8753_qptgtx.avif' },
-//   { id: 2, name: 'Firm B', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844388/business-logo_23-2147503133_sw5xjq.avif' },
-//   { id: 3, name: 'Firm C', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844376/gradient-logo-with-abstract-shape_23-2148219550_mgiwzf.avif' },
-//   { id: 4, name: 'Firm D', logo: 'https://res.cloudinary.com/harshdubey1198/image/upload/v1722844367/colorful-floral-logo_1025-262_ahzfec.avif' },
-// ];
-
 
 function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   const [firms, setFirms] = useState([])
