@@ -14,6 +14,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-account-multiple-outline",
       url: "/clients-management",
       isHasArrow: true,
+      
     },
    
     {
@@ -128,6 +129,11 @@ export const masterAdminSidebarData = () => [
     //     { sublabel: "View Taxes", link: "/view-taxes" },
     //     { sublabel: "Reports", link: "/reports" },
     //   ],
+    // },
+
+    // {
+    //   label:"Below-options",
+    //   isMainMenu:true,
     // },
     {
       label: "Authentication",
@@ -283,6 +289,8 @@ export const masterAdminSidebarData = () => [
       case 'super_admin':
         return masterAdminSidebarData();
       case 'client_admin':
+        return clientAdminSidebarData();
+      case 'firm_admin':
         return clientAdminSidebarData();
       case 'readOnly':
         return readOnlySidebarData();

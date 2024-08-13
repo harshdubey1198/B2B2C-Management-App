@@ -309,6 +309,7 @@ function Index() {
                       <th>User Name</th>
                       <th>Phone</th>
                       <th>Email</th>
+                      <th>Role</th>
                       {/* <th>Firm Admin</th> */}
                       <th>Actions</th>
                       <th>Permissions</th>
@@ -328,6 +329,7 @@ function Index() {
                         <td>{client.name}</td>
                         <td>{client.phone}</td>
                         <td>{client.email}</td>
+                        <td>{client.role}</td>
                         {/* <td>{client.firmAdmin}</td> */}
                         <td>Edit/Pause</td>
                         <td>{client.permissions.map((permission) => (
