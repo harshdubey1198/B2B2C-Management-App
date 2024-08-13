@@ -19,6 +19,7 @@ const LockScreen = () => {
         if (authUser) {
             setUserData(authUser?.response || {});
         }
+        localStorage.setItem("isLocked", 'true')
     }, []);
 
     const handleChange = (e) => {
@@ -43,6 +44,7 @@ const LockScreen = () => {
             role: userData?.role,
             password: pass
         }).then((response) =>  {
+            localStorage.setItem("isLocked", 'false')
             navigate("/dashboard")
         }).catch((error) => {
             setError(error)

@@ -9,9 +9,15 @@ const AuthProtected = (props) => {
 
   // Check if authUser is present in localStorage
   const authUser = JSON.parse(localStorage.getItem('authUser'));
-
+  const isLocked = JSON.parse(localStorage.getItem('isLocked'))
+console.log(isLocked, "isocaked")
   if (loading) {
     return  <Navigate to={{ pathname: "/login", state: { from: location } }} />;
+  }
+
+  // Redirect to lockscreen if isloacked is true
+  if(isLocked){
+    return  <Navigate to={{ pathname: "/auth-lock-screen", state: { from: location } }} />;
   }
 
   // Redirect to login if authUser is not found
