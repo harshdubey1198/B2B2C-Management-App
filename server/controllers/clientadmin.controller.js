@@ -64,4 +64,13 @@ router.post('/reset-password', async (req,res) => {
     })
 })
 
+router.post('/createFirm/:id', async (req,res) => {
+    ClientServices.createFirm(req.body, req.params.id).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
+    })
+})
+
 module.exports = router
