@@ -9,6 +9,7 @@ const SupportExecutive = require("../schemas/supportExecutive.schema");
 const Viewer = require("../schemas/viewersshema");
 const PasswordService = require('./password.services');
 const generateTemporaryPassword = require("../utils/tempPassword");
+const Firms = require("../schemas/firms.schema");
 
 let services = {}
 services.clientRegistration = clientRegistration
@@ -17,6 +18,7 @@ services.getRegiteredUser = getRegiteredUser
 services.updateClient = updateClient
 services.UserForgetPassword = UserForgetPassword
 services.resetPassword = resetPassword
+services.createFirm = createFirm
 
 // CLIENT REGISTRATION
 async function clientRegistration(body) {
@@ -225,5 +227,33 @@ async function resetPassword(body) {
     }
 }
 
+async function createFirm(body, clientId){
+    try {
+        // Generate a unique fuid
+        const latestFirm = await Firms.findOne({}).sort({ fuid: -1 });
+        const lastFuid = latestFirm ? parseInt(latestFirm.fuid, 10) : 0;
+        const newFuid = (lastFuid + 1).toString().padStart(3, '0'); 
+
+        const firmAdminId = body.firmAdmin || clientId; 
+
+        const data = {
+            clientAdmin: clientId,
+            cidm: body.cidm,
+            fuid: newFuid,
+            email: body.email,
+            phone: body.phone,
+            name: body.name,
+            firmAdmin: firmAdminId,
+            avatar: body.avatar,
+        };
+
+        const newfirm = new Firms(data);
+        await newfirm.save();
+        return newfirm
+    } catch (error) {
+        console.error('Error creating firm:', error);
+        Promise.reject('Error creating Firm')
+    }
+}
 
 module.exports = services
