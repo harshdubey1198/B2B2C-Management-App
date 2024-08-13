@@ -164,9 +164,7 @@ function Index() {
 
   useEffect(() => {
     if (selectedFirmId) {
-      console.log(firms, "firmsfirms")
       const selectedFirm = firms.find(firm => firm.id === selectedFirmId) || ''
-      console.log(selectedFirm, "selectedfirm")
       localStorage.setItem("defaultFirm", JSON.stringify({
         id: selectedFirmId,
         name: selectedFirm.name
@@ -179,7 +177,6 @@ function Index() {
     }
   }, [selectedFirmId, firms]);
 
-  console.log(clientData, "firms")
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
