@@ -12,6 +12,14 @@ export const masterAdminSidebarData = () => [
       url: "/clients-management",
       
     },
+    {
+      label: "Plans",
+      icon: "mdi mdi-printer",
+      subItem: [
+        { sublabel: "Create Plan", link: "/create-plan" },
+        { sublabel: "Manage Plan", link: "/manage-plan" },
+      ],
+    },
    
     {
       label: "Invoicing",
