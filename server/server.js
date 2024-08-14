@@ -17,6 +17,7 @@ mongoose.connect(process.env.MONGO_URI).then(resp => {
 
 // CLIENT ROUTES
 app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
+app.use('/api/plan', require("./controllers/plans.controller"))
 
 app.get("/", (req, res) => {
     res.send("Welcome to HRMS Servers!");

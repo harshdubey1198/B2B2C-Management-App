@@ -1,4 +1,5 @@
 const Plan = require('../schemas/plans.schema');
+const SuperAdmin = require('../schemas/superadmin.schema');
 
 let services = {};
 services.createPlan = createPlan;
@@ -9,24 +10,40 @@ services.deletePlan = deletePlan;
 services.approvePlan = approvePlan;
 services.checkPlanValidity = checkPlanValidity;
 
-async function createPlan(body) {
+async function createPlan(id, data) {
     try {
-        const newPlan = new Plan(body);
-        await newPlan.save();
-        return { success: true, plan: newPlan };
-    } catch (error) {
-        console.error("Error creating plan:", error);
-        return { success: false, error: 'Unable to create plan' };
+        const superAdmin = await SuperAdmin.findById(id).select("-password");
+        if (!superAdmin) {
+            return Promise.reject("Not authorized to add plan");
+        }
+
+        const existingPlan = await Plan.findOne({ title: data.title });
+        if (existingPlan) {
+            return Promise.reject("A plan with this title already exists.");
+        }
+
+        const approvalDate = new Date();
+        const validityEndDate = new Date(approvalDate);
+        validityEndDate.setMonth(validityEndDate.getMonth() + 3);
+
+        data.approvalDate = approvalDate;
+        data.validityEndDate = validityEndDate;
+
+        const plan = await Plan.create(data);
+        return plan;
+    } catch (err) {
+        console.log("error adding plan", err);
+        return Promise.reject("Error adding plan. Try again later!");
     }
 }
 
 async function getAllPlans() {
     try {
         const plans = await Plan.find();
-        return { success: true, plans };
+        return plans;
     } catch (error) {
         console.error("Error fetching plans:", error);
-        return { success: false, error: 'Unable to fetch plans' };
+        return Promise.reject("Unable to Fetch Plans");
     }
 }
 
@@ -34,28 +51,22 @@ async function getPlanById(planId) {
     try {
         const plan = await Plan.findById(planId);
         if (!plan) {
-            return { success: false, error: 'Plan not found' };
+            return Promise.reject("Plan not found");
         }
-        return { success: true, plan };
+        return plan;
     } catch (error) {
         console.error("Error fetching plan:", error);
-        return { success: false, error: 'Unable to fetch plan' };
+        return Promise.reject("Unable to Fetch Plan");
     }
 }
 
 async function updatePlan(planId, updateData) {
     try {
-        const plan = await Plan.findById(planId);
-        if (!plan) {
-            return { success: false, error: 'Plan not found' };
-        }
-
-        Object.assign(plan, updateData);
-        await plan.save();
-        return { success: true, plan };
+        const data = await Plan.findOneAndUpdate( { _id: planId }, updateData, { new: true } );
+        return data
     } catch (error) {
         console.error("Error updating plan:", error);
-        return { success: false, error: 'Unable to update plan' };
+        return Promise.reject("Unable to Update Plan");
     }
 }
 
@@ -63,12 +74,12 @@ async function deletePlan(planId) {
     try {
         const plan = await Plan.findByIdAndDelete(planId);
         if (!plan) {
-            return { success: false, error: 'Plan not found' };
+            return Promise.reject("Unable to Find Plan");
         }
-        return { success: true, message: 'Plan deleted successfully' };
+        return 'Plan deleted successfully';
     } catch (error) {
         console.error("Error deleting plan:", error);
-        return { success: false, error: 'Unable to delete plan' };
+        return Promise.reject("Unable to Delete Plan");
     }
 }
 
