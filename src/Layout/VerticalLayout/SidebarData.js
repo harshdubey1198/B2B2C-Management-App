@@ -116,7 +116,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-cash-multiple",
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/table-form" },
+        { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
         { sublabel: "Item Config", link: "/item-configuration" },
       ],

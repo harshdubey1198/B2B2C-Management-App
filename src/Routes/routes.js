@@ -130,7 +130,7 @@ const authProtectedRoutes = [
 
   // Inventory MNG
   {path:"/inventory-table", component: <InventoryTable />},
-  {path:"/table-form", component: <TableForm />},
+  {path:"/add-inventory", component: <TableForm />},
   {path:"/table-taxation", component: <TableTaxation />},
   {path:"/item-configuration", component: <ItemConfiguration />},
 
