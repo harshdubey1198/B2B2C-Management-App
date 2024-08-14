@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Container, Row, Col, Card, CardBody } from "reactstrap";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const PricingData = [
   {
@@ -44,6 +45,17 @@ const PricingData = [
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
+  const [plans, setPlans] = useState([])
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
+      setPlans(response)
+    }).catch((error) => {
+      console.log(error)
+    })
+  },[])
+
+  console.log(plans,"plans")
   return (
     <React.Fragment>
       <div className="page-content">
@@ -60,7 +72,7 @@ const Pricing = () => {
             </Col>
           </Row>
           <Row>
-            {PricingData.map((item, key) => (
+            {plans && plans.map((plan, key) => (
               <Col xl={4} md={6} key={key}>
                 <Card>
                   <CardBody className="p-4">
@@ -68,13 +80,13 @@ const Pricing = () => {
                       <div className="flex-shrink-0 me-3">
                         <div className="avatar-sm">
                           <span className="avatar-title rounded-circle bg-primary">
-                            <i className={item.icon + " font-size-20"}></i>
+                            <i className={plan.icon + " font-size-20"}></i>
                           </span>
                         </div>
                       </div>
                       <div className="flex-grow-1">
-                        <h5 className="font-size-16">{item.title}</h5>
-                        <p className="text-muted">{item.caption}</p>
+                        <h5 className="font-size-16">{plan.title}</h5>
+                        <p className="text-muted">{plan.caption}</p>
                       </div>
                     </div>
                     <div className="py-4 border-bottom">
@@ -88,16 +100,16 @@ const Pricing = () => {
                       </div>
                       <h4>
                         <sup>
-                          <small>$</small>
+                          <small>₹</small>
                         </sup>{" "}
-                        {item.price}/ <span className="font-size-16">m</span>
+                        {plan.price}/ <span className="font-size-16">m</span>
                       </h4>
                     </div>
                     <div className="plan-features mt-4">
                       <h5 className="text-center font-size-15 mb-4">
                         Plan Features :
                       </h5>
-                      {item.features.map((feature, index) => (
+                      {plan.features.map((feature, index) => (
                         <p key={index}>
                           <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>{" "}
                           {feature}

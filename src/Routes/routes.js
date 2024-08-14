@@ -115,12 +115,18 @@ import ProfileSettings from "../Pages/Settings/ProfileSettings.jsx";
 import FirmsSetting from "../Pages/Firms/FirmsSetting.js";
 import CreateFirm from "../Pages/Firms/CreateFirm.js";
 import SwitchFirm from "../Pages/Firms/SwitchFirm.js";
+import CreatePlan from "../Pages/Plans/CreatePlan.js";
+import ManagePlan from "../Pages/Plans/ManagePlan.js";
 
 
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
   { path: "/clients-management", component: <ClientManagement /> },
+
+  // plans
+  { path: "/create-plan", component: <CreatePlan /> },
+  { path: "/manage-plan", component: <ManagePlan /> },
 
   // invoicing
   { path: "/create-invoice", component: <CreateInvoice/> },

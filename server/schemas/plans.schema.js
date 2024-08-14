@@ -22,14 +22,6 @@ const planSchema = new Schema({
         type: [String],
         required: true,
     },
-    approvalDate: {
-        type: Date,
-        default: null,
-    },
-    validityEndDate: {
-        type: Date,
-        default: null,
-    },
 }, { timestamps: true });
 
 const Plan = mongoose.model('Plan', planSchema);

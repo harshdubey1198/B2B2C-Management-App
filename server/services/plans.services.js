@@ -22,13 +22,6 @@ async function createPlan(id, data) {
             return Promise.reject("A plan with this title already exists.");
         }
 
-        const approvalDate = new Date();
-        const validityEndDate = new Date(approvalDate);
-        validityEndDate.setMonth(validityEndDate.getMonth() + 3);
-
-        data.approvalDate = approvalDate;
-        data.validityEndDate = validityEndDate;
-
         const plan = await Plan.create(data);
         return plan;
     } catch (err) {
