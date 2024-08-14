@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const firmAdminSchema = new Schema({
     cidm: { type: String, required: true },
-    fid: { type: String, required: true },
+    fuid: { type: String, required: true },
+    faid: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true },
     name: { type: String, required: true },
