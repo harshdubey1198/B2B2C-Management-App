@@ -1,19 +1,15 @@
 export const masterAdminSidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+   
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
+     
     },
     {
       label: "Clients-Management",
       icon: "mdi mdi-account-multiple-outline",
       url: "/clients-management",
-      isHasArrow: true,
       
     },
    
@@ -32,14 +28,12 @@ export const masterAdminSidebarData = () => [
       label:"Maintenance",
       icon:"mdi mdi-tools",
       url:"/maintenance",
-      isHasArrow:true
     }
     ,
     {
       label:"Pricing",
       icon:"mdi mdi-cash-multiple",
       url:"/pages-pricing",
-      isHasArrow:true
     }
 ,
     // {
@@ -73,15 +67,11 @@ export const masterAdminSidebarData = () => [
   ];
   
   export const clientAdminSidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+   
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
     {
       label:"Companies",
@@ -98,7 +88,6 @@ export const masterAdminSidebarData = () => [
       label:"Pricing",
       icon:"mdi mdi-cash-multiple",
       url:"/pages-pricing",
-      isHasArrow:true
     },
     {
       label: "Invoicing",
@@ -172,15 +161,11 @@ export const masterAdminSidebarData = () => [
       }
   ];
   export const accountantSidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+   
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
     {
       label: "Invoicing",
@@ -195,26 +180,20 @@ export const masterAdminSidebarData = () => [
       label: "Clients",
       icon: "mdi mdi-account-multiple-outline",
       url: "/clients-management",
-      isHasArrow: true,
     },
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
       url: "/settings",
-      isHasArrow: true,
     },
   ];
   
   export const generalEmployeeSidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+  
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
     {
       label: "Invoicing",
@@ -228,20 +207,15 @@ export const masterAdminSidebarData = () => [
       label: "Settings",
       icon: "mdi mdi-cog-outline",
       url: "/settings",
-      isHasArrow: true,
     },
   ];
   
   export const viewerSidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+  
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
     {
       label: "Invoicing",
@@ -253,34 +227,27 @@ export const masterAdminSidebarData = () => [
   ];
   
   export const readOnlySidebarData = () => [
-    {
-      label: "Menu",
-      isMainMenu: true,
-    },
+   
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
   ];
   
   export const defaultSidebarData = () => [
     {
       label: "Menu",
-      isMainMenu: true,
     },
     {
       label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
-      isHasArrow: true,
     },
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
       url: "/settings",
-      isHasArrow: true,
     }
   ];
   
@@ -292,10 +259,10 @@ export const masterAdminSidebarData = () => [
         return clientAdminSidebarData();
       case 'firm_admin':
         return clientAdminSidebarData();
+        case 'accountant':
+          return accountantSidebarData();
       case 'readOnly':
         return readOnlySidebarData();
-      case 'accountant':
-        return accountantSidebarData();
       case 'g_emp':
         return generalEmployeeSidebarData();
       case 'Viewer':
