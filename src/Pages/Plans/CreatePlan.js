@@ -12,6 +12,7 @@ import {
   Button,
   Alert,
 } from "reactstrap";
+import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 // Predefined features and icons
 const predefinedFeatures = [
@@ -112,6 +113,7 @@ function CreatePlan() {
   return (
     <React.Fragment>
       <div className="page-content">
+      <Breadcrumbs title="aaMOBee" breadcrumbItem="Plan Management" />
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
