@@ -18,6 +18,10 @@ const planSchema = new Schema({
         type: Number,
         required: true,
     },
+    maxFirms: {
+        type: Number,
+        required: true,
+    },
     features: {
         type: [String],
         required: true,

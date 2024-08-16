@@ -1,5 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input } from "reactstrap";
+import {
+  Button,
+  Card,
+  CardBody,
+  Col,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Table,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+} from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 
@@ -19,7 +37,7 @@ function ManagePlan() {
       console.log(error);
     });
   }, [trigger]);
-//   console.log(plansData,"sjd")
+
   const toggleDropdown = (id) => {
     setDropdownOpen((prev) => ({
       ...prev,
@@ -34,21 +52,15 @@ function ManagePlan() {
     toggleModal();
   };
 
-//   const handleDelete = (id) => {
-//     axios.delete(`${process.env.REACT_APP_URL}/plan/delete/${id}`).then((response) => {
-//       setTrigger(prev => prev + 1);
-//     }).catch((error) => {
-//       console.log(error, "error deleting data");
-//     });
-//   };
-
   const handleUpdate = () => {
-    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan).then((response) => {
-      setTrigger(prev => prev + 1);
-      toggleModal();
-    }).catch((error) => {
-      console.log(error, "error updating data");
-    });
+    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan)
+      .then((response) => {
+        setTrigger(prev => prev + 1);
+        toggleModal();
+      })
+      .catch((error) => {
+        console.log(error, "error updating data");
+      });
   };
 
   const handleChange = (e) => {
@@ -66,7 +78,6 @@ function ManagePlan() {
   const getDropdownItems = (plan) => (
     <>
       <DropdownItem key="edit" onClick={() => handleEdit(plan)}>Edit</DropdownItem>
-      {/* <DropdownItem key="delete" onClick={() => handleDelete(plan._id)}>Delete</DropdownItem> */}
     </>
   );
 
@@ -87,6 +98,7 @@ function ManagePlan() {
                     <tr>
                       <th>Title</th>
                       <th>Caption</th>
+                      <th>Firms</th>
                       <th>Icon</th>
                       <th>Price</th>
                       <th>Features</th>
@@ -98,6 +110,7 @@ function ManagePlan() {
                       <tr key={plan._id}>
                         <td>{plan.title}</td>
                         <td>{plan.caption}</td>
+                        <td>{plan.maxFirms}</td>
                         <td>
                           <div className="avatar-sm">
                             <span className="avatar-title rounded-circle bg-primary">
@@ -139,6 +152,10 @@ function ManagePlan() {
                 <FormGroup>
                   <Label for="caption">Caption</Label>
                   <Input type="text" name="caption" id="caption" value={selectedPlan.caption} onChange={handleChange} />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="maxFirms">Max Firms</Label>
+                  <Input type="number" name="maxFirms" id="maxFirms" value={selectedPlan.maxFirms} onChange={handleChange} />
                 </FormGroup>
                 <FormGroup>
                   <Label for="icon">Select an Icon</Label>

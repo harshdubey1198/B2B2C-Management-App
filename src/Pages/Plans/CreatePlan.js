@@ -16,21 +16,22 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 
 // Predefined features and icons
 const predefinedFeatures = [
-  "Dashboard", "Profile", "Inventory", "User Management", "Item Congiguration"
+  "Dashboard", "Profile", "Inventory", "User Management", "Item Configuration"
 ];
 
 const predefinedIcons = ["fas fa-cube", "fas fa-trophy", "fas fa-shield-alt"];
 
 function CreatePlan() {
   document.title = "Plan Form";
-  const authuser = JSON.parse(localStorage.getItem("authUser"))
-  console.log(authuser?.response._id,"authus")
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  console.log(authuser?.response._id, "authus");
   const [formValues, setFormValues] = useState({
     title: "",
     caption: "",
     icon: "",
     price: "",
     features: [],
+    maxFirms: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -82,7 +83,8 @@ function CreatePlan() {
       !formValues.caption ||
       !formValues.icon ||
       !formValues.price ||
-      formValues.features.length === 0
+      formValues.features.length === 0 ||
+      !formValues.maxFirms
     ) {
       setError("Please fill in all fields.");
       setLoading(false);
@@ -90,30 +92,32 @@ function CreatePlan() {
     }
 
     // Simulate API call
-    setTimeout(() => {
-      setSuccess("Plan added successfully.");
-      setLoading(false);
-      setError("");
-      axios.post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}` , formValues).then((response) => {
+    axios
+      .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues)
+      .then((response) => {
+        setSuccess("Plan added successfully.");
         console.log(response.data);
-      }).catch((error) => {
-        setError(error)
+        setFormValues({
+          title: "",
+          caption: "",
+          icon: "",
+          price: "",
+          features: [],
+          maxFirms: "",
+        });
       })
-      // Reset form values
-      setFormValues({
-        title: "",
-        caption: "",
-        icon: "",
-        price: "",
-        features: [],
+      .catch((error) => {
+        setError(error.response?.data?.message || "An error occurred.");
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    }, 1000);
   };
 
   return (
     <React.Fragment>
       <div className="page-content">
-      <Breadcrumbs title="aaMOBee" breadcrumbItem="Plan Management" />
+        <Breadcrumbs title="aaMOBee" breadcrumbItem="Plan Management" />
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
@@ -248,6 +252,17 @@ function CreatePlan() {
                           </div>
                         ))}
                       </div>
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="maxFirms">Max Firms</Label>
+                      <Input
+                        type="number"
+                        id="maxFirms"
+                        name="maxFirms"
+                        placeholder="Enter maximum number of firms"
+                        value={formValues.maxFirms}
+                        onChange={handleChange}
+                      />
                     </FormGroup>
                     <Button color="primary" type="submit" disabled={loading}>
                       {loading ? "Adding..." : "Add Plan"}
