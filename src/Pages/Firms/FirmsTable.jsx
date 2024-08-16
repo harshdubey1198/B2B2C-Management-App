@@ -38,17 +38,17 @@ function FirmsTable() {
                 <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
-                      <th>Firm ID</th>
+                      {/* <th>Firm ID</th>
                       <th>Client Admin</th>
-                      <th>Client ID</th>
+                      <th>Client ID</th> */}
                       <th>Firm UID</th>
                       <th>Email</th>
                       <th>Name</th>
                       <th>Phone</th>
-                      <th>Firm Admin</th>
+                      {/* <th>Firm Admin</th> */}
                       <th>Avatar</th>
-                      <th>Created At</th>
-                      <th>Updated At</th>
+                      {/* <th>Created At</th>
+                      <th>Updated At</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -58,19 +58,19 @@ function FirmsTable() {
                         onMouseEnter={() => setHoveredFirmId(firm._id)}
                         onMouseLeave={() => setHoveredFirmId(null)}
                       >
-                        <td>{firm.id}</td>
-                        <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td>
-                        <td>{firm.cidm}</td>
+                        {/* <td>{firm.id}</td> */}
+                        {/* <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td> */}
+                        {/* <td>{firm.cidm}</td> */}
                         <td>{firm.fuid}</td>
                         <td>{firm.firmEmail}</td>
                         <td>{firm.firmName}</td>
                         <td>{firm.firmPhone}</td>
-                        <td>{firm.firmAdmin}</td>
+                        {/* <td>{firm.firmAdmin}</td> */}
                         <td>
                           <img src={firm.avatar} alt={firm.name} width="50" height="50" />
                         </td>
-                        <td>{new Date(firm.createdAt).toLocaleString()}</td>
-                        <td>{new Date(firm.updatedAt).toLocaleString()}</td>
+                        {/* <td>{new Date(firm.createdAt).toLocaleString()}</td>
+                        <td>{new Date(firm.updatedAt).toLocaleString()}</td> */}
                       </tr>
                     ))}
                   </tbody>

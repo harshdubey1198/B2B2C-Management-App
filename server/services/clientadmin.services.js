@@ -289,7 +289,7 @@ async function createFirm(body, clientId) {
 
 async function getFirms(clientId){
     try {
-        const firms = await Firms.find({clientAdmin: clientId}).populate("clientAdmin")
+        const firms = await Firms.find({clientAdmin: clientId})
         if(!firms.length){
             return Promise.reject('No firms found for this Client')
         }
