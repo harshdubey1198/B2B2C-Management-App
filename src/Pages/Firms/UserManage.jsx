@@ -23,91 +23,7 @@ import {
 } from "../Utility/FormValidation";
 import { setDefaultNamespace } from "i18next";
 
-// const clientData = {
-//   1: [
-//     {
-//       id: 1,
-//       name: "John Doe",
-//       phone: "123-456-7890",
-//       email: "john.doe@example.com",
-//       address: "123 Main St, Anytown, USA",
-//       actions: "Edit/Pause",
-//       firmAdmin: "John",
-//       permissions: "Admin/User",
-//       subscriptions: [
-//         {
-//           product: "Product A",
-//           status: "Active",
-//           startDate: "01/01/23",
-//           endDate: "31/12/23",
-//         },
-//       ],
-//     },
-//   ],
-//   2: [
-//     {
-//       id: 1,
-//       name: "Jane Smith",
-//       phone: "098-765-4321",
-//       email: "jane.smith@example.com",
-//       address: "456 Elm St, Othertown, USA",
-//       actions: "Edit/Pause",
-//       firmAdmin: "Jane",
-//       permissions: "Admin/User",
-//       subscriptions: [
-//         {
-//           product: "Product B",
-//           status: "Active",
-//           startDate: "15/02/23",
-//           endDate: "14/02/24",
-//         },
-//       ],
-//     },
-//   ],
-//   3: [
-//     {
-//       id: 1,
-//       name: "Alice Johnson",
-//       phone: "555-123-4567",
-//       email: "alice.johnson@example.com",
-//       address: "789 Oak St, Sometown, USA",
-//       actions: "Edit/Pause",
-//       firmAdmin: "Alice",
-//       permissions: "Admin/User",
-//       subscriptions: [
-//         {
-//           product: "Product C",
-//           status: "Active",
-//           startDate: "10/10/23",
-//           endDate: "10/10/24",
-//         },
-//       ],
-//     },
-//   ],
-//   4: [
-//     {
-//       id: 1,
-//       name: "Alice Johnson",
-//       phone: "555-123-4567",
-//       email: "alice.johnson@example.com",
-//       address: "789 Oak St, Sometown, USA",
-//       actions: "Edit/Pause",
-//       firmAdmin: "Alice",
-//       permissions: "Admin/User",
-//       subscriptions: [
-//         {
-//           product: "Product C",
-//           status: "Active",
-//           startDate: "10/10/23",
-//           endDate: "10/10/24",
-//         },
-//       ],
-//     },
-//   ],
-// };
-
-
-function Index() {
+function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState(1);
   const [hoveredClientId, setHoveredClientId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -612,4 +528,4 @@ function Index() {
   );
 }
 
-export default Index;
+export default UserManage;

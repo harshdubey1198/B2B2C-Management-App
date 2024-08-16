@@ -10,7 +10,7 @@ import PaymentsInvoice from "../Pages/Invoicing/payments.jsx";
 import ReportsInvoice from "../Pages/Invoicing/reports.jsx";
 
 
-import Firm from "../Pages/Firms/Index";
+import Firm from "../Pages/Firms/FirmsTable.jsx";
 // Import Calender
 import Calender from "../Pages/Calender";
 
@@ -117,6 +117,7 @@ import CreateFirm from "../Pages/Firms/CreateFirm.js";
 import SwitchFirm from "../Pages/Firms/SwitchFirm.js";
 import CreatePlan from "../Pages/Plans/CreatePlan.js";
 import ManagePlan from "../Pages/Plans/ManagePlan.js";
+import UserManage from "../Pages/Firms/UserManage.jsx";
 
 
 const authProtectedRoutes = [
@@ -142,6 +143,7 @@ const authProtectedRoutes = [
 
   // firm
   {path:"/firms", component: <Firm />},
+  {path:"/firmusers", component: <UserManage />},
   {path:"/firms-setting", component: <FirmsSetting />},
   {path:"/create-firm", component: <CreateFirm />},
   {path:"/switch-firm", component: <SwitchFirm/>},
