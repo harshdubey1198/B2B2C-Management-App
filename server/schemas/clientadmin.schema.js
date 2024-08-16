@@ -14,7 +14,11 @@ const clientAdminSchema = new Schema({
     address: { type: String },
     role: {type: String, required: true, default: 'client_admin'},
     avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
-    status: { type: String, enum: ['Approved', 'Rejected', 'Requested', 'Hold'], default: 'Requested' },
+    status: { type: String, enum: ['Accepted', 'Rejected', 'Requested', 'Hold'], default: 'Requested' },
+    firms : [{
+        firmId: {type: mongoose.Schema.Types.ObjectId, ref: "Firms"},
+        firmName: {type: String},
+    }],
     task_assigned: {},
     permissions: [{
         route: { type: String, required: true },

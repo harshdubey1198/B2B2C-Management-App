@@ -227,33 +227,62 @@ async function resetPassword(body) {
     }
 }
 
-async function createFirm(body, clientId){
+async function createFirm(body, clientId) {
     try {
+        const clientAdmin = await ClientAdmin.findById(clientId);
+        if (!clientAdmin) {
+            return Promise.reject('ClientAdmin not found');
+        }
+        const cidm = clientAdmin.cidm;
+
         // Generate a unique fuid
-        const latestFirm = await Firms.findOne({}).sort({ fuid: -1 });
-        const lastFuid = latestFirm ? parseInt(latestFirm.fuid, 10) : 0;
+        const latestFirm = await Firms.findOne({ cidm }).sort({ fuid: -1 });
+        let lastFuid = 0;
+        if (latestFirm) {
+            const parts = latestFirm.fuid.split('-');
+            lastFuid = parseInt(parts[1], 10);
+        }
         const newFuid = (lastFuid + 1).toString().padStart(3, '0'); 
+        const fullFuid = `${cidm}-${newFuid}`;
+
+        // Check if a firm with the same fuid already exists
+        const existingFirm = await Firms.findOne({ fuid: fullFuid });
+        if (existingFirm) {
+            return Promise.reject(`Firm with this credentials is already exists`);
+        }
+        const duplicateFirmName = await Firms.findOne({ firmName: body.firmName, clientAdmin: clientId });
+        if (duplicateFirmName) {
+            return Promise.reject(`Firm with name ${body.firmName} already exists for this client`);
+        }
 
         const firmAdminId = body.firmAdmin || clientId; 
 
         const data = {
             clientAdmin: clientId,
-            cidm: body.cidm,
-            fuid: newFuid,
-            email: body.email,
-            phone: body.phone,
-            name: body.name,
+            cidm: cidm,
+            fuid: fullFuid,
+            firmEmail: body.firmEmail,
+            firmPhone: body.firmPhone,
+            firmName: body.firmName,
             firmAdmin: firmAdminId,
             avatar: body.avatar,
         };
 
-        const newfirm = new Firms(data);
-        await newfirm.save();
-        return newfirm
+        const newFirm = new Firms(data);
+        await newFirm.save();
+
+        clientAdmin.firms = clientAdmin.firms || []
+        clientAdmin.firms.push({
+            firmId: newFirm._id,
+            firmName: newFirm.firmName
+        })
+        await clientAdmin.save()
+        return newFirm;
     } catch (error) {
         console.error('Error creating firm:', error);
-        Promise.reject('Error creating Firm')
+        return Promise.reject('Error creating Firm');
     }
 }
+
 
 module.exports = services
