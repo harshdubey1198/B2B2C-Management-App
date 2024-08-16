@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Container,
   Row,
@@ -119,23 +120,18 @@ function CreateFirm() {
         setLoading(false);
         return;
     }
+
     try {
-        const response = await fetch(
+        const response = await axios.post(
             `http://localhost:8000/api/clientadmin/createFirm/${clientId}`,
+            formValues,
             {
-                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(formValues),
             }
         );
 
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
         setSuccess("Firm added successfully.");
         setFormValues({
             firmName: "",
@@ -152,7 +148,7 @@ function CreateFirm() {
     } finally {
         setLoading(false);
     }
-};
+  };
 
   return (
     <React.Fragment>
