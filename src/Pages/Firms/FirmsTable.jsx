@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import axios from "axios";
 
 function FirmsTable() {
   const [firms, setFirms] = useState([]);
   const [hoveredFirmId, setHoveredFirmId] = useState(null);
-
+  const authUser = JSON.parse(localStorage.getItem("authUser"))?.response
+  console.log(authUser)
   useEffect(() => {
-    const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
-    setFirms(storedFirms);
+    // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
+    // setFirms(storedFirms);
+    if(authUser){
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser?._id}`).then((response) => {
+        setFirms(response);
+      }).catch((error) => {
+        console.error(error);
+      })
+    }
   }, []);
+
+  console.log(firms, "firms")
 
   return (
     <React.Fragment>
@@ -27,17 +38,17 @@ function FirmsTable() {
                 <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
-                      <th>Firm ID</th>
+                      {/* <th>Firm ID</th>
                       <th>Client Admin</th>
-                      <th>Client ID</th>
+                      <th>Client ID</th> */}
                       <th>Firm UID</th>
                       <th>Email</th>
                       <th>Name</th>
                       <th>Phone</th>
-                      <th>Firm Admin</th>
+                      {/* <th>Firm Admin</th> */}
                       <th>Avatar</th>
-                      <th>Created At</th>
-                      <th>Updated At</th>
+                      {/* <th>Created At</th>
+                      <th>Updated At</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -47,19 +58,19 @@ function FirmsTable() {
                         onMouseEnter={() => setHoveredFirmId(firm._id)}
                         onMouseLeave={() => setHoveredFirmId(null)}
                       >
-                        <td>{firm.id}</td>
-                        <td>{firm.clientAdmin}</td>
-                        <td>{firm.cidm}</td>
+                        {/* <td>{firm.id}</td> */}
+                        {/* <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td> */}
+                        {/* <td>{firm.cidm}</td> */}
                         <td>{firm.fuid}</td>
-                        <td>{firm.email}</td>
-                        <td>{firm.name}</td>
-                        <td>{firm.phone}</td>
-                        <td>{firm.firmAdmin}</td>
+                        <td>{firm.firmEmail}</td>
+                        <td>{firm.firmName}</td>
+                        <td>{firm.firmPhone}</td>
+                        {/* <td>{firm.firmAdmin}</td> */}
                         <td>
                           <img src={firm.avatar} alt={firm.name} width="50" height="50" />
                         </td>
-                        <td>{new Date(firm.createdAt).toLocaleString()}</td>
-                        <td>{new Date(firm.updatedAt).toLocaleString()}</td>
+                        {/* <td>{new Date(firm.createdAt).toLocaleString()}</td>
+                        <td>{new Date(firm.updatedAt).toLocaleString()}</td> */}
                       </tr>
                     ))}
                   </tbody>

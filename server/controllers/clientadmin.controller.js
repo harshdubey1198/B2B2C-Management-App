@@ -73,5 +73,15 @@ router.post('/createFirm/:id', async (req,res) => {
     })
 })
 
+// GET firms
+router.get('/getFirms/:id', async (req,res) => {
+    ClientServices.getFirms(req.params.id).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
+    })
+})
+
 
 module.exports = router

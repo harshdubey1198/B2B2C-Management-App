@@ -19,6 +19,7 @@ services.updateClient = updateClient
 services.UserForgetPassword = UserForgetPassword
 services.resetPassword = resetPassword
 services.createFirm = createFirm
+services.getFirms = getFirms
 
 // CLIENT REGISTRATION
 async function clientRegistration(body) {
@@ -283,6 +284,19 @@ async function createFirm(body, clientId) {
     } catch (error) {
         console.error('Error creating firm:', error.message);
         return Promise.reject(`Error creating firm: ${error.message}`);
+    }
+}
+
+async function getFirms(clientId){
+    try {
+        const firms = await Firms.find({clientAdmin: clientId})
+        if(!firms.length){
+            return Promise.reject('No firms found for this Client')
+        }
+        return firms
+    } catch (error) {
+        console.log('Error getting firms:', error);
+        return Promise.reject('Error getting Firms');
     }
 }
 
