@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import React, { useState } from "react";
 import {
   Container,
@@ -13,37 +12,36 @@ import {
   Alert,
 } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { checkEmptyFields, validateEmail, validatePhone } from "../Utility/FormValidation";
+import {
+  checkEmptyFields,
+  validateEmail,
+  validatePhone,
+} from "../Utility/FormValidation";
 
-const predefinedPermissions = ["Admin", "User", "Add Account", "Delete Account", "Edit Account"]; // Example permissions
+const predefinedPermissions = [
+  "Admin",
+  "User",
+  "Add Account",
+  "Delete Account",
+  "Edit Account",
+];
 
 function CreateFirm() {
   document.title = "Firm Form";
 
   const [formValues, setFormValues] = useState({
-    id: 0,
-    name: "",
-    phone: "",
-    email: "",
-    // firmAdmin: "",
-    image: "", // Base64 string for the image
+    firmName: "",
+    firmPhone: "",
+    firmEmail: "",
+    avatar: "",
     permissions: [],
     startDate: "",
     newPermission: "",
-    selectedPermission: ""
+    selectedPermission: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Function to get the next available ID from local storage
-  const getNextId = () => {
-    const storedData = JSON.parse(localStorage.getItem("Firms")) || [];
-    const highestId = storedData.reduce((maxId, firm) => Math.max(maxId, firm.id), 0);
-    const newId = highestId + 1;
-    localStorage.setItem("currentFirmId", newId); // Update local storage with new ID
-    return newId;
-  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -61,10 +59,10 @@ function CreateFirm() {
       reader.onloadend = () => {
         setFormValues((prevState) => ({
           ...prevState,
-          image: reader.result, // Store the Base64 image string directly
+          avatar: reader.result,
         }));
       };
-      reader.readAsDataURL(file); // Convert image to Base64
+      reader.readAsDataURL(file);
     }
   };
 
@@ -92,58 +90,69 @@ function CreateFirm() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
     setSuccess("");
 
-    if (!validateEmail(formValues.email)) {
-      setError("Invalid Email");
-      setLoading(false);
-      return;
+    console.log('Form Values:', formValues);
+
+    if (!validateEmail(formValues.firmEmail)) {
+        setError("Invalid Email");
+        setLoading(false);
+        return;
     }
-    if (!validatePhone(formValues.phone)) {
-      setError("Invalid Phone Number");
-      setLoading(false);
-      return;
+    if (!validatePhone(formValues.firmPhone)) {
+        setError("Invalid Phone Number");
+        setLoading(false);
+        return;
     }
 
-    // Get next available ID
-    const newId = getNextId();
+    const authUserData = JSON.parse(localStorage.getItem("authUser"));
+    const authUser = authUserData?.response;
+    const clientId = authUser?._id;
+    console.log('Client ID:', clientId);
 
-    // Prepare form data with new ID
-    const newFirmData = {
-      ...formValues,
-      id: newId // Assign the next available ID
-    };
+    if (!clientId) {
+        setError("User ID not found");
+        setLoading(false);
+        return;
+    }
+    try {
+        const response = await fetch(
+            `http://localhost:8000/api/clientadmin/createFirm/${clientId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formValues),
+            }
+        );
 
-    // Simulate API call
-    setTimeout(() => {
-      // Retrieve stored data from localStorage
-      const storedData = JSON.parse(localStorage.getItem("Firms")) || [];
-      storedData.push(newFirmData);
-      localStorage.setItem("Firms", JSON.stringify(storedData));
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
 
-      setSuccess("Firm added successfully.");
-      setLoading(false);
-      setError("");
-
-      // Reset form values
-      setFormValues({
-        id: 0, // Reset ID for the next form submission
-        name: "",
-        phone: "",
-        email: "",
-        firmAdmin: "",
-        image: "", // Reset image
-        permissions: [], // Reset to an empty array
-        startDate: "",
-        newPermission: "",
-        selectedPermission: ""
-      });
-    }, 1000);
-  };
+        const data = await response.json();
+        setSuccess("Firm added successfully.");
+        setFormValues({
+            firmName: "",
+            firmPhone: "",
+            firmEmail: "",
+            avatar: "",
+            permissions: [],
+            startDate: "",
+            newPermission: "",
+            selectedPermission: "",
+        });
+    } catch (error) {
+        setError("Error creating firm: " + error.message);
+    } finally {
+        setLoading(false);
+    }
+};
 
   return (
     <React.Fragment>
@@ -161,72 +170,64 @@ function CreateFirm() {
                   {success && <Alert color="success">{success}</Alert>}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label htmlFor="name">Firm Name</Label>
+                      <Label htmlFor="firmName">Firm Name</Label>
                       <Input
                         type="text"
-                        id="name"
-                        name="name"
+                        id="firmName"
+                        name="firmName"
                         placeholder="Enter firm name"
-                        value={formValues.name}
+                        value={formValues.firmName}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="phone">Phone</Label>
+                      <Label htmlFor="firmPhone">Phone</Label>
                       <Input
                         type="text"
-                        id="phone"
-                        name="phone"
+                        id="firmPhone"
+                        name="firmPhone"
                         placeholder="Enter phone number"
-                        value={formValues.phone}
+                        value={formValues.firmPhone}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="firmEmail">Email</Label>
                       <Input
                         type="email"
-                        id="email"
-                        name="email"
+                        id="firmEmail"
+                        name="firmEmail"
                         placeholder="Enter email"
-                        value={formValues.email}
+                        value={formValues.firmEmail}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="image">Firm Image</Label>
+                      <Label htmlFor="avatar">Firm Image</Label>
                       <Input
                         type="file"
-                        id="image"
-                        name="image"
+                        id="avatar"
+                        name="avatar"
                         onChange={handleFileChange}
                       />
-                      {formValues.image && (
+                      {formValues.avatar && (
                         <img
-                          src={formValues.image}
+                          src={formValues.avatar}
                           alt="Item Preview"
                           className="img-fluid mt-2"
-                          style={{ maxWidth: '150px' }}
+                          style={{ maxWidth: "150px" }}
                         />
                       )}
                     </FormGroup>
-                    {/* <FormGroup>
-                      <Label htmlFor="firmAdmin">Firm Admin</Label>
-                      <Input
-                        type="text"
-                        id="firmAdmin"
-                        name="firmAdmin"
-                        placeholder="Enter firm admin"
-                        value={formValues.firmAdmin}
-                        onChange={handleChange}
-                      />
-                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
                       <div className="d-flex flex-column">
                         {formValues.permissions.length > 0 ? (
                           formValues.permissions.map((permission, index) => (
-                            <div key={index} className="d-flex justify-content-between align-items-center mb-2 border rounded p-2">
+                            <div
+                              key={index}
+                              className="d-flex justify-content-between align-items-center mb-2 border rounded p-2"
+                            >
                               <span>{permission}</span>
                               <Button
                                 color="danger"
@@ -251,7 +252,9 @@ function CreateFirm() {
                           >
                             <option value="">Select Permission</option>
                             {predefinedPermissions.map((perm, index) => (
-                              <option key={index} value={perm}>{perm}</option>
+                              <option key={index} value={perm}>
+                                {perm}
+                              </option>
                             ))}
                           </Input>
                           <Input
@@ -263,10 +266,7 @@ function CreateFirm() {
                             onChange={handleChange}
                             className="me-2"
                           />
-                          <Button
-                            color="success"
-                            onClick={handleAddPermission}
-                          >
+                          <Button color="success" onClick={handleAddPermission}>
                             Add
                           </Button>
                         </div>
