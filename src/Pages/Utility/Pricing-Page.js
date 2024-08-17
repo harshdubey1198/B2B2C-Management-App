@@ -6,15 +6,26 @@ import axios from "axios";
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
   const [plans, setPlans] = useState([]);
-  const [requestedPlan, setRequestedPlan] = useState(null);
+  const [requestedPlan, setRequestedPlan] = useState();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
-      setPlans(response); // Ensure correct data property is accessed
+      setPlans(response); 
     }).catch((error) => {
       console.log(error);
     });
+
+    if(authuser){
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClient/${authuser?.response._id}`).then((response) => {
+        localStorage.setItem("clientAdminData", JSON.stringify(response))
+      }).catch((error) => {
+        console.log(error);
+      })
+    }
+
+    const storedData = JSON.parse(localStorage.getItem("clientAdminData"))
+    setRequestedPlan(storedData)
   }, []);
 
   const handleRequest = (planId) => {
@@ -22,8 +33,8 @@ const Pricing = () => {
       clientId: authuser?.response._id,
       planId: planId
     }).then((response) => {
-      console.log(response);
-      setRequestedPlan(response); // Store the requested plan details
+      localStorage.setItem("clientAdminData", JSON.stringify(response))
+      setRequestedPlan(response)
     }).catch((error) => {
       console.log(error);
     })

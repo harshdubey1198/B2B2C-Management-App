@@ -22,6 +22,7 @@ services.resetPassword = resetPassword
 services.createFirm = createFirm
 services.getFirms = getFirms
 services.requestPlan = requestPlan
+services.getClientAdmin = getClientAdmin
 
 // CLIENT REGISTRATION
 async function clientRegistration(body) {
@@ -331,6 +332,16 @@ async function requestPlan(clientId, planId){
     } catch (error) {
         console.log("error requesting plans", error)
         return Promise.reject('Error requesting Plans');
+    }
+}
+
+async function getClientAdmin(clientId){
+    try {
+        const data = await ClientAdmin.findById(clientId).populate("plan.planId")
+        return data
+    } catch (error) {
+        console.log("Error getting Clients details for Plan", error)
+        return Promise.reject("Error getting Clients details for Plan")
     }
 }
 

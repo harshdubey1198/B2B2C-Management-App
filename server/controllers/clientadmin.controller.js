@@ -94,5 +94,13 @@ router.post('/requestPlan', async (req,res) => {
     })
 })
 
+router.get('/getClient/:id', async (req,res) => {
+    ClientServices.getClientAdmin(req.params.id).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+    })
+})
+
 
 module.exports = router
