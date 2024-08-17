@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { Container, Row, Col, Card, CardBody } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Container, Row, Col, Card, CardBody, Button } from "reactstrap";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
   const [plans, setPlans] = useState([]);
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const navigate = useNavigate()
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
@@ -15,6 +17,17 @@ const Pricing = () => {
       console.log(error);
     });
   }, []);
+
+  const handleRequest = (planId) => {
+    axios.post(`${process.env.REACT_APP_URL}/clientadmin/requestPlan`, {
+      clientId: authuser?.response._id,
+      planId: planId
+    }).then((response) => {
+      console.log(response);
+    }).catch((error) => {
+      console.log(error);
+    })
+  }
 
   return (
     <React.Fragment>
@@ -51,12 +64,13 @@ const Pricing = () => {
                     </div>
                     <div className="py-4 border-bottom">
                       <div className="float-end plan-btn">
-                        <Link
-                          to="#"
+                        <Button
+                          color="primary"
                           className="btn btn-primary btn-sm waves-effect waves-light"
+                          onClick={() => handleRequest(plan._id)}
                         >
-                          Sign up Now
-                        </Link>
+                          Buy Now
+                        </Button>
                       </div>
                       <h4>
                         <sup>
