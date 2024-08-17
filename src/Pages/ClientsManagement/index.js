@@ -157,7 +157,7 @@ function ClientManagement() {
         <Modal isOpen={modal} toggle={toggleModal}>
           <ModalHeader toggle={toggleModal}>{selectedPlan.planId.title} Details</ModalHeader>
           <ModalBody>
-            <p><strong>Description:</strong> {selectedPlan.planId.description}</p>
+            <p><strong>Description:</strong> {selectedPlan.planId.caption}</p>
             <p><strong>Price:</strong> {selectedPlan.planId.price}</p>
             <p><strong>Status:</strong> {selectedPlan.status}</p>
           </ModalBody>
