@@ -1,22 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Table,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Label,
-  Input,
+import { Button, Card, CardBody, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Table, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input,
 } from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';

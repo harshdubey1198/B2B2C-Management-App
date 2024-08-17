@@ -1,151 +1,171 @@
 import React, { useEffect, useState } from 'react';
-import {Button, Card, CardBody, Col , Dropdown, DropdownToggle, DropdownMenu, DropdownItem} from "reactstrap";
+import { Button, Card, CardBody, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 
-
-
 function ClientManagement() {
-  const [requestedData, setRequestedData] = useState([])
-  const [trigger, setTrigger] = useState(0)
+  const [requestedData, setRequestedData] = useState([]);
+  const [trigger, setTrigger] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState({});
-  const getDropdownItems = (status, id) => {
-    switch (status) {
-      case 'Accepted':
-        return (
-          <>
-            <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>
-          </>
-        );
-      case 'Hold':
-        return (
-          <>
-            <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>
-          </>
-        );
-      case 'Rejected':
-        return (
-          <>
-            <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>
-          </>
-        );
-      default:
-        return (
+  const [modal, setModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState(null);
+
+  const toggleDropdown = (id) => {
+    setDropdownOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  const toggleModal = () => {
+    setModal(!modal);
+  };
+
+  const handleViewDetails = (plan) => {
+    setSelectedPlan(plan);
+    toggleModal();
+  };
+
+  const getDropdownItems = (status, id, plan) => {
+    return (
+      <>
+        <DropdownItem key="view-details" onClick={() => handleViewDetails(plan)}>View Details</DropdownItem>
+        {status === 'Accepted' && <DropdownItem key="pause" onClick={() => handleHold(id)}>Pause</DropdownItem>}
+        {status === 'Hold' && <DropdownItem key="resume" onClick={() => handleAccept(id)}>Resume</DropdownItem>}
+        {status === 'Rejected' && <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>}
+        {!['Accepted', 'Hold', 'Rejected'].includes(status) && (
           <>
             <DropdownItem key="accept" onClick={() => handleAccept(id)}>Accept</DropdownItem>
             <DropdownItem key="reject" onClick={() => handleReject(id)}>Reject</DropdownItem>
           </>
-        );
-    }
+        )}
+      </>
+    );
   };
-  const toggleDropdown = (id) => {
-    setDropdownOpen((prev) => ({
-      ...prev,
-      [id]: !prev[id]
-    }));
-  };
+
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClients`).then((response) => {
-      setRequestedData(response)
-      console.log(response, "response")
-    }).catch((error) => {
-      console.log(error);
-    })
-  }, [trigger])
+    axios
+      .get(`${process.env.REACT_APP_URL}/clientadmin/getClients`)
+      .then((response) => {
+        setRequestedData(response);
+
+        response.data.forEach(client => {
+          if (client.plan?.status === 'requested') {
+            alert(`Client ${client.firstName} ${client.lastName} has requested the ${client.plan.planId.title} plan.`);
+          }
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [trigger]);
 
   const handleAccept = (id) => {
-    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Accepted"}).then((response) => {
-      setTrigger(prev => prev + 1)
-    }).catch((error) => {
-      console.log(error, "error updating data")
-    })
-  }
+    axios
+      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, { status: 'Accepted' })
+      .then(() => {
+        setTrigger((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.log(error, 'error updating data');
+      });
+  };
 
   const handleReject = (id) => {
-    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Rejected"}).then((response) => {
-      setTrigger(prev => prev + 1)
-    }).catch((error) => {
-      console.log(error, "error updating data")
-    })
-  }
-  const handleHold = (id) => {
-    axios.put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {status: "Hold"}).then((response) => {
-      setTrigger(prev => prev + 1)
-    }).catch((error) => {
-      console.log(error, "error updating data")
-    })
-  }
+    axios
+      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, { status: 'Rejected' })
+      .then(() => {
+        setTrigger((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.log(error, 'error updating data');
+      });
+  };
 
-  console.log(requestedData, "request")
+  const handleHold = (id) => {
+    axios
+      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, { status: 'Hold' })
+      .then(() => {
+        setTrigger((prev) => prev + 1);
+      })
+      .catch((error) => {
+        console.log(error, 'error updating data');
+      });
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Client Management" />
-        <p className='mm-active'>
-          This is the Client Management page.
-          Here the client data table will be fetched and CRUD and permissions can be set by master admin.
+        <p className="mm-active">
+          This is the Client Management page. Here the client data table will be fetched and CRUD and permissions can be
+          set by master admin.
         </p>
-    
 
-        <p className='mm-active'>
-          Request Generated by Clients 
-        </p>
+        <p className="mm-active">Request Generated by Clients</p>
         <Col lg={12}>
-  <Card>
-    <CardBody>
-      <div className="table-responsive">
-        <table className="table table-bordered mb-0">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Company Name</th>
-              <th>Company Phone</th>
-              <th>Status</th>
-              <th>Actions</th> 
-            </tr>
-          </thead>
-          <tbody>
-            {requestedData && requestedData.map(client => (
-              <tr key={client.id} >
-                <td>{client.firstName + " " + client.lastName}</td>
-                <td>{client.email}</td>
-                <td>{client.companyName}</td>
-                <td>{client.companyMobile}</td>
-                <td>{client.status}</td>
-                
-                <td>
-                  <Dropdown isOpen={dropdownOpen[client._id]} toggle={() => toggleDropdown(client._id)}>
-                    <DropdownToggle caret color="secondary">
-                      Actions
-                    </DropdownToggle>
-                    <DropdownMenu>
-                      {getDropdownItems(client.status, client._id)}
-                    </DropdownMenu>
-                  </Dropdown>
-                </td>
-                
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <Card>
+            <CardBody>
+              <div className="table-responsive">
+                <table className="table table-bordered mb-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Company Name</th>
+                      <th>Company Phone</th>
+                      <th>Status</th>
+                      <th>Plan Title</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {requestedData &&
+                      requestedData.map((client) => (
+                        <tr key={client._id}>
+                          <td>{client.firstName + ' ' + client.lastName}</td>
+                          <td>{client.email}</td>
+                          <td>{client.companyName}</td>
+                          <td>{client.companyMobile}</td>
+                          <td>{client.status}</td>
+                          <td>
+                            <Button color="info" size="sm" onClick={() => handleViewDetails(client.plan)}>
+                              View Details
+                            </Button>
+                          </td>
+                          <td>
+                            <Dropdown isOpen={dropdownOpen[client._id]} toggle={() => toggleDropdown(client._id)}>
+                              <DropdownToggle caret color="secondary">
+                                Actions
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                {getDropdownItems(client.status, client._id, client.plan)}
+                              </DropdownMenu>
+                            </Dropdown>
+                          </td>
+                        </tr>
+                      ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardBody>
+          </Card>
+        </Col>
       </div>
-    </CardBody>
-  </Card>
-</Col>
 
-      </div>
-      <style>{`
-        .hover-details {
-          position: absolute;
-          background: white;
-          border: 1px solid #ccc;
-          padding: 10px;
-          bottom: 4px;
-          right: 0px;
-          box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
-        }
-      `}</style>
+      {selectedPlan && (
+        <Modal isOpen={modal} toggle={toggleModal}>
+          <ModalHeader toggle={toggleModal}>{selectedPlan.planId.title} Details</ModalHeader>
+          <ModalBody>
+            <p><strong>Description:</strong> {selectedPlan.planId.description}</p>
+            <p><strong>Price:</strong> {selectedPlan.planId.price}</p>
+            <p><strong>Status:</strong> {selectedPlan.status}</p>
+          </ModalBody>
+          <ModalFooter>
+            <Button color="secondary" onClick={toggleModal}>Close</Button>
+          </ModalFooter>
+        </Modal>
+      )}
     </React.Fragment>
   );
 }

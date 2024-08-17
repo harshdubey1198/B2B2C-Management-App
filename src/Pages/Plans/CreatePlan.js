@@ -1,20 +1,9 @@
 import axios from "axios";
 import React, { useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert,
 } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 
-// Predefined features and icons
 const predefinedFeatures = [
   "Dashboard", "Profile", "Inventory", "User Management", "Item Configuration"
 ];
@@ -24,7 +13,7 @@ const predefinedIcons = ["fas fa-cube", "fas fa-trophy", "fas fa-shield-alt"];
 function CreatePlan() {
   document.title = "Plan Form";
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  console.log(authuser?.response._id, "authus");
+  console.log(authuser?.response._id, "authuser");
   const [formValues, setFormValues] = useState({
     title: "",
     caption: "",
