@@ -10,6 +10,7 @@ const Viewer = require("../schemas/viewersshema");
 const PasswordService = require('./password.services');
 const generateTemporaryPassword = require("../utils/tempPassword");
 const Firms = require("../schemas/firms.schema");
+const Plan = require("../schemas/plans.schema");
 
 let services = {}
 services.clientRegistration = clientRegistration
@@ -20,6 +21,7 @@ services.UserForgetPassword = UserForgetPassword
 services.resetPassword = resetPassword
 services.createFirm = createFirm
 services.getFirms = getFirms
+services.requestPlan = requestPlan
 
 // CLIENT REGISTRATION
 async function clientRegistration(body) {
@@ -42,7 +44,7 @@ async function clientRegistration(body) {
 // GETTING ALL REGITER CLIENTS
 async function getRegiteredUser(){
     try {
-        const data = await ClientAdmin.find().select('-password')
+        const data = await ClientAdmin.find().select('-password').populate("plan.planId")
         return data
     } catch (error) {
         return Promise.reject("Unable to get registered client")
@@ -297,6 +299,39 @@ async function getFirms(clientId){
     } catch (error) {
         console.log('Error getting firms:', error);
         return Promise.reject('Error getting Firms');
+    }
+}
+
+
+async function requestPlan(clientId, planId){
+    try {
+        const clientAdmin = await ClientAdmin.findById(clientId);
+        if (!clientAdmin) {
+            return Promise.reject('Client Admin not found')
+        }
+
+        const plan = await Plan.findById(planId);
+        if (!plan) {
+            return Promise.reject('Plan not found')
+        }
+
+        if (!plan.isAvailable) {
+            return Promise.reject('This Plan is not available at the moment')
+        }
+
+        if (clientAdmin.plan && clientAdmin.plan.toString() === planId.toString()){
+            return Promise.reject('Client is already subscribed to this plan')
+        }
+
+        clientAdmin.plan = {
+            planId: planId,
+            status: "requested"
+        };
+        await clientAdmin.save();
+        return clientAdmin
+    } catch (error) {
+        console.log("error requesting plans", error)
+        return Promise.reject('Error requesting Plans');
     }
 }
 

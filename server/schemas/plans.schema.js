@@ -26,6 +26,9 @@ const planSchema = new Schema({
         type: [String],
         required: true,
     },
+    isAvailable: {
+        type: Boolean
+    },
 }, { timestamps: true });
 
 const Plan = mongoose.model('Plan', planSchema);

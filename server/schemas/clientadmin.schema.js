@@ -24,6 +24,13 @@ const clientAdminSchema = new Schema({
         route: { type: String, required: true },
         sub_permissions: [{ type: String }]
     }],
+    plan: {
+        planId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
+        status: {
+            type: String,
+            enum: ['requested', 'active', 'inactive', 'expired'],
+        },
+    },    
     logs: [{
         date: { type: Date, required: true },
         time: { type: String, required: true },
