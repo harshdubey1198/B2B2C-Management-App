@@ -83,5 +83,16 @@ router.get('/getFirms/:id', async (req,res) => {
     })
 })
 
+// BUY / REQUEST PLAN
+router.post('/requestPlan', async (req,res) => {
+    const {clientId, planId} = req.body
+    ClientServices.requestPlan(clientId, planId).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
+    })
+})
+
 
 module.exports = router
