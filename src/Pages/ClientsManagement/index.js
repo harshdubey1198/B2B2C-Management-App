@@ -62,7 +62,7 @@ function ClientManagement() {
 
   const handleAccept = (id) => {
     axios
-      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, { status: 'Accepted' })
+      .put(`${process.env.REACT_APP_URL}/clientadmin/updaterequestPlan/${id}`, { status: 'accepted' })
       .then(() => {
         setTrigger((prev) => prev + 1);
       })
