@@ -318,8 +318,7 @@ async function requestPlan(clientId, planId){
         if (!plan.isAvailable) {
             return Promise.reject('This Plan is not available at the moment')
         }
-
-        if (clientAdmin.plan && clientAdmin.plan.toString() === planId.toString()){
+        if (clientAdmin.plan.planId && clientAdmin.plan.planId.toString() === planId.toString()){
             return Promise.reject('Client is already subscribed to this plan')
         }
 
