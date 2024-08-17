@@ -327,7 +327,7 @@ async function requestPlan(clientId, planId){
             status: "requested"
         };
         await clientAdmin.save();
-        return clientAdmin
+        return clientAdmin.populate("plan.planId")
     } catch (error) {
         console.log("error requesting plans", error)
         return Promise.reject('Error requesting Plans');
