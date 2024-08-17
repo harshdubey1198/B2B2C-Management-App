@@ -102,5 +102,12 @@ router.get('/getClient/:id', async (req,res) => {
     })
 })
 
-
+// HANDLING REQUEST RELATED TO PLANS FOR CLIENTADMIN
+router.put('/updaterequestPlan/:id', (req,res) => {
+    ClientServices.handleRequestPlan(req.params.id, req.body).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+    })
+})
 module.exports = router
