@@ -346,14 +346,19 @@ async function getClientAdmin(clientId){
     }
 }
 
-async function handleRequestPlan(clientId, data){
+async function handleRequestPlan(clientId, data) {
     try {
-        const clientadmin = await ClientAdmin.findOneAndUpdate({_id: clientId} , data, {new:true})
-        return clientadmin
+        const clientadmin = await ClientAdmin.findOneAndUpdate(
+            { _id: clientId },
+            data,
+            { new: true }
+        );
+        return clientadmin;
     } catch (error) {
-        console.log("Error handling plan request", error)
-        return Promise.reject("Error Handling plan requests")
+        console.log("Error handling plan request", error);
+        return Promise.reject("Error Handling plan requests");
     }
 }
+
 
 module.exports = services
