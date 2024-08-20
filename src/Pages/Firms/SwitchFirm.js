@@ -1,15 +1,26 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Col, Table } from 'reactstrap';
 
 function SwitchFirm() {
   const [firms, setFirms] = useState([]);
   const [currentFirm, setCurrentFirm] = useState(null);
+  const authuser = JSON.parse(localStorage.getItem("authUser"))
 
   useEffect(() => {
     // Fetch firms from localStorage
     const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
     setFirms(storedFirms);
+    // if(authuser){
+    //   axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+    //     setFirms(response)
+    //   }).catch((error) => {
+    //     console.log(error, "error getting firms")
+    //   })
+    // }
   }, []);
+
+  console.log(firms, "firms")
 
   useEffect(() => {
       setCurrentFirm(firms[0]);
@@ -27,11 +38,13 @@ function SwitchFirm() {
             {currentFirm ? (
               <>
                 <img
+                  // src={currentFirm.avatar}
                   src={currentFirm.image}
                   alt={currentFirm.name}
                   className='img-fluid mb-2 rounded-circle'
                   style={{ maxWidth: '100px' }}
                 />
+                {/* <h1>{currentFirm.firmName}</h1> */}
                 <h1>{currentFirm.name}</h1>
               </>
             ) : (
@@ -53,12 +66,14 @@ function SwitchFirm() {
                     <tr key={firm.id}>
                       <td className='text-center'>
                         <img
-                          src={firm.image}
+                          // src={firm?.avatar}
+                          src={firm?.image}
                           alt={firm.name}
                           className='img-fluid'
                           style={{ maxWidth: '50px' }}
                         />
                       </td>
+                      {/* <td className='text-center'>{firm.firmName}</td> */}
                       <td className='text-center'>{firm.name}</td>
                       <td className='text-center'>
                         <button

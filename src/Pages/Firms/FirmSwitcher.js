@@ -1,9 +1,11 @@
+import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   const [firms, setFirms] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const authuser = JSON.parse(localStorage.getItem("authUser"))
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
@@ -17,6 +19,15 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     if (defaultFirm && !selectedFirmId) {
       onSelectFirm(defaultFirm.id);
     }
+
+    // SETTING FIRMS FROM BACKEND 
+    // if(authuser){
+    //     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+    //       setFirms(response)
+    //     }).catch((error) => {
+    //       console.log(error, "error getting firms")
+    //     })
+    // }
   }, [selectedFirmId, onSelectFirm]);
 
   useEffect(() => {
@@ -44,11 +55,13 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
             active={firm.id === selectedFirmId}
           >
             <img
+              // src={firm.avatar}
               src={firm.image}
               alt={firm.name}
               className='img-fluid'
               style={{ maxWidth: '30px', marginRight: '10px' }}
             />
+            {/* {firm.firmName} */}
             {firm.name}
           </DropdownItem>
         ))}

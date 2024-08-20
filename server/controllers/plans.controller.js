@@ -3,6 +3,7 @@ const router = express.Router();
 
 const PlansServices = require('../services/plans.services');
 
+// CREATE PLAN
 router.post('/create/:id', async (req, res) => {
     try {
         const response = await PlansServices.createPlan(req.params.id, req.body);
@@ -13,6 +14,7 @@ router.post('/create/:id', async (req, res) => {
     }
 });
 
+// GET ALL PLANS
 router.get('/all', async (req, res) => {
     try {
         const response = await PlansServices.getAllPlans();
@@ -23,6 +25,7 @@ router.get('/all', async (req, res) => {
     }
 });
 
+// GET PLAN
 router.get('/:id', async (req, res) => {
     try {
         const response = await PlansServices.getPlanById(req.params.id);
@@ -33,6 +36,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// UPDATE PLAN
 router.put('/update/:id', async (req, res) => {
     try {
         const response = await PlansServices.updatePlan(req.params.id, req.body);
@@ -43,6 +47,7 @@ router.put('/update/:id', async (req, res) => {
     }
 });
 
+// DELETE PLAN
 router.delete('/delete/:id', async (req, res) => {
     try {
         const response = await PlansServices.deletePlan(req.params.id);

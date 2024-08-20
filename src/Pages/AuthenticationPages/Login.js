@@ -271,7 +271,7 @@ const Login = (props) => {
                               Log In
                             </button>
                           </div>
-                          <div className="mt-4 text-center">
+                          {/* <div className="mt-4 text-center">
                             <h5 className="font-size-14 mb-3">Sign in with</h5>
                             <ul className="list-inline">
                               <li className="list-inline-item">
@@ -307,7 +307,7 @@ const Login = (props) => {
                                 />
                               </li>
                             </ul>
-                          </div>
+                          </div> */}
                         </Col>
                       </Row>
                     </Form>

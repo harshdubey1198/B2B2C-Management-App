@@ -7,7 +7,7 @@ function FirmsTable() {
   const [firms, setFirms] = useState([]);
   const [hoveredFirmId, setHoveredFirmId] = useState(null);
   const authUser = JSON.parse(localStorage.getItem("authUser"))?.response
-  console.log(authUser)
+  
   useEffect(() => {
     // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
     // setFirms(storedFirms);
@@ -19,8 +19,6 @@ function FirmsTable() {
       })
     }
   }, []);
-
-  console.log(firms, "firms")
 
   return (
     <React.Fragment>
