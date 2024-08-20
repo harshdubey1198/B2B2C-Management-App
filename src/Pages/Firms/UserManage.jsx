@@ -18,7 +18,7 @@ import FirmSwitcher from "./FirmSwitcher"; // Adjust the path as needed
 import {
   checkEmptyFields,
   validateEmail,
-  validatePassword,
+  // validatePassword,
   validatePhone,
 } from "../Utility/FormValidation";
 import { setDefaultNamespace } from "i18next";
@@ -39,14 +39,15 @@ function UserManage() {
   const [formValues, setFormValues] = useState({
     firmId: "",
     firmName: "",
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     emergencyContact: "",
     address: "",
     dob: "",
     role: "",
-    password: "",
+    // password: "",
     permissions: [],
     restrictions: "",
   });
@@ -137,12 +138,12 @@ function UserManage() {
       setError("Invalid Phone Number");
       return;
     }
-    if (!validatePassword(formValues.password)) {
-      setError(
-        "Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"
-      );
-      return false;
-    }
+    // if (!validatePassword(formValues.password)) {
+    //   setError(
+    //     "Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"
+    //   );
+    //   return false;
+    // }
 
     setTimeout(() => {
       // Store form data in localStorage
@@ -158,14 +159,15 @@ function UserManage() {
       setFormValues({
         firmId: "",
         firmName: "",
-        name: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phone: "",
         emergencyContact: "",
         address: "",
         dob: "",
         role: "",
-        password: "",
+        // password: "",
         permissions: [],
         restrictions: "",
       });
@@ -193,7 +195,7 @@ function UserManage() {
     e.target.value = "";
     setError("");
   };
-
+  console.log(formValues, "formvalues")
   const handleFirmNameChange = (e) => {
     const selectedFirmName = e.target.value;
     const selectedFirm = firms.find(firm => firm.firmName === selectedFirmName);
@@ -343,16 +345,30 @@ function UserManage() {
             <div className="row">
               <div className="col-md-6">
                 <FormGroup>
-                  <Label for="name">Name</Label>
+                  <Label for="name">First Name</Label>
                   <Input
                     type="text"
-                    id="name"
-                    name="name"
+                    id="firstName"
+                    name="firstName"
                     onChange={handleChange}
                   />
                 </FormGroup>
               </div>
               <div className="col-md-6">
+                <FormGroup>
+                  <Label for="name">Last Name</Label>
+                  <Input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+              </div>
+            </div>
+
+            <div className="row">
+            <div className="col-md-6">
                 <FormGroup>
                   <Label for="email">Email</Label>
                   <Input
@@ -363,9 +379,6 @@ function UserManage() {
                   />
                 </FormGroup>
               </div>
-            </div>
-
-            <div className="row">
               <div className="col-md-6">
                 <FormGroup>
                   <Label for="phone">Phone</Label>
@@ -373,17 +386,6 @@ function UserManage() {
                     type="tel"
                     id="phone"
                     name="phone"
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="emergencyContact">Emergency Contact</Label>
-                  <Input
-                    type="tel"
-                    id="emergencyContact"
-                    name="emergencyContact"
                     onChange={handleChange}
                   />
                 </FormGroup>
@@ -435,6 +437,17 @@ function UserManage() {
                 </FormGroup>
               </div>
               <div className="col-md-6">
+                <FormGroup>
+                  <Label for="emergencyContact">Emergency Contact</Label>
+                  <Input
+                    type="tel"
+                    id="emergencyContact"
+                    name="emergencyContact"
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+              </div>
+              {/* <div className="col-md-6">
                 <FormGroup className="position-relative">
                   <Label for="password">Password</Label>
                   <Input
@@ -452,7 +465,7 @@ function UserManage() {
                     <i className={`mdi mdi-eye${show ? "-off" : ""}`}></i>
                   </button>
                 </FormGroup>
-              </div>
+              </div> */}
             </div>
 
             <div className="row">
