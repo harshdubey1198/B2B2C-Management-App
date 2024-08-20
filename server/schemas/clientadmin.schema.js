@@ -8,16 +8,16 @@ const clientAdminSchema = new Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     companyMobile: { type: String },
-    companyName: { type: String},
+    companyName: { type: String },
     mobile: { type: String },
     dob: { type: Date },
     address: { type: String },
-    role: {type: String, required: true, default: 'client_admin'},
-    avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
+    role: { type: String, required: true, default: 'client_admin' },
+    avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed" },
     status: { type: String, enum: ['Accepted', 'Rejected', 'Requested', 'Hold'], default: 'Requested' },
-    firms : [{
-        firmId: {type: mongoose.Schema.Types.ObjectId, ref: "Firms"},
-        firmName: {type: String},
+    firms: [{
+        firmId: { type: mongoose.Schema.Types.ObjectId, ref: "Firms" },
+        firmName: { type: String },
     }],
     task_assigned: {},
     permissions: [{
@@ -26,11 +26,10 @@ const clientAdminSchema = new Schema({
     }],
     plan: {
         planId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
-        status: {
-            type: String,
-            enum: ['requested', 'active', 'inactive', 'expired'],
-        },
-    },    
+        status: { type: String, enum: ['requested', 'active', 'inactive', 'expired'], },
+        activationDate: { type: Date },  
+        validityDuration: { type: Number, default: 30 }  
+    },
     logs: [{
         date: { type: Date, required: true },
         time: { type: String, required: true },
