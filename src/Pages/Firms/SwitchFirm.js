@@ -20,8 +20,6 @@ function SwitchFirm() {
     }
   }, []);
 
-  console.log(firms, "firms")
-
   useEffect(() => {
       setCurrentFirm(firms[0]);
   }, [firms]);

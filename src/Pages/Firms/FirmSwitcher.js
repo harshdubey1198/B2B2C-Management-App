@@ -17,7 +17,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     // Set the default firm if selectedFirmId is not provided
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
     if (defaultFirm && !selectedFirmId) {
-      onSelectFirm(defaultFirm.id);
+      onSelectFirm(defaultFirm.fuid);
     }
 
     // SETTING FIRMS FROM BACKEND 
@@ -32,11 +32,11 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
 
   useEffect(() => {
     if (selectedFirmId) {
-      const selectedFirm = firms.find(firm => firm.id === selectedFirmId);
+      const selectedFirm = firms.find(firm => firm.fuid === selectedFirmId);
       if (selectedFirm) {
         localStorage.setItem("defaultFirm", JSON.stringify({
-          id: selectedFirm.id,
-          name: selectedFirm.name
+          fuid: selectedFirm.fuid,
+          name: selectedFirm.firmName
         }));
       }
     }
@@ -45,14 +45,14 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle caret>
-        {firms.find(firm => firm.id === selectedFirmId)?.name || 'Select Firm'}
+        {firms.find(firm => firm.fuid === selectedFirmId)?.firmName || 'Select Firm'}
       </DropdownToggle>
       <DropdownMenu>
         {firms.map(firm => (
           <DropdownItem
             key={firm.id}
-            onClick={() => onSelectFirm(firm.id)}
-            active={firm.id === selectedFirmId}
+            onClick={() => onSelectFirm(firm.fuid)}
+            active={firm.fuid === selectedFirmId}
           >
             <img
               src={firm.avatar}
