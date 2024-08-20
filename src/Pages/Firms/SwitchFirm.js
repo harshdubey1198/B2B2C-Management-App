@@ -9,15 +9,15 @@ function SwitchFirm() {
 
   useEffect(() => {
     // Fetch firms from localStorage
-    const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
-    setFirms(storedFirms);
-    // if(authuser){
-    //   axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
-    //     setFirms(response)
-    //   }).catch((error) => {
-    //     console.log(error, "error getting firms")
-    //   })
-    // }
+    // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
+    // setFirms(storedFirms);
+    if(authuser){
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+        setFirms(response)
+      }).catch((error) => {
+        console.log(error, "error getting firms")
+      })
+    }
   }, []);
 
   console.log(firms, "firms")
@@ -38,14 +38,14 @@ function SwitchFirm() {
             {currentFirm ? (
               <>
                 <img
-                  // src={currentFirm.avatar}
-                  src={currentFirm.image}
+                  src={currentFirm.avatar}
+                  // src={currentFirm.image}
                   alt={currentFirm.name}
                   className='img-fluid mb-2 rounded-circle'
                   style={{ maxWidth: '100px' }}
                 />
-                {/* <h1>{currentFirm.firmName}</h1> */}
-                <h1>{currentFirm.name}</h1>
+                <h1>{currentFirm.firmName}</h1>
+                {/* <h1>{currentFirm.name}</h1> */}
               </>
             ) : (
               <p>No firm selected</p>
@@ -66,15 +66,15 @@ function SwitchFirm() {
                     <tr key={firm.id}>
                       <td className='text-center'>
                         <img
-                          // src={firm?.avatar}
-                          src={firm?.image}
+                          src={firm?.avatar}
+                          // src={firm?.image}
                           alt={firm.name}
                           className='img-fluid'
                           style={{ maxWidth: '50px' }}
                         />
                       </td>
-                      {/* <td className='text-center'>{firm.firmName}</td> */}
-                      <td className='text-center'>{firm.name}</td>
+                      <td className='text-center'>{firm.firmName}</td>
+                      {/* <td className='text-center'>{firm.name}</td> */}
                       <td className='text-center'>
                         <button
                           className={`btn ${currentFirm?.id === firm.id ? 'btn-primary' : 'btn-secondary'}`}
