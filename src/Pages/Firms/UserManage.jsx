@@ -41,12 +41,12 @@ function UserManage() {
     lastName: "",
     email: "",
     phone: "",
+     password: "",
+    confirmPassword: "",
     emergencyContact: "",
     address: "",
     dob: "",
     role: "",
-    password: "",
-    confirmPassword: "", // New field for confirm password
     permissions: [],
     restrictions: "",
   });
@@ -144,7 +144,6 @@ function UserManage() {
       setError("Passwords do not match");
       return;
     }
-
     setTimeout(() => {
       const storedData = JSON.parse(localStorage.getItem("Create User")) || [];
       const newItems = {
@@ -162,12 +161,12 @@ function UserManage() {
         lastName: "",
         email: "",
         phone: "",
+        password: "",
+        confirmPassword: "", 
         emergencyContact: "",
         address: "",
         dob: "",
         role: "",
-        password: "",
-        confirmPassword: "", // Clear confirm password
         permissions: [],
         restrictions: "",
       });
@@ -286,6 +285,7 @@ function UserManage() {
         </Col>
       </div>
 
+      {/* MODAL FOR CREATE USER FOR FIRM */}
       <Modal isOpen={modalOpen} toggle={toggleModal}>
         <ModalHeader toggle={toggleModal}>Create User</ModalHeader>
         {error && <Alert color="danger">{error}</Alert>}
@@ -307,18 +307,24 @@ function UserManage() {
               </div>
               <div className="col-md-6">
                 <FormGroup>
-                  <Label for="firmName">FirmName</Label>
+                  <Label for="firmName">Firm Name</Label>
                   <Input
-                    type="text"
+                    type="select"
                     id="firmName"
                     name="firmName"
                     value={formValues.firmName}
                     onChange={handleFirmNameChange}
-                  />
+                  >
+                    <option value="">Select Firm</option>
+                    {firms.map((firm) => (
+                      <option key={firm.fuid} value={firm.firmName}>
+                        {firm.firmName}
+                      </option>
+                    ))}
+                  </Input>
                 </FormGroup>
               </div>
-            </div>
-            <div className="row">
+              {/* Rest of the fields */}
               <div className="col-md-6">
                 <FormGroup>
                   <Label for="firstName">First Name</Label>
@@ -343,8 +349,6 @@ function UserManage() {
                   />
                 </FormGroup>
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6">
                 <FormGroup>
                   <Label for="email">Email</Label>
@@ -369,34 +373,54 @@ function UserManage() {
                   />
                 </FormGroup>
               </div>
-            </div>
-            <div className="row">
+                <div className="col-md-6">
+                  <FormGroup>
+                    <Label for="password">Password</Label>
+                    <Input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={formValues.password}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </div>
+                <div className="col-md-6">
+                  <FormGroup>
+                    <Label for="confirmPassword">Confirm Password</Label>
+                    <Input
+                      type="password"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={formValues.confirmPassword}
+                      onChange={handleChange}
+                    />
+                  </FormGroup>
+                </div>
               <div className="col-md-6">
                 <FormGroup>
-                  <Label for="password">Password</Label>
+                  <Label for="emergencyContact">Emergency Contact</Label>
                   <Input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formValues.password}
+                    type="text"
+                    id="emergencyContact"
+                    name="emergencyContact"
+                    value={formValues.emergencyContact}
                     onChange={handleChange}
                   />
                 </FormGroup>
               </div>
               <div className="col-md-6">
                 <FormGroup>
-                  <Label for="confirmPassword">Confirm Password</Label>
+                  <Label for="address">Address</Label>
                   <Input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formValues.confirmPassword}
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={formValues.address}
                     onChange={handleChange}
                   />
                 </FormGroup>
               </div>
-            </div>
-            <div className="row">
               <div className="col-md-6">
                 <FormGroup>
                   <Label for="dob">Date of Birth</Label>
@@ -419,43 +443,15 @@ function UserManage() {
                     value={formValues.role}
                     onChange={handleChange}
                   >
-                    <option>Select a role</option>
-                    {userRoles.map((role, index) => (
-                      <option key={index} value={role}>
+                    <option value="">Select Role</option>
+                    {userRoles.map((role) => (
+                      <option key={role} value={role}>
                         {role}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
               </div>
-            </div>
-            <div className="row">
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="emergencyContact">Emergency Contact</Label>
-                  <Input
-                    type="text"
-                    id="emergencyContact"
-                    name="emergencyContact"
-                    value={formValues.emergencyContact}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="address">Address</Label>
-                  <Input
-                    type="textarea"
-                    id="address"
-                    name="address"
-                    value={formValues.address}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-            </div>
-            <div className="row">
               <div className="col-md-6">
                 <FormGroup>
                   <Label for="permissions">Permissions</Label>
@@ -463,16 +459,31 @@ function UserManage() {
                     type="select"
                     id="permissions"
                     name="permissions"
+                    value=""
                     onChange={handlePermissionChange}
                   >
-                    <option>Select a permission</option>
-                    {prePermissions.map((permission, index) => (
-                      <option key={index} value={permission}>
+                    <option value="">Select Permissions</option>
+                    {prePermissions.map((permission) => (
+                      <option key={permission} value={permission}>
                         {permission}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
+                <ul>
+                  {formValues.permissions.map((permission, index) => (
+                    <li key={index}>
+                      {permission}{" "}
+                      <Button
+                        size="sm"
+                        color="danger"
+                        onClick={() => handleRemovePermission(permission)}
+                      >
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <div className="col-md-6">
                 <FormGroup>
@@ -484,9 +495,9 @@ function UserManage() {
                     value={formValues.restrictions}
                     onChange={handleChange}
                   >
-                    <option>Select a restriction</option>
-                    {preRestrictions.map((restriction, index) => (
-                      <option key={index} value={restriction}>
+                    <option value="">Select Restriction</option>
+                    {preRestrictions.map((restriction) => (
+                      <option key={restriction} value={restriction}>
                         {restriction}
                       </option>
                     ))}
@@ -494,33 +505,11 @@ function UserManage() {
                 </FormGroup>
               </div>
             </div>
-            <div className="row">
-              <div className="col-md-12">
-                <div className="permissions-list">
-                  {formValues.permissions.length > 0 && (
-                    <>
-                      <h5>Assigned Permissions:</h5>
-                      <ul>
-                        {formValues.permissions.map((permission, index) => (
-                          <li key={index}>
-                            {permission}{" "}
-                            <Button
-                              close
-                              onClick={() => handleRemovePermission(permission)}
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
           </div>
         </ModalBody>
         <ModalFooter>
           <Button color="primary" onClick={handleSubmit}>
-            Create User
+            Submit
           </Button>
           <Button color="secondary" onClick={toggleModal}>
             Cancel
