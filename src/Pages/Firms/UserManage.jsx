@@ -22,6 +22,7 @@ import {
   validatePhone,
 } from "../Utility/FormValidation";
 import { setDefaultNamespace } from "i18next";
+import axios from "axios";
 
 function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState(1);
@@ -33,6 +34,7 @@ function UserManage() {
   const [firms, SetFirms] = useState([])
   const [clientData, setClientData] = useState([])
   const [defaultFirm, setDefaultFirm] = useState()
+  const authuser = JSON.parse(localStorage.getItem("authUser"))
 
   const [formValues, setFormValues] = useState({
     firmId: "",
@@ -59,8 +61,16 @@ function UserManage() {
   const userRoles = ["Firm Admin", "Accountant", "Employee"];
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("Firms")) || []
-    SetFirms(storedData)
+    // const storedData = JSON.parse(localStorage.getItem("Firms")) || []
+    // SetFirms(storedData)
+
+    if(authuser){
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+        SetFirms(response)
+      }).catch((error) => {
+        console.log(error, "error getting firms")
+      })
+    }
 
     const storedUsers = JSON.parse(localStorage.getItem("Create User")) || []
     setClientData(storedUsers)
@@ -68,11 +78,11 @@ function UserManage() {
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm")) || {};
     setDefaultFirm(defaultFirm)
 
-    if (defaultFirm.id) {
-      setSelectedFirmId(defaultFirm.id);
+    if (defaultFirm.fuid) {
+      setSelectedFirmId(defaultFirm.fuid);
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: defaultFirm.id,
+        firmId: defaultFirm.fuid,
         firmName: defaultFirm.name
       }));
     }
@@ -80,15 +90,15 @@ function UserManage() {
 
   useEffect(() => {
     if (selectedFirmId) {
-      const selectedFirm = firms.find(firm => firm.id === selectedFirmId) || ''
+      const selectedFirm = firms.find(firm => firm.fuid === selectedFirmId) || ''
       localStorage.setItem("defaultFirm", JSON.stringify({
-        id: selectedFirmId,
-        name: selectedFirm.name
+        fuid: selectedFirmId,
+        name: selectedFirm.firmName
       }));
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: selectedFirm.id,
-        firmName: selectedFirm.name
+        firmId: selectedFirm.fuid,
+        firmName: selectedFirm.firmName
       }));
     }
   }, [selectedFirmId, firms]);
@@ -186,9 +196,9 @@ function UserManage() {
 
   const handleFirmNameChange = (e) => {
     const selectedFirmName = e.target.value;
-    const selectedFirm = firms.find(firm => firm.name === selectedFirmName);
+    const selectedFirm = firms.find(firm => firm.firmName === selectedFirmName);
     if (selectedFirm) {
-      setSelectedFirmId(selectedFirm.id);
+      setSelectedFirmId(selectedFirm.fuid);
     }
   };  
 
@@ -321,8 +331,8 @@ function UserManage() {
               >
                   <option value="">Select Firm</option>
                   {firms && firms.map((firm, index) => (
-                  <option key={index} value={firm.name}>
-                      {firm.name}
+                  <option key={index} value={firm.firmName}>
+                      {firm.firmName}
                   </option>
                   ))}
               </Input>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardBody, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import FirmSwitcher from './FirmSwitcher';
+import axios from 'axios';
 
 // Utility function to get firm data from local storage
 const getFirmsFromLocalStorage = () => {
@@ -14,15 +15,24 @@ const saveFirmsToLocalStorage = (firms) => {
 };
 
 function FirmSettings() {
-  const [firmsData, setFirmsData] = useState(getFirmsFromLocalStorage());
+  const [firmsData, setFirmsData] = useState([]);
   const [selectedFirmId, setSelectedFirmId] = useState(firmsData[0]?.id || null);
   const [firmDetails, setFirmDetails] = useState(firmsData.find(firm => firm.id === selectedFirmId) || {});
+  const authuser = JSON.parse(localStorage.getItem("authUser"))
 
   useEffect(() => {
     if (selectedFirmId) {
       setFirmDetails(firmsData.find(firm => firm.id === selectedFirmId) || {});
     }
-  }, [selectedFirmId, firmsData]);
+
+    if(authuser){
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+        setFirmsData(response)
+      }).catch((error) => {
+        console.log(error, "error getting firms")
+      })
+    }
+  }, []);
 
   const handleFirmChange = (id) => {
     setSelectedFirmId(id);
