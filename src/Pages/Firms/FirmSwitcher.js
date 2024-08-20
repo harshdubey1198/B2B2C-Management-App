@@ -11,8 +11,8 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
 
   useEffect(() => {
     // Load firms from localStorage
-    const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
-    setFirms(storedFirms);
+    // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
+    // setFirms(storedFirms);
 
     // Set the default firm if selectedFirmId is not provided
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
@@ -21,13 +21,13 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     }
 
     // SETTING FIRMS FROM BACKEND 
-    // if(authuser){
-    //     axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
-    //       setFirms(response)
-    //     }).catch((error) => {
-    //       console.log(error, "error getting firms")
-    //     })
-    // }
+    if(authuser){
+        axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+          setFirms(response)
+        }).catch((error) => {
+          console.log(error, "error getting firms")
+        })
+    }
   }, [selectedFirmId, onSelectFirm]);
 
   useEffect(() => {
@@ -55,14 +55,14 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
             active={firm.id === selectedFirmId}
           >
             <img
-              // src={firm.avatar}
-              src={firm.image}
+              src={firm.avatar}
+              // src={firm.image}
               alt={firm.name}
               className='img-fluid'
               style={{ maxWidth: '30px', marginRight: '10px' }}
             />
-            {/* {firm.firmName} */}
-            {firm.name}
+            {firm.firmName}
+            {/* {firm.name} */}
           </DropdownItem>
         ))}
       </DropdownMenu>
