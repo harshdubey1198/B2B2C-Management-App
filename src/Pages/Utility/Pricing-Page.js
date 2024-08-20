@@ -78,9 +78,9 @@ const Pricing = () => {
                   </Col>
                 ) : requestedPlan.status === "active" ? (
                   <Col lg={12}>
-                    <Card className="d-flex flex-column h-100">
+                    <Card className="d-flex flex-column h-100 relative">
                       <CardBody className="p-4 d-flex flex-column flex-grow-1">
-                        <div className="d-flex mb-1">
+                        <div className="d-flex mb-1 relative">
                           <div className="flex-shrink-0 me-3">
                             <div className="avatar-sm">
                               <span className="avatar-title rounded-circle bg-primary">
@@ -93,6 +93,9 @@ const Pricing = () => {
                             <p className="text-muted" style={{ wordWrap: 'break-word' }}>
                               {requestedPlan.planId?.caption}
                             </p>
+                          </div>
+                          <div>
+                            status: <strong className="text-success">{requestedPlan.status}</strong>
                           </div>
                         </div>
                         <div className="py-4 border-bottom">
