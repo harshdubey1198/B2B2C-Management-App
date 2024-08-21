@@ -13,7 +13,7 @@ function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState(1);
   const [hoveredClientId, setHoveredClientId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [firms, SetFirms] = useState([]);
@@ -57,6 +57,7 @@ function UserManage() {
         .catch((error) => {
           console.log(error, "error getting firms");
         });
+        console.log("Auth User Role:", authuser?.response.role);
     }
 
     const storedUsers = JSON.parse(localStorage.getItem("Create User")) || [];
@@ -206,10 +207,14 @@ function UserManage() {
           <Button color="primary" onClick={toggleModal}>
             Add User
           </Button>
-          <FirmSwitcher
-            selectedFirmId={selectedFirmId}
-            onSelectFirm={setSelectedFirmId}
-          />
+          {authuser.response.role === "client_admin" && (
+              <FirmSwitcher
+                selectedFirmId={selectedFirmId}
+                onSelectFirm={setSelectedFirmId}
+              />
+            )}
+
+
         </div>
         <Col lg={12}>
           <Card>
