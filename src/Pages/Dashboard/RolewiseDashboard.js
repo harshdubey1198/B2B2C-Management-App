@@ -78,7 +78,7 @@ import React, { useEffect, useState } from 'react';
 const rolePermissions = {
   super_admin: ['View All Data', 'Manage Users', 'Edit Settings'],
   client_admin: ['View Client Data', 'Manage Client Users'],
-  firm_Admin: ['View Firm Data', 'Manage Firm Users'],
+  firm_admin: ['View Firm Data', 'Manage Firm Users'],
   accountant: ['View Financial Data', 'Manage Transactions'],
   GE: ['View General Data']
 };

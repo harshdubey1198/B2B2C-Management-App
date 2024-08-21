@@ -1,20 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Alert,
-  Button,
-  Card,
-  CardBody,
-  Col,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-} from "reactstrap";
+import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import FirmSwitcher from "./FirmSwitcher"; // Adjust the path as needed
+import FirmSwitcher from "./FirmSwitcher"; 
 import {
   checkEmptyFields,
   validateEmail,
