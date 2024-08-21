@@ -10,7 +10,7 @@ import {
 import axios from "axios";
 
 function UserManage() {
-  const [selectedFirmId, setSelectedFirmId] = useState(1);
+  const [selectedFirmId, setSelectedFirmId] = useState();
   const [hoveredClientId, setHoveredClientId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   // const [show, setShow] = useState(false);
@@ -64,9 +64,9 @@ function UserManage() {
     const storedUsers = JSON.parse(localStorage.getItem("Create User")) || [];
     setClientData(storedUsers);
 
-    const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm")) || {};
-    setDefaultFirm(defaultFirm);
-    if (defaultFirm.fuid) {
+    const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
+    if (defaultFirm && defaultFirm.fuid) {
+      setDefaultFirm(defaultFirm);
       setSelectedFirmId(defaultFirm.fuid);
       setFormValues((prevValues) => ({
         ...prevValues,
@@ -83,6 +83,7 @@ function UserManage() {
       localStorage.setItem(
         "defaultFirm",
         JSON.stringify({
+          firmId: selectedFirm._id,
           fuid: selectedFirmId,
           name: selectedFirm.firmName,
         })
