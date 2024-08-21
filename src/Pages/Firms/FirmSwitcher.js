@@ -36,7 +36,8 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
       if (selectedFirm) {
         localStorage.setItem("defaultFirm", JSON.stringify({
           fuid: selectedFirm.fuid,
-          name: selectedFirm.firmName
+          name: selectedFirm.firmName,
+          firmId: selectedFirm._id
         }));
       }
     }

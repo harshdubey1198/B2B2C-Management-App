@@ -24,6 +24,7 @@ function UserManage() {
   const [formValues, setFormValues] = useState({
     firmUniqueId: "",
     firmName: "",
+    firmId: "",
     firstName: "",
     lastName: "",
     email: "",
@@ -45,7 +46,7 @@ function UserManage() {
     "See Invoice",
   ];
   const preRestrictions = ["Only View", "Not allow update"];
-  const userRoles = ["Firm Admin", "Accountant", "Employee"];
+  const userRoles = ["firm_admin", "accountant", "g_emp"];
 
   useEffect(() => {
     if (authuser) {
@@ -65,11 +66,11 @@ function UserManage() {
 
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm")) || {};
     setDefaultFirm(defaultFirm);
-
     if (defaultFirm.fuid) {
       setSelectedFirmId(defaultFirm.fuid);
       setFormValues((prevValues) => ({
         ...prevValues,
+        firmId: defaultFirm.firmId,
         firmUniqueId: defaultFirm.fuid,
         firmName: defaultFirm.name,
       }));
@@ -88,6 +89,7 @@ function UserManage() {
       );
       setFormValues((prevValues) => ({
         ...prevValues,
+        firmId: defaultFirm.firmId,
         firmUniqueId: selectedFirm.fuid,
         firmName: selectedFirm.firmName,
       }));
@@ -133,32 +135,38 @@ function UserManage() {
       return;
     }
     setTimeout(() => {
-      const storedData = JSON.parse(localStorage.getItem("Create User")) || [];
-      const newItems = {
-        ...formValues,
-      };
-      storedData.push(newItems);
-      localStorage.setItem("Create User", JSON.stringify(storedData));
-      setSuccess("User added successfully.");
-      setError("");
+      // const storedData = JSON.parse(localStorage.getItem("Create User")) || [];
+      
+      // storedData.push(newItems);
+      // localStorage.setItem("Create User", JSON.stringify(storedData));
+      // console.log(newItems, "items")
+      axios.post(`${process.env.REACT_APP_URL}/auth/createUser`,
+        formValues
+      ).then((response) => {
+        setSuccess("User added successfully.");
+        setError("");
 
-      setFormValues({
-        firmUniqueId: "",
-        firmName: "",
-        firstName: "",
-        lastName: "",
-        email: "",
-        phone: "",
-        password: "",
-        confirmPassword: "", 
-        emergencyContact: "",
-        address: "",
-        dob: "",
-        role: "",
-        permissions: [],
-        restrictions: "",
-      });
-      toggleModal();
+        setFormValues({
+          firmUniqueId: "",
+          firmName: "",
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          password: "",
+          confirmPassword: "", 
+          emergencyContact: "",
+          address: "",
+          dob: "",
+          role: "",
+          permissions: [],
+          restrictions: "",
+        });
+        toggleModal();
+      }).catch((error) => {
+        console.log("error creating users", error)
+      })
+      
     }, 1000);
   };
 
@@ -171,7 +179,7 @@ function UserManage() {
     setError("");
   };
 
-  console.log(formValues)
+  // console.log(formValues)
   const handlePermissionChange = (e) => {
     const selectedPermission = e.target.value;
     if (
@@ -288,7 +296,7 @@ function UserManage() {
             <div className="row">
               <div className="col-md-6">
                 <FormGroup>
-                  <Label for="firmId">FirmId</Label>
+                  <Label for="firmUniqueId">FirmId</Label>
                   <Input
                     type="text"
                     id="firmUniqueId"
