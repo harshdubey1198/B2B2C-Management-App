@@ -7,7 +7,7 @@ const superAdminSchema = new Schema({
     email: { type: String, required: true },
     password: { type: String, required: true },
     phone: { type: String, required: true },
-    avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
+    avatar: { type: String, default: "https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"},
     dob: Date,
     logs: [{
         date: { type: Date, required: true },

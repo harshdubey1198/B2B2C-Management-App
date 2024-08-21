@@ -5,13 +5,14 @@ const GeneralEmployee = require("../schemas/generalEmployee.schema");
 const SuperAdmin = require("../schemas/superadmin.schema");
 const SupportExecutive = require("../schemas/supportExecutive.schema");
 const Viewer = require("../schemas/viewersshema");
+const PasswordService = require('./password.services')
 
 let service = {};
 service.createUser = createUser;
 
 async function createUser(body) {
   try{
-  const { role, firmUniqueId, email, ...rest} = body;
+  const { role, firmUniqueId, email, password, ...rest} = body;
   let userModel;
   let uniqueIdField = ""
 
@@ -42,9 +43,10 @@ async function createUser(body) {
     uniqueId = await generateUniqueId(userModel, uniqueIdField, firmUniqueId, role)
     rest[uniqueIdField] = uniqueId
   }
-
+  
+  const hashedPassword = await PasswordService.passwordHash(password);
   // Create the new user
-  const newUser = new userModel({ ...rest, email, role });
+  const newUser = new userModel({ ...rest, email, role, password: hashedPassword });
   await newUser.save();
 
   return newUser;

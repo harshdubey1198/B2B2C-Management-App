@@ -46,7 +46,7 @@ const firmAdminSchema = new Schema({
         required: true,
     },
     role: { type: String, default: 'firm_admin' },
-    avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
+    avatar: { type: String, default: "https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"},
     // permissions: {
     //     type: Map,
     //     of: [String],
