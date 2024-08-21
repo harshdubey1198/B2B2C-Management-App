@@ -42,6 +42,10 @@ const accountantSchema = new Schema({
       required: true,
   },
   role: { type: String, default: 'accountant' },
+  dob: {
+    type: Date,
+    required: true,
+  },
   avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
   permissions: {
       type: Map,

@@ -41,6 +41,10 @@ const firmAdminSchema = new Schema({
         type: String,
         required: true,
     },
+    dob: {
+        type: Date,
+        required: true,
+    },
     role: { type: String, default: 'firm_admin' },
     avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
     permissions: {
