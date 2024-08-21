@@ -10,7 +10,6 @@ let service = {};
 service.createUser = createUser;
 
 async function createUser(body) {
-  console.log(body)
   try{
   const { role, firmUniqueId, email, ...rest} = body;
   let userModel;
@@ -50,7 +49,7 @@ async function createUser(body) {
 
   return newUser;
   }catch (error) {
-    console.error('Error creating user:', error.message);
+    console.error('Error creating user:', error);
     return Promise.reject(`Error creating user`);
   }
 }
@@ -66,7 +65,7 @@ async function generateUniqueId(userModel, uniqueIdField, firmUniqueId, role) {
     case "g_emp":
       return generateEmployeeId(userModel, uniqueIdField, firmUniqueId);
     default:
-      throw new Error("Invalid Role");
+      return Promise.reject("Invalid Role");
   }
 }
 
