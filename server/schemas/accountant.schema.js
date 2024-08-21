@@ -41,6 +41,7 @@ const accountantSchema = new Schema({
       type: String,
       required: true,
   },
+  role: { type: String, default: 'accountant' },
   avatar: { type: String, default: "https://res-console.cloudinary.com/harshdubey1198/media_explorer_thumbnails/e4538e487d236764e095b75071b82209/detailed"},
   permissions: {
       type: Map,
