@@ -22,13 +22,13 @@ function UserManage() {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   const [formValues, setFormValues] = useState({
-    firmId: "",
+    firmUniqueId: "",
     firmName: "",
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
-     password: "",
+    password: "",
     confirmPassword: "",
     emergencyContact: "",
     address: "",
@@ -70,7 +70,7 @@ function UserManage() {
       setSelectedFirmId(defaultFirm.fuid);
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: defaultFirm.fuid,
+        firmUniqueId: defaultFirm.fuid,
         firmName: defaultFirm.name,
       }));
     }
@@ -88,7 +88,7 @@ function UserManage() {
       );
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: selectedFirm.fuid,
+        firmUniqueId: selectedFirm.fuid,
         firmName: selectedFirm.firmName,
       }));
     }
@@ -143,7 +143,7 @@ function UserManage() {
       setError("");
 
       setFormValues({
-        firmId: "",
+        firmUniqueId: "",
         firmName: "",
         firstName: "",
         lastName: "",
@@ -171,6 +171,7 @@ function UserManage() {
     setError("");
   };
 
+  console.log(formValues)
   const handlePermissionChange = (e) => {
     const selectedPermission = e.target.value;
     if (
@@ -290,9 +291,9 @@ function UserManage() {
                   <Label for="firmId">FirmId</Label>
                   <Input
                     type="text"
-                    id="firmId"
-                    name="firmId"
-                    value={formValues.firmId}
+                    id="firmUniqueId"
+                    name="firmUniqueId"
+                    value={formValues.firmUniqueId}
                     readOnly
                   />
                 </FormGroup>

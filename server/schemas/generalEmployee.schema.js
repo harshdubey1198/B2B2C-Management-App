@@ -41,6 +41,10 @@ const generalEmployeeSchema = new Schema({
     type: String,
     required: true,
   },
+  dob: {
+    type: Date,
+    required: true,
+  },
   role: { type: String, default: 'g_emp' },
   avatar: {
     type: String,
