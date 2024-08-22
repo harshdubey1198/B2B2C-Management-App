@@ -291,7 +291,7 @@ function UserManage() {
           <form onSubmit={handleSubmit}>
             <Row>
               <Col md={6}>
-                {authuser?.response.role === "client_admin" && (
+              
                   <FormGroup>
                     <Label>Firm Name</Label>
                     <Input
@@ -308,7 +308,7 @@ function UserManage() {
                       ))}
                     </Input>
                   </FormGroup>
-                )}
+            
                 <FormGroup>
                   <Label>First Name</Label>
                   <Input
