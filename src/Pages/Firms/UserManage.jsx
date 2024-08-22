@@ -4,10 +4,10 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import FirmSwitcher from "./FirmSwitcher";
 import {   checkEmptyFields,   validateEmail,   validatePhone, } from "../Utility/FormValidation";
 import axios from "axios";
+import UserTable from "../../components/FirmComponents/userTable";
 
 function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState();
-  const [hoveredClientId, setHoveredClientId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -192,6 +192,8 @@ function UserManage() {
     }
   };
 
+  console.log(clientData, "data")
+
   const filteredClients = clientData.filter(
     (client) => client?.firmId === selectedFirmId
   );
@@ -225,7 +227,8 @@ function UserManage() {
         <Col lg={12}>
           <Card>
             <CardBody>
-              <div className="table-responsive mt-4">
+              <UserTable selectedFirm={selectedFirmId}/>
+              {/* <div className="table-responsive mt-4">
                 <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
@@ -277,7 +280,7 @@ function UserManage() {
                       ))}
                   </ul>
                 </div>
-              )}
+              )} */}
             </CardBody>
           </Card>
         </Col>
@@ -291,7 +294,7 @@ function UserManage() {
           <form onSubmit={handleSubmit}>
             <Row>
               <Col md={6}>
-              
+                {authuser?.response.role === "client_admin" && (
                   <FormGroup>
                     <Label>Firm Name</Label>
                     <Input
@@ -308,7 +311,7 @@ function UserManage() {
                       ))}
                     </Input>
                   </FormGroup>
-            
+                )}
                 <FormGroup>
                   <Label>First Name</Label>
                   <Input
