@@ -192,8 +192,6 @@ function UserManage() {
     }
   };
 
-  console.log(clientData, "data")
-
   const filteredClients = clientData.filter(
     (client) => client?.firmId === selectedFirmId
   );
@@ -227,7 +225,7 @@ function UserManage() {
         <Col lg={12}>
           <Card>
             <CardBody>
-              <UserTable selectedFirm={selectedFirmId}/>
+              <UserTable selectedFirmId={selectedFirmId}/>
               {/* <div className="table-responsive mt-4">
                 <table className="table table-bordered mb-0">
                   <thead>

@@ -10,14 +10,9 @@ function UserTable({selectedFirmId}) {
     setClientData(storedUsers);
   },[])
 
-  console.log(clientData, "clientdata")
-  console.log(selectedFirmId, "selectedfirmid")
-
-  const filteredClients = selectedFirmId
-    ? clientData.filter((client) => client.firmUniqueId === selectedFirmId)
-    : clientData;
-
-    console.log(filteredClients, "filteredcleue")
+  const filteredClients = clientData.filter(
+    (client) => client?.firmId === selectedFirmId
+  );
 
   return (
     <>
