@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "reactstrap";
 
 function UserTable({selectedFirmId}) {
   const [clientData, setClientData] = useState([])
