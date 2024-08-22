@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader,} from "reactstrap";
+import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import FirmSwitcher from "./FirmSwitcher"; 
-import {
-  checkEmptyFields,
-  validateEmail,
-  validatePhone,
-} from "../Utility/FormValidation";
+import FirmSwitcher from "./FirmSwitcher";
+import {   checkEmptyFields,   validateEmail,   validatePhone, } from "../Utility/FormValidation";
 import axios from "axios";
 
 function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState();
   const [hoveredClientId, setHoveredClientId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  // const [show, setShow] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [firms, SetFirms] = useState([]);
@@ -46,19 +41,21 @@ function UserManage() {
     "See Invoice",
   ];
   const preRestrictions = ["Only View", "Not allow update"];
-  const userRoles = ["firm_admin", "accountant", "g_emp"];
+
+  const clientAdminRoles = ["firm_admin", "accountant", "g_emp"];
+  const firmAdminRoles = ["accountant", "g_emp"];
 
   useEffect(() => {
     if (authuser) {
       axios
         .get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
-          SetFirms(response);
+          SetFirms(response); 
         })
         .catch((error) => {
           console.log(error, "error getting firms");
         });
-        console.log("Auth User Role:", authuser?.response.role);
+      console.log("Auth User Role:", authuser?.response.role);
     }
 
     const storedUsers = JSON.parse(localStorage.getItem("Create User")) || [];
@@ -119,6 +116,7 @@ function UserManage() {
     e.preventDefault();
     setError("");
     setSuccess("");
+
     if (checkEmptyFields(formValues)) {
       setError("Fill All the Fields");
       return;
@@ -135,15 +133,10 @@ function UserManage() {
       setError("Passwords do not match");
       return;
     }
-    setTimeout(() => {
-      // const storedData = JSON.parse(localStorage.getItem("Create User")) || [];
-      
-      // storedData.push(newItems);
-      // localStorage.setItem("Create User", JSON.stringify(storedData));
-      // console.log(newItems, "items")
-      axios.post(`${process.env.REACT_APP_URL}/auth/createUser`,
-        formValues
-      ).then((response) => {
+
+    axios
+      .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
+      .then((response) => {
         setSuccess("User added successfully.");
         setError("");
 
@@ -155,7 +148,7 @@ function UserManage() {
           email: "",
           phone: "",
           password: "",
-          confirmPassword: "", 
+          confirmPassword: "",
           emergencyContact: "",
           address: "",
           dob: "",
@@ -164,11 +157,10 @@ function UserManage() {
           restrictions: "",
         });
         toggleModal();
-      }).catch((error) => {
-        console.log("error creating users", error)
       })
-      
-    }, 1000);
+      .catch((error) => {
+        console.log("Error creating user", error);
+      });
   };
 
   const handleChange = (e) => {
@@ -180,7 +172,6 @@ function UserManage() {
     setError("");
   };
 
-  // console.log(formValues)
   const handlePermissionChange = (e) => {
     const selectedPermission = e.target.value;
     if (
@@ -201,7 +192,14 @@ function UserManage() {
     }
   };
 
-  const filteredClients = clientData.filter((client) => client?.firmId === selectedFirmId);
+  const filteredClients = clientData.filter(
+    (client) => client?.firmId === selectedFirmId
+  );
+
+  const availableRoles =
+    authuser.response.role === "client_admin"
+      ? clientAdminRoles
+      : firmAdminRoles;
 
   return (
     <React.Fragment>
@@ -218,13 +216,11 @@ function UserManage() {
             Add User
           </Button>
           {authuser.response.role === "client_admin" && (
-              <FirmSwitcher
-                selectedFirmId={selectedFirmId}
-                onSelectFirm={setSelectedFirmId}
-              />
-            )}
-
-
+            <FirmSwitcher
+              selectedFirmId={selectedFirmId}
+              onSelectFirm={setSelectedFirmId}
+            />
+          )}
         </div>
         <Col lg={12}>
           <Card>
@@ -287,16 +283,105 @@ function UserManage() {
         </Col>
       </div>
 
-      {/* MODAL FOR CREATE USER FOR FIRM */}
       <Modal isOpen={modalOpen} toggle={toggleModal}>
-        <ModalHeader toggle={toggleModal}>Create User</ModalHeader>
-        {error && <Alert color="danger">{error}</Alert>}
-        {success && <Alert color="success">{success}</Alert>}
+        <ModalHeader toggle={toggleModal}>Add New User</ModalHeader>
         <ModalBody>
-          <div>
-            <div className="row">
-              <div className="col-md-6">
+          {error && <Alert color="danger">{error}</Alert>}
+          {success && <Alert color="success">{success}</Alert>}
+          <form onSubmit={handleSubmit}>
+            <Row>
+              <Col md={6}>
+                {authuser?.response.role === "client_admin" && (
+                  <FormGroup>
+                    <Label>Firm Name</Label>
+                    <Input
+                      type="select"
+                      name="firmName"
+                      value={formValues.firmName}
+                      onChange={handleFirmNameChange}
+                    >
+                      <option value="">Select Firm</option>
+                      {firms.map((firm) => (
+                        <option key={firm.fuid} value={firm.firmName}>
+                          {firm.firmName}
+                        </option>
+                      ))}
+                    </Input>
+                  </FormGroup>
+                )}
                 <FormGroup>
+                  <Label>First Name</Label>
+                  <Input
+                    name="firstName"
+                    value={formValues.firstName}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Email</Label>
+                  <Input
+                    name="email"
+                    type="email"
+                    value={formValues.email}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Password</Label>
+                  <Input
+                    name="password"
+                    type="password"
+                    value={formValues.password}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Emergency Contact</Label>
+                  <Input
+                    name="emergencyContact"
+                    value={formValues.emergencyContact}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                <FormGroup>
+                  <Label>Date of Birth</Label>
+                  <Input
+                    name="dob"
+                    type="date"
+                    value={formValues.dob}
+                    onChange={handleChange}
+                  />
+                </FormGroup>
+                
+                <FormGroup>
+                  <Label>Permissions</Label>
+                  <Input type="select" onChange={handlePermissionChange}>
+                    <option value="">Select Permission</option>
+                    {prePermissions.map((permission) => (
+                      <option key={permission} value={permission}>
+                        {permission}
+                      </option>
+                    ))}
+                  </Input>
+                  <ul>
+                    {formValues.permissions.map((permission) => (
+                      <li key={permission}>
+                        {permission}{" "}
+                        <Button
+                          color="danger"
+                          size="sm"
+                          onClick={() => handleRemovePermission(permission)}
+                        >
+                          Remove
+                        </Button>
+                      </li>
+                    ))}
+                  </ul>
+                </FormGroup>
+              </Col>
+
+              <Col md={6}>
+              <FormGroup>
                   <Label for="firmUniqueId">FirmId</Label>
                   <Input
                     type="text"
@@ -306,193 +391,60 @@ function UserManage() {
                     readOnly
                   />
                 </FormGroup>
-              </div>
-              <div className="col-md-6">
                 <FormGroup>
-                  <Label for="firmName">Firm Name</Label>
+                  <Label>Last Name</Label>
                   <Input
-                    type="select"
-                    id="firmName"
-                    name="firmName"
-                    value={formValues.firmName}
-                    onChange={handleFirmNameChange}
-                  >
-                    <option value="">Select Firm</option>
-                    {firms.map((firm) => (
-                      <option key={firm.fuid} value={firm.firmName}>
-                        {firm.firmName}
-                      </option>
-                    ))}
-                  </Input>
-                </FormGroup>
-              </div>
-              {/* Rest of the fields */}
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="firstName">First Name</Label>
-                  <Input
-                    type="text"
-                    id="firstName"
-                    name="firstName"
-                    value={formValues.firstName}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="lastName">Last Name</Label>
-                  <Input
-                    type="text"
-                    id="lastName"
                     name="lastName"
                     value={formValues.lastName}
                     onChange={handleChange}
                   />
                 </FormGroup>
-              </div>
-              <div className="col-md-6">
                 <FormGroup>
-                  <Label for="email">Email</Label>
+                  <Label>Phone</Label>
                   <Input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formValues.email}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="phone">Phone</Label>
-                  <Input
-                    type="text"
-                    id="phone"
                     name="phone"
                     value={formValues.phone}
                     onChange={handleChange}
                   />
                 </FormGroup>
-              </div>
-                <div className="col-md-6">
-                  <FormGroup>
-                    <Label for="password">Password</Label>
-                    <Input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formValues.password}
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
-                </div>
-                <div className="col-md-6">
-                  <FormGroup>
-                    <Label for="confirmPassword">Confirm Password</Label>
-                    <Input
-                      type="password"
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={formValues.confirmPassword}
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
-                </div>
-              <div className="col-md-6">
                 <FormGroup>
-                  <Label for="emergencyContact">Emergency Contact</Label>
+                  <Label>Confirm Password</Label>
                   <Input
-                    type="text"
-                    id="emergencyContact"
-                    name="emergencyContact"
-                    value={formValues.emergencyContact}
+                    name="confirmPassword"
+                    type="password"
+                    value={formValues.confirmPassword}
                     onChange={handleChange}
                   />
                 </FormGroup>
-              </div>
-              <div className="col-md-6">
                 <FormGroup>
-                  <Label for="address">Address</Label>
+                  <Label>Address</Label>
                   <Input
-                    type="text"
-                    id="address"
                     name="address"
                     value={formValues.address}
                     onChange={handleChange}
                   />
                 </FormGroup>
-              </div>
-              <div className="col-md-6">
+               
                 <FormGroup>
-                  <Label for="dob">Date of Birth</Label>
-                  <Input
-                    type="date"
-                    id="dob"
-                    name="dob"
-                    value={formValues.dob}
-                    onChange={handleChange}
-                  />
-                </FormGroup>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="role">Role</Label>
+                  <Label>Role</Label>
                   <Input
                     type="select"
-                    id="role"
                     name="role"
                     value={formValues.role}
                     onChange={handleChange}
                   >
                     <option value="">Select Role</option>
-                    {userRoles.map((role) => (
+                    {availableRoles.map((role) => (
                       <option key={role} value={role}>
                         {role}
                       </option>
                     ))}
                   </Input>
                 </FormGroup>
-              </div>
-              <div className="col-md-6">
                 <FormGroup>
-                  <Label for="permissions">Permissions</Label>
+                  <Label>Restrictions</Label>
                   <Input
                     type="select"
-                    id="permissions"
-                    name="permissions"
-                    value=""
-                    onChange={handlePermissionChange}
-                  >
-                    <option value="">Select Permissions</option>
-                    {prePermissions.map((permission) => (
-                      <option key={permission} value={permission}>
-                        {permission}
-                      </option>
-                    ))}
-                  </Input>
-                </FormGroup>
-                <ul>
-                  {formValues.permissions.map((permission, index) => (
-                    <li key={index}>
-                      {permission}{" "}
-                      <Button
-                        size="sm"
-                        color="danger"
-                        onClick={() => handleRemovePermission(permission)}
-                      >
-                        Remove
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="col-md-6">
-                <FormGroup>
-                  <Label for="restrictions">Restrictions</Label>
-                  <Input
-                    type="select"
-                    id="restrictions"
                     name="restrictions"
                     value={formValues.restrictions}
                     onChange={handleChange}
@@ -505,18 +457,18 @@ function UserManage() {
                     ))}
                   </Input>
                 </FormGroup>
-              </div>
-            </div>
-          </div>
+              </Col>
+            </Row>
+            <ModalFooter>
+              <Button color="secondary" onClick={toggleModal}>
+                Cancel
+              </Button>
+              <Button type="submit" color="primary">
+                Submit
+              </Button>
+            </ModalFooter>
+          </form>
         </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={handleSubmit}>
-            Submit
-          </Button>
-          <Button color="secondary" onClick={toggleModal}>
-            Cancel
-          </Button>
-        </ModalFooter>
       </Modal>
     </React.Fragment>
   );
