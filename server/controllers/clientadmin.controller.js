@@ -99,6 +99,7 @@ router.get('/getClient/:id', async (req,res) => {
         res.status(200).send(response)
     }).catch((error) => {
         console.log(error, "err")
+        res.status(500).send(error)
     })
 })
 
@@ -108,6 +109,18 @@ router.put('/updaterequestPlan/:id', (req,res) => {
         res.status(200).send(response)
     }).catch((error) => {
         console.log(error, "err")
+        res.status(500).send(error)
+    })
+})
+
+
+// FIRM SETTING API
+router.post('/updatefirm/:id', (req,res) => {
+    ClientServices.updateFirm(req.params.id, req.body).then((response) => {
+        res.status(200).send(response)
+    }).catch((error) => {
+        console.log(error, "err")
+        res.status(500).send(error)
     })
 })
 module.exports = router

@@ -24,6 +24,7 @@ services.getFirms = getFirms
 services.requestPlan = requestPlan
 services.getClientAdmin = getClientAdmin
 services.handleRequestPlan = handleRequestPlan
+services.updateFirm = updateFirm 
 
 // CLIENT REGISTRATION
 async function clientRegistration(body) {
@@ -304,7 +305,6 @@ async function getFirms(clientId){
     }
 }
 
-
 async function requestPlan(clientId, planId){
     try {
         const clientAdmin = await ClientAdmin.findById(clientId);
@@ -357,6 +357,31 @@ async function handleRequestPlan(clientId, data) {
     } catch (error) {
         console.log("Error handling plan request", error);
         return Promise.reject("Error Handling plan requests");
+    }
+}
+
+async function updateFirm(firmId, body) {
+    try {
+        const firm = await Firms.findById(firmId);
+        if (!firm) {
+            return Promise.reject("Firm is not available");
+        }
+
+        firm.companyAddress = body.companyAddress || firm.companyAddress;
+        firm.bankName = body.bankName || firm.bankName;
+        firm.accountNumber = body.accountNumber || firm.accountNumber;
+        firm.ifscCode = body.ifscCode || firm.ifscCode;
+        firm.cifNumber = body.cifNumber || firm.cifNumber;
+        firm.gstin = body.gstin || firm.gstin;
+        firm.branchName = body.branchName || firm.branchName;
+        firm.accountHolder = body.accountHolder || firm.accountHolder;
+
+        await firm.save();
+
+        return firm;
+    } catch (error) {
+        console.error("Error updating firm:", error.message);
+        return Promise.reject("Error updating firm: " + error.message);
     }
 }
 
