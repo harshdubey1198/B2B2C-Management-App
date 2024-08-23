@@ -1,31 +1,10 @@
 import React, { useState } from "react";
-import {
-  Alert,
-  Button,
-  Col,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-} from "reactstrap";
-
+import {  Alert,  Button,  Col,  FormGroup,  Input,  Label,  Modal,  ModalBody,  ModalFooter,  ModalHeader,  Row,} from "reactstrap";
 import axios from "axios";
 import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
 
 const ClientUserCreateForm = ({
-  isOpen,
-  toggle,
-  firms,
-  selectedFirmId,
-  setSelectedFirmId,
-  defaultFirm,
-  formValues,
-  setFormValues,
-  availableRoles,
+  isOpen,   toggle,   firms,   selectedFirmId,   setSelectedFirmId,   defaultFirm,   formValues,   setFormValues,   availableRoles, 
 }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -33,7 +12,7 @@ const ClientUserCreateForm = ({
   const handleAddPermission = (permission) => {
     setFormValues((prevState) => ({
       ...prevState,
-      permissions: [...new Set([...prevState.permissions, permission])], // Ensure no duplicates
+      permissions: [...new Set([...prevState.permissions, permission])],
     }));
   };
 

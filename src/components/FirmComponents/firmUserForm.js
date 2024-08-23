@@ -1,37 +1,26 @@
 import React, { useState, useEffect } from "react";
-import {
-  Alert,
-  Button,
-  Col,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-} from "reactstrap";
+import {Alert,Button,Col,FormGroup,Input,Label,Modal,ModalBody,ModalFooter,ModalHeader,Row,} from "reactstrap";
 import axios from "axios";
-import {
-  checkEmptyFields,
-  validateEmail,
-  validatePhone,
-} from "../../Pages/Utility/FormValidation";
+import {   checkEmptyFields,   validateEmail,   validatePhone, } from "../../Pages/Utility/FormValidation";
 
 const FirmUserCreateForm = ({
   isOpen,
   toggle,
-  userRoleAuthUser, // Assuming this prop determines the user role
+  userRoleAuthUser, 
   formValues,
   setFormValues,
 }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const authUser = JSON.parse(localStorage.getItem("authUser"))
-
+  const handleRemovePermission = (permission) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      permissions: prevState.permissions.filter((p) => p !== permission),
+    }));
+  };
   useEffect(() => {
-      // API call to fetch the default firmId and firmName
+   
       axios
         .get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser?.response._id}`)
         .then((response) => {
@@ -100,7 +89,23 @@ const FirmUserCreateForm = ({
         setError("Failed to create user");
       });
   };
-
+  const handleAddPermission = (permission) => {
+    setFormValues((prevState) => ({
+      ...prevState,
+      permissions: [...new Set([...prevState.permissions, permission])],
+    }));
+  };
+  const handlePermissionChange = (e) => {
+    const selectedPermission = e.target.value;
+    if (
+      selectedPermission &&
+      !formValues.permissions.includes(selectedPermission)
+    ) {
+      handleAddPermission(selectedPermission);
+    }
+    e.target.value = "";
+    setError("");
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
@@ -180,6 +185,31 @@ const FirmUserCreateForm = ({
                   value={formValues.dob}
                   onChange={handleChange}
                 />
+              </FormGroup>
+              <FormGroup>
+                <Label>Permissions</Label>
+                <Input type="select" onChange={handlePermissionChange}>
+                  <option value="">Select Permission</option>
+                  {prePermissions.map((permission) => (
+                    <option key={permission} value={permission}>
+                      {permission}
+                    </option>
+                  ))}
+                </Input>
+                <ul>
+                  {formValues.permissions.map((permission) => (
+                    <li key={permission}>
+                      {permission}{" "}
+                      <Button
+                        color="danger"
+                        size="sm"
+                        onClick={() => handleRemovePermission(permission)}
+                      >
+                        Remove
+                      </Button>
+                    </li>
+                  ))}
+                </ul>
               </FormGroup>
             </Col>
 
