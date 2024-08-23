@@ -8,32 +8,28 @@ services.getFirmData = getFirmData;
 services.createUser = createUser;
 
 async function getFirmData(id) {
-  console.log(id , "data")
   try {
     const data = await FirmAdmin.findOne({ _id: id }).populate({
       path: "firmId",
-      select: "_id firmName fuid",
     });
     
     const result = {
       _id: data.firmId._id,
       fuid: data.firmId.fuid,
-      cidm: data.cidm,
+      cidm: data.firmId.cidm,
       firmName: data.firmId.firmName,
-      firmEmail: data.firmEmail,
-      firmPhone: data.firmPhone,
-      companyAddress: data.companyAddress,
-      bankName: data.bankName,
-      accountNumber: data.accountNumber,
-      ifscCode: data.ifscCode,
-      cifNumber: data.cifNumber,
-      gstin: data.gstin,
-      branchName: data.branchName,
-      accountHolder: data.accountHolder,
+      firmEmail: data.firmId.firmEmail,
+      firmPhone: data.firmId.firmPhone,
+      companyAddress: data.firmId.companyAddress,
+      bankName: data.firmId.bankName,
+      accountNumber: data.firmId.accountNumber,
+      ifscCode: data.firmId.ifscCode,
+      cifNumber: data.firmId.cifNumber,
+      gstin: data.firmId.gstin,
+      branchName: data.firmId.branchName,
+      accountHolder: data.firmId.accountHolder,
       avatar: data.firmId.avatar,
-
     };
-    console.log(data.firmId.fuid , "data")
     return result;
   } catch (error) {
     console.log("error getting firm data", error);
