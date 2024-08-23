@@ -1,43 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardBody, Col, Form, FormGroup, Label, Input, Button, Row } from 'reactstrap';
+import { Card, CardBody, Col, Form, FormGroup, Label, Input, Button, Row, Alert } from 'reactstrap';
 import FirmSwitcher from './FirmSwitcher';
 import axios from 'axios';
 
-// const getFirmsFromLocalStorage = () => {
-//   const firms = JSON.parse(localStorage.getItem('Firms')) || [];
-//   return firms;
-// };
-
-// const saveFirmsToLocalStorage = (firms) => {
-//   localStorage.setItem('Firms', JSON.stringify(firms));
-// };
-
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
-  const [selectedFirmId, setSelectedFirmId] = useState(firmsData[0]?.fuid || null);
-  const [firmDetails, setFirmDetails] = useState(firmsData.find(firm => firm.fuid === selectedFirmId) || {});
-  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
+  const [firmDetails, setFirmDetails] = useState({});
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [authUser, setAuthUser] = useState(null);
+
+  useEffect(() => {
+    const fetchAuthUser = () => {
+      const user = JSON.parse(localStorage.getItem("authUser"));
+      setAuthUser(user);
+    };
+
+    fetchAuthUser();
+  }, []);
+
+  useEffect(() => {
+    if (authUser?.response?.role === "client_admin") {
+      const fetchFirms = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser.response._id}`);
+          setFirmsData(response || []);
+        } catch (error) {
+          console.error("Error getting firms:", error.response || error.message);
+          setError("Failed to fetch firms data");
+        }
+      };
+      fetchFirms();
+    }
+  }, [authUser]);
+
+  useEffect(() => {
+    if (authUser?.response?.role === "firm_admin") {
+      const fetchFirmAdminData = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
+          const firmData = response || {};
+          console.log(firmData, "response");
+          setFirmDetails(firmData);
+        } catch (error) {
+          console.error("Error fetching firm data:", error.response?.data || error.message);
+          setError("Failed to fetch firm data");
+        }
+      };
+
+      fetchFirmAdminData();
+    }
+  }, [authUser]);
 
   useEffect(() => {
     if (selectedFirmId) {
-      setFirmDetails(firmsData.find(firm => firm.fuid === selectedFirmId) || {});
+      const selectedFirm = firmsData.find(firm => firm.fuid === selectedFirmId) || {};
+      localStorage.setItem("defaultFirm", JSON.stringify({
+        firmId: selectedFirm._id || "",
+        fuid: selectedFirmId || "",
+        name: selectedFirm.firmName || "",
+      }));
+      setFirmDetails(selectedFirm);
     }
-
-    if(authuser){
-      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
-        setFirmsData(response);
-      }).catch((error) => {
-        console.log(error, "error getting firms");
-      });
-    }
-  }, []);
-
-  console.log(firmsData, "firmsdata")
+  }, [selectedFirmId, firmsData]);
 
   const handleFirmChange = (id) => {
-    console.log(id, "firmchange")
     setSelectedFirmId(id);
-    setFirmDetails(firmsData.find(firm => firm.fuid === id) || {});
   };
 
   const handleInputChange = (e) => {
@@ -46,25 +75,26 @@ function FirmSettings() {
       ...prevDetails,
       [name]: value
     }));
+    setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails?._id}`, firmDetails).then((response) => {
-      setFirmsData(prevData => prevData.map(firm =>
-        firm.fuid === selectedFirmId ? firmDetails : firm
-      ));
-      alert('Firm details updated successfully!');
-    }).catch((error) => {
-      console.log(error, "error getting firms");
-    });
+    try {
+      await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}, firmDetails`);
+      setSuccess("Firm details updated successfully!");
+      setError("");
+    } catch (error) {
+      console.error("Error updating firm details:", error.response?.data || error.message);
+      setError("Failed to update firm details");
+    }
   };
 
   return (
     <React.Fragment>
       <div className="page-content">
         <div className="container">
-          {authuser.response.role === "client_admin" && (
+          {authUser?.response?.role === "client_admin" && (
             <FirmSwitcher
               firms={firmsData}
               selectedFirmId={selectedFirmId}
@@ -75,7 +105,9 @@ function FirmSettings() {
             <Card>
               <CardBody>
                 <h4 className="mb-4">Edit Firm Settings</h4>
-                {selectedFirmId ? (
+                {error && <Alert color="danger">{error}</Alert>}
+                {success && <Alert color="success">{success}</Alert>}
+                {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
                   <Form onSubmit={handleSubmit}>
                     <Row>
                       <Col md={6}>
@@ -281,7 +313,7 @@ function FirmSettings() {
                     <Button color="primary" type="submit">Save Changes</Button>
                   </Form>
                 ) : (
-                  <p>Select a firm to edit.</p>
+                  <p>Select a firm to edit or verify your role.</p>
                 )}
               </CardBody>
             </Card>

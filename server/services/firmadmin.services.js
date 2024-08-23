@@ -17,8 +17,21 @@ async function getFirmData(id) {
     
     const result = {
       _id: data.firmId._id,
-      firmName: data.firmId.firmName,
       fuid: data.firmId.fuid,
+      cidm: data.cidm,
+      firmName: data.firmId.firmName,
+      firmEmail: data.firmEmail,
+      firmPhone: data.firmPhone,
+      companyAddress: data.companyAddress,
+      bankName: data.bankName,
+      accountNumber: data.accountNumber,
+      ifscCode: data.ifscCode,
+      cifNumber: data.cifNumber,
+      gstin: data.gstin,
+      branchName: data.branchName,
+      accountHolder: data.accountHolder,
+      avatar: data.firmId.avatar,
+
     };
     console.log(data.firmId.fuid , "data")
     return result;
