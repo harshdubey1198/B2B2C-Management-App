@@ -3,24 +3,24 @@ import { Card, CardBody, Col, Form, FormGroup, Label, Input, Button, Row } from 
 import FirmSwitcher from './FirmSwitcher';
 import axios from 'axios';
 
-const getFirmsFromLocalStorage = () => {
-  const firms = JSON.parse(localStorage.getItem('Firms')) || [];
-  return firms;
-};
+// const getFirmsFromLocalStorage = () => {
+//   const firms = JSON.parse(localStorage.getItem('Firms')) || [];
+//   return firms;
+// };
 
-const saveFirmsToLocalStorage = (firms) => {
-  localStorage.setItem('Firms', JSON.stringify(firms));
-};
+// const saveFirmsToLocalStorage = (firms) => {
+//   localStorage.setItem('Firms', JSON.stringify(firms));
+// };
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
-  const [selectedFirmId, setSelectedFirmId] = useState(firmsData[0]?.id || null);
-  const [firmDetails, setFirmDetails] = useState(firmsData.find(firm => firm.id === selectedFirmId) || {});
+  const [selectedFirmId, setSelectedFirmId] = useState(firmsData[0]?.fuid || null);
+  const [firmDetails, setFirmDetails] = useState(firmsData.find(firm => firm.fuid === selectedFirmId) || {});
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   useEffect(() => {
     if (selectedFirmId) {
-      setFirmDetails(firmsData.find(firm => firm.id === selectedFirmId) || {});
+      setFirmDetails(firmsData.find(firm => firm.fuid === selectedFirmId) || {});
     }
 
     if(authuser){
@@ -32,9 +32,12 @@ function FirmSettings() {
     }
   }, []);
 
+  console.log(firmsData, "firmsdata")
+
   const handleFirmChange = (id) => {
+    console.log(id, "firmchange")
     setSelectedFirmId(id);
-    setFirmDetails(firmsData.find(firm => firm.id === id) || {});
+    setFirmDetails(firmsData.find(firm => firm.fuid === id) || {});
   };
 
   const handleInputChange = (e) => {
@@ -47,12 +50,14 @@ function FirmSettings() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const updatedFirmsData = firmsData.map(firm =>
-      firm.id === selectedFirmId ? firmDetails : firm
-    );
-    setFirmsData(updatedFirmsData);
-    saveFirmsToLocalStorage(updatedFirmsData);
-    alert('Firm details updated successfully!');
+    axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails?._id}`, firmDetails).then((response) => {
+      setFirmsData(prevData => prevData.map(firm =>
+        firm.fuid === selectedFirmId ? firmDetails : firm
+      ));
+      alert('Firm details updated successfully!');
+    }).catch((error) => {
+      console.log(error, "error getting firms");
+    });
   };
 
   return (
