@@ -367,6 +367,10 @@ async function updateFirm(firmId, body) {
             return Promise.reject("Firm is not available");
         }
 
+        firm.firmName = body.firmName || firm.firmName;
+        firm.firmEmail = body.firmEmail || firm.firmEmail;
+        firm.firmPhone = body.firmPhone || firm.firmPhone;
+        firm.avatar = body.avatar || firm.avatar;
         firm.companyAddress = body.companyAddress || firm.companyAddress;
         firm.bankName = body.bankName || firm.bankName;
         firm.accountNumber = body.accountNumber || firm.accountNumber;
