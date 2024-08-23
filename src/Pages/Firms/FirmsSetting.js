@@ -81,7 +81,7 @@ function FirmSettings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}, firmDetails`);
+      await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
       setSuccess("Firm details updated successfully!");
       setError("");
     } catch (error) {
@@ -89,7 +89,7 @@ function FirmSettings() {
       setError("Failed to update firm details");
     }
   };
-
+  
   return (
     <React.Fragment>
       <div className="page-content">
