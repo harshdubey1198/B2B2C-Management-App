@@ -8,16 +8,19 @@ services.getFirmData = getFirmData;
 services.createUser = createUser;
 
 async function getFirmData(id) {
+  console.log(id , "data")
   try {
     const data = await FirmAdmin.findOne({ _id: id }).populate({
       path: "firmId",
       select: "_id firmName fuid",
     });
+    
     const result = {
       _id: data.firmId._id,
       firmName: data.firmId.firmName,
       fuid: data.firmId.fuid,
     };
+    console.log(data.firmId.fuid , "data")
     return result;
   } catch (error) {
     console.log("error getting firm data", error);
