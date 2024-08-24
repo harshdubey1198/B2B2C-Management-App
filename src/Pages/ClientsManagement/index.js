@@ -127,7 +127,7 @@ function ClientManagement() {
       });
   };
 
-  console.log(selectedPlan, "selectedplan")
+  console.log(selectedPlan, "selectedplan");
   return (
     <React.Fragment>
       <div className="page-content">
@@ -164,19 +164,19 @@ function ClientManagement() {
                           <td>{client.companyMobile}</td>
                           <td>{client.status}</td>
                           <td>
-                          {client.plan ? (
-                              <Button
-                                color="info"
-                                size="sm"
-                                onClick={() =>
-                                  handleViewDetails(client.plan, client._id)
-                                }
-                              >
-                                View Details
-                              </Button>
-                            ) : (
+                            {/* {client.plan ? ( */}
+                            <Button
+                              color="info"
+                              size="sm"
+                              onClick={() =>
+                                handleViewDetails(client.plan, client._id)
+                              }
+                            >
+                              View Details
+                            </Button>
+                            {/* ) : (
                               <span>No plan selected</span>
-                            )}
+                            )} */}
                           </td>
                           <td>
                             <Dropdown
@@ -247,72 +247,81 @@ function ClientManagement() {
           </Card>
         </Col>
       </div>
-
-      {selectedPlan && (
-        <Modal isOpen={modal} toggle={toggleModal}>
-          <ModalHeader toggle={toggleModal}>
-            {selectedPlan.planId.title} Details
-          </ModalHeader>
-          <ModalBody>
-            <p>
-              <strong>Description:</strong> {selectedPlan.planId.caption}
-            </p>
-            <p>
-              <strong>Price:</strong> {selectedPlan.planId.price}
-            </p>
-            <p>
-              <strong>Status:</strong> {selectedPlan.status}
-            </p>
-            <div style={{ marginTop: "10px" }}>
-              <Button
-                color="primary"
-                onClick={toggleStatusDropdown}
-                style={{ marginBottom: "10px" }}
-              >
-                Edit
-              </Button>
-              {statusDropdownOpen && (
-                <Dropdown
-                  isOpen={statusDropdownOpen}
-                  toggle={toggleStatusDropdown}
-                  direction="down"
+      <Modal isOpen={modal} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>
+          {selectedPlan?.planId
+            ? `${selectedPlan.planId.title} Details`
+            : "No Plan Selected"}
+        </ModalHeader>
+        <ModalBody>
+          {selectedPlan?.planId ? (
+            <>
+              <p>
+                <strong>Description:</strong> {selectedPlan.planId.caption}
+              </p>
+              <p>
+                <strong>Price:</strong> {selectedPlan.planId.price}
+              </p>
+              <p>
+                <strong>Status:</strong> {selectedPlan.status}
+              </p>
+              <div style={{ marginTop: "10px" }}>
+                <Button
+                  color="primary"
+                  onClick={toggleStatusDropdown}
+                  style={{ marginBottom: "10px" }}
                 >
-                  <DropdownToggle
-                    caret
-                    color="secondary"
-                    style={{ width: "100%" }}
+                  Edit
+                </Button>
+                {statusDropdownOpen && (
+                  <Dropdown
+                    isOpen={statusDropdownOpen}
+                    toggle={toggleStatusDropdown}
+                    direction="down"
                   >
-                    Select Status
-                  </DropdownToggle>
-                  <DropdownMenu>
-                    <DropdownItem
-                      onClick={() => handleStatusChange("requested")}
+                    <DropdownToggle
+                      caret
+                      color="secondary"
+                      style={{ width: "100%" }}
                     >
-                      Requested
-                    </DropdownItem>
-                    <DropdownItem onClick={() => handleStatusChange("active")}>
-                      Active
-                    </DropdownItem>
-                    <DropdownItem
-                      onClick={() => handleStatusChange("inactive")}
-                    >
-                      Inactive
-                    </DropdownItem>
-                    <DropdownItem onClick={() => handleStatusChange("expired")}>
-                      Expired
-                    </DropdownItem>
-                  </DropdownMenu>
-                </Dropdown>
-              )}
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button color="secondary" onClick={toggleModal}>
-              Close
-            </Button>
-          </ModalFooter>
-        </Modal>
-      )}
+                      Select Status
+                    </DropdownToggle>
+                    <DropdownMenu>
+                      <DropdownItem
+                        onClick={() => handleStatusChange("requested")}
+                      >
+                        Requested
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={() => handleStatusChange("active")}
+                      >
+                        Active
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={() => handleStatusChange("inactive")}
+                      >
+                        Inactive
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={() => handleStatusChange("expired")}
+                      >
+                        Expired
+                      </DropdownItem>
+                    </DropdownMenu>
+                  </Dropdown>
+                )}
+              </div>
+            </>
+          ) : (
+            <p>No plan selected</p>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={toggleModal}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
     </React.Fragment>
   );
 }

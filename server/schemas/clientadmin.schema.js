@@ -26,9 +26,9 @@ const clientAdminSchema = new Schema({
     }],
     plan: {
         planId: { type: mongoose.Schema.Types.ObjectId, ref: "Plan" },
-        status: { type: String, enum: ['requested', 'active', 'inactive', 'expired'], },
+        status: { type: String, enum: ['requested', 'active', 'inactive', 'expired']},
         activationDate: { type: Date },  
-        validityDuration: { type: Number, default: 30 }  
+        validityDuration: { type: Number }  
     },
     logs: [{
         date: { type: Date, required: true },
