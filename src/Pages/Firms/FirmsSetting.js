@@ -27,7 +27,11 @@ function FirmSettings() {
       const fetchFirms = async () => {
         try {
           const response = await axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser.response._id}`);
-          setFirmsData(response || []);
+          const firms = response || [];
+          setFirmsData(firms);
+          if (firms.length > 0) {
+            setSelectedFirmId(firms[0].fuid);
+          }
         } catch (error) {
           console.error("Error getting firms:", error.response || error.message);
           setError("Failed to fetch firms data");
@@ -36,7 +40,7 @@ function FirmSettings() {
       fetchFirms();
     }
   }, [authUser]);
-
+  
   useEffect(() => {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
