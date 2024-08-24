@@ -6,7 +6,9 @@ import axios from 'axios';
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
   const [selectedFirmId, setSelectedFirmId] = useState(null);
-  const [firmDetails, setFirmDetails] = useState({});
+  const [firmDetails, setFirmDetails] = useState({
+    companyAddress: []
+  });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [authUser, setAuthUser] = useState(null);
@@ -42,7 +44,8 @@ function FirmSettings() {
           const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
           const firmData = response || {};
           console.log(firmData, "response");
-          setFirmDetails(firmData);
+          // Ensure companyAddress is initialized as an array
+          setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
           setError("Failed to fetch firm data");
@@ -61,7 +64,8 @@ function FirmSettings() {
         fuid: selectedFirmId || "",
         name: selectedFirm.firmName || "",
       }));
-      setFirmDetails(selectedFirm);
+      // Ensure companyAddress is initialized as an array
+      setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] });
     }
   }, [selectedFirmId, firmsData]);
 
@@ -76,6 +80,18 @@ function FirmSettings() {
       [name]: value
     }));
     setError("");
+  };
+
+  const handleAddressChange = (index, e) => {
+    const { name, value } = e.target;
+    setFirmDetails(prevDetails => {
+      const updatedAddress = [...prevDetails.companyAddress];
+      updatedAddress[index] = {
+        ...updatedAddress[index],
+        [name]: value
+      };
+      return { ...prevDetails, companyAddress: updatedAddress };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -101,7 +117,7 @@ function FirmSettings() {
               onSelectFirm={handleFirmChange}
             />
           )}
-          <Col lg={8} className="mx-auto mt-2">
+          <Col lg={10} className="mx-auto mt-2">
             <Card>
               <CardBody>
                 <h4 className="mb-4">Edit Firm Settings</h4>
@@ -173,20 +189,7 @@ function FirmSettings() {
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="companyAddress">Company Address</Label>
-                          <Input
-                            type="text"
-                            id="companyAddress"
-                            name="companyAddress"
-                            value={firmDetails.companyAddress || ''}
-                            onChange={handleInputChange}
-                            required
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                        <Col md={6}>
                         <FormGroup>
                           <Label for="bankName">Bank Name</Label>
                           <Input
@@ -310,10 +313,110 @@ function FirmSettings() {
                         </FormGroup>
                       </Col>
                     </Row>
+                    <h5>Company Address</h5>
+                    {firmDetails.companyAddress.length > 0 ? (
+                      firmDetails.companyAddress.map((address, index) => (
+                        <Row key={index}>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`h_no_${index}`}>House Number</Label>
+                              <Input
+                                type="text"
+                                id={`h_no_${index}`}
+                                name="h_no"
+                                value={address.h_no || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`nearby_${index}`}>Nearby</Label>
+                              <Input
+                                type="text"
+                                id={`nearby_${index}`}
+                                name="nearby"
+                                value={address.nearby || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`district_${index}`}>District</Label>
+                              <Input
+                                type="text"
+                                id={`district_${index}`}
+                                name="district"
+                                value={address.district || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`city_${index}`}>City</Label>
+                              <Input
+                                type="text"
+                                id={`city_${index}`}
+                                name="city"
+                                value={address.city || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`state_${index}`}>State</Label>
+                              <Input
+                                type="text"
+                                id={`state_${index}`}
+                                name="state"
+                                value={address.state || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`zip_code_${index}`}>Zip Code</Label>
+                              <Input
+                                type="text"
+                                id={`zip_code_${index}`}
+                                name="zip_code"
+                                value={address.zip_code || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label for={`country_${index}`}>Country</Label>
+                              <Input
+                                type="text"
+                                id={`country_${index}`}
+                                name="country"
+                                value={address.country || ''}
+                                onChange={(e) => handleAddressChange(index, e)}
+                                required
+                              />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      ))
+                    ) : (
+                      <Alert color="info">No addresses available.</Alert>
+                    )}
                     <Button color="primary" type="submit">Save Changes</Button>
                   </Form>
                 ) : (
-                  <p>Select a firm to edit or verify your role.</p>
+                  <Alert color="info">Please select a firm to edit its settings.</Alert>
                 )}
               </CardBody>
             </Card>
