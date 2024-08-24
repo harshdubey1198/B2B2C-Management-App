@@ -44,6 +44,39 @@ async function clientRegistration(body) {
     }
 }
 
+
+async function clientRegistration(body) {
+    try {
+        const existingUser = await ClientAdmin.findOne({ email: body.email });
+        if (existingUser) {
+            return Promise.reject('Account already exists!');
+        } else {
+            let uniqueCidm = false;
+            let cidm;
+
+            while (!uniqueCidm) {
+                const randomAlphabet = () => String.fromCharCode(97 + Math.floor(Math.random() * 26));
+                const randomDigit = () => Math.floor(Math.random() * 10);
+                cidm = `${randomAlphabet()}${randomAlphabet()}${randomDigit()}${randomDigit()}${randomDigit()}`;
+                const existingCidm = await ClientAdmin.findOne({ cidm: cidm });
+                if (!existingCidm) {
+                    uniqueCidm = true;
+                }
+            }
+            const hashedPassword = await PasswordService.passwordHash(body.password);
+            body.password = hashedPassword;
+            body.cidm = cidm;
+
+            const user = await ClientAdmin.create(body);
+            return user;
+        }
+    } catch (error) {
+        console.log(error);
+        return Promise.reject('Unable to create User');
+    }
+}
+
+
 // GETTING ALL REGITER CLIENTS
 async function getRegiteredUser(){
     try {
@@ -263,7 +296,7 @@ async function createFirm(body, clientId) {
         }
 
         const firmAdminId = body.firmAdmin || clientId; 
-
+        console.log
         const data = {
             clientAdmin: clientId,
             cidm: cidm,
