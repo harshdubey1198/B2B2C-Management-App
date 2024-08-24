@@ -12,7 +12,6 @@ async function getFirmData(id) {
     const data = await FirmAdmin.findOne({ _id: id }).populate({
       path: "firmId",
     });
-    console.log(data)
     const result = {
       _id: data.firmId._id,
       fuid: data.firmId.fuid,
