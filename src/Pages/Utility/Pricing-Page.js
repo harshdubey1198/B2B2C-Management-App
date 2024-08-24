@@ -12,7 +12,7 @@ const Pricing = () => {
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/plan/all`)
       .then((response) => {
-        setPlans(response);
+        setPlans(response); 
       })
       .catch((error) => {
         console.log(error);
@@ -21,7 +21,7 @@ const Pricing = () => {
     if (authuser) {
       axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClient/${authuser?.response._id}`)
         .then((response) => {
-          const clientAdminData = response;
+          const clientAdminData = response; 
           if (clientAdminData && clientAdminData.plan) {
             localStorage.setItem("clientAdminData", JSON.stringify(clientAdminData));
             setRequestedPlan(clientAdminData.plan);
@@ -40,9 +40,9 @@ const Pricing = () => {
       clientId: authuser?.response._id,
       planId: planId
     }).then((response) => {
-      if (response.data && response.data.plan) {
-        localStorage.setItem("clientAdminData", JSON.stringify(response.data));
-        setRequestedPlan(response.data.plan);
+      if (response && response.plan) {
+        localStorage.setItem("clientAdminData", JSON.stringify(response));
+        setRequestedPlan(response.plan);
       } else {
         console.log("No plan data returned in response");
       }
@@ -50,6 +50,11 @@ const Pricing = () => {
       console.log("Error requesting plan:", error);
     });
   }
+
+  const shouldShowRequestedPlan = requestedPlan &&
+    requestedPlan.status &&
+    requestedPlan.planId &&
+    requestedPlan.validityDuration;
 
   return (
     <React.Fragment>
@@ -64,7 +69,7 @@ const Pricing = () => {
             </Col>
           </Row>
           <Row>
-            {requestedPlan ? (
+            {shouldShowRequestedPlan ? (
               <>
                 {requestedPlan.status === "requested" ? (
                   <Col lg={12}>
@@ -176,7 +181,7 @@ const Pricing = () => {
                 )}
               </>
             ) : (
-              plans && plans.map((plan, key) => (
+              plans.map((plan, key) => (
                 <Col xl={4} md={6} key={key}>
                   <Card className="d-flex flex-column h-100">
                     <CardBody className="p-4 d-flex flex-column flex-grow-1">
