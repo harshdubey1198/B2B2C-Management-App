@@ -11,21 +11,21 @@ const firmsSchema = new Schema({
     firmAdmin: {type: mongoose.Schema.Types.ObjectId, ref: "FirmAdmin"},
     avatar: { type: String, default: "https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg"},
     companyAddress: [{
-        h_no: { type: String, required: true },
-        nearby: { type: String, required: true },
-        district: { type: String, required: true },
-        city: { type: String, required: true },
+        h_no: { type: String },
+        nearby: { type: String },
+        district: { type: String },
+        city: { type: String },
         state: { type: String, required: true },
-        zip_code: { type: String, required: true },
-        country: { type: String, required: true }
+        zip_code: { type: String },
+        country: { type: String }
     }],
-    bankName: { type: String, required: true },
-    accountNumber: { type: String, required: true },
-    ifscCode: { type: String, required: true },
-    cifNumber: { type: String, required: true },
-    gstin: { type: String, required: true },
-    branchName: { type: String, required: true },
-    accountHolder: { type: String, required: true },
+    bankName: { type: String },
+    accountNumber: { type: String },
+    ifscCode: { type: String },
+    cifNumber: { type: String },
+    gstin: { type: String },
+    branchName: { type: String },
+    accountHolder: { type: String },
 
 }, {timestamps: true});  
 

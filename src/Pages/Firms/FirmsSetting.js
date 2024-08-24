@@ -124,7 +124,16 @@ function FirmSettings() {
                 {error && <Alert color="danger">{error}</Alert>}
                 {success && <Alert color="success">{success}</Alert>}
                 {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
+                  
                   <Form onSubmit={handleSubmit}>
+                     {firmDetails.avatar && (
+                            <img
+                              src={firmDetails.avatar}
+                              alt="Firm Avatar"
+                              className="img-fluid mt-2 rounded-circle"
+                              style={{ maxWidth: '100px' }}
+                            />
+                          )}
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -177,14 +186,7 @@ function FirmSettings() {
                             value={firmDetails.avatar || ''}
                             onChange={handleInputChange}
                           />
-                          {firmDetails.avatar && (
-                            <img
-                              src={firmDetails.avatar}
-                              alt="Firm Avatar"
-                              className="img-fluid mt-2"
-                              style={{ maxWidth: '150px' }}
-                            />
-                          )}
+                         
                         </FormGroup>
                       </Col>
                     </Row>
