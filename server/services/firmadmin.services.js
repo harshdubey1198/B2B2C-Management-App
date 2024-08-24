@@ -12,7 +12,7 @@ async function getFirmData(id) {
     const data = await FirmAdmin.findOne({ _id: id }).populate({
       path: "firmId",
     });
-    
+    console.log(data)
     const result = {
       _id: data.firmId._id,
       fuid: data.firmId.fuid,
@@ -20,7 +20,15 @@ async function getFirmData(id) {
       firmName: data.firmId.firmName,
       firmEmail: data.firmId.firmEmail,
       firmPhone: data.firmId.firmPhone,
-      companyAddress: data.firmId.companyAddress,
+      companyAddress: {
+        h_no: data.firmId.companyAddress[0].h_no,
+        nearby: data.firmId.companyAddress[0].nearby,
+        district: data.firmId.companyAddress[0].district,
+        city: data.firmId.companyAddress[0].city,
+        state: data.firmId.companyAddress[0].state,
+        zip_code: data.firmId.companyAddress[0].zip_code,
+        country: data.firmId.companyAddress[0].country
+      },
       bankName: data.firmId.bankName,
       accountNumber: data.firmId.accountNumber,
       ifscCode: data.firmId.ifscCode,
