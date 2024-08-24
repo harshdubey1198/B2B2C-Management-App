@@ -60,8 +60,8 @@ function UserManage() {
           }
         })
         .catch((error) => {
-          // console.log(error, "error getting firms");
-          toast.error("Failed to fetch firms data");
+          console.log(error, "error getting firms");
+          // toast.error("Failed to fetch firms data");
         });
       // console.log("Auth User Role:", authuser?.response.role);
     }
