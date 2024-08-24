@@ -88,7 +88,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Firms", link: "/firms" },
         { sublabel: "Firm Users", link: "/firmusers" },
         { sublabel: "Create Firm", link: "/create-firm" },
-        { sublabel: "Switch Firm", link: "/Switch-firm" },
+        // { sublabel: "Switch Firm", link: "/Switch-firm" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
     },
@@ -182,7 +182,7 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Manage Firm", link: "/manage-firm" },
         { sublabel: "Firm Users", link: "/firmusers" },
         { sublabel: "Create Firm", link: "/create-firm" },
-        { sublabel: "Switch Firm", link: "/Switch-firm" },
+        // { sublabel: "Switch Firm", link: "/Switch-firm" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
     },

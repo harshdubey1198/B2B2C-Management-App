@@ -6,6 +6,9 @@ import axios from "axios";
 import UserTable from "../../components/FirmComponents/userTable";
 import ClientUserCreateForm from "../../components/FirmComponents/clientUserForm";
 import FirmUserCreateForm from "../../components/FirmComponents/firmUserForm";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
+
 
 function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState();
@@ -40,29 +43,44 @@ function UserManage() {
       axios
         .get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
-          SetFirms(response); 
+          // console.log("API Response:", response);
+          const firmsData = response.data || [];
+          SetFirms(firmsData);
+          
+          if (firmsData.length > 0) {
+            const firstFirm = firmsData[0]; 
+            setDefaultFirm(firstFirm);
+            setSelectedFirmId(firstFirm.fuid);
+            setFormValues((prevValues) => ({
+              ...prevValues,
+              firmId: firstFirm._id,
+              firmUniqueId: firstFirm.fuid,
+              firmName: firstFirm.firmName,
+            }));
+          }
         })
         .catch((error) => {
-          console.log(error, "error getting firms");
+          // console.log(error, "error getting firms");
+          toast.error("Failed to fetch firms data");
         });
-      console.log("Auth User Role:", authuser?.response.role);
+      // console.log("Auth User Role:", authuser?.response.role);
     }
 
-    const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
-    if (defaultFirm && defaultFirm.fuid) {
-      setDefaultFirm(defaultFirm);
-      setSelectedFirmId(defaultFirm.fuid);
+    const storedDefaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
+    if (storedDefaultFirm && storedDefaultFirm.fuid) {
+      setDefaultFirm(storedDefaultFirm);
+      setSelectedFirmId(storedDefaultFirm.fuid);
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: defaultFirm.firmId,
-        firmUniqueId: defaultFirm.fuid,
-        firmName: defaultFirm.name,
+        firmId: storedDefaultFirm.firmId,
+        firmUniqueId: storedDefaultFirm.fuid,
+        firmName: storedDefaultFirm.name,
       }));
     }
-  }, []);
+  }, [authuser]);
 
   useEffect(() => {
-    if (selectedFirmId) {
+    if (selectedFirmId && firms.length > 0) {
       const selectedFirm = firms.find((firm) => firm.fuid === selectedFirmId) || "";
       localStorage.setItem(
         "defaultFirm",
@@ -74,7 +92,7 @@ function UserManage() {
       );
       setFormValues((prevValues) => ({
         ...prevValues,
-        firmId: defaultFirm.firmId,
+        firmId: selectedFirm._id,
         firmUniqueId: selectedFirm.fuid,
         firmName: selectedFirm.firmName,
       }));
@@ -96,8 +114,7 @@ function UserManage() {
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Client Management" />
         <div className="d-flex justify-content-between mb-4">
           <p className="mm-active">
-            This is the Client Management page. Here the client data table will
-            be fetched and CRUD and permissions can be set by master admin.
+            This is the user management page. Here you can manage users.
           </p>
         </div>
         <div className="d-flex justify-content-between mb-4">
@@ -114,38 +131,38 @@ function UserManage() {
         <Col lg={12}>
           <Card>
             <CardBody>
-              <UserTable selectedFirmId={selectedFirmId}/>
+              <UserTable selectedFirmId={selectedFirmId} />
             </CardBody>
           </Card>
         </Col>
       </div>
 
       {authuser?.response.role === "client_admin" && (
-      <ClientUserCreateForm
-        isOpen={modalOpen}
-        toggle={toggleModal}
-        firms={firms}
-        selectedFirmId={selectedFirmId}
-        setSelectedFirmId={setSelectedFirmId}
-        defaultFirm={defaultFirm}
-        formValues={formValues}
-        setFormValues={setFormValues}
-        availableRoles={availableRoles}
-      />
-    )}
-    {authuser?.response.role === "firm_admin" && (
-      <FirmUserCreateForm
-        isOpen={modalOpen}
-        toggle={toggleModal}
-        firms={firms}
-        selectedFirmId={selectedFirmId}
-        setSelectedFirmId={setSelectedFirmId}
-        defaultFirm={defaultFirm}
-        formValues={formValues}
-        setFormValues={setFormValues}
-        availableRoles={availableRoles}
-      />
-    )}
+        <ClientUserCreateForm
+          isOpen={modalOpen}
+          toggle={toggleModal}
+          firms={firms}
+          selectedFirmId={selectedFirmId}
+          setSelectedFirmId={setSelectedFirmId}
+          defaultFirm={defaultFirm}
+          formValues={formValues}
+          setFormValues={setFormValues}
+          availableRoles={availableRoles}
+        />
+      )}
+      {authuser?.response.role === "firm_admin" && (
+        <FirmUserCreateForm
+          isOpen={modalOpen}
+          toggle={toggleModal}
+          firms={firms}
+          selectedFirmId={selectedFirmId}
+          setSelectedFirmId={setSelectedFirmId}
+          defaultFirm={defaultFirm}
+          formValues={formValues}
+          setFormValues={setFormValues}
+          availableRoles={availableRoles}
+        />
+      )}  <ToastContainer />
     </React.Fragment>
   );
 }

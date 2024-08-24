@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardBody, Col, Form, FormGroup, Label, Input, Button, Row, Alert } from 'reactstrap';
 import FirmSwitcher from './FirmSwitcher';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -53,6 +55,7 @@ function FirmSettings() {
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
           setError("Failed to fetch firm data");
+          toast.error("Failed to fetch firm data");
         }
       };
 
@@ -102,11 +105,13 @@ function FirmSettings() {
     e.preventDefault();
     try {
       await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
-      setSuccess("Firm details updated successfully!");
+      // setSuccess("Firm details updated successfully!");
+      toast.success("Firm details updated successfully!");
       setError("");
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
       setError("Failed to update firm details");
+      toast.error("Failed to update firm details");
     }
   };
   

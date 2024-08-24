@@ -6,6 +6,7 @@ import './assets/scss/theme.scss';
 
 // Fake Backend 
 import fakeBackend from "./helpers/AuthType/fakeBackend";
+import { ToastContainer } from "react-toastify";
 
 // Activating fake backend
 fakeBackend();
@@ -32,6 +33,7 @@ fakeBackend();
 function App() {
   return (
     <React.Fragment>
+      <ToastContainer />
       <Routes />
     </React.Fragment>
   );

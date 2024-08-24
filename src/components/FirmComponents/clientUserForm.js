@@ -70,7 +70,7 @@ const ClientUserCreateForm = ({
         toggle();
       })
       .catch((error) => {
-        console.log("Error creating user", error);
+        // console.log("Error creating user", error);
       });
   };
 
