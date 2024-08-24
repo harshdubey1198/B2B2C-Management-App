@@ -57,7 +57,7 @@ async function clientRegistration(body) {
             while (!uniqueCidm) {
                 const randomAlphabet = () => String.fromCharCode(97 + Math.floor(Math.random() * 26));
                 const randomDigit = () => Math.floor(Math.random() * 10);
-                cidm = `${randomAlphabet()}${randomAlphabet()}${randomDigit()}${randomDigit()}${randomDigit()}`;
+                cidm = `${randomDigit()}${randomAlphabet()}${randomDigit()}${randomDigit()}${randomDigit()}`;
                 const existingCidm = await ClientAdmin.findOne({ cidm: cidm });
                 if (!existingCidm) {
                     uniqueCidm = true;
