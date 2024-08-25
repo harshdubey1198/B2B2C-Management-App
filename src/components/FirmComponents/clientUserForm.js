@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {  Alert,  Button,  Col,  FormGroup,  Input,  Label,  Modal,  ModalBody,  ModalFooter,  ModalHeader,  Row,} from "reactstrap";
 import axios from "axios";
 import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
+import { toast } from "react-toastify";
 
 const ClientUserCreateForm = ({
   isOpen,   toggle,   firms,   selectedFirmId,   setSelectedFirmId,   defaultFirm,   formValues,   setFormValues,   availableRoles, 
@@ -47,7 +48,8 @@ const ClientUserCreateForm = ({
     axios
       .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
       .then((response) => {
-        setSuccess("User added successfully.");
+        // setSuccess("User added successfully.");
+        toast.success("User added successfully."); 
         setError("");
 
         setFormValues({

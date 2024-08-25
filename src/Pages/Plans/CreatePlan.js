@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Alert,
 } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import { toast } from "react-toastify";
 
 const predefinedFeatures = [
   "Dashboard", "Profile", "Inventory", "User Management", "Item Configuration"
@@ -84,7 +85,8 @@ function CreatePlan() {
     axios
       .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues)
       .then((response) => {
-        setSuccess("Plan added successfully.");
+        // setSuccess("Plan added successfully.");
+        toast.success("Plan added successfully.");
         console.log(response.data);
         setFormValues({
           title: "",
