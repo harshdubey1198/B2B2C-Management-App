@@ -43,10 +43,8 @@ function UserManage() {
       axios
         .get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
-          // console.log("API Response:", response);
-          const firmsData = response.data || [];
+          const firmsData = response || [];
           SetFirms(firmsData);
-          
           if (firmsData.length > 0) {
             const firstFirm = firmsData[0]; 
             setDefaultFirm(firstFirm);
@@ -77,7 +75,7 @@ function UserManage() {
         firmName: storedDefaultFirm.name,
       }));
     }
-  }, [authuser]);
+  }, []);
 
   useEffect(() => {
     if (selectedFirmId && firms.length > 0) {

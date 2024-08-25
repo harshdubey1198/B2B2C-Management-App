@@ -8,7 +8,6 @@ const ClientUserCreateForm = ({
 }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   const handleAddPermission = (permission) => {
     setFormValues((prevState) => ({
       ...prevState,
