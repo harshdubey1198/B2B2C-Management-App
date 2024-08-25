@@ -49,8 +49,9 @@ function FirmSettings() {
         try {
           const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
           const firmData = response || {};
-          console.log(firmData, "response");
           // Ensure companyAddress is initialized as an array
+          // const normalizedAddress = Array.isArray(firmData.companyAddress) ? firmData.companyAddress : [firmData.companyAddress];
+          // setFirmDetails({ ...firmData, companyAddress: normalizedAddress });
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
