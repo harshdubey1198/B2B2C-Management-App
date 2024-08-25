@@ -4,6 +4,7 @@ import FirmSwitcher from './FirmSwitcher';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import AddressForm from '../../components/FirmComponents/adressForm';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -14,6 +15,7 @@ function FirmSettings() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [authUser, setAuthUser] = useState(null);
+  const [trigger, setTrigger] = useState(0)
 
   useEffect(() => {
     const fetchAuthUser = () => {
@@ -41,7 +43,7 @@ function FirmSettings() {
       };
       fetchFirms();
     }
-  }, [authUser]);
+  }, [authUser, trigger]);
   
   useEffect(() => {
     if (authUser?.response?.role === "firm_admin") {
@@ -50,9 +52,6 @@ function FirmSettings() {
           const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
           const firmData = response || {};
           // Ensure companyAddress is initialized as an array
-          // const normalizedAddress = Array.isArray(firmData.companyAddress) ? firmData.companyAddress : [firmData.companyAddress];
-          // setFirmDetails({ ...firmData, companyAddress: normalizedAddress });
-          console.log(firmData, "response");
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
@@ -63,7 +62,7 @@ function FirmSettings() {
 
       fetchFirmAdminData();
     }
-  }, [authUser]);
+  }, [authUser, trigger]);
 
   useEffect(() => {
     if (selectedFirmId) {
@@ -102,12 +101,15 @@ function FirmSettings() {
     });
   };
 
+  console.log(firmDetails, "firmdteiald")
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
       // setSuccess("Firm details updated successfully!");
       toast.success("Firm details updated successfully!");
+      setTrigger(prev => prev + 1)
       setError("");
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
@@ -332,104 +334,20 @@ function FirmSettings() {
                     </Row>
                     <h5>Company Address</h5>
                     {firmDetails.companyAddress.length > 0 ? (
-                      firmDetails.companyAddress.map((address, index) => (
-                        <Row key={index}>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`h_no_${index}`}>House Number</Label>
-                              <Input
-                                type="text"
-                                id={`h_no_${index}`}
-                                name="h_no"
-                                value={address.h_no || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`nearby_${index}`}>Nearby</Label>
-                              <Input
-                                type="text"
-                                id={`nearby_${index}`}
-                                name="nearby"
-                                value={address.nearby || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`district_${index}`}>District</Label>
-                              <Input
-                                type="text"
-                                id={`district_${index}`}
-                                name="district"
-                                value={address.district || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`city_${index}`}>City</Label>
-                              <Input
-                                type="text"
-                                id={`city_${index}`}
-                                name="city"
-                                value={address.city || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`state_${index}`}>State</Label>
-                              <Input
-                                type="text"
-                                id={`state_${index}`}
-                                name="state"
-                                value={address.state || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`zip_code_${index}`}>Zip Code</Label>
-                              <Input
-                                type="text"
-                                id={`zip_code_${index}`}
-                                name="zip_code"
-                                value={address.zip_code || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label for={`country_${index}`}>Country</Label>
-                              <Input
-                                type="text"
-                                id={`country_${index}`}
-                                name="country"
-                                value={address.country || ''}
-                                onChange={(e) => handleAddressChange(index, e)}
-                                required
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                      ))
-                    ) : (
-                      <Alert color="info">No addresses available.</Alert>
-                    )}
+                        firmDetails.companyAddress.map((address, index) => (
+                          <AddressForm
+                            key={index}
+                            address={address}
+                            index={index}
+                            handleAddressChange={handleAddressChange}
+                          />
+                        ))
+                      ) : (
+                        <AddressForm
+                          index={0}
+                          handleAddressChange={handleAddressChange}
+                        />
+                      )}
                     <Button color="primary" type="submit">Save Changes</Button>
                   </Form>
                 ) : (
