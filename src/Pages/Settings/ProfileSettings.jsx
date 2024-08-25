@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert, Card, CardBody, FormText } from 'reactstrap';
 
 const ProfileSettings = () => {
@@ -55,7 +56,8 @@ const ProfileSettings = () => {
   const handleEmailOtpSubmit = (e) => {
     e.preventDefault();
     if (formData.emailOtp) {
-      setSuccessMessage('Email OTP verified successfully!');
+      // setSuccessMessage('Email OTP verified successfully!');
+      toast.success('Email OTP verified successfully!');
       setErrorMessage('');
     } else {
       setSuccessMessage('');
@@ -65,14 +67,16 @@ const ProfileSettings = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSuccessMessage('Profile updated successfully!');
+    // setSuccessMessage('Profile updated successfully!');
+    toast.success('Profile updated successfully!');
     setErrorMessage('');
   };
 
   const handleEmailChange = (e) => {
     e.preventDefault();
     if (formData.newEmail === formData.confirmEmail) {
-      setSuccessMessage('Verification email sent for email change!');
+      toast.success('Verification email sent for email change!');
+      // setSuccessMessage('Verification email sent for email change!');
       setErrorMessage('');
     } else {
       setSuccessMessage('');
@@ -83,7 +87,8 @@ const ProfileSettings = () => {
   const handlePasswordChange = (e) => {
     e.preventDefault();
     if (formData.newPassword === formData.confirmPassword) {
-      setSuccessMessage('Password change requested. Please check your email for the OTP.');
+      // setSuccessMessage('Password change requested. Please check your email for the OTP.');
+      toast.success('Password change requested. Please check your email for the OTP.');
       setErrorMessage('');
     } else {
       setSuccessMessage('');

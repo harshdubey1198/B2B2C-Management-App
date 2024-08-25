@@ -22,6 +22,7 @@ import {
 } from "../Utility/FormValidation";
 import { useDispatch } from "react-redux";
 import { PostRequest } from "../Utility/Request";
+import { toast } from "react-toastify";
 
 const ResetPassword = () => {
   const { token } = useParams();
@@ -70,7 +71,8 @@ const ResetPassword = () => {
         // API call to reset password
         PostRequest(`${process.env.REACT_APP_URL}/clientadmin/reset-password`, formValues).then((response) => {
             if(response){
-                setSuccess("Password reset successfully");
+                // setSuccess("Password reset successfully");
+                toast.success("Password reset successfully");
                 navigate('/login')
             }
         }).catch((error) => {
@@ -81,7 +83,8 @@ const ResetPassword = () => {
 
     // Simulate an API call here
     setTimeout(() => {
-      setSuccess("Password has been reset successfully");
+      // setSuccess("Password has been reset successfully");
+      toast.success("Password has been reset successfully");
       setLoading(false);
     }, 1000);
   };

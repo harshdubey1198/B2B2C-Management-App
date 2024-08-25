@@ -18,6 +18,7 @@ import {
   validateEmail,
   validatePhone,
 } from "../Utility/FormValidation";
+import { toast } from "react-toastify";
 
 const predefinedPermissions = [
   "Admin",
@@ -132,7 +133,8 @@ function CreateFirm() {
             }
         );
 
-        setSuccess("Firm added successfully.");
+        // setSuccess("Firm added successfully.");
+        toast.success("Firm added successfully.");
         setFormValues({
             firmName: "",
             firmPhone: "",

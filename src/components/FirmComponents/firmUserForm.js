@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {Alert,Button,Col,FormGroup,Input,Label,Modal,ModalBody,ModalFooter,ModalHeader,Row,} from "reactstrap";
 import axios from "axios";
 import {   checkEmptyFields,   validateEmail,   validatePhone, } from "../../Pages/Utility/FormValidation";
+import { toast } from "react-toastify";
 
 const FirmUserCreateForm = ({
   isOpen,
@@ -64,7 +65,8 @@ const FirmUserCreateForm = ({
     axios
       .post(`${process.env.REACT_APP_URL}/firmadmin/createUser`, formValues)
       .then((response) => {
-        setSuccess("User added successfully.");
+        // setSuccess("User added successfully.");
+        toast.success("User added successfully.");
         setError("");
         setFormValues({
           firmUniqueId: "",

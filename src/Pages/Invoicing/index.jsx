@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Container } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import { checkEmptyFields, validatePhone } from '../Utility/FormValidation';
+import { toast } from 'react-toastify';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -143,7 +144,8 @@ const Index = () => {
                 paymentLink: ''
             });
     
-            setSuccess("Invoice Form Submitted Successfully");
+            // setSuccess("Invoice Form Submitted Successfully");
+            toast.success("Invoice Form Submitted Successfully");
         }, 1000);
     };
     

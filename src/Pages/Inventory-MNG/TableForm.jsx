@@ -14,6 +14,7 @@ import {
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { v4 as uuidv4 } from 'uuid';
+import { toast } from "react-toastify";
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
@@ -103,7 +104,8 @@ const InventoryItemForm = () => {
       };
       storedData.push(newItems);
       localStorage.setItem("inventoryItems", JSON.stringify(storedData));
-      setSuccess("Item added successfully.");
+      // setSuccess("Item added successfully.");
+      toast.success("Item added successfully.");
       setLoading(false);
       setError("");
 
