@@ -75,7 +75,7 @@ function SwitchFirm() {
                       {/* <td className='text-center'>{firm.name}</td> */}
                       <td className='text-center'>
                         <button
-                          className={`btn ${currentFirm?.id === firm.id ? 'btn-primary' : 'btn-secondary'}`}
+                          className={`btn ${currentFirm?.id === firm.id ? 'btn-primary' : 'btn-primary'}`}
                           onClick={() => handleSwitchFirm(firm)}
                         >
                           {currentFirm?.id === firm.id ? 'Current Firm' : 'Switch'}

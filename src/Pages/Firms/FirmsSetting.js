@@ -52,6 +52,7 @@ function FirmSettings() {
           // Ensure companyAddress is initialized as an array
           // const normalizedAddress = Array.isArray(firmData.companyAddress) ? firmData.companyAddress : [firmData.companyAddress];
           // setFirmDetails({ ...firmData, companyAddress: normalizedAddress });
+          console.log(firmData, "response");
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
@@ -72,7 +73,6 @@ function FirmSettings() {
         fuid: selectedFirmId || "",
         name: selectedFirm.firmName || "",
       }));
-      // Ensure companyAddress is initialized as an array
       setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] });
     }
   }, [selectedFirmId, firmsData]);
@@ -120,17 +120,22 @@ function FirmSettings() {
     <React.Fragment>
       <div className="page-content">
         <div className="container">
-          {authUser?.response?.role === "client_admin" && (
-            <FirmSwitcher
-              firms={firmsData}
-              selectedFirmId={selectedFirmId}
-              onSelectFirm={handleFirmChange}
-            />
-          )}
-          <Col lg={10} className="mx-auto mt-2">
+         
+          <Col lg={12} className="mx-auto mt-2">
             <Card>
               <CardBody>
-                <h4 className="mb-4">Edit Firm Settings</h4>
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h4 className="w-50">Edit Firm Settings</h4>
+                {authUser?.response?.role === "client_admin" && (
+                  <FirmSwitcher
+                    firms={firmsData}
+                    selectedFirmId={selectedFirmId}
+                    onSelectFirm={handleFirmChange}
+                  />
+                )}
+              </div>
+
+
                 {error && <Alert color="danger">{error}</Alert>}
                 {success && <Alert color="success">{success}</Alert>}
                 {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
