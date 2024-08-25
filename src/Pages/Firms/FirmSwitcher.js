@@ -5,28 +5,24 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   const [firms, setFirms] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const authuser = JSON.parse(localStorage.getItem("authUser"))
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
-    // Load firms from localStorage
-    // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
-    // setFirms(storedFirms);
-
-    // Set the default firm if selectedFirmId is not provided
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
     if (defaultFirm && !selectedFirmId) {
       onSelectFirm(defaultFirm.fuid);
     }
 
-    // SETTING FIRMS FROM BACKEND 
-    if(authuser){
-        axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
-          setFirms(response)
-        }).catch((error) => {
-          console.log(error, "error getting firms")
+    if (authuser) {
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
+        .then((response) => {
+          setFirms(response);  
         })
+        .catch((error) => {
+          console.log(error, "Error getting firms");
+        });
     }
   }, [selectedFirmId, onSelectFirm]);
 
@@ -44,9 +40,15 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   }, [selectedFirmId, firms]);
 
   return (
-    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-      <DropdownToggle caret>
-        {firms.find(firm => firm.fuid === selectedFirmId)?.firmName || 'Select Firm'}
+    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'100px'}}>
+      <DropdownToggle  style={{ backgroundColor: '#0bb197' ,width:'100px'}}>
+        <span style={{ marginRight: '10px' }}>
+          {firms.find(firm => firm.fuid === selectedFirmId)?.firmName || 'Select Firm'}
+        </span>
+
+        {dropdownOpen 
+          ? <i className="mdi mdi-chevron-up"></i> 
+          : <i className="mdi mdi-chevron-down"></i>}
       </DropdownToggle>
       <DropdownMenu>
         {firms.map(firm => (
@@ -57,13 +59,11 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
           >
             <img
               src={firm.avatar}
-              // src={firm.image}
               alt={firm.name}
-              className='img-fluid'
+              className="img-fluid"
               style={{ maxWidth: '30px', marginRight: '10px' }}
             />
             {firm.firmName}
-            {/* {firm.name} */}
           </DropdownItem>
         ))}
       </DropdownMenu>
