@@ -23,9 +23,6 @@ import { toast } from "react-toastify";
 const predefinedPermissions = [
   "Admin",
   "User",
-  "Add Account",
-  "Delete Account",
-  "Edit Account",
 ];
 
 function CreateFirm() {
