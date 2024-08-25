@@ -30,9 +30,7 @@ const Index = () => {
     const [success, setSuccess] = useState("");
     const printRef = useRef();
 
-    useEffect(() => {
-        // Any initialization logic if needed
-    }, []);
+  
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -46,10 +44,10 @@ const Index = () => {
             reader.onloadend = () => {
                 setInvoiceData(prevState => ({
                     ...prevState,
-                    companyLogo: reader.result // Store the Base64 image string directly
+                    companyLogo: reader.result 
                 }));
             };
-            reader.readAsDataURL(file); // Convert image to Base64
+            reader.readAsDataURL(file);
         }
     };
 
@@ -89,11 +87,10 @@ const Index = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Clear previous errors
         setError("");
         setSuccess("");
 
-        // Perform validation checks
+      
         if (!validatePhone(invoiceData.customerPhone)) {
             setError("Invalid Phone Number");
             return;
@@ -104,13 +101,13 @@ const Index = () => {
             id: Math.floor(Math.random() * 1000000)
         };
 
-        // Store data in local storage
+        
         setTimeout(() => {
             const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
             storedData.push(newdata);
             localStorage.setItem("Invoice Form", JSON.stringify(storedData));
 
-            // Clear the form data and show success message
+            
             setInvoiceData({
                 companyName: "",
                 companyAddress: "",

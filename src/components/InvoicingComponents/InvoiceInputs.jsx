@@ -27,7 +27,6 @@ const InvoiceInputs = ({
     error,
     success
 }) => {
-    // Inputs Section
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
             {error && <Alert color='danger'>{error}</Alert>}
@@ -214,7 +213,6 @@ const InvoiceInputs = ({
         </Form>
     );
 
-    // Preview Section
     const renderPreviewSection = () => (
         <Card className="mt-5">
             <CardBody>
