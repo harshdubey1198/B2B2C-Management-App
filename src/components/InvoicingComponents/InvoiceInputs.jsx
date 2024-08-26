@@ -245,9 +245,9 @@ const InvoiceInputs = ({
                         ))}
                     </ul>
                 </div>
-                <div>
+                {/* <div>
                     <strong>Payment Link:</strong> <a href={invoiceData.paymentLink} target="_blank" rel="noopener noreferrer">Click here to pay</a>
-                </div>
+                </div> */}
             </CardBody>
         </Card>
     );

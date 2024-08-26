@@ -8,7 +8,7 @@ const countries = {
 };
 
 const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
-    const { country, paymentLink } = invoiceData;
+    const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
     const taxAmount = (totalAmount * taxRate) / 100;
@@ -52,7 +52,7 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
             <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
             <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
             <p><strong>Total:</strong> {(totalAmount + taxAmount).toFixed(2)}</p>
-            <p><strong>Payment Link:</strong> <a href={paymentLink} target="_blank" rel="noopener noreferrer">Pay Now</a></p>
+            {/* <p><strong>Payment Link:</strong> <a href={paymentLink} target="_blank" rel="noopener noreferrer">Pay Now</a></p> */}
         </div>
     );
 });
