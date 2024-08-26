@@ -39,7 +39,7 @@ const LockScreen = () => {
             return;
         }
         // Perform the API call here
-        axios.post(`${process.env.REACT_APP_URL}/clientadmin/login`, {
+        axios.post(`${process.env.REACT_APP_URL}/auth/login`, {
             email: userData?.email,
             role: userData?.role,
             password: pass

@@ -27,7 +27,7 @@ function* forgetUser({ payload: { user, history } }) {
         yield put(userForgetPasswordError("Failed to send reset link. Please try again."));
       }
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/clientadmin/forget-password`,{
+      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/auth/forget-password`,{
         email: user.email,
         role: user.role
       })

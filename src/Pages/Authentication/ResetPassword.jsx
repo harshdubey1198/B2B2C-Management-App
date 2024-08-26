@@ -69,7 +69,7 @@ const ResetPassword = () => {
       return;
     }else{
         // API call to reset password
-        PostRequest(`${process.env.REACT_APP_URL}/clientadmin/reset-password`, formValues).then((response) => {
+        PostRequest(`${process.env.REACT_APP_URL}/auth/reset-password`, formValues).then((response) => {
             if(response){
                 // setSuccess("Password reset successfully");
                 toast.success("Password reset successfully");

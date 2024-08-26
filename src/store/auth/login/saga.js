@@ -25,7 +25,7 @@ function* loginUser({ payload: { user, history } }) {
       );
       yield put(loginSuccess(response));
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
-      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/clientadmin/login`, {
+      const response = yield call(axios.post, `${process.env.REACT_APP_URL}/auth/login`, {
         email: user.email,
         password: user.password,
         role: user.role
