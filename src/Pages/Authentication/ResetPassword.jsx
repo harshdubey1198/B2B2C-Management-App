@@ -81,12 +81,12 @@ const ResetPassword = () => {
         })
     }
 
-    // Simulate an API call here
-    setTimeout(() => {
-      // setSuccess("Password has been reset successfully");
-      toast.success("Password has been reset successfully");
-      setLoading(false);
-    }, 1000);
+  
+    // setTimeout(() => {
+    //   // setSuccess("Password has been reset successfully");
+    //   toast.success("Password has been reset successfully");
+    //   setLoading(false);
+    // }, 1000);
   };
 
   // Handler to clean input values
