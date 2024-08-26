@@ -8,7 +8,8 @@ const SuperAdmin = require("../schemas/superadmin.schema");
 const SupportExecutive = require("../schemas/supportExecutive.schema");
 const Viewer = require("../schemas/viewersshema");
 const generateTemporaryPassword = require("../utils/tempPassword");
-const PasswordService = require('./password.services')
+const PasswordService = require('./password.services');
+const User = require("../schemas/user.schema");
 
 let service = {};
 service.createUser = createUser;
@@ -21,7 +22,6 @@ async function userLogin(body) {
   try {
       const { email, password, role } = body;
       let userModel;
-
       switch (role) {
           case 'super_admin':
               userModel = SuperAdmin;
@@ -30,13 +30,9 @@ async function userLogin(body) {
               userModel = ClientAdmin;
               break;
           case 'firm_admin':
-              userModel = FirmAdmin;
-              break;
           case 'accountant':
-              userModel = Accountant;
-              break;
           case 'g_emp':
-              userModel = GeneralEmployee;
+              userModel = User;
               break;
           case 'customer_sp':
               userModel = SupportExecutive;
