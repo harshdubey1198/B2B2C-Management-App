@@ -7,11 +7,11 @@ const userSchema = new Schema({
         required: true,
         unique: true,
     },
-    clientAdminId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "ClientAdmin",
-        required: true
-    },
+    // clientAdminId: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "ClientAdmin",
+    //     required: true
+    // },
     firmId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Firms',
