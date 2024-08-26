@@ -80,7 +80,7 @@ const rolePermissions = {
   client_admin: ['View Client Data', 'Manage Client Users'],
   firm_admin: ['View Firm Data', 'Manage Firm Users'],
   accountant: ['View Financial Data', 'Manage Transactions'],
-  GE: ['View General Data']
+  g_emp: ['View General Data']
 };
 
 const RolewiseDashboard = () => {
@@ -97,7 +97,7 @@ const RolewiseDashboard = () => {
         const simulatedUser = {
           uid: 1,
           username: "Demo User",
-          role: "GE",
+          role: "employee",
           email: "GE123@gmail.com",
         };
 
