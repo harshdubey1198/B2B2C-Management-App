@@ -58,10 +58,11 @@ const ProfileSettings = () => {
     if (formData.emailOtp) {
       // setSuccessMessage('Email OTP verified successfully!');
       toast.success('Email OTP verified successfully!');
-      setErrorMessage('');
+      // setErrorMessage('');
     } else {
-      setSuccessMessage('');
-      setErrorMessage('Invalid OTP!');
+      // setSuccessMessage('');
+      // setErrorMessage('Invalid OTP!');
+      toast.error('Invalid OTP!');
     }
   };
 
@@ -69,7 +70,7 @@ const ProfileSettings = () => {
     e.preventDefault();
     // setSuccessMessage('Profile updated successfully!');
     toast.success('Profile updated successfully!');
-    setErrorMessage('');
+    // setErrorMessage('');
   };
 
   const handleEmailChange = (e) => {
@@ -77,10 +78,11 @@ const ProfileSettings = () => {
     if (formData.newEmail === formData.confirmEmail) {
       toast.success('Verification email sent for email change!');
       // setSuccessMessage('Verification email sent for email change!');
-      setErrorMessage('');
+      // setErrorMessage('');
     } else {
       setSuccessMessage('');
-      setErrorMessage('Emails do not match!');
+      toast.error('Emails do not match!');
+      // setErrorMessage('Emails do not match!');
     }
   };
 
@@ -89,10 +91,11 @@ const ProfileSettings = () => {
     if (formData.newPassword === formData.confirmPassword) {
       // setSuccessMessage('Password change requested. Please check your email for the OTP.');
       toast.success('Password change requested. Please check your email for the OTP.');
-      setErrorMessage('');
+      // setErrorMessage('');
     } else {
       setSuccessMessage('');
-      setErrorMessage('Passwords do not match!');
+      toast.error('Passwords do not match!');
+      // setErrorMessage('Passwords do not match!');
     }
   };
 
@@ -112,8 +115,10 @@ const ProfileSettings = () => {
               <Card>
                 <CardBody>
                   <h2>Profile Settings</h2>
-                  {successMessage && <Alert color="success">{successMessage}</Alert>}
-                  {errorMessage && <Alert color="danger">{errorMessage}</Alert>}
+                  {/* {successMessage && <Alert color="success">{successMessage}</Alert>} */}
+                  toast.success(successMessage);
+                  {/* {errorMessage && <Alert color="danger">{errorMessage}</Alert>} */}
+                  toast.error(errorMessage);
                   <Form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label for="name">Name</Label>
