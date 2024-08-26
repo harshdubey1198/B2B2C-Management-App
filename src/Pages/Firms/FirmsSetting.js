@@ -38,7 +38,8 @@ function FirmSettings() {
           }
         } catch (error) {
           console.error("Error getting firms:", error.response || error.message);
-          setError("Failed to fetch firms data");
+          // setError("Failed to fetch firms data");
+          toast.error("Failed to fetch firms data");
         }
       };
       fetchFirms();
@@ -55,7 +56,7 @@ function FirmSettings() {
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
-          setError("Failed to fetch firm data");
+          // setError("Failed to fetch firm data");
           toast.error("Failed to fetch firm data");
         }
       };
@@ -86,7 +87,8 @@ function FirmSettings() {
       ...prevDetails,
       [name]: value
     }));
-    setError("");
+    toast.error("");
+    // setError("");
   };
 
   const handleAddressChange = (index, e) => {
@@ -110,10 +112,11 @@ function FirmSettings() {
       // setSuccess("Firm details updated successfully!");
       toast.success("Firm details updated successfully!");
       setTrigger(prev => prev + 1)
-      setError("");
+      // setError("");
+      toast.error("");
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
-      setError("Failed to update firm details");
+      // setError("Failed to update firm details");
       toast.error("Failed to update firm details");
     }
   };
@@ -138,8 +141,8 @@ function FirmSettings() {
               </div>
 
 
-                {error && <Alert color="danger">{error}</Alert>}
-                {success && <Alert color="success">{success}</Alert>}
+                {/* {error && <Alert color="danger">{error}</Alert>}
+                {success && <Alert color="success">{success}</Alert>} */}
                 {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
                   
                   <Form onSubmit={handleSubmit}>

@@ -87,12 +87,15 @@ const Index = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        setError("");
-        setSuccess("");
+        // setError("");
+        // setSuccess("");
+        toast.error("");
+        toast.success("");
 
       
         if (!validatePhone(invoiceData.customerPhone)) {
-            setError("Invalid Phone Number");
+            // setError("Invalid Phone Number");
+            toast.error("Invalid Phone Number");
             return;
         }
 
@@ -133,8 +136,8 @@ const Index = () => {
         <Container>
             <div className='page-content'>
                 <Form onSubmit={handleSubmit}>
-                    {error && <Alert color='danger'>{error}</Alert>}
-                    {success && <Alert color='success'>{success}</Alert>}
+                    {/* {error && <Alert color='danger'>{error}</Alert>}
+                    {success && <Alert color='success'>{success}</Alert>} */}
 
                     <InvoiceInputs 
                         invoiceData={invoiceData}

@@ -33,7 +33,8 @@ function CreatePlan() {
       ...prevState,
       [name]: value,
     }));
-    setError("");
+    // setError("");
+    toast.error("");
   };
 
   const handleFeatureChange = (e) => {
@@ -64,8 +65,10 @@ function CreatePlan() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    // setError("");
+    // setSuccess("");
+    toast.error("");
+    toast.success("");
 
     // Basic validation
     if (
@@ -76,7 +79,8 @@ function CreatePlan() {
       formValues.features.length === 0 ||
       !formValues.maxFirms
     ) {
-      setError("Please fill in all fields.");
+      // setError("Please fill in all fields.");
+      toast.error("Please fill in all fields.");
       setLoading(false);
       return;
     }
@@ -98,7 +102,8 @@ function CreatePlan() {
         });
       })
       .catch((error) => {
-        setError(error.response?.data?.message || "An error occurred.");
+        // setError(error.response?.data?.message || "An error occurred.");
+        toast.error(error.response?.data?.message || "An error occurred.");
       })
       .finally(() => {
         setLoading(false);
@@ -117,8 +122,8 @@ function CreatePlan() {
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Create Plan
                   </h4>
-                  {error && <Alert color="danger">{error}</Alert>}
-                  {success && <Alert color="success">{success}</Alert>}
+                  {/* {error && <Alert color="danger">{error}</Alert>}
+                  {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label htmlFor="title">Title</Label>

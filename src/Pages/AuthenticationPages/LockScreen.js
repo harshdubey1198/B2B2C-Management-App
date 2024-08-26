@@ -6,6 +6,7 @@ import { Container, Row, Col, Card, CardBody } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { validatePassword } from '../Utility/FormValidation';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const LockScreen = () => {
     document.title = "Lock Screen | aaMOBee";
@@ -25,17 +26,20 @@ const LockScreen = () => {
     const handleChange = (e) => {
         const { value } = e.target;
         setPass(value.replace(/\s/g, ""));
-        setError("");
+        // setError("");
+        toast.error("");
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (pass === "") {
-            setError("Please enter your password");
+            // setError("Please enter your password");
+            toast.error("Please enter your password");
             return;
         }
         if (!validatePassword(pass)) {
-            setError("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+            // setError("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+            toast.error("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
             return;
         }
         // Perform the API call here
@@ -47,7 +51,8 @@ const LockScreen = () => {
             localStorage.setItem("isLocked", 'false')
             navigate("/dashboard")
         }).catch((error) => {
-            setError(error)
+            // setError(error)
+            toast.error("Invalid Password")
         })
     };
 
@@ -80,7 +85,7 @@ const LockScreen = () => {
                                                             <label className="form-label" htmlFor="userpassword">Password</label>
                                                             <input type="password" className="form-control" id="userpassword" placeholder="Enter password" onChange={handleChange} value={pass} />
                                                         </div>
-                                                        {error && <div className="text-danger mt-2">{error}</div>}
+                                                        {/* {error && <div className="text-danger mt-2">{error}</div>} */}
                                                         <div className="d-grid mt-4">
                                                             <button
                                                                 className="btn btn-primary waves-effect waves-light"

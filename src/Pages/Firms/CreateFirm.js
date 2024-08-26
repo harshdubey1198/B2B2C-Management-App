@@ -48,7 +48,8 @@ function CreateFirm() {
       ...prevState,
       [name]: value,
     }));
-    setError("");
+    // setError("");
+    toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -92,18 +93,22 @@ function CreateFirm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    // setError("");
+    // setSuccess("");
+    toast.success("");
+    toast.error("");
 
     console.log('Form Values:', formValues);
 
     if (!validateEmail(formValues.firmEmail)) {
-        setError("Invalid Email");
+        // setError("Invalid Email");
+        toast.error("Invalid Email");
         setLoading(false);
         return;
     }
     if (!validatePhone(formValues.firmPhone)) {
-        setError("Invalid Phone Number");
+        // setError("Invalid Phone Number");
+        toast.error("Invalid Phone Number");
         setLoading(false);
         return;
     }
@@ -114,8 +119,9 @@ function CreateFirm() {
     console.log('Client ID:', clientId);
 
     if (!clientId) {
-        setError("User ID not found");
+        // setError("User ID not found");
         setLoading(false);
+        toast.error("User ID not found");
         return;
     }
 
@@ -143,8 +149,8 @@ function CreateFirm() {
             selectedPermission: "",
         });
     } catch (error) {
-        setError("Error creating firm: " + error.message);
-        toast.error("Error creating firm");
+        // setError("Error creating firm: " + error.message);
+        toast.error("Error creating firm" + error.message);
     } finally {
         setLoading(false);
     }
@@ -162,8 +168,8 @@ function CreateFirm() {
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Create Firm
                   </h4>
-                  {error && <Alert color="danger">{error}</Alert>}
-                  {success && <Alert color="success">{success}</Alert>}
+                  {/* {error && <Alert color="danger">{error}</Alert>}
+                  {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label htmlFor="firmName">Firm Name</Label>

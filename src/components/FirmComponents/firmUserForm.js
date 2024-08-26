@@ -46,19 +46,23 @@ const FirmUserCreateForm = ({
     setSuccess("");
 
     if (checkEmptyFields(formValues)) {
-      setError("Fill All the Fields");
+      // setError("Fill All the Fields");
+      toast.error("Fill All the Fields");
       return;
     }
     if (!validateEmail(formValues.email)) {
-      setError("Invalid Email");
+      // setError("Invalid Email");
+      toast.error("Invalid Email");
       return;
     }
     if (!validatePhone(formValues.phone)) {
-      setError("Invalid Phone Number");
+      // setError("Invalid Phone Number");
+      toast.error("Invalid Phone Number");
       return;
     }
     if (formValues.password !== formValues.confirmPassword) {
-      setError("Passwords do not match");
+      // setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
@@ -67,7 +71,8 @@ const FirmUserCreateForm = ({
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully.");
-        setError("");
+        // setError("");
+        toast.error("");
         setFormValues({
           firmUniqueId: "",
           firmName: "",
@@ -88,7 +93,7 @@ const FirmUserCreateForm = ({
       })
       .catch((error) => {
         console.log("Error creating user", error);
-        setError("Failed to create user");
+        // setError("Failed to create user");
         toast.error("Error creating user");
       });
   };
@@ -107,7 +112,8 @@ const FirmUserCreateForm = ({
       handleAddPermission(selectedPermission);
     }
     e.target.value = "";
-    setError("");
+    // setError("");
+    toast.error("");
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -115,7 +121,8 @@ const FirmUserCreateForm = ({
       ...prevState,
       [name]: value,
     }));
-    setError("");
+    // setError("");
+    toast.error("");
   };
 
   const prePermissions = [
@@ -131,8 +138,8 @@ const FirmUserCreateForm = ({
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>Add New User</ModalHeader>
       <ModalBody>
-        {error && <Alert color="danger">{error}</Alert>}
-        {success && <Alert color="success">{success}</Alert>}
+        {/* {error && <Alert color="danger">{error}</Alert>}
+        {success && <Alert color="success">{success}</Alert>} */}
         <form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>

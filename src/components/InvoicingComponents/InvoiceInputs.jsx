@@ -29,8 +29,10 @@ const InvoiceInputs = ({
 }) => {
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
-            {error && <Alert color='danger'>{error}</Alert>}
-            {success && <Alert color='success'>{success}</Alert>}
+            {/* {error && <Alert color='danger'>{error}</Alert>}
+            {success && <Alert color='success'>{success}</Alert>} */}
+            toast.error(error);
+            toast.success(success);
             
             <Row className="mb-4">
                 <Col md={6}>

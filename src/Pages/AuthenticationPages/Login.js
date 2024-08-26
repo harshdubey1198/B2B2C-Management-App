@@ -22,6 +22,7 @@ import { loginUser, socialLogin } from "../../store/actions";
 import { facebook, google } from "../../config";
 import { createSelector } from "reselect";
 import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
+import { toast } from "react-toastify";
 
 const Login = (props) => {
   document.title = "Login | aaMOBee";
@@ -47,7 +48,8 @@ const Login = (props) => {
 
   useEffect(() => {
     if (reduxError) {
-      setError(reduxError);
+      // setError(reduxError);
+      toast.error(reduxError);
     }
   }, [reduxError]);
 
@@ -66,9 +68,11 @@ const Login = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (checkEmptyFields(formValues)) {
-      setError("Fields must not be empty!");
+      // setError("Fields must not be empty!");
+      toast.error("Fields must not be empty!");
     } else if (!validateEmail(formValues.email)) {
-      setError("Email is invalid!");
+      // setError("Email is invalid!");
+      toast.error("Email is invalid!");
     } else {
       if (rememberMe) {
         localStorage.setItem("userCredentials", JSON.stringify({
@@ -181,7 +185,7 @@ const Login = (props) => {
                       Sign in to continue to aaMOBee.
                     </p>
                     <Form className="form-horizontal" onSubmit={handleSubmit}>
-                      {error && <Alert color="danger">{error}</Alert>}
+                      {/* {error && <Alert color="danger">{error}</Alert>} */}
                       <Row>
                         <Col md={12}>
                           <div className="mb-4">

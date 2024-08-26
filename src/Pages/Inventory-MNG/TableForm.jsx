@@ -45,7 +45,8 @@ const InventoryItemForm = () => {
       ...prevState,
       [name]: value,
     }));
-    setError("");
+    // setError("");
+    toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -83,14 +84,17 @@ const InventoryItemForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    setSuccess("");
+    // setError("");
+    // setSuccess("");
+    toast.error("");
+    toast.success("");
 
     if (checkEmptyFields({
       ...formValues,
       image: formValues.image ? 'Not Empty' : ''
     })) {
-      setError("Please fill in all fields and upload an image.");
+      toast.error("Please fill in all fields and upload an image.");
+      // setError("Please fill in all fields and upload an image.");
       setLoading(false);
       return;
     }
@@ -107,7 +111,8 @@ const InventoryItemForm = () => {
       // setSuccess("Item added successfully.");
       toast.success("Item added successfully.");
       setLoading(false);
-      setError("");
+      // setError("");
+      toast.error("");
 
       setFormValues({
         name: "",
@@ -135,8 +140,8 @@ const InventoryItemForm = () => {
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Add Inventory Item
                   </h4>
-                  {error && <Alert color="danger">{error}</Alert>}
-                  {success && <Alert color="success">{success}</Alert>}
+                  {/* {error && <Alert color="danger">{error}</Alert>}
+                  {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label htmlFor="name">Item Name</Label>
