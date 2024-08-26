@@ -260,6 +260,8 @@ export const masterAdminSidebarData = () => [
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
+        { sublabel: "Create Invoice", link: "/create-invoice" },
+        { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "Payments", link: "/payments" },
         { sublabel: "Reports", link: "/reports-invoice" },
@@ -290,6 +292,15 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "Payments", link: "/payments" },
+      ],
+    },{
+      label: "Inventory",
+      icon: "mdi mdi-room-service-outline",
+      subItem: [
+        { sublabel: "Inventory Table", link: "/inventory-table" },
+        { sublabel: "Table Form", link: "/add-inventory" },
+        { sublabel: "Table Taxation", link: "/table-taxation" },
+        { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     {

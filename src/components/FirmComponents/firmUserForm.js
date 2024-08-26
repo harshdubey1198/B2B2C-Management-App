@@ -89,6 +89,7 @@ const FirmUserCreateForm = ({
       .catch((error) => {
         console.log("Error creating user", error);
         setError("Failed to create user");
+        toast.error("Error creating user");
       });
   };
   const handleAddPermission = (permission) => {

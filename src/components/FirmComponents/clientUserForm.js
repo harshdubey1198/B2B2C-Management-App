@@ -72,6 +72,7 @@ const ClientUserCreateForm = ({
       })
       .catch((error) => {
         // console.log("Error creating user", error);
+        toast.error("Error creating user");
       });
   };
 

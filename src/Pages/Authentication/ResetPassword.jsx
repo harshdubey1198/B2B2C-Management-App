@@ -78,6 +78,7 @@ const ResetPassword = () => {
         }).catch((error) => {
             setError("Error resetting password");
             setLoading(false);
+            toast.error("Error resetting password");
         })
     }
 

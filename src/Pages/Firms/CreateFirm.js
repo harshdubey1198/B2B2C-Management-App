@@ -144,6 +144,7 @@ function CreateFirm() {
         });
     } catch (error) {
         setError("Error creating firm: " + error.message);
+        toast.error("Error creating firm");
     } finally {
         setLoading(false);
     }
