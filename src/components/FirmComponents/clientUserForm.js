@@ -30,23 +30,27 @@ const ClientUserCreateForm = ({
 
     if (checkEmptyFields(formValues)) {
       setError("Fill All the Fields");
+      toast.error("Fill All the Fields");
       return;
     }
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
+      toast.error("Invalid Email");
       return;
     }
     if (!validatePhone(formValues.phone)) {
       setError("Invalid Phone Number");
+      toast.error("Invalid Phone Number");
       return;
     }
     if (formValues.password !== formValues.confirmPassword) {
       setError("Passwords do not match");
+      toast.error("Passwords do not match");
       return;
     }
 
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/clientadmin/createUser`, formValues)
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully."); 
@@ -118,8 +122,8 @@ const ClientUserCreateForm = ({
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>Add New User</ModalHeader>
       <ModalBody>
-        {error && <Alert color="danger">{error}</Alert>}
-        {success && <Alert color="success">{success}</Alert>}
+        {/* {error && <Alert color="danger">{error}</Alert>} */}
+        {/* {success && <Alert color="success">{success}</Alert>} */}
         <form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
