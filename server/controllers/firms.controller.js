@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const FirmServices = require("../services/firmadmin.services");
+const FirmServices = require("../services/firms.services");
 
 router.get("/firmdata/:id", (req, res) => {
   FirmServices.getFirmData(req.params.id)
