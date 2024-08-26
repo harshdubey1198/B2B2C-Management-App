@@ -148,6 +148,59 @@ async function userLogin(body) {
     }
 }
 
+
+// async function userLogin(body) {
+//     try {
+//         const { email, password, role } = body;
+//         let userModel;
+
+//         switch (role) {
+//             case 'super_admin':
+//                 userModel = SuperAdmin;
+//                 break;
+//             case 'client_admin':
+//                 userModel = ClientAdmin;
+//                 break;
+//             // case 'firm_admin':
+//             //     userModel = FirmAdmin;
+//             //     break;
+//             case 'firm_admin':
+//             case 'accountant':
+//             case 'g_emp':
+//                 userModel = User;
+//                 break;
+//             // case 'g_emp':
+//             //     userModel = GeneralEmployee;
+//             //     break;
+//             case 'customer_sp':
+//                 userModel = SupportExecutive;
+//                 break;
+//             case 'viewer':
+//                 userModel = Viewer;
+//                 break;
+//             default:
+//                 return Promise.reject('Invalid Role');
+//         }
+
+//         const user = await userModel.findOne({ email: email });
+//         if (!user) {
+//             return Promise.reject('Account Not Found');
+//         } else {
+//             const match = await PasswordService.comparePassword(password, user.password);
+//             if (match) {
+//                 const userData = await userModel.findOne({ _id: user._id }).select('-password');
+//                 return userData;
+//             } else {
+//                 return Promise.reject('Incorrect Password');
+//             }
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return Promise.reject('Login failed');
+//     }
+// }
+
+
 async function UserForgetPassword(body) {
     try {
         const { email, role } = body;
