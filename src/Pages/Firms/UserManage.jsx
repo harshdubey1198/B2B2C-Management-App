@@ -109,7 +109,7 @@ function UserManage() {
   return (
     <React.Fragment>
       <div className="page-content">
-        <Breadcrumbs title="aaMOBee" breadcrumbItem="Client Management" />
+        <Breadcrumbs title="aaMOBee" breadcrumbItem="Firm Users" />
         <div className="d-flex justify-content-between mb-4">
           <p className="mm-active">
             This is the user management page. Here you can manage users.
