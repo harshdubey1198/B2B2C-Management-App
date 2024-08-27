@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function UserTable() {
+function UserTable({selectedFirmId}) {
   const [userData, setUserData] = useState([]);
   const [hoveredUserId, setHoveredUserId] = useState(null);
   const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
@@ -30,6 +30,9 @@ function UserTable() {
       console.error("Error fetching users:", error);
     }
   };
+
+  console.log(userData,"userdaata")
+  console.log(selectedFirmId,"usta")
 
   useEffect(() => {
     fetchUsers();
