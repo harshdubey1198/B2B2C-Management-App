@@ -69,7 +69,7 @@ const generalEmployeeSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["Active", "Inactive", "Pending", "Suspended"],
+      enum: ["Active", "Inactive", "Pending", "Suspended","Requested"],
       default: "Active",
     },
     logs: [

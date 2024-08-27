@@ -24,6 +24,7 @@ import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
 import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
 import { PostRequest } from "../Utility/Request";
+import { toast } from "react-toastify";
 
 const Register = (props) => {
   document.title = "Register | aaMOBee";
@@ -36,7 +37,7 @@ const Register = (props) => {
 
   // Default formInput for role and status
   const defaultRole = "client_admin";
-  const defaultStatus = "requested";
+  const defaultStatus = "Requested";
 
   // State to manage form formInput and validation
   const [formInput, setFormInput] = useState({
@@ -52,7 +53,7 @@ const Register = (props) => {
     // dob: "",
     address: "",
     role: defaultRole,
-    status: defaultStatus,
+    status: "Requested",
   });
 
   const [show, setShow] = useState({
@@ -65,14 +66,18 @@ const Register = (props) => {
     // Validate the form
     dispatch(registerUserFailed(""));
     if (checkEmptyFields(formInput)) {
-      dispatch(registerUserFailed("Fields must not be empty!"));
+      // dispatch(registerUserFailed("Fields must not be empty!"));
+      toast.error("Fields must not be empty!");
     } else if (!validateEmail(formInput.email)) {
-      dispatch(registerUserFailed("Email is invalid!"));
+      // dispatch(registerUserFailed("Email is invalid!"));
+      toast.error("Email is invalid!");
     } else if (!validatePassword(formInput.password)) {
-        dispatch(registerUserFailed("Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"));
+        // dispatch(registerUserFailed("Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"));
+        toast.error("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
     } else if (formInput.password !== formInput.confirmPassword) {
-        dispatch(registerUserFailed("Confirm Password should be same as Password!"));
-    }else {
+        // dispatch(registerUserFailed("Confirm Password should be same as Password!"));
+        toast.error("Confirm Password should be the same as Password!");
+      }else {
       PostRequest(
         `${process.env.REACT_APP_URL}/clientadmin/register`,
         formInput
@@ -83,12 +88,14 @@ const Register = (props) => {
             dispatch(registerUserFailed(""));
             navigate("/login");
           } else {
-            dispatch(registerUserFailed("Registration failed"));
+            // dispatch(registerUserFailed("Registration failed"));
+            toast.error("Registration failed");
           }
         })
         .catch((err) => {
           console.log("API Error", err);
-          dispatch(registerUserFailed(err || "An error occurred"));
+          // dispatch(registerUserFailed(err || "An error occurred"));
+          toast.error(err || "An error occurred");
         });
     }
   };

@@ -192,7 +192,7 @@ async function requestPlan(clientId, planId){
 
         clientAdmin.plan = {
             planId: planId,
-            status: "requested"
+            status: "Requested"
         };
         await clientAdmin.save();
         return clientAdmin.populate("plan.planId")
