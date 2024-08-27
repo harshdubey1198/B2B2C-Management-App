@@ -44,9 +44,9 @@ async function userLogin(body) {
               return Promise.reject('Invalid Role');
       }
 
-      const user = await userModel.findOne({ email: email });
+      const user = await userModel.findOne({ email: email, role: role });
       if (!user) {
-          return Promise.reject('Account Not Found');
+          return Promise.reject('Account Not Found Or Role Mismatch');
       } else {
           const match = await PasswordService.comparePassword(password, user.password);
           if (match) {
@@ -267,7 +267,7 @@ async function createUser(body) {
       console.error("Error creating user:", error);
       return Promise.reject(`Error creating user`);
     }
-  }
+}
   
 async function generateUniqueId(User, uniqueIdField, firmUniqueId) {
     let newUniqueId;
