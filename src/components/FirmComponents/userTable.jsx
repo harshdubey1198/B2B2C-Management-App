@@ -39,9 +39,15 @@ function UserTable({selectedFirmId, trigger}) {
     fetchUsers();
   }, [trigger]);
 
-  const filteredUsers = userData.filter(
-    (user) => user?.firmId === defaultFirm?.firmId
-  );
+  // const filteredUsers = userData.filter(
+  //   (user) => user?.firmId === defaultFirm?.firmId
+  // );
+
+  const filteredUsers = authuser?.response.role === "client_admin"
+  ? userData.filter((user) => user?.firmId === defaultFirm?.firmId)
+  : userData;
+
+  console.log(filteredUsers, "filtered")
 
   return (
     <>
