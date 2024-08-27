@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function UserTable({selectedFirmId, trigger}) {
+function UserTable({ selectedFirmId, trigger }) {
   const [userData, setUserData] = useState([]);
   const [hoveredUserId, setHoveredUserId] = useState(null);
   const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
@@ -31,23 +31,9 @@ function UserTable({selectedFirmId, trigger}) {
     }
   };
 
-  console.log(userData,"userdaata")
-  console.log(selectedFirmId,"usta")
-  console.log(trigger,"trigger")
-
   useEffect(() => {
     fetchUsers();
   }, [trigger]);
-
-  // const filteredUsers = userData.filter(
-  //   (user) => user?.firmId === defaultFirm?.firmId
-  // );
-
-  const filteredUsers = authuser?.response.role === "client_admin"
-  ? userData.filter((user) => user?.firmId === defaultFirm?.firmId)
-  : userData;
-
-  console.log(filteredUsers, "filtered")
 
   return (
     <>
@@ -61,12 +47,11 @@ function UserTable({selectedFirmId, trigger}) {
               <th>Email</th>
               <th>Role</th>
               <th>Actions</th>
-              {/* <th>Permissions</th> */}
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.length > 0 ? (
-              filteredUsers.map((user) => (
+            {userData.length > 0 ? (
+              userData.map((user) => (
                 <tr
                   key={user.id}
                   onMouseEnter={() => setHoveredUserId(user.id)}
@@ -78,32 +63,16 @@ function UserTable({selectedFirmId, trigger}) {
                   <td>{user.email}</td>
                   <td>{user.role}</td>
                   <td>Edit/Pause</td>
-                  {/* <td>
-                    {user.permissions.map((permission) => (
-                      <span key={permission}>{permission}, </span>
-                    ))}
-                  </td> */}
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8">No users found</td>
+                <td colSpan="6">No users found</td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-      {/* {hoveredUserId && (
-        <div className="hover-details">
-          <h5>Products:</h5>
-          <ul>
-            {userData.find((user) => user.id === hoveredUserId)
-              ?.subscriptions.map((subscription) => (
-                <li key={subscription.product}>{subscription.product}</li>
-              ))}
-          </ul>
-        </div>
-      )} */}
     </>
   );
 }
