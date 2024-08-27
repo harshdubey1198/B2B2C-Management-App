@@ -53,9 +53,8 @@ const Pricing = () => {
 
   const shouldShowRequestedPlan = requestedPlan &&
     requestedPlan.status &&
-    requestedPlan.planId &&
-    requestedPlan.validityDuration;
-
+    requestedPlan.planId 
+    console.log("Current plan status:", requestedPlan?.status);
   return (
     <React.Fragment>
       <div className="page-content">
@@ -69,7 +68,7 @@ const Pricing = () => {
             </Col>
           </Row>
           <Row>
-            {shouldShowRequestedPlan ? (
+            {shouldShowRequestedPlan ?(
               <>
                 {requestedPlan.status === "requested" ? (
                   <Col lg={12}>
