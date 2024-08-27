@@ -1,6 +1,7 @@
 const Accountant = require("../schemas/accountant.schema");
 const FirmAdmin = require("../schemas/firmadmin.schema");
 const GeneralEmployee = require("../schemas/generalEmployee.schema");
+const User = require("../schemas/user.schema")
 const PasswordService = require("./password.services");
 
 let services = {};
@@ -8,7 +9,7 @@ services.getFirmData = getFirmData;
 
 async function getFirmData(id) {
   try {
-    const data = await FirmAdmin.findOne({ _id: id }).populate({
+    const data = await User.findOne({ _id: id }).populate({
       path: "firmId",
     });
 
