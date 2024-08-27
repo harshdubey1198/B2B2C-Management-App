@@ -6,6 +6,7 @@ const PasswordService = require("./password.services");
 
 let services = {};
 services.getFirmData = getFirmData;
+services.getFirmUser = getFirmUser;
 
 async function getFirmData(id) {
   try {
@@ -44,6 +45,19 @@ async function getFirmData(id) {
     };
 
     return result;
+  } catch (error) {
+    console.log("Error getting firm data", error);
+    return Promise.reject("Error getting firm data");
+  }
+}
+
+async function getFirmUser(id) {
+  try {
+    const data = await User.find({firmId : id}).select("-password")
+    if(!data){
+      return Promise.reject("No Users found for this Firm")
+    }
+    return data
   } catch (error) {
     console.log("Error getting firm data", error);
     return Promise.reject("Error getting firm data");
