@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function UserTable({selectedFirmId}) {
+function UserTable({selectedFirmId, trigger}) {
   const [userData, setUserData] = useState([]);
   const [hoveredUserId, setHoveredUserId] = useState(null);
   const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
@@ -33,10 +33,11 @@ function UserTable({selectedFirmId}) {
 
   console.log(userData,"userdaata")
   console.log(selectedFirmId,"usta")
+  console.log(trigger,"trigger")
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [trigger]);
 
   const filteredUsers = userData.filter(
     (user) => user?.firmId === defaultFirm?.firmId
