@@ -23,7 +23,7 @@ function UserTable() {
         const response = await axios.get(
           `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
         );
-        console.log("API response data:", response);
+        console.log("API response data", response);
         setUserData(response || []);
       }
     } catch (error) {
