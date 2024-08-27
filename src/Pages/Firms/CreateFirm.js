@@ -49,7 +49,7 @@ function CreateFirm() {
       [name]: value,
     }));
     // setError("");
-    toast.error("");
+    //toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -96,7 +96,7 @@ function CreateFirm() {
     // setError("");
     // setSuccess("");
     toast.success("");
-    toast.error("");
+    //toast.error("");
 
     console.log('Form Values:', formValues);
 

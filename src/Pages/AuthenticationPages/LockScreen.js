@@ -27,7 +27,7 @@ const LockScreen = () => {
         const { value } = e.target;
         setPass(value.replace(/\s/g, ""));
         // setError("");
-        toast.error("");
+        //toast.error("");
     };
 
     const handleSubmit = (e) => {
