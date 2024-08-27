@@ -19,6 +19,7 @@ import {
   validatePhone,
 } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const predefinedPermissions = [
   "Admin",
@@ -41,6 +42,7 @@ function CreateFirm() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate()
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -148,6 +150,7 @@ function CreateFirm() {
             newPermission: "",
             selectedPermission: "",
         });
+        navigate('/firms')
     } catch (error) {
         // setError("Error creating firm: " + error.message);
         toast.error("Error creating firm" + error.message);
