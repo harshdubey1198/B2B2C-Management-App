@@ -1,16 +1,42 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-function UserTable({selectedFirmId}) {
-  const [clientData, setClientData] = useState([])
-  const [hoveredClientId, setHoveredClientId] = useState(null);
+function UserTable() {
+  const [userData, setUserData] = useState([]);
+  const [hoveredUserId, setHoveredUserId] = useState(null);
+  const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+
+  const fetchUsers = async () => {
+    try {
+      let firmId;
+      
+      if (authuser?.response.role === "firm_admin") {
+        firmId = authuser?.response.firmId;
+        console.log("Fetching users for firm_admin with firmId:", firmId);
+      } else if (authuser?.response.role === "client_admin") {
+        firmId = defaultFirm?.firmId;
+        console.log("Fetching users for client_admin with defaultFirmId:", firmId);
+      }
+      console.log("Firm Id:", firmId);
+      if (firmId) {
+        const response = await axios.get(
+          `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
+        );
+        console.log("API response data:", response);
+        setUserData(response || []);
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem("Create User")) || [];
-    setClientData(storedUsers);
-  },[])
+    fetchUsers();
+  }, [authuser]);
 
-  const filteredClients = clientData.filter(
-    (client) => client?.firmId === selectedFirmId
+  const filteredUsers = userData.filter(
+    (user) => user?.firmId === defaultFirm?.firmId
   );
 
   return (
@@ -20,8 +46,7 @@ function UserTable({selectedFirmId}) {
           <thead>
             <tr>
               <th>Firm Id</th>
-              <th>Firm Name</th>
-              <th>User Name</th>
+              <th>Name</th>
               <th>Phone</th>
               <th>Email</th>
               <th>Role</th>
@@ -30,36 +55,39 @@ function UserTable({selectedFirmId}) {
             </tr>
           </thead>
           <tbody>
-            {clientData &&
-              filteredClients.map((client) => (
+            {filteredUsers.length > 0 ? (
+              filteredUsers.map((user) => (
                 <tr
-                  key={client.id}
-                  onMouseEnter={() => setHoveredClientId(client.id)}
-                  onMouseLeave={() => setHoveredClientId(null)}
+                  key={user.id}
+                  onMouseEnter={() => setHoveredUserId(user.id)}
+                  onMouseLeave={() => setHoveredUserId(null)}
                 >
-                  <td>{client.firmId}</td>
-                  <td>{client.firmName}</td>
-                  <td>{client.name}</td>
-                  <td>{client.phone}</td>
-                  <td>{client.email}</td>
-                  <td>{client.role}</td>
+                  <td>{user.uid}</td>
+                  <td>{user.firstName} {user.lastName}</td>
+                  <td>{user.phone}</td>
+                  <td>{user.email}</td>
+                  <td>{user.role}</td>
                   <td>Edit/Pause</td>
                   <td>
-                    {client.permissions.map((permission) => (
+                    {user.permissions.map((permission) => (
                       <span key={permission}>{permission}, </span>
                     ))}
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="8">No users found</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
-      {hoveredClientId && (
+      {hoveredUserId && (
         <div className="hover-details">
           <h5>Products:</h5>
           <ul>
-            {clientData[selectedFirmId]
-              ?.find((client) => client.id === hoveredClientId)
+            {userData.find((user) => user.id === hoveredUserId)
               ?.subscriptions.map((subscription) => (
                 <li key={subscription.product}>{subscription.product}</li>
               ))}
