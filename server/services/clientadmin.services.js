@@ -265,12 +265,12 @@ async function createUser(body) {
       return Promise.reject("Email already exists");
     }
 
-    // if(role === "firm_admin"){
-    //     const existingFirmAdmin = await User.findOne({role: "firm_admin", firmId: firmId})
-    //     if(existingFirmAdmin){
-    //         return Promise.reject("Firm Admin already exists for this Firm");
-    //     }
-    // }
+    if(role === "firm_admin"){
+        const existingFirmAdmin = await User.findOne({role: "firm_admin", firmId: firmId})
+        if(existingFirmAdmin){
+            return Promise.reject("Firm Admin already exists for this Firm");
+        }
+    }
   
     let uniqueId = ''
     if(uniqueIdField){
@@ -280,7 +280,7 @@ async function createUser(body) {
     
     const hashedPassword = await PasswordService.passwordHash(password);
     // Create the new user
-    const newUser = new User({ ...rest, email, role, password: hashedPassword });
+    const newUser = new User({ ...rest, email, firmId, role, password: hashedPassword });
     await newUser.save();
   
     return newUser;
