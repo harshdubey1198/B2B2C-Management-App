@@ -16,6 +16,7 @@ function UserManage() {
   const [firms, SetFirms] = useState([]);
   const [defaultFirm, setDefaultFirm] = useState();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const [trigger, setTrigger] = useState(0)
 
   const [formValues, setFormValues] = useState({
     firmUniqueId: "",
@@ -77,6 +78,7 @@ function UserManage() {
     }
   }, []);
 
+
   useEffect(() => {
     if (selectedFirmId && firms.length > 0) {
       const selectedFirm = firms.find((firm) => firm.fuid === selectedFirmId) || "";
@@ -96,6 +98,11 @@ function UserManage() {
       }));
     }
   }, [selectedFirmId, firms]);
+
+  const handleFirmSwitch = (firmId) => {
+    setSelectedFirmId(firmId);
+    setTrigger((prev) => prev + 1); // Update trigger state
+  };
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
@@ -122,14 +129,15 @@ function UserManage() {
           {authuser.response.role === "client_admin" && (
             <FirmSwitcher
               selectedFirmId={selectedFirmId}
-              onSelectFirm={setSelectedFirmId}
+              // onSelectFirm={setSelectedFirmId}
+              onSelectFirm={handleFirmSwitch}
             />
           )}
         </div>
         <Col lg={12}>
           <Card>
             <CardBody>
-              <UserTable selectedFirmId={selectedFirmId} />
+              <UserTable trigger={trigger}/>
             </CardBody>
           </Card>
         </Col>
