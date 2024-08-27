@@ -36,11 +36,15 @@ function UserTable({selectedFirmId}) {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [selectedFirmId]);
 
-  const filteredUsers = userData.filter(
-    (user) => user?.firmId === defaultFirm?.firmId
-  );
+  // const filteredUsers = userData.filter(
+  //   (user) => user?.firmId === defaultFirm?.firmId
+  // );
+
+  const filteredUsers = authuser?.response.role === "client_admin"
+  ? userData.filter((user) => user?.firmId === defaultFirm?.firmId)
+  : userData;
 
   return (
     <>
