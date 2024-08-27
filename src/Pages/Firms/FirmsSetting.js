@@ -87,7 +87,7 @@ function FirmSettings() {
       ...prevDetails,
       [name]: value
     }));
-    toast.error("");
+    // //toast.error("");
     // setError("");
   };
 
@@ -103,7 +103,7 @@ function FirmSettings() {
     });
   };
 
-  console.log(firmDetails, "firmdteiald")
+  // console.log(firmDetails, "firm details")
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -113,7 +113,7 @@ function FirmSettings() {
       toast.success("Firm details updated successfully!");
       setTrigger(prev => prev + 1)
       // setError("");
-      toast.error("");
+      // //toast.error("");
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
       // setError("Failed to update firm details");

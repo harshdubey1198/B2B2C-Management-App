@@ -46,7 +46,7 @@ const InventoryItemForm = () => {
       [name]: value,
     }));
     // setError("");
-    toast.error("");
+    //toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -86,7 +86,7 @@ const InventoryItemForm = () => {
     setLoading(true);
     // setError("");
     // setSuccess("");
-    toast.error("");
+    //toast.error("");
     toast.success("");
 
     if (checkEmptyFields({
@@ -112,7 +112,7 @@ const InventoryItemForm = () => {
       toast.success("Item added successfully.");
       setLoading(false);
       // setError("");
-      toast.error("");
+      //toast.error("");
 
       setFormValues({
         name: "",

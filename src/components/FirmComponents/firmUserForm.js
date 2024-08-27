@@ -72,7 +72,7 @@ const FirmUserCreateForm = ({
         // setSuccess("User added successfully.");
         toast.success("User added successfully.");
         // setError("");
-        toast.error("");
+        // //toast.error("");
         setFormValues({
           firmUniqueId: "",
           firmName: "",
@@ -113,7 +113,7 @@ const FirmUserCreateForm = ({
     }
     e.target.value = "";
     // setError("");
-    toast.error("");
+    //toast.error("");
   };
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -122,7 +122,7 @@ const FirmUserCreateForm = ({
       [name]: value,
     }));
     // setError("");
-    toast.error("");
+    //toast.error("");
   };
 
   const prePermissions = [

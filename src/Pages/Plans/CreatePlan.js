@@ -34,7 +34,7 @@ function CreatePlan() {
       [name]: value,
     }));
     // setError("");
-    toast.error("");
+    //toast.error("");
   };
 
   const handleFeatureChange = (e) => {
@@ -67,7 +67,7 @@ function CreatePlan() {
     setLoading(true);
     // setError("");
     // setSuccess("");
-    toast.error("");
+    //toast.error("");
     toast.success("");
 
     // Basic validation
