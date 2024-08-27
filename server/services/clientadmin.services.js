@@ -257,13 +257,20 @@ async function updateFirm(firmId, body) {
 
 async function createUser(body) {
     try{
-    const { role, firmUniqueId, email, password, ...rest} = body;
+    const { role, firmUniqueId, firmId, email, password, ...rest} = body;
     let uniqueIdField = "uid"
   
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return Promise.reject("Email already exists");
     }
+
+    // if(role === "firm_admin"){
+    //     const existingFirmAdmin = await User.findOne({role: "firm_admin", firmId: firmId})
+    //     if(existingFirmAdmin){
+    //         return Promise.reject("Firm Admin already exists for this Firm");
+    //     }
+    // }
   
     let uniqueId = ''
     if(uniqueIdField){

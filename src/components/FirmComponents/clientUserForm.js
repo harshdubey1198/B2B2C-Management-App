@@ -23,7 +23,7 @@ const ClientUserCreateForm = ({
     }));
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -75,10 +75,10 @@ const ClientUserCreateForm = ({
         toggle();
       })
       .catch((error) => {
-        // console.log("Error creating user", error);
+        console.log("Full error object:", error); // log full error
         toast.error("Error creating user");
       });
-  };
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;

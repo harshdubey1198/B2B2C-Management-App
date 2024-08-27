@@ -33,7 +33,7 @@ const Pricing = () => {
           console.log("Error fetching client admin data:", error);
         });
     }
-  }, [authuser]);
+  }, []);
 
   const handleRequest = (planId) => {
     axios.post(`${process.env.REACT_APP_URL}/clientadmin/requestPlan`, {

@@ -33,7 +33,7 @@ function UserTable() {
 
   useEffect(() => {
     fetchUsers();
-  }, [authuser]);
+  }, []);
 
   const filteredUsers = userData.filter(
     (user) => user?.firmId === defaultFirm?.firmId
@@ -51,7 +51,7 @@ function UserTable() {
               <th>Email</th>
               <th>Role</th>
               <th>Actions</th>
-              <th>Permissions</th>
+              {/* <th>Permissions</th> */}
             </tr>
           </thead>
           <tbody>
@@ -68,11 +68,11 @@ function UserTable() {
                   <td>{user.email}</td>
                   <td>{user.role}</td>
                   <td>Edit/Pause</td>
-                  <td>
+                  {/* <td>
                     {user.permissions.map((permission) => (
                       <span key={permission}>{permission}, </span>
                     ))}
-                  </td>
+                  </td> */}
                 </tr>
               ))
             ) : (
@@ -83,7 +83,7 @@ function UserTable() {
           </tbody>
         </table>
       </div>
-      {hoveredUserId && (
+      {/* {hoveredUserId && (
         <div className="hover-details">
           <h5>Products:</h5>
           <ul>
@@ -93,7 +93,7 @@ function UserTable() {
               ))}
           </ul>
         </div>
-      )}
+      )} */}
     </>
   );
 }

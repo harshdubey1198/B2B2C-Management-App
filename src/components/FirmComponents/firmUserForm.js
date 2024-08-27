@@ -67,7 +67,7 @@ const FirmUserCreateForm = ({
     }
 
     axios
-      .post(`${process.env.REACT_APP_URL}/firmadmin/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully.");
