@@ -244,22 +244,13 @@ async function createUser(body) {
   
       let uniqueId = "";
       if (uniqueIdField) {
-        uniqueId = await generateUniqueId(
-            User,
-          uniqueIdField,
-          firmUniqueId,
-        );
+        uniqueId = await generateUniqueId(User, uniqueIdField, firmUniqueId,);
         rest[uniqueIdField] = uniqueId;
       }
   
       const hashedPassword = await PasswordService.passwordHash(password);
       // Create the new user
-      const newUser = new User({
-        ...rest,
-        email,
-        role,
-        password: hashedPassword,
-      });
+      const newUser = new User({...rest, email, role, password: hashedPassword,});
       await newUser.save();
   
       return newUser;
