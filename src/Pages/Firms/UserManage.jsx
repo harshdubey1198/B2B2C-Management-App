@@ -99,10 +99,11 @@ function UserManage() {
     }
   }, [selectedFirmId, firms]);
 
-  const handleFirmSwitch = (firmId) => {
-    setSelectedFirmId(firmId);
-    setTrigger((prev) => prev + 1); // Update trigger state
-  };
+  // const handleFirmSwitch = (firmId) => {
+  //   console.log(firmId, "firmid")
+  //   setSelectedFirmId(firmId);
+  //   setTrigger((prev) => prev + 1); // Update trigger state
+  // };
 
   const toggleModal = () => {
     setModalOpen(!modalOpen);
@@ -129,15 +130,15 @@ function UserManage() {
           {authuser.response.role === "client_admin" && (
             <FirmSwitcher
               selectedFirmId={selectedFirmId}
-              // onSelectFirm={setSelectedFirmId}
-              onSelectFirm={handleFirmSwitch}
+              onSelectFirm={setSelectedFirmId}
+              // onSelectFirm={handleFirmSwitch}
             />
           )}
         </div>
         <Col lg={12}>
           <Card>
             <CardBody>
-              <UserTable trigger={trigger}/>
+              <UserTable selectedFirmId={selectedFirmId} trigger={trigger}/>
             </CardBody>
           </Card>
         </Col>

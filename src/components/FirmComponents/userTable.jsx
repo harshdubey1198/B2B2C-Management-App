@@ -33,7 +33,7 @@ function UserTable({ selectedFirmId, trigger }) {
 
   useEffect(() => {
     fetchUsers();
-  }, [trigger]);
+  }, [selectedFirmId]);
 
   return (
     <>
