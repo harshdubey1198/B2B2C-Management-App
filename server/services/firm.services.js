@@ -1,14 +1,16 @@
 const Accountant = require("../schemas/accountant.schema");
 const FirmAdmin = require("../schemas/firmadmin.schema");
 const GeneralEmployee = require("../schemas/generalEmployee.schema");
+const User = require("../schemas/user.schema")
 const PasswordService = require("./password.services");
 
 let services = {};
 services.getFirmData = getFirmData;
+services.getFirmUser = getFirmUser;
 
 async function getFirmData(id) {
   try {
-    const data = await FirmAdmin.findOne({ _id: id }).populate({
+    const data = await User.findOne({ _id: id }).populate({
       path: "firmId",
     });
 
@@ -43,6 +45,19 @@ async function getFirmData(id) {
     };
 
     return result;
+  } catch (error) {
+    console.log("Error getting firm data", error);
+    return Promise.reject("Error getting firm data");
+  }
+}
+
+async function getFirmUser(id) {
+  try {
+    const data = await User.find({firmId : id}).select("-password")
+    if(!data){
+      return Promise.reject("No Users found for this Firm")
+    }
+    return data
   } catch (error) {
     console.log("Error getting firm data", error);
     return Promise.reject("Error getting firm data");
