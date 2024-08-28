@@ -30,7 +30,15 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
     const taxAmount = (totalAmount * taxRate) / 100;
     const amountDue = totalAmount + taxAmount;
 
-    const netReceived = amountDue; 
+    const netReceived = amountDue;
+
+    const isSameState = invoiceData.companyAddress === invoiceData.customerState;
+    const cgstSgstRate = isSameState ? taxRate / 2 : 0;
+    const igstRate = !isSameState ? taxRate : 0;
+
+    const cgstAmount = (totalAmount * cgstSgstRate) / 100;
+    const sgstAmount = (totalAmount * cgstSgstRate) / 100;
+    const igstAmount = (totalAmount * igstRate) / 100;
 
     return (
         <div ref={ref} className="card p-4 border rounded">
@@ -64,7 +72,14 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                         <th>Quantity</th>
                         <th>Price</th>
                         <th>Total Value</th>
-                        <th>IGST</th>
+                        {isSameState ? (
+                            <>
+                                <th>CGST ({cgstSgstRate}%)</th>
+                                <th>SGST ({cgstSgstRate}%)</th>
+                            </>
+                        ) : (
+                            <th>IGST ({igstRate}%)</th>
+                        )}
                         <th>Amount</th>
                     </tr>
                 </thead>
@@ -77,8 +92,15 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                             <td>{item.quantity}</td>
                             <td>{item.price.toFixed(2)}</td>
                             <td>{(item.quantity * item.price).toFixed(2)}</td>
-                            <td>{taxRate}%</td>
-                            <td>{amountDue}</td>
+                            {isSameState ? (
+                                <>
+                                    <td>{cgstAmount.toFixed(2)}</td>
+                                    <td>{sgstAmount.toFixed(2)}</td>
+                                </>
+                            ) : (
+                                <td>{igstAmount.toFixed(2)}</td>
+                            )}
+                            <td>{(item.quantity * item.price + (isSameState ? cgstAmount + sgstAmount : igstAmount)).toFixed(2)}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -94,7 +116,14 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 </div>
                 <div className="col-md-6 text-right">
                     <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
-                    <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
+                    {isSameState ? (
+                        <>
+                            <p><strong>CGST ({cgstSgstRate}%):</strong> {cgstAmount.toFixed(2)}</p>
+                            <p><strong>SGST ({cgstSgstRate}%):</strong> {sgstAmount.toFixed(2)}</p>
+                        </>
+                    ) : (
+                        <p><strong>IGST ({igstRate}%):</strong> {igstAmount.toFixed(2)}</p>
+                    )}
                     <p><strong>Total:</strong> ₹{amountDue.toFixed(2)}</p>
                     <p><strong>Total Value in Words:</strong> ₹{convertNumberToWords(amountDue.toFixed(2))} only</p>
                     <p><strong>Net Received:</strong> ₹{netReceived.toFixed(2)}</p>
