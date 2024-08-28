@@ -19,6 +19,8 @@ const Index = () => {
         companyName: "",
         companyAddress: "",
         companyLogo: "",
+        companyPhone: "",
+        companyEmail: "",
         customerName: '',
         customerAddress: '',
         customerPhone: '',
@@ -43,6 +45,8 @@ const Index = () => {
                 companyName: response.firmName,
                 companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
                 companyLogo: response.avatar,
+                companyPhone: response.firmPhone,
+                companyEmail: response.firmEmail
             }))
         }).catch((error) => {
             console.log(error, "error")
@@ -126,6 +130,8 @@ const Index = () => {
                 companyName: "",
                 companyAddress: "",
                 companyLogo: "",
+                companyPhone: "",
+                companyEmail: "",
                 customerName: '',
                 customerAddress: '',
                 customerPhone: '',
@@ -142,7 +148,7 @@ const Index = () => {
     const printInvoice = useReactToPrint({
         content: () => printRef.current
     });
-
+    console.log(invoiceData, "invoicedata")
     return (
         <Container>
             <div className='page-content'>

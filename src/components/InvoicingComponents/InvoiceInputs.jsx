@@ -68,6 +68,28 @@ const InvoiceInputs = ({
                             required
                         />
                     </FormGroup>
+                    <FormGroup>
+                        <Label for="companyPhone">Company Phone</Label>
+                        <Input
+                            type="text"
+                            name="companyPhone"
+                            id="companyPhone"
+                            value={invoiceData.companyPhone}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="companyEmail">Company Email</Label>
+                        <Input
+                            type="text"
+                            name="companyEmail"
+                            id="companyEmail"
+                            value={invoiceData.companyEmail}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
                 </Col>
                 <Col md={6}>
                     <FormGroup>

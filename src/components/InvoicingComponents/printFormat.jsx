@@ -19,6 +19,8 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
                 <h3>{invoiceData?.companyName}</h3>
                 <p>{invoiceData?.companyAddress}</p>
+                <p>{invoiceData?.customerPhone}</p>
+                <p>{invoiceData?.customerEmail}</p>
             </div>
             <h2>Invoice</h2>
             <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
