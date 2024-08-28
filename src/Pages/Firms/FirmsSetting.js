@@ -12,8 +12,8 @@ function FirmSettings() {
   const [firmDetails, setFirmDetails] = useState({
     companyAddress: []
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  // const [error, setError] = useState("");
+  // const [success, setSuccess] = useState("");
   const [authUser, setAuthUser] = useState(null);
   const [trigger, setTrigger] = useState(0)
 
@@ -33,7 +33,8 @@ function FirmSettings() {
           const response = await axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser.response._id}`);
           const firms = response || [];
           setFirmsData(firms);
-          if (firms.length > 0) {
+          // Only set selectedFirmId if it's not already set
+          if (firms.length > 0 && !selectedFirmId) {
             setSelectedFirmId(firms[0].fuid);
           }
         } catch (error) {
@@ -79,6 +80,9 @@ function FirmSettings() {
 
   const handleFirmChange = (id) => {
     setSelectedFirmId(id);
+    // Fetch details for the newly selected firm
+    const selectedFirm = firmsData.find(firm => firm.fuid === id) || {};
+    setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] })
   };
 
   const handleInputChange = (e) => {
@@ -111,9 +115,9 @@ function FirmSettings() {
       await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
       // setSuccess("Firm details updated successfully!");
       toast.success("Firm details updated successfully!");
+      // Instead of triggering a full re-fetch of the firm list, just update the details for the current firm
       setTrigger(prev => prev + 1)
-      // setError("");
-      // //toast.error("");
+      handleFirmChange(selectedFirmId); // Refresh data for the current firm
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
       // setError("Failed to update firm details");
