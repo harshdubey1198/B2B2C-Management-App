@@ -21,6 +21,7 @@ const Index = () => {
         companyLogo: "",
         companyPhone: "",
         companyEmail: "",
+        gstin: "",
         customerName: '',
         customerAddress: '',
         customerPhone: '',
@@ -46,7 +47,8 @@ const Index = () => {
                 companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
                 companyLogo: response.avatar,
                 companyPhone: response.firmPhone,
-                companyEmail: response.firmEmail
+                companyEmail: response.firmEmail,
+                gstin: response.gstin,
             }))
         }).catch((error) => {
             console.log(error, "error")
