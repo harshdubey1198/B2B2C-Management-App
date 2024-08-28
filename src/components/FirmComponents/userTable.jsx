@@ -4,7 +4,7 @@ import axios from "axios";
 function UserTable({ selectedFirmId, trigger }) {
   const [userData, setUserData] = useState([]);
   const [hoveredUserId, setHoveredUserId] = useState(null);
-  const defaultfirm = JSON.parse(localStorage.getItem("defaultFirm"));
+  const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   const fetchUsers = async () => {
@@ -15,7 +15,7 @@ function UserTable({ selectedFirmId, trigger }) {
         firmId = authuser?.response.firmId;
         console.log("Fetching users for firm_admin with firmId:", firmId);
       } else if (authuser?.response.role === "client_admin") {
-        firmId = defaultfirm?.firmId;
+        firmId = defaultFirm?.firmId;
         console.log("Fetching users for client_admin with defaultFirmId:", firmId);
       }
       console.log("Firm Id:", firmId);

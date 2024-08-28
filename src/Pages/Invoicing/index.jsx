@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import InvoiceInputs from '../../components/InvoicingComponents/InvoiceInputs';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import { checkEmptyFields, validatePhone } from '../Utility/FormValidation';
+import axios from 'axios';
 
 const fakeItems = [
     { id: 1, name: 'Item A', price: 10.00 },
@@ -13,6 +14,7 @@ const fakeItems = [
 ];
 
 const Index = () => {
+    const [companyData, setCompanyData] = useState({})
     const [invoiceData, setInvoiceData] = useState({
         companyName: "",
         companyAddress: "",
@@ -30,7 +32,22 @@ const Index = () => {
     const [success, setSuccess] = useState("");
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser"))
-    console.log(authuser.response._id, "authuser")
+
+    useEffect(() => {
+        axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
+            console.log(response, "response")
+            const address = Array.isArray(response.companyAddress) ? response.companyAddress[0] : {};
+            setCompanyData(response, "response")
+            setInvoiceData((prevData) => ({
+                ...prevData,
+                companyName: response.firmName,
+                companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
+                companyLogo: response.avatar,
+            }))
+        }).catch((error) => {
+            console.log(error, "error")
+        })
+    },[])
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
