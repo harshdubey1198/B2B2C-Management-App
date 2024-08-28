@@ -29,8 +29,8 @@ const Index = () => {
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
     const printRef = useRef();
-
-  
+    const authuser = JSON.parse(localStorage.getItem("authUser"))
+    console.log(authuser.response._id, "authuser")
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
