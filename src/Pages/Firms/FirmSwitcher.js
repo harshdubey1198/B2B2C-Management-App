@@ -40,8 +40,8 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   }, [selectedFirmId, firms]);
 
   return (
-    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'100px'}}>
-      <DropdownToggle  style={{ backgroundColor: '#0bb197' ,width:'100px'}}>
+    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'150px'}}>
+      <DropdownToggle  style={{ backgroundColor: '#0bb197' ,width:'140px'}}>
         <span style={{ marginRight: '10px' }}>
           {firms.find(firm => firm.fuid === selectedFirmId)?.firmName || 'Select Firm'}
         </span>

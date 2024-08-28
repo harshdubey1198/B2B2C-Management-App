@@ -1,30 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
-} from "reactstrap";
+import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import {
-  checkEmptyFields,
-  validateEmail,
-  validatePhone,
-} from "../Utility/FormValidation";
+import {  checkEmptyFields ,  validateEmail ,  validatePhone } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const predefinedPermissions = [
-  "Admin",
-  "User",
-];
+// const predefinedPermissions = [
+//   "Admin",
+//   "User",
+// ];
 
 function CreateFirm() {
   document.title = "Firm Form";
@@ -34,10 +19,10 @@ function CreateFirm() {
     firmPhone: "",
     firmEmail: "",
     avatar: "",
-    permissions: [],
+    // permissions: [],
     startDate: "",
-    newPermission: "",
-    selectedPermission: "",
+    // newPermission: "",
+    // selectedPermission: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -68,29 +53,29 @@ function CreateFirm() {
     }
   };
 
-  const handleAddPermission = () => {
-    if (formValues.newPermission) {
-      setFormValues((prevState) => ({
-        ...prevState,
-        permissions: [...prevState.permissions, prevState.newPermission],
-        newPermission: "",
-      }));
-    }
-    if (formValues.selectedPermission) {
-      setFormValues((prevState) => ({
-        ...prevState,
-        permissions: [...prevState.permissions, prevState.selectedPermission],
-        selectedPermission: "",
-      }));
-    }
-  };
+  // const handleAddPermission = () => {
+  //   if (formValues.newPermission) {
+  //     setFormValues((prevState) => ({
+  //       ...prevState,
+  //       permissions: [...prevState.permissions, prevState.newPermission],
+  //       newPermission: "",
+  //     }));
+  //   }
+  //   if (formValues.selectedPermission) {
+  //     setFormValues((prevState) => ({
+  //       ...prevState,
+  //       permissions: [...prevState.permissions, prevState.selectedPermission],
+  //       selectedPermission: "",
+  //     }));
+  //   }
+  // };
 
-  const handleRemovePermission = (index) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      permissions: prevState.permissions.filter((_, i) => i !== index),
-    }));
-  };
+  // const handleRemovePermission = (index) => {
+  //   setFormValues((prevState) => ({
+  //     ...prevState,
+  //     permissions: prevState.permissions.filter((_, i) => i !== index),
+  //   }));
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,10 +130,10 @@ function CreateFirm() {
             firmPhone: "",
             firmEmail: "",
             avatar: "",
-            permissions: [],
+            // permissions: [],
             startDate: "",
-            newPermission: "",
-            selectedPermission: "",
+            // newPermission: "",
+            // selectedPermission: "",
         });
         navigate('/firms')
     } catch (error) {
@@ -224,7 +209,7 @@ function CreateFirm() {
                         />
                       )}
                     </FormGroup>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <Label htmlFor="permissions">Permissions</Label>
                       <div className="d-flex flex-column">
                         {formValues.permissions.length > 0 ? (
@@ -276,7 +261,7 @@ function CreateFirm() {
                           </Button>
                         </div>
                       </div>
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="startDate">Start Date</Label>
                       <Input
