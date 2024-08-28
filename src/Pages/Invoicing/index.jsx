@@ -21,6 +21,10 @@ const Index = () => {
         companyLogo: "",
         companyPhone: "",
         companyEmail: "",
+        bankName: "",
+        IFSCCode: "",
+        branchName: "",
+        accountNumber: "",
         gstin: "",
         customerName: '',
         customerAddress: '',
@@ -49,6 +53,10 @@ const Index = () => {
                 companyPhone: response.firmPhone,
                 companyEmail: response.firmEmail,
                 gstin: response.gstin,
+                bankName: response.bankName,
+                IFSCCode: response.ifscCode,
+                accountNumber: response.accountNumber,
+                branchName: response.branchName
             }))
         }).catch((error) => {
             console.log(error, "error")

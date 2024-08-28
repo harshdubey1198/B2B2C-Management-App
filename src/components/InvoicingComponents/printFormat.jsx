@@ -7,11 +7,30 @@ const countries = {
     Indonesia: { currency: 'IDR', gst: 10 }
 };
 
+const convertNumberToWords = (num) => {
+    const a = ['','one','two','three','four','five','six','seven','eight','nine','ten',
+        'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+    const b = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+
+    const inWords = (n) => {
+        if (n === 0) return 'zero';
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
+        if (n < 1000) return a[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' and ' + inWords(n % 100) : '');
+        return 'Number too large';
+    };
+
+    return inWords(num);
+};
+
 const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
     const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
     const taxAmount = (totalAmount * taxRate) / 100;
+    const amountDue = totalAmount + taxAmount;
+
+    const netReceived = amountDue; 
 
     return (
         <div ref={ref} className="card p-4 border rounded">
@@ -22,6 +41,10 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 <p>{invoiceData?.companyPhone}</p>
                 <p>{invoiceData?.companyEmail}</p>
                 <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
+                 {/* Add Amount Due */}
+                <div className="text-right mb-4">
+                    <p><strong>Amount Due:</strong> ₹{amountDue.toFixed(2)}</p>
+                </div>
             </div>
             <h2>Invoice</h2>
             <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
@@ -35,27 +58,48 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
             <table className="table table-bordered">
                 <thead>
                     <tr>
+                        <th>Sr. no</th>
                         <th>Description</th>
+                        <th>HSN/SAC</th>
                         <th>Quantity</th>
                         <th>Price</th>
-                        <th>Total</th>
+                        <th>Total Value</th>
+                        <th>IGST</th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
                     {invoiceData.items.map((item, index) => (
                         <tr key={index}>
+                            <td>{index + 1}</td>
                             <td>{item.description}</td>
+                            <td>{item.Hsn}</td>
                             <td>{item.quantity}</td>
                             <td>{item.price.toFixed(2)}</td>
                             <td>{(item.quantity * item.price).toFixed(2)}</td>
+                            <td>{taxRate}%</td>
+                            <td>{amountDue}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
-            <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
-            <p><strong>Total:</strong> {(totalAmount + taxAmount).toFixed(2)}</p>
-            {/* <p><strong>Payment Link:</strong> <a href={paymentLink} target="_blank" rel="noopener noreferrer">Pay Now</a></p> */}
+
+            <div className="row">
+                <div className="col-md-6 text-left">
+                    <h5>Bank Details</h5>
+                    <p><strong>Bank Name:</strong> {invoiceData?.bankName || 'Your Bank Name'}</p>
+                    <p><strong>Account Number:</strong> {invoiceData?.accountNumber || 'XXXXXXXXXXXX'}</p>
+                    <p><strong>IFSC Code:</strong> {invoiceData?.IFSCCode || ''}</p>
+                    <p><strong>Branch:</strong> {invoiceData?.branchName || 'Your Branch'}</p>
+                </div>
+                <div className="col-md-6 text-right">
+                    <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
+                    <p><strong>Tax ({taxRate}%):</strong> {taxAmount.toFixed(2)}</p>
+                    <p><strong>Total:</strong> ₹{amountDue.toFixed(2)}</p>
+                    <p><strong>Total Value in Words:</strong> ₹{convertNumberToWords(amountDue.toFixed(2))} only</p>
+                    <p><strong>Net Received:</strong> ₹{netReceived.toFixed(2)}</p>
+                </div>
+            </div>
         </div>
     );
 });
