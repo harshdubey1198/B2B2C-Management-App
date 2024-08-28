@@ -119,29 +119,19 @@ export const masterAdminSidebarData = () => [
       ],
     },
     // {
-    //   label: "Taxation",
-    //   icon: "mdi mdi-file-document-outline",
-    //   subItem: [
-    //     { sublabel: "Create Tax", link: "/create-tax" },
-    //     { sublabel: "View Taxes", link: "/view-taxes" },
-    //     { sublabel: "Reports", link: "/reports" },
-    //   ],
-    // },
-
-    // {
     //   label:"Below-options",
     //   isMainMenu:true,
     // },
-    {
-      label: "Authentication",
-      icon: "mdi mdi-account-circle-outline",
-      subItem: [
-        { sublabel: "Login", link: "/auth-login" },
-        { sublabel: "Register", link: "/auth-register" },
-        { sublabel: "Recover Password", link: "/recover-password" },
-        { sublabel: "Lock Screen", link: "/auth-lock-screen" },
-      ],
-    },
+    // {
+    //   label: "Authentication",
+    //   icon: "mdi mdi-account-circle-outline",
+    //   subItem: [
+    //     { sublabel: "Login", link: "/auth-login" },
+    //     { sublabel: "Register", link: "/auth-register" },
+    //     { sublabel: "Recover Password", link: "/recover-password" },
+    //     { sublabel: "Lock Screen", link: "/auth-lock-screen" },
+    //   ],
+    // },
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",
@@ -151,22 +141,23 @@ export const masterAdminSidebarData = () => [
           // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
-      },
-      {
-        label: "Extra Pages",
-        icon: "mdi mdi-file-document-outline",
-        subItem: [
-          
-          { sublabel: "Ui Cards", link: "/ui-cards" },
-          { sublabel: "Ui Buttons", link: "/ui-buttons" },
-          { sublabel: "Ui Modals", link: "/ui-modals" },
-          { sublabel: "Boxicons", link: "/icon-boxicon" },
-          { sublabel: "MDI", link: "/icons-materialdesign" },
-          { sublabel: "FA-Icons", link: "/icons-fontawesome" },
-          { sublabel: "Drip-Icons", link: "/icon-dripicons" },
-        ],
-
       }
+      
+      // {
+      //   label: "Extra Pages",
+      //   icon: "mdi mdi-file-document-outline",
+      //   subItem: [
+          
+      //     { sublabel: "Ui Cards", link: "/ui-cards" },
+      //     { sublabel: "Ui Buttons", link: "/ui-buttons" },
+      //     { sublabel: "Ui Modals", link: "/ui-modals" },
+      //     { sublabel: "Boxicons", link: "/icon-boxicon" },
+      //     { sublabel: "MDI", link: "/icons-materialdesign" },
+      //     { sublabel: "FA-Icons", link: "/icons-fontawesome" },
+      //     { sublabel: "Drip-Icons", link: "/icon-dripicons" },
+      //   ],
+
+      // }
   ];
   export const firmAdminSidebarData =()=>[
     {
@@ -181,7 +172,7 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Firms", link: "/firms" },
         // { sublabel: "Manage Firm", link: "/manage-firm" },
         { sublabel: "Firm Users", link: "/firmusers" },
-        { sublabel: "Create Firm", link: "/create-firm" },
+        // { sublabel: "Create Firm", link: "/create-firm" },
         // { sublabel: "Switch Firm", link: "/Switch-firm" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
@@ -197,9 +188,9 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Payments", link: "/payments" },
-        { sublabel: "Expenses", link: "/expenses" },
-        { sublabel: "Reports", link: "/reports" },
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Expenses", link: "/expenses" },
+        // { sublabel: "Reports", link: "/reports" },
       ],
     },
     {
@@ -262,20 +253,24 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Payments", link: "/payments" },
-        { sublabel: "Reports", link: "/reports-invoice" },
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Reports", link: "/reports-invoice" },
       ],
     },
     {
-      label: "Clients",
-      icon: "mdi mdi-account-multiple-outline",
-      url: "/clients-management",
+      label: "Inventory",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "Inventory Table", link: "/inventory-table" },
+        { sublabel: "Table Form", link: "/add-inventory" },
+        { sublabel: "Table Taxation", link: "/table-taxation" },
+        { sublabel: "Item Config", link: "/item-configuration" },
+      ],
     },
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
-      url: "/settings",
+      url: "/profile-settings",
     },
   ];
   
@@ -290,8 +285,9 @@ export const masterAdminSidebarData = () => [
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
+        { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Payments", link: "/payments" },
       ],
     },{
       label: "Inventory",
@@ -306,7 +302,7 @@ export const masterAdminSidebarData = () => [
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
-      url: "/settings",
+      url: "/profile-settings",
     },
   ];
   

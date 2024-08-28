@@ -116,9 +116,7 @@ const ProfileSettings = () => {
                 <CardBody>
                   <h2>Profile Settings</h2>
                   {/* {successMessage && <Alert color="success">{successMessage}</Alert>} */}
-                  toast.success(successMessage);
                   {/* {errorMessage && <Alert color="danger">{errorMessage}</Alert>} */}
-                  toast.error(errorMessage);
                   <Form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label for="name">Name</Label>
