@@ -121,7 +121,7 @@ const InventoryItemForm = () => {
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
-              <Card className="mt-5">
+              <Card>
                 <CardBody>
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Add Inventory Item
@@ -202,7 +202,7 @@ const InventoryItemForm = () => {
                       )}
                     </FormGroup>
                     <FormGroup >
-                      <Label htmlFor="variants">Variants</Label>
+                      <Label htmlFor="variants"  style={{marginRight:"20px"}}>Variants</Label>
                       {formValues.variants.map((variant, index) => (
                         <div key={index} className="d-flex align-items-center mb-2">
                           <Input
@@ -243,7 +243,7 @@ const InventoryItemForm = () => {
                           </Button>
                         </div>
                       ))}
-                      <Button color="success" onClick={handleAddVariant} style={{marginLeft:"20px"}}>
+                      <Button color="success" onClick={handleAddVariant}>
                         Add Variant
                       </Button>
                     </FormGroup>
