@@ -26,8 +26,6 @@ function ItemConfiguration() {
     setItems(storedItems);
   }, []);
 
-  console.log(setItems, "setitems");
-
   useEffect(() => {
     localStorage.setItem("inventoryItems", JSON.stringify(items));
   }, [items]);
@@ -218,7 +216,7 @@ function ItemConfiguration() {
               >
                 <Input
                   type="text"
-                  id="variantName"
+                  id="name"
                   placeholder="Variant Name"
                   value={variant.name || ""}
                   onChange={(e) => handleVariantChange(index, e)}
@@ -256,11 +254,6 @@ function ItemConfiguration() {
                 <Button
                   color="danger"
                   onClick={() => handleRemoveVariant(index)}
-                  // style={{
-                  //   padding: "0.5rem",
-                  //   minWidth: "2rem",
-                  //   fontSize: "1rem",
-                  // }}
                 >
                   <Icon path={mdiClose} size={1} />
                 </Button>

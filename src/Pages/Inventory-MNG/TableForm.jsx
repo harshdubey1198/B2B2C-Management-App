@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
-} from "reactstrap";
+import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert,} from "reactstrap";
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +14,7 @@ const InventoryItemForm = () => {
     supplier: "",
     image: null,
     imageUrl: "",
-    variants: [], // Variants now hold objects with name, price, and tax
+    variants: [],
     type: "",
   });
   const [error, setError] = useState("");
@@ -34,7 +23,6 @@ const InventoryItemForm = () => {
   const [taxationData, setTaxationData] = useState([]);
 
   useEffect(() => {
-    // Retrieve taxation table from localStorage
     const storedTaxationTable = JSON.parse(localStorage.getItem("taxationData")) || [];
     setTaxationData(storedTaxationTable);
   }, []);
@@ -45,8 +33,6 @@ const InventoryItemForm = () => {
       ...prevState,
       [name]: value,
     }));
-    // setError("");
-    //toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -215,7 +201,7 @@ const InventoryItemForm = () => {
                         />
                       )}
                     </FormGroup>
-                    <FormGroup>
+                    <FormGroup >
                       <Label htmlFor="variants">Variants</Label>
                       {formValues.variants.map((variant, index) => (
                         <div key={index} className="d-flex align-items-center mb-2">
@@ -257,7 +243,7 @@ const InventoryItemForm = () => {
                           </Button>
                         </div>
                       ))}
-                      <Button color="success" onClick={handleAddVariant}>
+                      <Button color="success" onClick={handleAddVariant} style={{marginLeft:"20px"}}>
                         Add Variant
                       </Button>
                     </FormGroup>
