@@ -1,16 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
-} from "reactstrap";
+import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert,} from "reactstrap";
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +14,7 @@ const InventoryItemForm = () => {
     supplier: "",
     image: null,
     imageUrl: "",
-    variants: [], // Variants now hold objects with name, price, and tax
+    variants: [],
     type: "",
   });
   const [error, setError] = useState("");
@@ -34,7 +23,6 @@ const InventoryItemForm = () => {
   const [taxationData, setTaxationData] = useState([]);
 
   useEffect(() => {
-    // Retrieve taxation table from localStorage
     const storedTaxationTable = JSON.parse(localStorage.getItem("taxationData")) || [];
     setTaxationData(storedTaxationTable);
   }, []);
@@ -45,8 +33,6 @@ const InventoryItemForm = () => {
       ...prevState,
       [name]: value,
     }));
-    // setError("");
-    //toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -135,7 +121,7 @@ const InventoryItemForm = () => {
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
-              <Card className="mt-5">
+              <Card>
                 <CardBody>
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Add Inventory Item
@@ -215,8 +201,8 @@ const InventoryItemForm = () => {
                         />
                       )}
                     </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="variants">Variants</Label>
+                    <FormGroup >
+                      <Label htmlFor="variants"  style={{marginRight:"20px"}}>Variants</Label>
                       {formValues.variants.map((variant, index) => (
                         <div key={index} className="d-flex align-items-center mb-2">
                           <Input
