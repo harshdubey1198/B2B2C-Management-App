@@ -1,18 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Card,
-  CardBody,
-  Col,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  FormGroup,
-  Label,
-  Input,
-  Table,
-} from "reactstrap";
+import {  Card,  CardBody,  Col,  Button,  Modal,  ModalHeader,  ModalBody,  ModalFooter,  FormGroup,  Label,  Input,  Table,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { mdiPencil, mdiDelete, mdiClose } from "@mdi/js";
 import Icon from "@mdi/react";
