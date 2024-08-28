@@ -86,13 +86,7 @@ const Index = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        // setError("");
-        // setSuccess("");
-        //toast.error("");
-        //toast.success("");
-
-      
+     
         if (!validatePhone(invoiceData.customerPhone)) {
             // setError("Invalid Phone Number");
             toast.error("Invalid Phone Number");
