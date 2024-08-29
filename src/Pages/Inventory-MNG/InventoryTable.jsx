@@ -53,7 +53,7 @@ function InventoryTable() {
   const calculatePriceAfterTax = (price, taxRate) => {
     return (price + (price * (taxRate / 100))).toFixed(2);
   };
-
+//resolve merge
   return (
     <React.Fragment>
       <div className="page-content">
