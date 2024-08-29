@@ -176,7 +176,7 @@ const InvoiceInputs = ({
                         id="customerHouse"
                         placeholder='House No.'
                         value={invoiceData.customerHouse}
-                        // onChange={handleInputChange}
+                        onChange={handleInputChange}
                         required
                         />
                         <Input

@@ -32,7 +32,7 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
 
     const netReceived = amountDue;
 
-    const isSameState = invoiceData.companyAddress === invoiceData.customerState;
+    const isSameState = invoiceData.companyState === invoiceData.customerState;
     const cgstSgstRate = isSameState ? taxRate / 2 : 0;
     const igstRate = !isSameState ? taxRate : 0;
 
@@ -48,10 +48,11 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 </div>
             </div>
 
-            <div className="row mb-4">
+            <div className="row">
                 <div className="col-md-6 text-right">
-                    {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
-                    <p>{invoiceData?.companyAddress}</p>
+                    {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '100px' }} />}
+                    <p>{invoiceData?.officeAddress + " "  +invoiceData?.companyNearby + " " + invoiceData?.companyDistrict}</p>
+                    <p>{invoiceData?.companyState + " "  +invoiceData?.companyCity + " " + invoiceData?.companyCountry + " " + invoiceData?.companyZip}</p>
                     <p>{invoiceData?.companyPhone}</p>
                     <p>{invoiceData?.companyEmail}</p>
                     <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
@@ -64,12 +65,14 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 </div>
             </div>
 
-            <div className="row mb-4">
+            <div className="row">
                 <div className="col-md-6 text-right">
-                    <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
-                    <p><strong>Customer Address:</strong> {invoiceData.customerAddress}</p>
-                    <p><strong>Customer Phone:</strong> {invoiceData.customerPhone}</p>
-                    <p><strong>Country:</strong> {country}</p>
+                    <h4>Customer Details:</h4>
+                    <p> {invoiceData.customerName}</p>
+                    <p>{invoiceData?.customerHouse + " " + invoiceData?.customerNearby+ " " + invoiceData?.customerDistrict}</p>
+                    <p>{invoiceData?.customerState + " " + invoiceData?.customerCity+ " " + invoiceData?.customerCountry+ " "+ invoiceData?.customerZip}</p>
+                    <p>{invoiceData.customerPhone}</p>
+                    <p>{country}</p>
                     {/* <p><strong>Prepared by:</strong> {userRole}</p> */}
                 </div>
             </div>
