@@ -5,6 +5,9 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "react-toastify";
 import hsnData from '../../data/hsn.json';
+import { mdiDelete } from '@mdi/js';
+import Icon from '@mdi/react';
+
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
@@ -61,7 +64,7 @@ const InventoryItemForm = () => {
   const handleAddVariant = () => {
     setFormValues({
       ...formValues,
-      variants: [...formValues.variants, { name: "", price: "", tax: "" }],
+      variants: [...formValues.variants, { name: "", price: "", tax: "", quantity: "" }],
     });
   };
 
@@ -206,43 +209,69 @@ const InventoryItemForm = () => {
                     <FormGroup>
                       <Label htmlFor="variants" style={{ marginRight: "20px" }}>Variants</Label>
                       {formValues.variants.map((variant, index) => (
-                        <div key={index} className="d-flex align-items-center mb-2">
-                          <Input
-                            type="text"
-                            name="name"
-                            placeholder={`Variant Name ${index + 1}`}
-                            value={variant.name}
-                            onChange={(e) => handleVariantChange(index, e)}
-                          />
-                          <Input
-                            type="number"
-                            name="price"
-                            placeholder={`Price ${index + 1}`}
-                            value={variant.price}
-                            onChange={(e) => handleVariantChange(index, e)}
-                            className="ml-2"
-                          />
-                          <Input
-                            type="select"
-                            name="tax"
-                            value={variant.tax}
-                            onChange={(e) => handleVariantChange(index, e)}
-                            className="ml-2"
-                          >
-                            <option value="">Select Tax</option>
-                            {taxationData.map((tax) => (
-                              <option key={tax.id} value={tax.rate}>
-                                {tax.name} ({tax.rate}%)
-                              </option>
-                            ))}
-                          </Input>
+                        <div
+                          key={index}
+                          className="mb-3 p-3 border rounded position-relative"
+                          style={{ border: "1px solid #ddd", padding: "1.5rem" }}
+                        >
                           <Button
                             color="danger"
-                            className="ml-2"
                             onClick={() => handleRemoveVariant(index)}
+                            style={{ 
+                              position: 'absolute', 
+                              top: '7px', 
+                              right: '7px', 
+                              cursor: 'pointer',
+                              zIndex: 10,
+                              padding: '0',
+                            }}
                           >
-                            Remove
+                            <Icon path={mdiDelete} size={1} />
                           </Button>
+                          <div className="row mt-3">
+                            <div className="col-md-6 mb-2">
+                              <Input
+                                type="text"
+                                name="name"
+                                placeholder={`Variant Name ${index + 1}`}
+                                value={variant.name}
+                                onChange={(e) => handleVariantChange(index, e)}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-2">
+                              <Input
+                                type="number"
+                                name="price"
+                                placeholder={`Price ${index + 1}`}
+                                value={variant.price}
+                                onChange={(e) => handleVariantChange(index, e)}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-2">
+                              <Input
+                                type="number"
+                                name="quantity"
+                                placeholder={`Quantity ${index + 1}`}
+                                value={variant.quantity}
+                                onChange={(e) => handleVariantChange(index, e)}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-2">
+                              <Input
+                                type="select"
+                                name="tax"
+                                value={variant.tax}
+                                onChange={(e) => handleVariantChange(index, e)}
+                              >
+                                <option value="">Select Tax</option>
+                                {taxationData.map((tax) => (
+                                  <option key={tax.id} value={tax.rate}>
+                                    {tax.name} ({tax.rate}%)
+                                  </option>
+                                ))}
+                              </Input>
+                            </div>
+                          </div>
                         </div>
                       ))}
                       <Button color="success" onClick={handleAddVariant}>
