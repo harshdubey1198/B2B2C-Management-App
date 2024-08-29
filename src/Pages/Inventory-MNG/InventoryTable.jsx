@@ -97,7 +97,7 @@ function InventoryTable() {
                               <td>${variant.price.toFixed(2)}</td>
                               <td>{index === 0 ? item.category : ''}</td>
                               <td>
-                                {variant.name} - ${calculatePriceAfterTax(variant.price, variant.tax)}
+                                {variant.name} - ${calculatePriceAfterTax(variant.price, variant.tax)} - <span>{variant.quantity}</span>
                               </td>
                               <td>{index === 0 ? item.type : ''}</td>
                               <td>
