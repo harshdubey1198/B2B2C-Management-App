@@ -42,7 +42,7 @@ const InvoiceInputs = ({
                             type="file"
                             name="companyLogo"
                             id="companyLogo"
-                            onChange={handleFileChange}
+                            // onChange={handleFileChange}
                             required
                         />
                     </FormGroup>
@@ -53,7 +53,7 @@ const InvoiceInputs = ({
                             name="companyName"
                             id="companyName"
                             value={invoiceData.companyName}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
                             required
                         />
                     </FormGroup>
@@ -64,7 +64,7 @@ const InvoiceInputs = ({
                             name="companyAddress"
                             id="companyAddress"
                             value={invoiceData.companyAddress}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
                             required
                         />
                     </FormGroup>
@@ -75,7 +75,7 @@ const InvoiceInputs = ({
                             name="companyPhone"
                             id="companyPhone"
                             value={invoiceData.companyPhone}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
                             required
                         />
                     </FormGroup>
@@ -86,7 +86,7 @@ const InvoiceInputs = ({
                             name="companyEmail"
                             id="companyEmail"
                             value={invoiceData.companyEmail}
-                            onChange={handleInputChange}
+                            // onChange={handleInputChange}
                             required
                         />
                     </FormGroup>
