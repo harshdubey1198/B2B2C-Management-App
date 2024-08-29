@@ -166,7 +166,7 @@ export const masterAdminSidebarData = () => [
       url: "/dashboard",
     },
     {
-      label:"Companies",
+      label:"Company",
       icon:"mdi mdi-account-multiple-outline",
       subItem: [
         // { sublabel: "Firms", link: "/firms" },
@@ -203,16 +203,16 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
-{
-      label: "Authentication",
-      icon: "mdi mdi-account-circle-outline",
-      subItem: [
-        { sublabel: "Login", link: "/auth-login" },
-        { sublabel: "Register", link: "/auth-register" },
-        { sublabel: "Recover Password", link: "/recover-password" },
-        { sublabel: "Lock Screen", link: "/auth-lock-screen" },
-      ],
-    },
+    // {
+    //   label: "Authentication",
+    //   icon: "mdi mdi-account-circle-outline",
+    //   subItem: [
+    //     { sublabel: "Login", link: "/auth-login" },
+    //     { sublabel: "Register", link: "/auth-register" },
+    //     { sublabel: "Recover Password", link: "/recover-password" },
+    //     { sublabel: "Lock Screen", link: "/auth-lock-screen" },
+    //   ],
+    // },
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",
@@ -222,22 +222,22 @@ export const masterAdminSidebarData = () => [
           // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
-      },
-      {
-        label: "Extra Pages",
-        icon: "mdi mdi-file-document-outline",
-        subItem: [
+      } 
+      // {
+      //   label: "Extra Pages",
+      //   icon: "mdi mdi-file-document-outline",
+      //   subItem: [
           
-          { sublabel: "Ui Cards", link: "/ui-cards" },
-          { sublabel: "Ui Buttons", link: "/ui-buttons" },
-          { sublabel: "Ui Modals", link: "/ui-modals" },
-          { sublabel: "Boxicons", link: "/icon-boxicon" },
-          { sublabel: "MDI", link: "/icons-materialdesign" },
-          { sublabel: "FA-Icons", link: "/icons-fontawesome" },
-          { sublabel: "Drip-Icons", link: "/icon-dripicons" },
-        ],
+      //     { sublabel: "Ui Cards", link: "/ui-cards" },
+      //     { sublabel: "Ui Buttons", link: "/ui-buttons" },
+      //     { sublabel: "Ui Modals", link: "/ui-modals" },
+      //     { sublabel: "Boxicons", link: "/icon-boxicon" },
+      //     { sublabel: "MDI", link: "/icons-materialdesign" },
+      //     { sublabel: "FA-Icons", link: "/icons-fontawesome" },
+      //     { sublabel: "Drip-Icons", link: "/icon-dripicons" },
+      //   ],
 
-      }
+      // }
   ]
 
   export const accountantSidebarData = () => [
