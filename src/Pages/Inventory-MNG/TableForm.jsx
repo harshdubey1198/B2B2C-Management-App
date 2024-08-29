@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert,} from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "react-toastify";
+import hsnData from '../../data/hsn.json';
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
@@ -12,15 +13,14 @@ const InventoryItemForm = () => {
     quantity: "",
     category: "",
     supplier: "",
-    image: null,
-    imageUrl: "",
+    hsn: "",
     variants: [],
     type: "",
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  
   const [loading, setLoading] = useState(false);
   const [taxationData, setTaxationData] = useState([]);
+  const [manualHSN, setManualHSN] = useState(false);
 
   useEffect(() => {
     const storedTaxationTable = JSON.parse(localStorage.getItem("taxationData")) || [];
@@ -35,13 +35,18 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+  const handleDescriptionChange = (e) => {
+    const { value } = e.target;
+    setFormValues((prevState) => ({
+      ...prevState,
+      description: value,
+    }));
+
+    if (!manualHSN) {
+      const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
       setFormValues((prevState) => ({
         ...prevState,
-        image: file,
-        imageUrl: URL.createObjectURL(file),
+        hsn: matchingHSN ? matchingHSN.hsn : "",
       }));
     }
   };
@@ -54,33 +59,25 @@ const InventoryItemForm = () => {
   };
 
   const handleAddVariant = () => {
-    setFormValues({ 
-      ...formValues, 
-      variants: [...formValues.variants, { name: "", price: "", tax: "" }] 
+    setFormValues({
+      ...formValues,
+      variants: [...formValues.variants, { name: "", price: "", tax: "" }],
     });
   };
 
   const handleRemoveVariant = (index) => {
-    setFormValues({ 
-      ...formValues, 
-      variants: formValues.variants.filter((_, i) => i !== index) 
+    setFormValues({
+      ...formValues,
+      variants: formValues.variants.filter((_, i) => i !== index),
     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    // setError("");
-    // setSuccess("");
-    //toast.error("");
-    //toast.success("");
 
-    if (checkEmptyFields({
-      ...formValues,
-      image: formValues.image ? 'Not Empty' : ''
-    })) {
-      toast.error("Please fill in all fields and upload an image.");
-      // setError("Please fill in all fields and upload an image.");
+    if (checkEmptyFields({ formValues })) {
+      toast.error("Please fill in all fields.");
       setLoading(false);
       return;
     }
@@ -90,15 +87,11 @@ const InventoryItemForm = () => {
       const newItems = {
         ...formValues,
         id: uuidv4(),
-        image: formValues.imageUrl
       };
       storedData.push(newItems);
       localStorage.setItem("inventoryItems", JSON.stringify(storedData));
-      // setSuccess("Item added successfully.");
       toast.success("Item added successfully.");
       setLoading(false);
-      // setError("");
-      //toast.error("");
 
       setFormValues({
         name: "",
@@ -106,8 +99,7 @@ const InventoryItemForm = () => {
         quantity: "",
         category: "",
         supplier: "",
-        image: null,
-        imageUrl: "",
+        hsn: "",
         variants: [],
         type: "",
       });
@@ -126,8 +118,6 @@ const InventoryItemForm = () => {
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Add Inventory Item
                   </h4>
-                  {/* {error && <Alert color="danger">{error}</Alert>}
-                  {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label htmlFor="name">Item Name</Label>
@@ -148,8 +138,37 @@ const InventoryItemForm = () => {
                         name="description"
                         placeholder="Enter item description"
                         value={formValues.description}
-                        onChange={handleChange}
+                        onChange={handleDescriptionChange}
                       />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="hsn">HSN Code</Label>
+                      <Input
+                        type="text"
+                        id="hsn"
+                        name="hsn"
+                        placeholder="HSN number will be suggested here"
+                        value={formValues.hsn}
+                        onChange={(e) => {
+                          if (manualHSN) {
+                            setFormValues((prevState) => ({
+                              ...prevState,
+                              hsn: e.target.value,
+                            }));
+                          }
+                        }}
+                        readOnly={!manualHSN}
+                      />
+                      <FormGroup check>
+                        <Label check>
+                          <Input
+                            type="checkbox"
+                            checked={manualHSN}
+                            onChange={() => setManualHSN(!manualHSN)}
+                          />{' '}
+                          Enter HSN Code Manually
+                        </Label>
+                      </FormGroup>
                     </FormGroup>
                     <FormGroup>
                       <Label htmlFor="quantity">Quantity</Label>
@@ -185,24 +204,7 @@ const InventoryItemForm = () => {
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="image">Item Image</Label>
-                      <Input
-                        type="file"
-                        id="image"
-                        name="image"
-                        onChange={handleFileChange}
-                      />
-                      {formValues.imageUrl && (
-                        <img
-                          src={formValues.imageUrl}
-                          alt="Item Preview"
-                          className="img-fluid mt-2"
-                          style={{ maxWidth: '150px' }}
-                        />
-                      )}
-                    </FormGroup>
-                    <FormGroup >
-                      <Label htmlFor="variants"  style={{marginRight:"20px"}}>Variants</Label>
+                      <Label htmlFor="variants" style={{ marginRight: "20px" }}>Variants</Label>
                       {formValues.variants.map((variant, index) => (
                         <div key={index} className="d-flex align-items-center mb-2">
                           <Input

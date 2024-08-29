@@ -145,11 +145,11 @@ function InventoryTable() {
                 <h5>Item Details:</h5>
                 {inventoryData.find(item => item.id === selectedItemId) && (
                   <div className='d-flex justify-content-evenly'>
-                    <img
+                    {/* <img
                       src={inventoryData.find(item => item.id === selectedItemId).image}
                       alt="Item"
                       style={{ maxWidth: '200px', display: 'block', marginBottom: '10px' }}
-                    />
+                    /> */}
                     <ul>
                       <li>Name: {inventoryData.find(item => item.id === selectedItemId).name}</li>
                       <li>Description: {inventoryData.find(item => item.id === selectedItemId).description}</li>
