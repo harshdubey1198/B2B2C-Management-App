@@ -36,7 +36,7 @@ const InvoiceInputs = ({
             
             <Row className="mb-4">
                 <Col md={6}>
-                    <FormGroup>
+                    {/* <FormGroup>
                         <Label for="companyLogo">Company Logo</Label>
                         <Input
                             type="file"
@@ -45,7 +45,7 @@ const InvoiceInputs = ({
                             // onChange={handleFileChange}
                             required
                         />
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                         <Label for="companyName">Company Name</Label>
                         <Input
@@ -59,14 +59,71 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="companyAddress">Company Address</Label>
-                        <Input
+                        {/* <Input
                             type="text"
                             name="companyAddress"
                             id="companyAddress"
                             value={invoiceData.companyAddress}
                             // onChange={handleInputChange}
                             required
+                        /> */}
+                        <Input 
+                        type="text"
+                        name="officeAddress"
+                        id="officeAddress"
+                        value={invoiceData.officeAddress}
+                        // onChange={handleInputChange}
+                        required
                         />
+                        <Input
+                        type="text"
+                        name="companyNearby"
+                        id="companyNearby"
+                        value={invoiceData.companyNearby}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input 
+                        type="text" 
+                        name="companyDistrict"
+                        id="companyDistrict"
+                        value={invoiceData.companyDistrict}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input 
+                        type="text"
+                        name="companyCity"
+                        id="companyCity"
+                        value={invoiceData.companyCity}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="companyZip"
+                        id="companyZip"
+                        value={invoiceData.companyZip}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="companyState"
+                        id="companyState"
+                        value={invoiceData.companyState}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="companyCountry"
+                        id="companyCountry"
+                        value={invoiceData.companyCountry}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        
                     </FormGroup>
                     <FormGroup>
                         <Label for="companyPhone">Company Phone</Label>
@@ -105,13 +162,76 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="customerAddress">Customer Address</Label>
-                        <Input
+                        {/* <Input
                             type="text"
                             name="customerAddress"
                             id="customerAddress"
                             value={invoiceData.customerAddress}
                             onChange={handleInputChange}
                             required
+                        /> */}
+                         <Input 
+                        type="text"
+                        name="customerHouse"
+                        id="customerHouse"
+                        placeholder='House No.'
+                        value={invoiceData.customerHouse}
+                        // onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="customerNearby"
+                        id="customerNearby"
+                        placeholder='Nearby Landmark'
+                        value={invoiceData.customerNearby}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        <Input 
+                        type="text" 
+                        name="customerDistrict"
+                        id="customerDistrict"
+                        placeholder='District'
+                        value={invoiceData.customerDistrict}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        <Input 
+                        type="text"
+                        name="customerCity"
+                        id="customerCity"
+                        placeholder='City'
+                        value={invoiceData.customerCity}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="customerZip"
+                        id="customerZip"
+                        placeholder='Zip Code'
+                        value={invoiceData.customerZip}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="customerState"
+                        id="customerState"
+                        placeholder='State'
+                        value={invoiceData.customerState}
+                        onChange={handleInputChange}
+                        required
+                        />
+                        <Input
+                        type="text"
+                        name="customerCountry"
+                        id="customerCountry"
+                        placeholder='Country'
+                        value={invoiceData.customerCountry}
+                        onChange={handleInputChange}
+                        required
                         />
                     </FormGroup>
                     <FormGroup>
