@@ -42,27 +42,38 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
 
     return (
         <div ref={ref} className="card p-4 border rounded">
-            <div className="text-center mb-4">
-                {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
-                <h3>{invoiceData?.companyName}</h3>
-                <p>{invoiceData?.companyAddress}</p>
-                <p>{invoiceData?.companyPhone}</p>
-                <p>{invoiceData?.companyEmail}</p>
-                <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
-                 {/* Add Amount Due */}
-                <div className="text-right mb-4">
-                    <p><strong>Amount Due:</strong> ₹{amountDue.toFixed(2)}</p>
+            <div className="row mb-4">
+                <div className="col-md-6">
+                    <h2>Tax Invoice</h2>
                 </div>
             </div>
-            <h2>Invoice</h2>
-            <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
-            <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
-            <p><strong>Customer Address:</strong> {invoiceData.customerAddress}</p>
-            <p><strong>Customer Phone:</strong> {invoiceData.customerPhone}</p>
-            <p><strong>Date:</strong> {invoiceData.date}</p>
-            <p><strong>Country:</strong> {country}</p>
-            <p><strong>Currency:</strong> {countries[country]?.currency || 'Unknown'}</p>
-            <p><strong>Prepared by:</strong> {userRole}</p>
+
+            <div className="row mb-4">
+                <div className="col-md-6 text-right">
+                    {invoiceData && <img src={invoiceData.companyLogo} alt="Company Logo" style={{ maxWidth: '150px' }} />}
+                    <p>{invoiceData?.companyAddress}</p>
+                    <p>{invoiceData?.companyPhone}</p>
+                    <p>{invoiceData?.companyEmail}</p>
+                    <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
+                </div>
+                <div className="col-md-6">
+                    <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
+                    <p><strong>Amount Due:</strong> ₹{amountDue.toFixed(2)}</p>
+                    <p><strong>Issue Date:</strong> </p>
+                    <p><strong>Due Date:</strong> </p>
+                </div>
+            </div>
+
+            <div className="row mb-4">
+                <div className="col-md-6 text-right">
+                    <p><strong>Customer Name:</strong> {invoiceData.customerName}</p>
+                    <p><strong>Customer Address:</strong> {invoiceData.customerAddress}</p>
+                    <p><strong>Customer Phone:</strong> {invoiceData.customerPhone}</p>
+                    <p><strong>Country:</strong> {country}</p>
+                    {/* <p><strong>Prepared by:</strong> {userRole}</p> */}
+                </div>
+            </div>
+
             <table className="table table-bordered">
                 <thead>
                     <tr>
