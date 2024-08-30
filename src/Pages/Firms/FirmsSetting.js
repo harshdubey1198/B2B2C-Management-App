@@ -168,7 +168,7 @@ function FirmSettings() {
                             name="firmName"
                             value={firmDetails.firmName || ''}
                             onChange={handleInputChange}
-                            required
+                            // //required
                           />
                         </FormGroup>
                       </Col>
@@ -181,7 +181,7 @@ function FirmSettings() {
                             name="firmEmail"
                             value={firmDetails.firmEmail || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -196,7 +196,7 @@ function FirmSettings() {
                             name="firmPhone"
                             value={firmDetails.firmPhone || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -224,7 +224,7 @@ function FirmSettings() {
                             name="bankName"
                             value={firmDetails.bankName || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -239,7 +239,7 @@ function FirmSettings() {
                             name="accountNumber"
                             value={firmDetails.accountNumber || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -252,7 +252,7 @@ function FirmSettings() {
                             name="ifscCode"
                             value={firmDetails.ifscCode || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -267,7 +267,7 @@ function FirmSettings() {
                             name="cifNumber"
                             value={firmDetails.cifNumber || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -280,7 +280,7 @@ function FirmSettings() {
                             name="gstin"
                             value={firmDetails.gstin || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -295,7 +295,7 @@ function FirmSettings() {
                             name="branchName"
                             value={firmDetails.branchName || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>
@@ -308,7 +308,7 @@ function FirmSettings() {
                             name="accountHolder"
                             value={firmDetails.accountHolder || ''}
                             onChange={handleInputChange}
-                            required
+                            //required
                           />
                         </FormGroup>
                       </Col>

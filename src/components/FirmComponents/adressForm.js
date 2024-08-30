@@ -1,7 +1,8 @@
 import React from 'react';
 import { FormGroup, Label, Input } from 'reactstrap';
 
-const AddressForm = ({ address, index, handleAddressChange }) => {
+const AddressForm = ({ address = {}, index, handleAddressChange }) => {
+    console.log(address,"address")
     return (
         <div className="mb-3">
             <h5>Address {index + 1}</h5>
@@ -14,7 +15,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     value={address.h_no || ''}
                     placeholder='House Number'
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -26,7 +27,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`nearby${index}`}
                     value={address.nearby || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -38,7 +39,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`zip_code${index}`}
                     value={address.zip_code || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -50,7 +51,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`district${index}`}
                     value={address.district || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -62,7 +63,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`city${index}`}
                     value={address.city || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -74,7 +75,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`state${index}`}
                     value={address.state || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
             <FormGroup>
@@ -86,7 +87,7 @@ const AddressForm = ({ address, index, handleAddressChange }) => {
                     id={`country${index}`}
                     value={address.country || ''}
                     onChange={(e) => handleAddressChange(index, e)}
-                    required
+                    //required
                 />
             </FormGroup>
         </div>
