@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, Col, Button } from 'reactstrap';
+import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, FormGroup, Label, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { mdiPencil, mdiDelete, mdiCheck } from '@mdi/js';
 import Icon from '@mdi/react';
@@ -8,6 +8,8 @@ function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [role, setRole] = useState("");
+  const [editModal, setEditModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
@@ -22,7 +24,7 @@ function InventoryTable() {
 
     const storedRoles = JSON.parse(localStorage.getItem('role')) || "";
     setRole(storedRoles);
-  }, [inventoryData]);
+  }, []);
 
   const handleRowClick = (id) => {
     if (selectedItemId === id) {
@@ -32,8 +34,9 @@ function InventoryTable() {
     }
   };
 
-  const handleEditClick = (id) => {
-    console.log("Edit item:", id);
+  const handleEditClick = (item) => {
+    setEditItem(item);
+    setEditModal(true);
   };
 
   const handleDeleteClick = (id) => {
@@ -53,7 +56,24 @@ function InventoryTable() {
   const calculatePriceAfterTax = (price, taxRate) => {
     return (price + (price * (taxRate / 100))).toFixed(2);
   };
-//resolve merge
+
+  const handleModalInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditItem(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  const handleSaveChanges = () => {
+    const updatedData = inventoryData.map(item =>
+      item.id === editItem.id ? editItem : item
+    );
+    setInventoryData(updatedData);
+    localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
+    setEditModal(false);
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -76,7 +96,7 @@ function InventoryTable() {
                       <th>Category</th>
                       <th>Variants</th>
                       <th>Type</th>
-                      <th>Status</th> {/* New column for approval status */}
+                      <th>Status</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -88,7 +108,7 @@ function InventoryTable() {
                             <tr
                               key={`${item.id}-${index}`}
                               onClick={() => handleRowClick(item.id)}
-                              style={{ cursor: 'pointer' }} // Pointer cursor for clickable rows
+                              style={{ cursor: 'pointer' }} 
                             >
                               <td>{index === 0 ? item.name : ''}</td>
                               <td>{index === 0 ? item.description : ''}</td>
@@ -114,7 +134,7 @@ function InventoryTable() {
                                       <Icon path={mdiCheck} size={1} />
                                     </Button>
                                   )}
-                                  <Button color="warning" onClick={() => handleEditClick(item.id)} style={{ marginRight: '5px' }} title="Edit">
+                                  <Button color="warning" onClick={() => handleEditClick(item)} style={{ marginRight: '5px' }} title="Edit">
                                     <Icon path={mdiPencil} size={1} />
                                   </Button>
                                   <Button color="danger" onClick={() => handleDeleteClick(item.id)} title="Delete">
@@ -138,38 +158,72 @@ function InventoryTable() {
           </Card>
         </Col>
 
-        {selectedItemId && (
-          <Card>
-            <CardBody>
-              <div className="hover-details mt-3">
-                <h5>Item Details:</h5>
-                {inventoryData.find(item => item.id === selectedItemId) && (
-                  <div className='d-flex justify-content-evenly'>
-                    {/* <img
-                      src={inventoryData.find(item => item.id === selectedItemId).image}
-                      alt="Item"
-                      style={{ maxWidth: '200px', display: 'block', marginBottom: '10px' }}
-                    /> */}
-                    <ul>
-                      <li>Name: {inventoryData.find(item => item.id === selectedItemId).name}</li>
-                      <li>Description: {inventoryData.find(item => item.id === selectedItemId).description}</li>
-                      <li>Quantity: {inventoryData.find(item => item.id === selectedItemId).quantity}</li>
-                      <li>Supplier: {inventoryData.find(item => item.id === selectedItemId).supplier}</li>
-                      <li>Price: ${Number(inventoryData.find(item => item.id === selectedItemId).price).toFixed(2)}</li>
-                      <li>Category: {inventoryData.find(item => item.id === selectedItemId).category}</li>
-                      <li>Variants: {inventoryData.find(item => item.id === selectedItemId).variants.map(v => (
-                        <div key={v.variantName}>
-                          {v.variantName} - Original: ${v.price.toFixed(2)}, After Tax: ${calculatePriceAfterTax(v.price, v.tax)}
-                        </div>
-                      ))}</li>
-                      <li>Type: {inventoryData.find(item => item.id === selectedItemId).type}</li>
-                    </ul>
-                  </div>
-                )}
-              </div>
-            </CardBody>
-          </Card>
-        )}
+        <Modal isOpen={editModal} toggle={() => setEditModal(!editModal)}>
+          <ModalHeader toggle={() => setEditModal(!editModal)}>Edit Inventory Item</ModalHeader>
+          <ModalBody>
+            {editItem && (
+              <FormGroup>
+                <Label for="itemName">Item Name</Label>
+                <Input
+                  type="text"
+                  id="itemName"
+                  name="name"
+                  value={editItem.name}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemDescription">Description</Label>
+                <Input
+                  type="textarea"
+                  id="itemDescription"
+                  name="description"
+                  value={editItem.description}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemQuantity">Quantity</Label>
+                <Input
+                  type="number"
+                  id="itemQuantity"
+                  name="quantity"
+                  value={editItem.quantity}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemSupplier">Supplier</Label>
+                <Input
+                  type="text"
+                  id="itemSupplier"
+                  name="supplier"
+                  value={editItem.supplier}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemPrice">Original Price</Label>
+                <Input
+                  type="number"
+                  id="itemPrice"
+                  name="price"
+                  value={editItem.price}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemCategory">Category</Label>
+                <Input
+                  type="text"
+                  id="itemCategory"
+                  name="category"
+                  value={editItem.category}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemType">Type</Label>
+                <Input
+                  type="text"
+                  id="itemType"
+                  name="type"
+                  value={editItem.type}
+                  onChange={handleModalInputChange}
+                />
+                <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
+              </FormGroup>
+            )}
+          </ModalBody>
+        </Modal>
       </div>
     </React.Fragment>
   );
