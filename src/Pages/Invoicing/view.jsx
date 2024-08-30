@@ -1,34 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, Alert } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
-
-// const invoiceData = [
-//     {
-//         id: 1,
-//         customerName: 'John Doe',
-//         date: '2024-07-30',
-//         country: 'India',
-//         items: [
-//             { description: 'Item A', quantity: 2, price: 10.00 },
-//             { description: 'Item B', quantity: 1, price: 20.00 }
-//         ],
-//         subtotal: 40.00,
-//         tax: 7.20,
-//         total: 47.20
-//     },
-//     {
-//         id: 2,
-//         customerName: 'Jane Smith',
-//         date: '2024-07-29',
-//         country: 'Malaysia',
-//         items: [
-//             { description: 'Item C', quantity: 3, price: 30.00 }
-//         ],
-//         subtotal: 90.00,
-//         tax: 5.40,
-//         total: 95.40
-//     }
-// ];
+import PrintFormat from '../../components/InvoicingComponents/printFormat';
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
@@ -36,51 +9,31 @@ const ViewInvoices = () => {
     const printRef = useRef();
 
     useEffect(() => {
-        const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || []
-        setInvoices(storedData);
+        try {
+            // Fetch invoices data from local storage
+            const storedData = localStorage.getItem("Invoice Form");
+            if (storedData) {
+                const parsedData = JSON.parse(storedData);
+                console.log("Fetched invoices data from localStorage:", parsedData); // Debugging line
+                setInvoices(parsedData);
+            } else {
+                console.log("No data found in localStorage for 'Invoice Form'"); // Debugging line
+                setInvoices([]);
+            }
+        } catch (error) {
+            console.error("Error parsing local storage data:", error);
+            setInvoices([]);
+        }
     }, []);
-
-    console.log(invoices,"invoices")
-
-    const PrintInvoice = React.forwardRef(({ invoice }, ref) => {
-        if (!invoice) return null; 
-
-        return (
-            <div ref={ref} className="card p-4  border rounded mb-4">
-                <h2>Invoice</h2>
-                <p><strong>Customer Name:</strong> {invoice.customerName}</p>
-                <p><strong>Date:</strong> {invoice.date}</p>
-                <p><strong>Country:</strong> {invoice.country}</p>
-                <table className="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Description</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {invoice.items.map((item, index) => (
-                            <tr key={index}>
-                                <td>{item.description}</td>
-                                <td>{item.quantity}</td>
-                                <td>{item.price.toFixed(2)}</td>
-                                <td>{(item.quantity * item.price).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                <p><strong>Subtotal:</strong> {invoice.subtotal.toFixed(2)}</p>
-                <p><strong>Tax:</strong> {invoice.tax.toFixed(2)}</p>
-                <p><strong>Total:</strong> {invoice.total.toFixed(2)}</p>
-            </div>
-        );
-    });
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
     });
+
+    // const handlePrint = (invoice) => {
+    //     setSelectedInvoice(invoice);
+    //     printInvoice();
+    // };
 
     return (
         <React.Fragment>
@@ -100,7 +53,7 @@ const ViewInvoices = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {invoices.map((invoice,i) => (
+                            {invoices.map((invoice) => (
                                 <tr key={invoice.id}>
                                     <td>{invoice.id}</td>
                                     <td>{invoice.customerName}</td>
@@ -110,7 +63,7 @@ const ViewInvoices = () => {
                                         <Button
                                             color="info"
                                             onClick={() => {
-                                                setSelectedInvoice(invoice); 
+                                                setSelectedInvoice(invoice);
                                                 printInvoice();
                                             }}
                                         >
@@ -122,7 +75,9 @@ const ViewInvoices = () => {
                         </tbody>
                     </Table>
                 )}
-                <PrintInvoice ref={printRef} invoice={selectedInvoice} />
+                {selectedInvoice && (
+                    <PrintFormat ref={printRef} invoiceData={selectedInvoice} />
+                )}
             </div>
         </React.Fragment>
     );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -23,7 +23,7 @@ const convertNumberToWords = (num) => {
     return inWords(num);
 };
 
-const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
+const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
     const isSameState = invoiceData.companyState === invoiceData.customerState;
