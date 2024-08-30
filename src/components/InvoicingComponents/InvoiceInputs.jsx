@@ -236,14 +236,15 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="customerPhone">Customer Phone</Label>
-                        <Input
-                            type="text"
-                            name="customerPhone"
-                            id="customerPhone"
-                            value={invoiceData.customerPhone}
-                            onChange={handleInputChange}
-                            required
-                        />
+                        <Input type="text" name="customerPhone" id="customerPhone" value={invoiceData.customerPhone} onChange={handleInputChange} required />        
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="dueDate">Due Date</Label>
+                        <Input type="date" name="dueDate" id="dueDate" value={invoiceData.dueDate} onChange={handleInputChange} required/>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="issueDate">Issue Date</Label>
+                        <Input type="date" name="issueDate" id="issueDate" value={invoiceData.issueDate} onChange={handleInputChange} required/>
                     </FormGroup>
                 </Col>
             </Row>
@@ -279,17 +280,7 @@ const InvoiceInputs = ({
                     </FormGroup>
                 </Col>
             </Row>
-            <FormGroup>
-                <Label for="paymentLink">Payment Link</Label>
-                <Input
-                    type="url"
-                    name="paymentLink"
-                    id="paymentLink"
-                    value={invoiceData.paymentLink}
-                    onChange={handleInputChange}
-                    required
-                />
-            </FormGroup>
+          
             <h4>Items</h4>
             {invoiceData.items.map((item, index) => (
                 <Row key={index} className="mb-3">
@@ -353,7 +344,7 @@ const InvoiceInputs = ({
                 </Row>
             ))}
             <Button color="primary" onClick={addItem}>Add Item</Button>
-            <Button color="success" type="submit" className="ml-2">Generate Invoice</Button>
+            {/* <Button color="success" type="submit" className="ml-2">Generate Invoice</Button> */}
         </Form>
     );
 
