@@ -26,19 +26,15 @@ const convertNumberToWords = (num) => {
 const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
     const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
+    const isSameState = invoiceData.companyState === invoiceData.customerState;
+    const cgstSgstRate = isSameState ? taxRate / 2 : 0;
+    const igstRate = !isSameState ? taxRate : 0;
+
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
     const taxAmount = (totalAmount * taxRate) / 100;
     const amountDue = totalAmount + taxAmount;
 
     const netReceived = amountDue;
-
-    const isSameState = invoiceData.companyState === invoiceData.customerState;
-    const cgstSgstRate = isSameState ? taxRate / 2 : 0;
-    const igstRate = !isSameState ? taxRate : 0;
-
-    const cgstAmount = (totalAmount * cgstSgstRate) / 100;
-    const sgstAmount = (totalAmount * cgstSgstRate) / 100;
-    const igstAmount = (totalAmount * igstRate) / 100;
 
     return (
         <div ref={ref} className="card p-4 border rounded">
@@ -60,15 +56,15 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                 <div className="col-md-6">
                     <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
                     <p><strong>Amount Due:</strong> ₹{amountDue.toFixed(2)}</p>
-                    <p><strong>Issue Date:</strong> </p>
-                    <p><strong>Due Date:</strong> </p>
+                    <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
+                    <p><strong>Due Date:</strong> {invoiceData.dueDate}</p>
                 </div>
             </div>
 
             <div className="row">
                 <div className="col-md-6 text-right">
                     <h4>Customer Details:</h4>
-                    <p> {invoiceData.customerName}</p>
+                    <p>{invoiceData.customerName}</p>
                     <p>{invoiceData?.customerHouse + " " + invoiceData?.customerNearby+ " " + invoiceData?.customerDistrict}</p>
                     <p>{invoiceData?.customerState + " " + invoiceData?.customerCity+ " " + invoiceData?.customerCountry+ " "+ invoiceData?.customerZip}</p>
                     <p>{invoiceData.customerPhone}</p>
@@ -98,25 +94,35 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {invoiceData.items.map((item, index) => (
-                        <tr key={index}>
-                            <td>{index + 1}</td>
-                            <td>{item.description}</td>
-                            <td>{item.Hsn}</td>
-                            <td>{item.quantity}</td>
-                            <td>{item.price.toFixed(2)}</td>
-                            <td>{(item.quantity * item.price).toFixed(2)}</td>
-                            {isSameState ? (
-                                <>
-                                    <td>{cgstAmount.toFixed(2)}</td>
-                                    <td>{sgstAmount.toFixed(2)}</td>
-                                </>
-                            ) : (
-                                <td>{igstAmount.toFixed(2)}</td>
-                            )}
-                            <td>{(item.quantity * item.price + (isSameState ? cgstAmount + sgstAmount : igstAmount)).toFixed(2)}</td>
-                        </tr>
-                    ))}
+                    {invoiceData.items.map((item, index) => {
+                        const itemTotalValue = item.quantity * item.price;
+                        const itemCgstAmount = (itemTotalValue * cgstSgstRate) / 100;
+                        const itemSgstAmount = (itemTotalValue * cgstSgstRate) / 100;
+                        const itemIgstAmount = (itemTotalValue * igstRate) / 100;
+                        const itemTotalAmount = isSameState 
+                            ? itemTotalValue + itemCgstAmount + itemSgstAmount
+                            : itemTotalValue + itemIgstAmount;
+
+                        return (
+                            <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item.description}</td>
+                                <td>{item.Hsn}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.price.toFixed(2)}</td>
+                                <td>{itemTotalValue.toFixed(2)}</td>
+                                {isSameState ? (
+                                    <>
+                                        <td>{itemCgstAmount.toFixed(2)}</td>
+                                        <td>{itemSgstAmount.toFixed(2)}</td>
+                                    </>
+                                ) : (
+                                    <td>{itemIgstAmount.toFixed(2)}</td>
+                                )}
+                                <td>{itemTotalAmount.toFixed(2)}</td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
 
@@ -132,11 +138,11 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
                     <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
                     {isSameState ? (
                         <>
-                            <p><strong>CGST ({cgstSgstRate}%):</strong> {cgstAmount.toFixed(2)}</p>
-                            <p><strong>SGST ({cgstSgstRate}%):</strong> {sgstAmount.toFixed(2)}</p>
+                            <p><strong>CGST ({cgstSgstRate}%):</strong> {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
+                            <p><strong>SGST ({cgstSgstRate}%):</strong> {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
                         </>
                     ) : (
-                        <p><strong>IGST ({igstRate}%):</strong> {igstAmount.toFixed(2)}</p>
+                        <p><strong>IGST ({igstRate}%):</strong> {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
                     <p><strong>Total:</strong> ₹{amountDue.toFixed(2)}</p>
                     <p><strong>Total Value in Words:</strong> ₹{convertNumberToWords(amountDue.toFixed(2))} only</p>

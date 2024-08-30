@@ -36,7 +36,6 @@ const ViewInvoices = () => {
     const printRef = useRef();
 
     useEffect(() => {
-        // Fetch invoices data from an API or use mock data
         const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || []
         setInvoices(storedData);
     }, []);
@@ -44,7 +43,7 @@ const ViewInvoices = () => {
     console.log(invoices,"invoices")
 
     const PrintInvoice = React.forwardRef(({ invoice }, ref) => {
-        if (!invoice) return null; // Handle case when invoice is undefined
+        if (!invoice) return null; 
 
         return (
             <div ref={ref} className="card p-4  border rounded mb-4">
