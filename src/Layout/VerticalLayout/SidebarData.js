@@ -26,7 +26,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-printer",
       subItem: [
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Create Invoice", link: "/create-invoice" },
+        // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "Payments", link: "/payments-invoice" },
         // { sublabel: "Expenses", link: "/expenses" },
         { sublabel: "Reports", link: "/reports-invoice" },
@@ -87,7 +87,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Firms", link: "/firms" },
         { sublabel: "Firm Users", link: "/firmusers" },
-        { sublabel: "Create Firm", link: "/create-firm" },
+        // { sublabel: "Create Firm", link: "/create-firm" },
         // { sublabel: "Switch Firm", link: "/Switch-firm" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
@@ -101,11 +101,11 @@ export const masterAdminSidebarData = () => [
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
-        { sublabel: "Create Invoice", link: "/create-invoice" },
+        // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Payments", link: "/payments" },
-        { sublabel: "Expenses", link: "/expenses" },
-        { sublabel: "Reports", link: "/reports" },
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Expenses", link: "/expenses" },
+        // { sublabel: "Reports", link: "/reports" },
       ],
     },
     {
@@ -186,7 +186,7 @@ export const masterAdminSidebarData = () => [
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
-        { sublabel: "Create Invoice", link: "/create-invoice" },
+        // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
         // { sublabel: "Payments", link: "/payments" },
         // { sublabel: "Expenses", link: "/expenses" },
