@@ -2,17 +2,7 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-import {
-  Row,
-  Col,
-  CardBody,
-  Card,
-  Alert,
-  Container,
-  Form,
-  Input,
-  Label,
-} from "reactstrap";
+import {Row,Col,CardBody,Card,Alert,Container,Form,Input,Label} from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
@@ -26,7 +16,6 @@ import { toast } from "react-toastify";
 
 const Login = (props) => {
   document.title = "Login | aaMOBee";
-
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
     email: "",
@@ -48,7 +37,6 @@ const Login = (props) => {
 
   useEffect(() => {
     if (reduxError) {
-      // setError(reduxError);
       toast.error(reduxError);
     }
   }, [reduxError]);
