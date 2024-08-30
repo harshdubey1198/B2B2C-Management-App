@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {forwardRef} from 'react';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -23,7 +23,7 @@ const convertNumberToWords = (num) => {
     return inWords(num);
 };
 
-const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
+const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
@@ -31,11 +31,9 @@ const PrintFormat = React.forwardRef(({ invoiceData, userRole }, ref) => {
     const amountDue = totalAmount + taxAmount;
 
     const netReceived = amountDue;
-
-    const isSameState = invoiceData.companyState === invoiceData.customerState;
+    const isSameState = invoiceData?.companyState?.toLowerCase() === invoiceData?.customerState?.toLowerCase();
     const cgstSgstRate = isSameState ? taxRate / 2 : 0;
     const igstRate = !isSameState ? taxRate : 0;
-
     const cgstAmount = (totalAmount * cgstSgstRate) / 100;
     const sgstAmount = (totalAmount * cgstSgstRate) / 100;
     const igstAmount = (totalAmount * igstRate) / 100;
