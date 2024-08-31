@@ -31,7 +31,7 @@ const Index = () => {
         customerPhone: '',
         date: '',
         country: 'India',
-        items: [{ description: '', quantity: 1, price: 0 }],
+        items: [],
         paymentLink: '',
         id: ''
     });
@@ -80,13 +80,14 @@ const Index = () => {
         })
 
         const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"))
+        console.log(storedItemData, "storeddatata")
+        setFakeItems(storedItemData)    
         setInvoiceData((prevState) => ({
             ...prevState,
             items: storedItemData ? storedItemData : []
         }))
-        setFakeItems(storedItemData)    
     },[])
-
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInvoiceData(prevState => ({ ...prevState, [name]: value }));
@@ -118,46 +119,42 @@ const Index = () => {
         const selectedItem = fakeItems.find(item => item.id === (value));
         if (selectedItem) {
             const updatedItems = [...invoiceData.items];
-            console.log(selectedItem,"selecteditems")
             updatedItems[index] = {
                 ...updatedItems[index],
                 description: selectedItem.name,
                 price: selectedItem.price,
-                variants: selectedItem.variants
+                variants: selectedItem.variants,
+                id: selectedItem.id,
+                quantity: selectedItem.quantity
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-            setVariants(prevVariants => {
-                const newVariants = [...prevVariants];
-                newVariants[index] = selectedItem.variants;
-                return newVariants;
-            });
+            setVariants(selectedItem.variants);
         }
     };
-
+    
+    console.log(variants, "variants")
     const handleVariantChange = (index, e) => {
         const { value } = e.target;
         console.log(value, "value");
-    
-        // Find the selected variant using the value (which is the variant ID)
         const selectedItemVariant = variants.find(variant => variant.id === value);
-    
+        console.log(selectedItemVariant, "selectedvarieant")
         if (selectedItemVariant) {
             const updatedItems = [...invoiceData.items];
-            
-            // Update the selected variant's name and ID in the invoice data
-            updatedItems[index].selectedVariant = selectedItemVariant.name;
-            updatedItems[index].variantId = selectedItemVariant.id;
-    
-            // Update the invoice data state
+            updatedItems[index] = {
+                ...updatedItems[index],
+                selectedVariant: selectedItemVariant.name,
+                variantId: selectedItemVariant.id,
+                quantity: selectedItemVariant.quantity,
+                price: selectedItemVariant.price
+            };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
     };
-       
 
     const addItem = () => {
         setInvoiceData(prevState => ({
             ...prevState,
-            items: [...prevState.items, { description: '', quantity: 1, price: 0 }]
+            items: [...prevState.items]
         }));
     };
 
@@ -212,7 +209,7 @@ const Index = () => {
                 customerPhone: '',
                 date: '',
                 country: 'India',
-                items: [{ description: '', quantity: 1, price: 0 }],
+                items: [],
                 paymentLink: ''
             });
 
@@ -250,7 +247,7 @@ const Index = () => {
                     </div>
                 </Form>
 
-                {/* <PrintFormat ref={printRef} invoiceData={invoiceData} /> */}
+                <PrintFormat ref={printRef} invoiceData={invoiceData} />
             </div>
         </Container>
     );

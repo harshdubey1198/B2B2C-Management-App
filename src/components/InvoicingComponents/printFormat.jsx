@@ -121,7 +121,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                                 <td>{item.description}</td>
                                 <td>{item.Hsn}</td>
                                 <td>{item.quantity}</td>
-                                <td>{item.price.toFixed(2)}</td>
+                                <td>{Number(item.price).toFixed(2)}</td>
                                 <td>{itemTotalValue.toFixed(2)}</td>
                                 {isSameState ? (
                                     <>

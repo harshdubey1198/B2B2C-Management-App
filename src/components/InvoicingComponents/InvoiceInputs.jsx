@@ -323,19 +323,19 @@ const InvoiceInputs = ({
                         </FormGroup>
                     </Col>
                     <Col md={2}>
-                        <FormGroup>
-                            <Label for={`quantity${index}`}>Quantity</Label>
-                            <Input
-                                type="number"
-                                name="quantity"
-                                id={`quantity${index}`}
-                                value={item.quantity}
-                                onChange={(e) => handleItemChange(index, e)}
-                                required
-                            />
-                        </FormGroup>
+                    <FormGroup>
+                        <Label for={`quantity${index}`}>Quantity</Label>
+                        <Input
+                            type="number"
+                            name="quantity"
+                            id={`quantity${index}`}
+                            value={item.quantity || ''}
+                            onChange={(e) => handleItemChange(index, e)}
+                            required
+                        />
+                    </FormGroup>
                     </Col>
-                    {/* <Col md={2}>
+                    <Col md={2}>
                         <FormGroup>
                             <Label for={`price${index}`}>Price</Label>
                             <Input
@@ -357,7 +357,7 @@ const InvoiceInputs = ({
                                 readOnly
                             />
                         </FormGroup>
-                    </Col> */}
+                    </Col> 
                     <Col md={2}>
                         <Button color="danger" onClick={() => removeItem(index)} className="mt-4">Remove</Button>
                     </Col>
