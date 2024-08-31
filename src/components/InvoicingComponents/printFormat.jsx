@@ -60,11 +60,11 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             style={{ height: "100px", maxWidth: "200px" , marginBottom:"10px" }} 
                         />
                     )}
-                    <p>{invoiceData?.officeAddress + ", " + invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>
-                    <p>{invoiceData?.companyState + ", " + invoiceData?.companyCity + ", " + invoiceData?.companyCountry + ", " + invoiceData?.companyZip}</p>
-                    <p>{invoiceData?.companyPhone}</p>
-                    <p>{invoiceData?.companyEmail}</p>
-                    <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
+                    <p className="my-1">{invoiceData?.officeAddress + ", " + invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>
+                    <p className="my-1">{invoiceData?.companyState + ", " + invoiceData?.companyCity + ", " + invoiceData?.companyCountry + ", " + invoiceData?.companyZip}</p>
+                    <p className="my-1">{invoiceData?.companyPhone}</p>
+                    <p className="my-1">{invoiceData?.companyEmail}</p>
+                    <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin}</p>
                 </div>
                 <div className="col-md-3 offset-md-3  right-t-col3" >
                     <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
@@ -77,11 +77,11 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
-                    <p>{invoiceData.customerName}</p>
-                    <p>{invoiceData?.customerHouse + ", " + invoiceData?.customerNearby+ ", " + invoiceData?.customerDistrict}</p>
-                    <p>{invoiceData?.customerState + ", " + invoiceData?.customerCity+ ", " + invoiceData?.customerCountry+ ", "+ invoiceData?.customerZip}</p>
-                    <p>{invoiceData.customerPhone}</p>
-                    <p>{country}</p>
+                    <p className="my-1">{invoiceData.customerName}</p>
+                    <p className="my-1">{invoiceData?.customerHouse + ", " + invoiceData?.customerNearby+ ", " + invoiceData?.customerDistrict}</p>
+                    <p className="my-1">{invoiceData?.customerState + ", " + invoiceData?.customerCity+ ", " + invoiceData?.customerCountry+ ", "+ invoiceData?.customerZip}</p>
+                    <p className="my-1">{invoiceData.customerPhone}</p>
+                    <p className="my-1">{country}</p>
                 </div>
             </div>
 
@@ -141,13 +141,13 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h5>Bank Details</h5>
-                    <p><strong>Bank Name:</strong> {invoiceData?.bankName || 'Your Bank Name'}</p>
-                    <p><strong>Account Number:</strong> {invoiceData?.accountNumber || 'XXXXXXXXXXXX'}</p>
-                    <p><strong>IFSC Code:</strong> {invoiceData?.IFSCCode || ''}</p>
-                    <p><strong>Branch:</strong> {invoiceData?.branchName || 'Your Branch'}</p>
+                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || 'Your Bank Name'}</p>
+                    <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber || 'XXXXXXXXXXXX'}</p>
+                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.IFSCCode || ''}</p>
+                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || 'Your Branch'}</p>
                 </div>
                 <div className="col-md-6 .right-t-col3">
-                    <p><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>
+                    <p className="my-1"><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (
                         <>
                             <p><strong>CGST ({cgstSgstRate}%):</strong> ₹ {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
@@ -156,9 +156,9 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     ) : (
                         <p><strong>IGST ({igstRate}%):</strong> ₹ {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
-                    <p><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(amountDue.toFixed(2))} ONLY</p>
-                    <p><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
+                    <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
+                    <p className="my-1"><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(amountDue.toFixed(2))} ONLY</p>
+                    <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                 </div>
             </div>
         </div>
