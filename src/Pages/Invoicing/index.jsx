@@ -7,11 +7,11 @@ import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import { checkEmptyFields, validatePhone } from '../Utility/FormValidation';
 import axios from 'axios';
 
-const fakeItems = [
-    { id: 1, name: 'Item A', price: 10.00 },
-    { id: 2, name: 'Item B', price: 20.00 },
-    { id: 3, name: 'Item C', price: 30.00 }
-];
+// const fakeItems = [
+//     { id: 1, name: 'Item A', price: 10.00 },
+//     { id: 2, name: 'Item B', price: 20.00 },
+//     { id: 3, name: 'Item C', price: 30.00 }
+// ];
 
 const Index = () => {
     const [companyData, setCompanyData] = useState({})
@@ -37,6 +37,8 @@ const Index = () => {
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [variants, setVariants] = useState([])
+    const [fakeItems, setFakeItems] = useState([])
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser"))
 
@@ -76,6 +78,13 @@ const Index = () => {
         }).catch((error) => {
             console.log(error, "error")
         })
+
+        const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"))
+        setInvoiceData((prevState) => ({
+            ...prevState,
+            items: storedItemData ? storedItemData : []
+        }))
+        setFakeItems(storedItemData)    
     },[])
 
     const handleInputChange = (e) => {
@@ -106,17 +115,36 @@ const Index = () => {
 
     const handleDescriptionChange = (index, e) => {
         const { value } = e.target;
-        const selectedItem = fakeItems.find(item => item.id === parseInt(value));
+        const selectedItem = fakeItems.find(item => item.id === (value));
         if (selectedItem) {
             const updatedItems = [...invoiceData.items];
+            console.log(selectedItem,"selecteditems")
             updatedItems[index] = {
                 ...updatedItems[index],
                 description: selectedItem.name,
-                price: selectedItem.price
+                price: selectedItem.price,
+                variants: selectedItem.variants
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
+            setVariants(prevVariants => {
+                const newVariants = [...prevVariants];
+                newVariants[index] = selectedItem.variants;
+                return newVariants;
+            });
         }
     };
+
+   const handleVariantChange = (index, e) => {
+        const { value } = e.target;
+        console.log(value, "value")
+        const selectedItemVariant = variants[index]?.find(variant => variant.id === (value));
+    
+        if (selectedItemVariant) {
+            const updatedItems = [...invoiceData.items];
+            updatedItems[index].selectedVariant = selectedItemVariant.name;
+            setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
+        }
+    };   
 
     const addItem = () => {
         setInvoiceData(prevState => ({
@@ -201,6 +229,9 @@ const Index = () => {
                         handleFileChange={handleFileChange}
                         handleItemChange={handleItemChange}
                         handleDescriptionChange={handleDescriptionChange}
+                        variants={variants}
+                        fakeItems={fakeItems}
+                        handleVariantChange={handleVariantChange}
                         addItem={addItem}
                         removeItem={removeItem}
                     />
@@ -211,7 +242,7 @@ const Index = () => {
                     </div>
                 </Form>
 
-                <PrintFormat ref={printRef} invoiceData={invoiceData} />
+                {/* <PrintFormat ref={printRef} invoiceData={invoiceData} /> */}
             </div>
         </Container>
     );

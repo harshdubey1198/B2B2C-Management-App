@@ -8,11 +8,11 @@ const countries = {
     Indonesia: { currency: 'IDR', gst: 10 }
 };
 
-const fakeItems = [
-    { id: 1, name: 'Item A', price: 10.00 },
-    { id: 2, name: 'Item B', price: 20.00 },
-    { id: 3, name: 'Item C', price: 30.00 }
-];
+// const fakeItems = [
+//     { id: 1, name: 'Item 1', price: 10.00 },
+//     { id: 2, name: 'Item 2', price: 20.00 },
+//     { id: 3, name: 'Item 3', price: 30.00 }
+// ];
 
 const InvoiceInputs = ({
     invoiceData,
@@ -21,12 +21,16 @@ const InvoiceInputs = ({
     handleFileChange,
     handleItemChange,
     handleDescriptionChange,
+    fakeItems,
+    variants,
+    handleVariantChange,
     addItem,
     removeItem,
     handleSubmit,
     error,
     success
 }) => {
+    console.log(fakeItems,"fakeitems")
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
             {/* {error && <Alert color='danger'>{error}</Alert>}
@@ -311,6 +315,24 @@ const InvoiceInputs = ({
                             </Input>
                         </FormGroup>
                     </Col>
+                    <Col md={4}>
+                    <FormGroup>
+                            <Label for={`variant${index}`}>Variant</Label>
+                            <Input
+                                type="select"
+                                name={`variant${index}`}
+                                id={`variant${index}`}
+                                value={item.selectedVariant || ''}
+                                onChange={(e) => handleVariantChange(index, e)}
+                            >
+                                {variants[index] && variants[index].map((variant, variantIndex) => (
+                                    <option key={variantIndex} value={variant.name}>
+                                        {variant.name}
+                                    </option>
+                                ))}
+                            </Input>
+                        </FormGroup>
+                       </Col>
                     <Col md={2}>
                         <FormGroup>
                             <Label for={`quantity${index}`}>Quantity</Label>
@@ -324,7 +346,7 @@ const InvoiceInputs = ({
                             />
                         </FormGroup>
                     </Col>
-                    <Col md={2}>
+                    {/* <Col md={2}>
                         <FormGroup>
                             <Label for={`price${index}`}>Price</Label>
                             <Input
@@ -346,7 +368,7 @@ const InvoiceInputs = ({
                                 readOnly
                             />
                         </FormGroup>
-                    </Col>
+                    </Col> */}
                     <Col md={2}>
                         <Button color="danger" onClick={() => removeItem(index)} className="mt-4">Remove</Button>
                     </Col>

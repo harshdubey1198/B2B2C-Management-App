@@ -64,7 +64,7 @@ const InventoryItemForm = () => {
   const handleAddVariant = () => {
     setFormValues({
       ...formValues,
-      variants: [...formValues.variants, { name: "", price: "", tax: "", quantity: "" }],
+      variants: [...formValues.variants, { id: uuidv4(), name: "", price: "", tax: "", quantity: "" }],
     });
   };
 
