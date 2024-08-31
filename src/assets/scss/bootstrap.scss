@@ -25,3 +25,33 @@ File: Custom Bootstrap Css File
 @import "custom/components/table";
 @import "custom/components/pagination";
 @import "custom/components/progress";
+
+@media print {
+    .text-right {
+        text-align: right !important;
+    }
+    .text-left {
+        text-align: left !important;
+    }
+    .card {
+        border: none !important;
+    }
+    .row {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+    }
+    .col-md-6 {
+        width: 50% !important;
+        float: left !important;
+    }
+    .col-md-3 {
+        width: 25% !important;
+        // background: #000 !important;
+    }
+    .right-t-col3{
+        display: flex !important;
+        flex-direction: column !important;
+        // justify-content: end;
+        margin-left: 25%;
+    }
+}
