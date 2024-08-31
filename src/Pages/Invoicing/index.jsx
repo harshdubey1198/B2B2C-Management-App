@@ -110,9 +110,24 @@ const Index = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updatedItems = [...invoiceData.items];
-        updatedItems[index][name] = parseFloat(value) || 0;
+    
+        if (name === 'quantity') {
+            const selectedQuantity = parseInt(value, 10) || 0;
+            const availableQuantity = updatedItems[index].availableQuantity || 0;
+    
+            if (selectedQuantity <= availableQuantity) {
+                updatedItems[index].quantity = selectedQuantity;
+            } else {
+                toast.error("Selected quantity exceeds available stock");
+                return;
+            }
+        } else {    
+            updatedItems[index][name] = parseFloat(value) || 0;
+        }
+    
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
+    
 
     const handleDescriptionChange = (index, e) => {
         const { value } = e.target;
@@ -135,26 +150,27 @@ const Index = () => {
     console.log(variants, "variants")
     const handleVariantChange = (index, e) => {
         const { value } = e.target;
-        console.log(value, "value");
         const selectedItemVariant = variants.find(variant => variant.id === value);
-        console.log(selectedItemVariant, "selectedvarieant")
+        
         if (selectedItemVariant) {
             const updatedItems = [...invoiceData.items];
             updatedItems[index] = {
                 ...updatedItems[index],
                 selectedVariant: selectedItemVariant.name,
                 variantId: selectedItemVariant.id,
-                quantity: selectedItemVariant.quantity,
-                price: selectedItemVariant.price
+                quantity: 1, // Default quantity or set based on requirements
+                price: selectedItemVariant.price,
+                availableQuantity: selectedItemVariant.quantity
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
     };
+    
 
     const addItem = () => {
         setInvoiceData(prevState => ({
             ...prevState,
-            items: [...prevState.items]
+            items: [...prevState.items, { quantity: 1, availableQuantity: 0 }] // Add default values
         }));
     };
 
@@ -162,28 +178,27 @@ const Index = () => {
         const updatedItems = invoiceData.items.filter((_, i) => i !== index);
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-     
+        
         if (!validatePhone(invoiceData.customerPhone)) {
-            // setError("Invalid Phone Number");
             toast.error("Invalid Phone Number");
             return;
         }
-
+    
         const newdata = {
             ...invoiceData,
             id: Math.floor(Math.random() * 1000000)
         };
-
-        
+    
         setTimeout(() => {
             const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
             storedData.push(newdata);
             localStorage.setItem("Invoice Form", JSON.stringify(storedData));
-
-            
+    
+            // Update available quantities here
+            // Example: UpdateInventory(newdata.items);
+    
             setInvoiceData({
                 companyName: "",
                 companyAddress: "",
@@ -212,10 +227,11 @@ const Index = () => {
                 items: [],
                 paymentLink: ''
             });
-
+    
             toast.success("Invoice Form Submitted Successfully");
         }, 1000);
     };
+    
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
