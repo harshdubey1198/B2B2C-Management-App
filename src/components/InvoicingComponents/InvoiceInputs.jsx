@@ -307,23 +307,21 @@ const InvoiceInputs = ({
                         </FormGroup>
                     </Col>
                     <Col md={4}>
-                    <FormGroup>
-                            <Label for={`variant${index}`}>Variant</Label>
+                        <FormGroup>
+                            <Label for={`variant${index}`}>Variants</Label>
                             <Input
                                 type="select"
                                 name={`variant${index}`}
                                 id={`variant${index}`}
-                                value={item.selectedVariant || ''}
                                 onChange={(e) => handleVariantChange(index, e)}
                             >
-                                {variants[index] && variants[index].map((variant, variantIndex) => (
-                                    <option key={variantIndex} value={variant.name}>
-                                        {variant.name}
-                                    </option>
+                                <option value="">Select Variant</option>
+                                {variants.map(variant => (
+                                    <option key={variant.id} value={variant.id}>{variant.name}</option>
                                 ))}
                             </Input>
                         </FormGroup>
-                       </Col>
+                    </Col>
                     <Col md={2}>
                         <FormGroup>
                             <Label for={`quantity${index}`}>Quantity</Label>

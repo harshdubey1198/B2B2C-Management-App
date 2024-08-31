@@ -134,17 +134,25 @@ const Index = () => {
         }
     };
 
-   const handleVariantChange = (index, e) => {
+    const handleVariantChange = (index, e) => {
         const { value } = e.target;
-        console.log(value, "value")
-        const selectedItemVariant = variants[index]?.find(variant => variant.id === (value));
+        console.log(value, "value");
+    
+        // Find the selected variant using the value (which is the variant ID)
+        const selectedItemVariant = variants.find(variant => variant.id === value);
     
         if (selectedItemVariant) {
             const updatedItems = [...invoiceData.items];
+            
+            // Update the selected variant's name and ID in the invoice data
             updatedItems[index].selectedVariant = selectedItemVariant.name;
+            updatedItems[index].variantId = selectedItemVariant.id;
+    
+            // Update the invoice data state
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
-    };   
+    };
+       
 
     const addItem = () => {
         setInvoiceData(prevState => ({
