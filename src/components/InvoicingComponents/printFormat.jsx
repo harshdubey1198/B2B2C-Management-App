@@ -20,7 +20,15 @@ const convertNumberToWords = (num) => {
         return 'Number too large';
     };
 
-    return inWords(num);
+    const [whole, fraction] = num.toString().split('.').map(Number);
+
+    let words = `${inWords(whole)} rupees`;
+    
+    if (fraction) {
+        words += ` & ${inWords(fraction)} paise`;
+    }
+    
+    return words.toUpperCase();
 };
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
@@ -142,9 +150,9 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     ) : (
                         <p><strong>IGST ({igstRate}%):</strong> {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
-                    <p><strong>Total:</strong> ₹{amountDue.toFixed(2)}</p>
-                    <p><strong>Total Value in Words:</strong> ₹{convertNumberToWords(amountDue.toFixed(2))} only</p>
-                    <p><strong>Net Received:</strong> ₹{netReceived.toFixed(2)}</p>
+                    <p><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
+                    <p><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(amountDue.toFixed(2))} ONLY</p>
+                    <p><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                 </div>
             </div>
         </div>
