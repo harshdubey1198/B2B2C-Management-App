@@ -47,35 +47,40 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
             <div className="row mb-2 text-center ">
-                    <h2>Tax Invoice </h2>
+                <h2>Tax Invoice</h2>
             </div>
 
-            <div className="row mt-2 d-flex flex-row justify-content-between">
-                <div className="col-md-6 text-right" style={{marginTop:"-50px"}}>
-                    {invoiceData && <img src={invoiceData.companyLogo}  alt="Company Logo" style={{ height:"100px" ,maxWidth:"200px" }} />}
-                    <p>{invoiceData?.officeAddress + ", "  +invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>
-                    <p>{invoiceData?.companyState + ", "  +invoiceData?.companyCity + ", " + invoiceData?.companyCountry + ", " + invoiceData?.companyZip}</p>
+            <div className="row mt-2">
+                <div className="col-md-6 text-left">
+                    {invoiceData && (
+                        <img 
+                            src={invoiceData.companyLogo}  
+                            alt="Company Logo" 
+                            style={{ height: "100px", maxWidth: "200px" }} 
+                        />
+                    )}
+                    <p>{invoiceData?.officeAddress + ", " + invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>
+                    <p>{invoiceData?.companyState + ", " + invoiceData?.companyCity + ", " + invoiceData?.companyCountry + ", " + invoiceData?.companyZip}</p>
                     <p>{invoiceData?.companyPhone}</p>
                     <p>{invoiceData?.companyEmail}</p>
                     <p><b>GSTIN:</b> {invoiceData?.gstin}</p>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-3 offset-md-3  right-t-col3" >
                     <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
-                    <p><strong>Amount Due:</strong> ₹{amountDue.toFixed(2)}</p>
+                    <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
                     <p><strong>Due Date:</strong> {invoiceData.dueDate}</p>
                 </div>
             </div>
 
             <div className="row">
-                <div className="col-md-6 text-right">
+                <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
                     <p>{invoiceData.customerName}</p>
                     <p>{invoiceData?.customerHouse + ", " + invoiceData?.customerNearby+ ", " + invoiceData?.customerDistrict}</p>
                     <p>{invoiceData?.customerState + ", " + invoiceData?.customerCity+ ", " + invoiceData?.customerCountry+ ", "+ invoiceData?.customerZip}</p>
                     <p>{invoiceData.customerPhone}</p>
                     <p>{country}</p>
-                    {/* <p><strong>Prepared by:</strong> {userRole}</p> */}
                 </div>
             </div>
 
@@ -140,15 +145,15 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     <p><strong>IFSC Code:</strong> {invoiceData?.IFSCCode || ''}</p>
                     <p><strong>Branch:</strong> {invoiceData?.branchName || 'Your Branch'}</p>
                 </div>
-                <div className="col-md-6 text-right">
-                    <p><strong>Subtotal:</strong> {totalAmount.toFixed(2)}</p>
+                <div className="col-md-6 .right-t-col3">
+                    <p><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (
                         <>
-                            <p><strong>CGST ({cgstSgstRate}%):</strong> {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
-                            <p><strong>SGST ({cgstSgstRate}%):</strong> {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
+                            <p><strong>CGST ({cgstSgstRate}%):</strong> ₹ {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
+                            <p><strong>SGST ({cgstSgstRate}%):</strong> ₹ {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
                         </>
                     ) : (
-                        <p><strong>IGST ({igstRate}%):</strong> {(totalAmount * igstRate / 100).toFixed(2)}</p>
+                        <p><strong>IGST ({igstRate}%):</strong> ₹ {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
                     <p><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(amountDue.toFixed(2))} ONLY</p>
