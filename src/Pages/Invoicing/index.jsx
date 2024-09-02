@@ -158,7 +158,7 @@ const Index = () => {
                 ...updatedItems[index],
                 selectedVariant: selectedItemVariant.name,
                 variantId: selectedItemVariant.id,
-                quantity: 1, // Default quantity or set based on requirements
+                quantity: 1,
                 price: selectedItemVariant.price,
                 availableQuantity: selectedItemVariant.quantity
             };
@@ -170,7 +170,7 @@ const Index = () => {
     const addItem = () => {
         setInvoiceData(prevState => ({
             ...prevState,
-            items: [...prevState.items, { quantity: 1, availableQuantity: 0 }] // Add default values
+            items: [...prevState.items, { quantity: 1, availableQuantity: 0 }]
         }));
     };
 
@@ -198,6 +198,7 @@ const Index = () => {
     
             // Update available quantities here
             // Example: UpdateInventory(newdata.items);
+            
     
             setInvoiceData({
                 companyName: "",
