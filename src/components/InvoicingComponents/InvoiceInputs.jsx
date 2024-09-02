@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, FormGroup, Label, Input, Row, Col, Alert, Card, CardBody } from 'reactstrap';
+import { Button, Form, FormGroup, Label, Input, Row, Col, Card, CardBody } from 'reactstrap';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -8,11 +8,11 @@ const countries = {
     Indonesia: { currency: 'IDR', gst: 10 }
 };
 
-const fakeItems = [
-    { id: 1, name: 'Item A', price: 10.00 },
-    { id: 2, name: 'Item B', price: 20.00 },
-    { id: 3, name: 'Item C', price: 30.00 }
-];
+// const fakeItems = [
+//     { id: 1, name: 'Item 1', price: 10.00 },
+//     { id: 2, name: 'Item 2', price: 20.00 },
+//     { id: 3, name: 'Item 3', price: 30.00 }
+// ];
 
 const InvoiceInputs = ({
     invoiceData,
@@ -21,12 +21,16 @@ const InvoiceInputs = ({
     handleFileChange,
     handleItemChange,
     handleDescriptionChange,
+    fakeItems,
+    variants,
+    handleVariantChange,
     addItem,
     removeItem,
     handleSubmit,
     error,
     success
 }) => {
+    // console.log(fakeItems,"fakeitems")
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
             {/* {error && <Alert color='danger'>{error}</Alert>}
@@ -147,6 +151,31 @@ const InvoiceInputs = ({
                             required
                         />
                     </FormGroup>
+                    <FormGroup>
+                        <Label for="country">Country</Label>
+                        <Input
+                            type="select"
+                            name="country"
+                            id="country"
+                            value={invoiceData.country}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            {Object.keys(countries).map((country) => (
+                                <option key={country} value={country}>{country}</option>
+                            ))}
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="invoiceType">Invoice Type</Label> <br/>
+                        {/* <Input type="radio" name="invoiceType" value="GST" onChange={handleInputChange} required /> GST &nbsp; &nbsp; &nbsp; &nbsp; 
+                        <Input type="radio" name="invoiceType" value="Non-GST" onChange={handleInputChange} required /> Non-GST  */}
+                        <Input type="select" name="invoiceType" id="invoiceType" value={invoiceData.invoiceType} onChange={handleInputChange} required>
+                            <option value="">Select Invoice Type</option>
+                            <option value="GST">GST</option>
+                            <option value="Non-GST">Non-GST</option>
+                        </Input>
+                    </FormGroup>
                 </Col>
                 <Col md={6}>
                     <FormGroup>
@@ -246,103 +275,109 @@ const InvoiceInputs = ({
                         <Label for="issueDate">Issue Date</Label>
                         <Input type="date" name="issueDate" id="issueDate" value={invoiceData.issueDate} onChange={handleInputChange} required/>
                     </FormGroup>
-                </Col>
-            </Row>
-            <Row className="mb-4">
-                <Col md={6}>
                     <FormGroup>
-                        <Label for="date">Date</Label>
-                        <Input
-                            type="date"
-                            name="date"
-                            id="date"
-                            value={invoiceData.date}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                </Col>
-                <Col md={6}>
-                    <FormGroup>
-                        <Label for="country">Country</Label>
-                        <Input
-                            type="select"
-                            name="country"
-                            id="country"
-                            value={invoiceData.country}
-                            onChange={handleInputChange}
-                            required
-                        >
-                            {Object.keys(countries).map((country) => (
-                                <option key={country} value={country}>{country}</option>
-                            ))}
+                        <Label for="invoiceSubType" >Invoice Sub Type</Label>
+                        <Input type="select" name="invoiceSubType" id="invoiceSubType" value={invoiceData.invoiceSubType} onChange={handleInputChange} required>
+                            <option value="">Select Invoice Sub Type</option>
+                            <option value="Original">     Original</option>
+                            <option value="Duplicate">    Duplicate</option>
+                            <option value="Triplicate">   Triplicate</option>
+                            <option value="Quadruplicate">Quadruplicate</option>
                         </Input>
                     </FormGroup>
                 </Col>
             </Row>
-          
-            <h4>Items</h4>
-            {invoiceData.items.map((item, index) => (
-                <Row key={index} className="mb-3">
-                    <Col md={4}>
+            
+    <h4>Items</h4>
+      {invoiceData.items.map((item, index) => (
+        <Row key={index} className="mb-3">
+            <Col md={3}>
+                <FormGroup>
+                    <Label for={`description${index}`}>Description</Label>
+                    <Input
+                        type="select"
+                        name="description"
+                        id={`description${index}`}
+                        value={fakeItems.find(i => i.name === item.description)?.id || ''}
+                        onChange={(e) => handleDescriptionChange(index, e)}
+                        required
+                    >
+                        <option value="">Select Item</option>
+                        {fakeItems.map((item) => (
+                            <option key={item.id} value={item.id}>{item.name}</option>
+                        ))}
+                    </Input>
+                </FormGroup>
+            </Col>
+            <Col md={3}>
+                <FormGroup>
+                    <Label for={`variant${index}`}>Variants</Label>
+                    <Input
+                        type="select"
+                        name={`variant${index}`}
+                        id={`variant${index}`}
+                        onChange={(e) => handleVariantChange(index, e)}
+                    >
+                        <option value="">Select Variant</option>
+                        {variants.map(variant => (
+                            <option key={variant.id} value={variant.id}>{variant.name}</option>
+                        ))}
+                    </Input>
+                </FormGroup>
+            </Col>
+            <Col md={2}>
+                <FormGroup>
+                    <Label for={`quantity${index}`}>Quantity</Label>
+                    <Input
+                        type="number"
+                        name="quantity"
+                        value={item.quantity || 0}
+                        onChange={(e) => handleItemChange(index, e)}
+                        min="1"
+                        max={item.availableQuantity || 0} // Ensure this is updated correctly
+                    />
+                </FormGroup>
+            </Col>
+            <Col md={1}>
                         <FormGroup>
-                            <Label for={`description${index}`}>Description</Label>
-                            <Input
-                                type="select"
-                                name="description"
-                                id={`description${index}`}
-                                value={fakeItems.find(i => i.name === item.description)?.id || ''}
-                                onChange={(e) => handleDescriptionChange(index, e)}
-                                required
-                            >
-                                <option value="">Select Item</option>
-                                {fakeItems.map((item) => (
-                                    <option key={item.id} value={item.id}>{item.name}</option>
-                                ))}
-                            </Input>
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label for={`quantity${index}`}>Quantity</Label>
-                            <Input
-                                type="number"
-                                name="quantity"
-                                id={`quantity${index}`}
-                                value={item.quantity}
-                                onChange={(e) => handleItemChange(index, e)}
-                                required
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label for={`price${index}`}>Price</Label>
-                            <Input
-                                type="number"
-                                name="price"
-                                id={`price${index}`}
-                                value={item.price}
-                                onChange={(e) => handleItemChange(index, e)}
-                                required
-                            />
-                        </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <FormGroup>
-                            <Label>Total</Label>
+                            <Label for={`availableQuantity${index}`}>Av. Qty</Label>
                             <Input
                                 type="text"
-                                value={(item.quantity * item.price).toFixed(2)}
+                                id={`availableQuantity${index}`}
+                                value={item.availableQuantity || 0}
                                 readOnly
                             />
                         </FormGroup>
-                    </Col>
-                    <Col md={2}>
-                        <Button color="danger" onClick={() => removeItem(index)} className="mt-4">Remove</Button>
-                    </Col>
-                </Row>
-            ))}
+            </Col>
+            <Col md={2}>
+                <FormGroup>
+                    <Label for={`price${index}`}>Price</Label>
+                    <Input
+                        type="number"
+                        name="price"
+                        id={`price${index}`}
+                        value={item.price}
+                        onChange={(e) => handleItemChange(index, e)}
+                        required
+                    />
+                </FormGroup>
+            </Col>
+            <Col md={2}>
+                <FormGroup>
+                    <Label>Total</Label>
+                    <Input
+                        type="text"
+                        value={((item.quantity || 0) * (item.price || 0)).toFixed(2)}
+                        readOnly
+                    />
+                </FormGroup>
+            </Col>
+            <Col md={2}>
+                <Button color="danger" onClick={() => removeItem(index)} className="mt-4">Remove</Button>
+            </Col>
+        </Row>
+    ))}
+
             <Button color="primary" onClick={addItem}>Add Item</Button>
             {/* <Button color="success" type="submit" className="ml-2">Generate Invoice</Button> */}
         </Form>

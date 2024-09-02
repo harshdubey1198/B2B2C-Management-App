@@ -7,11 +7,11 @@ import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import { checkEmptyFields, validatePhone } from '../Utility/FormValidation';
 import axios from 'axios';
 
-const fakeItems = [
-    { id: 1, name: 'Item A', price: 10.00 },
-    { id: 2, name: 'Item B', price: 20.00 },
-    { id: 3, name: 'Item C', price: 30.00 }
-];
+// const fakeItems = [
+//     { id: 1, name: 'Item A', price: 10.00 },
+//     { id: 2, name: 'Item B', price: 20.00 },
+//     { id: 3, name: 'Item C', price: 30.00 }
+// ];
 
 const Index = () => {
     const [companyData, setCompanyData] = useState({})
@@ -31,12 +31,14 @@ const Index = () => {
         customerPhone: '',
         date: '',
         country: 'India',
-        items: [{ description: '', quantity: 1, price: 0 }],
+        items: [],
         paymentLink: '',
         id: ''
     });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [variants, setVariants] = useState([])
+    const [fakeItems, setFakeItems] = useState([])
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser"))
 
@@ -48,7 +50,7 @@ const Index = () => {
             setInvoiceData((prevData) => ({
                 ...prevData,
                 companyName: response.firmName,
-                companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
+                companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}.trim() || ""`,
                 companyLogo: response.avatar,
                 officeAddress: address.h_no,
                 companyCity: address.city,
@@ -76,8 +78,16 @@ const Index = () => {
         }).catch((error) => {
             console.log(error, "error")
         })
-    },[])
 
+        const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"))
+        console.log(storedItemData, "storeddatata")
+        setFakeItems(storedItemData)    
+        setInvoiceData((prevState) => ({
+            ...prevState,
+            items: storedItemData ? storedItemData : []
+        }))
+    },[])
+    
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInvoiceData(prevState => ({ ...prevState, [name]: value }));
@@ -100,28 +110,66 @@ const Index = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updatedItems = [...invoiceData.items];
-        updatedItems[index][name] = parseFloat(value) || 0;
+        const selectedQuantity = parseInt(value, 10) || 0;
+    
+        if (name === 'quantity') {
+            if (selectedQuantity <= updatedItems[index].availableQuantity) {
+                updatedItems[index].quantity = selectedQuantity;
+            } else {
+                toast.error("Selected quantity exceeds available stock");
+                return;
+            }
+        } else {
+            updatedItems[index][name] = parseFloat(value) || 0;
+        }
+    
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
+    
 
     const handleDescriptionChange = (index, e) => {
         const { value } = e.target;
-        const selectedItem = fakeItems.find(item => item.id === parseInt(value));
+        const selectedItem = fakeItems.find(item => item.id === value);
         if (selectedItem) {
             const updatedItems = [...invoiceData.items];
             updatedItems[index] = {
                 ...updatedItems[index],
                 description: selectedItem.name,
-                price: selectedItem.price
+                price: selectedItem.price,
+                variants: selectedItem.variants,
+                id: selectedItem.id,
+                quantity: 1,  // Reset to 1 by default
+                availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + variant.quantity, 0) // Sum of all variant quantities
+            };
+            setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
+            setVariants(selectedItem.variants || []);
+        }
+    };
+    
+    console.log(variants, "variants")
+    const handleVariantChange = (index, e) => {
+        const { value } = e.target;
+        const selectedVariant = variants.find(variant => variant.id === value);
+        if (selectedVariant) {
+            const updatedItems = [...invoiceData.items];
+            updatedItems[index] = {
+                ...updatedItems[index],
+                selectedVariant: selectedVariant.name,
+                variantId: selectedVariant.id,
+                price: selectedVariant.price,
+                availableQuantity: selectedVariant.quantity, // Ensure correct quantity
+                quantity: 1  // Reset to 1 by default
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
     };
+    
+    
 
     const addItem = () => {
         setInvoiceData(prevState => ({
             ...prevState,
-            items: [...prevState.items, { description: '', quantity: 1, price: 0 }]
+            items: [...prevState.items, { quantity: 1, availableQuantity: 0 }]
         }));
     };
 
@@ -129,65 +177,63 @@ const Index = () => {
         const updatedItems = invoiceData.items.filter((_, i) => i !== index);
         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
     };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-     
+    
         if (!validatePhone(invoiceData.customerPhone)) {
-            // setError("Invalid Phone Number");
             toast.error("Invalid Phone Number");
             return;
         }
-
-        const newdata = {
+    
+        const newInvoice = {
             ...invoiceData,
             id: Math.floor(Math.random() * 1000000)
         };
-
-        
-        setTimeout(() => {
-            const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
-            storedData.push(newdata);
-            localStorage.setItem("Invoice Form", JSON.stringify(storedData));
-
-            
-            setInvoiceData({
-                companyName: "",
-                companyAddress: "",
-                companyCity: "",
-                officeAddress: "",
-                companyNearby: "",
-                companyZip: "",
-                companyDistrict: "",
-                companyState: "",
-                companyCountry: "",
-                companyLogo: "",
-                companyPhone: "",
-                companyEmail: "",
-                customerName: '',
-                customerAddress: '',
-                customerHouse: '',
-                customerCity: '',
-                customerNearby: '',
-                customerZip: '',
-                customerDistrict: '',
-                customerState: '',
-                customerCountry: '',
-                customerPhone: '',
-                date: '',
-                country: 'India',
-                items: [{ description: '', quantity: 1, price: 0 }],
-                paymentLink: ''
-            });
-
-            toast.success("Invoice Form Submitted Successfully");
-        }, 1000);
+    
+        // Add the new invoice to localStorage
+        const storedInvoices = JSON.parse(localStorage.getItem("Invoice Form")) || [];
+        storedInvoices.push(newInvoice);
+        localStorage.setItem("Invoice Form", JSON.stringify(storedInvoices));
+    
+        // Clear the form state after submission
+        setInvoiceData({
+            companyName: "",
+            companyAddress: "",
+            companyCity: "",
+            officeAddress: "",
+            companyNearby: "",
+            companyZip: "",
+            companyDistrict: "",
+            companyState: "",
+            companyCountry: "",
+            companyLogo: "",
+            companyPhone: "",
+            companyEmail: "",
+            customerName: '',
+            customerAddress: '',
+            customerHouse: '',
+            customerCity: '',
+            customerNearby: '',
+            customerZip: '',
+            customerDistrict: '',
+            customerState: '',
+            customerCountry: '',
+            customerPhone: '',
+            date: '',
+            country: 'India',
+            items: [],  // Reset items array
+            paymentLink: ''
+        });
+    
+        toast.success("Invoice Form Submitted Successfully");
     };
+    
+    
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
     });
-    console.log(invoiceData, "invoicedata")
+    // console.log(invoiceData, "invoicedata")
     return (
         <Container>
             <div className='page-content'>
@@ -201,6 +247,9 @@ const Index = () => {
                         handleFileChange={handleFileChange}
                         handleItemChange={handleItemChange}
                         handleDescriptionChange={handleDescriptionChange}
+                        variants={variants}
+                        fakeItems={fakeItems}
+                        handleVariantChange={handleVariantChange}
                         addItem={addItem}
                         removeItem={removeItem}
                     />
