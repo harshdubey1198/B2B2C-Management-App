@@ -151,34 +151,6 @@ const InvoiceInputs = ({
                             required
                         />
                     </FormGroup>
-                    <FormGroup>
-                        <Label for="country">Country Of Invoicing</Label>
-                        <Input
-                            type="select"
-                            name="country"
-                            id="country"
-                            value={invoiceData.country}
-                            onChange={handleInputChange}
-                            required
-                        >
-                            {Object.keys(countries).map((country) => (
-                                <option key={country} value={country}>{country}</option>
-                            ))}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                       <Label for="InvoiceType">Invoice Type</Label> <br/>
-                      {/*<Input type="select" name="invoiceType" id="invoiceType" value={invoiceData.invoiceType} onChange={handleInputChange} required>
-                            <option value="">Select Invoice Type</option>
-                            <option value="Tax">Tax Invoice</option>
-                            <option value="Performa">Performa Invoice</option>
-                            <option value="Rough">Rough Invoice</option>
-
-                        </Input> */}
-                        <Input type= "radio" name="invoiceType" id="invoiceType" value="Tax" onChange={handleInputChange} required/> Tax Invoice <br/>
-                        <Input type= "radio" name="invoiceType" id="invoiceType" value="Performa" onChange={handleInputChange} required/> Performa Invoice <br/>
-                        <Input type= "radio" name="invoiceType" id="invoiceType" value="Rough" onChange={handleInputChange} required/> Rough Invoice
-                    </FormGroup>
                 </Col>
                 <Col md={6}>
                     <FormGroup>
@@ -268,7 +240,7 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="customerPhone">Customer Phone</Label>
-                        <Input type="text" name="customerPhone" id="customerPhone" placeholder='Customer Phone Number' value={invoiceData.customerPhone} onChange={handleInputChange} required />        
+                        <Input type="text" name="customerPhone" id="customerPhone" value={invoiceData.customerPhone} onChange={handleInputChange} required />        
                     </FormGroup>
                     <FormGroup>
                         <Label for="dueDate">Due Date</Label>
@@ -278,20 +250,44 @@ const InvoiceInputs = ({
                         <Label for="issueDate">Issue Date</Label>
                         <Input type="date" name="issueDate" id="issueDate" value={invoiceData.issueDate} onChange={handleInputChange} required/>
                     </FormGroup>
+                </Col>
+            </Row>
+            <Row className="mb-4">
+                <Col md={6}>
                     <FormGroup>
-                      <Label for="invoicesubtype">Invoice Subtype</Label>
-                        <Input type="select" name="invoicesubtype" id="invoicesubtype" value={invoiceData.invoicesubtype} onChange={handleInputChange} required>
-                            <option value="">Select Invoice Subtype</option>
-                            <option value="Original">Original</option>
-                            <option value="Duplicate">Duplicate</option>
-                            <option value="Triplicate">Triplicate</option>
-                            <option value="Others">Others</option>
+                        <Label for="date">Date</Label>
+                        <Input
+                            type="date"
+                            name="date"
+                            id="date"
+                            value={invoiceData.date}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                </Col>
+                <Col md={6}>
+                    <FormGroup>
+                        <Label for="country">Country</Label>
+                        <Input
+                            type="select"
+                            name="country"
+                            id="country"
+                            value={invoiceData.country}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            {Object.keys(countries).map((country) => (
+                                <option key={country} value={country}>{country}</option>
+                            ))}
                         </Input>
                     </FormGroup>
                 </Col>
             </Row>
-       
-    <h4>Items</h4>
+          
+            <h4>Items</h4>
+                
+
     {invoiceData.items.map((item, index) => (
         <Row key={index} className="mb-3">
             <Col md={3}>
@@ -337,13 +333,13 @@ const InvoiceInputs = ({
                         value={item.quantity || 0}
                         onChange={(e) => handleItemChange(index, e)}
                         min="1"
-                        max={item.availableQuantity || 0} 
+                        max={item.availableQuantity || 0} // Ensure this is updated correctly
                     />
                 </FormGroup>
             </Col>
             <Col md={1}>
                         <FormGroup>
-                            <Label for={`availableQuantity${index}`}>Av.Qty</Label>
+                            <Label for={`availableQuantity${index}`}>Av. Qty</Label>
                             <Input
                                 type="text"
                                 id={`availableQuantity${index}`}
