@@ -150,14 +150,16 @@ function FirmSettings() {
                 {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
                   
                   <Form onSubmit={handleSubmit}>
+                     <div className=' d-flex flex-row justify-content-center'>
                      {firmDetails.avatar && (
                             <img
                               src={firmDetails.avatar}
                               alt="Firm Avatar"
-                              className="img-fluid mt-2 rounded-circle"
-                              style={{ maxWidth: '100px' }}
+                              className="img-fluid my-5 mt-0"
+                              style={{ width:'auto', height:'150px', objectFit:'cover' , borderRadius:'10px' }}
                             />
                           )}
+                     </div>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
