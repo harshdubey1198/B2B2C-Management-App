@@ -63,7 +63,7 @@ const Register = (props) => {
       dispatch(registerUserFailed("Email is invalid!"));
     } else {
       PostRequest(
-        `${process.env.REACT_APP_URL}/clientadmin/register`,
+        `https://b2b2c-management-app.onrender.com/api/clientadmin/register`,
         formInput
       )
         .then((response) => {

@@ -21,7 +21,7 @@ function UserTable({ selectedFirmId, trigger }) {
       console.log("Firm Id:", firmId);
       if (firmId) {
         const response = await axios.get(
-          `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
+          `https://b2b2c-management-app.onrender.com/api/firmadmin/firmusers/${firmId}`
         );
         console.log("API response data", response);
         setUserData(response || []);

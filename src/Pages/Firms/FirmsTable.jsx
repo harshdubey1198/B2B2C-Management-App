@@ -12,7 +12,7 @@ function FirmsTable() {
     // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
     // setFirms(storedFirms);
     if(authUser){
-      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser?._id}`).then((response) => {
+      axios.get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authUser?._id}`).then((response) => {
         setFirms(response);
       }).catch((error) => {
         console.error(error);

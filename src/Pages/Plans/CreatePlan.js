@@ -87,7 +87,7 @@ function CreatePlan() {
 
     // Simulate API call
     axios
-      .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues)
+      .post(`https://b2b2c-management-app.onrender.com/api/plan/create/${authuser?.response._id}`, formValues)
       .then((response) => {
         // setSuccess("Plan added successfully.");
         toast.success("Plan added successfully.");

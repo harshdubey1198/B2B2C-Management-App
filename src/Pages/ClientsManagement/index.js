@@ -49,7 +49,7 @@ function ClientManagement() {
     if (selectedPlan) {
       axios
         .put(
-          `${process.env.REACT_APP_URL}/clientadmin/updaterequestPlan/${selectedPlan?.clientId}`,
+          `https://b2b2c-management-app.onrender.com/api/clientadmin/updaterequestPlan/${selectedPlan?.clientId}`,
           {
             plan: {
               planId: selectedPlan?.planId,
@@ -71,7 +71,7 @@ function ClientManagement() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_URL}/clientadmin/getClients`)
+      .get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getClients`)
       .then((response) => {
         setRequestedData(response);
 
@@ -90,7 +90,7 @@ function ClientManagement() {
 
   const handleAccept = (id) => {
     axios
-      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {
+      .put(`https://b2b2c-management-app.onrender.com/api/clientadmin/updateClient/${id}`, {
         status: "Accepted",
       })
       .then(() => {
@@ -103,7 +103,7 @@ function ClientManagement() {
 
   const handleReject = (id) => {
     axios
-      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {
+      .put(`https://b2b2c-management-app.onrender.com/api/clientadmin/updateClient/${id}`, {
         status: "Rejected",
       })
       .then(() => {
@@ -116,7 +116,7 @@ function ClientManagement() {
 
   const handleHold = (id) => {
     axios
-      .put(`${process.env.REACT_APP_URL}/clientadmin/updateClient/${id}`, {
+      .put(`https://b2b2c-management-app.onrender.com/api/clientadmin/updateClient/${id}`, {
         status: "Hold",
       })
       .then(() => {

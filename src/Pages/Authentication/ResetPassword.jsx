@@ -69,7 +69,7 @@ const ResetPassword = () => {
       return;
     }else{
         // API call to reset password
-        PostRequest(`${process.env.REACT_APP_URL}/auth/reset-password`, formValues).then((response) => {
+        PostRequest(`https://b2b2c-management-app.onrender.com/api/auth/reset-password`, formValues).then((response) => {
             if(response){
                 // setSuccess("Password reset successfully");
                 toast.success("Password reset successfully");
