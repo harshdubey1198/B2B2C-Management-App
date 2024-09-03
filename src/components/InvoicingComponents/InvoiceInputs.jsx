@@ -8,11 +8,6 @@ const countries = {
     Indonesia: { currency: 'IDR', gst: 10 }
 };
 
-// const fakeItems = [
-//     { id: 1, name: 'Item 1', price: 10.00 },
-//     { id: 2, name: 'Item 2', price: 20.00 },
-//     { id: 3, name: 'Item 3', price: 30.00 }
-// ];
 
 const InvoiceInputs = ({
     invoiceData,
@@ -63,14 +58,6 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="companyAddress">Company Address</Label>
-                        {/* <Input
-                            type="text"
-                            name="companyAddress"
-                            id="companyAddress"
-                            value={invoiceData.companyAddress}
-                            // onChange={handleInputChange}
-                            required
-                        /> */}
                         <Input 
                         type="text"
                         name="officeAddress"

@@ -44,7 +44,7 @@ const Index = () => {
 
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
-            console.log(response, "response")
+            // console.log(response, "response")
             const address = Array.isArray(response.companyAddress) ? response.companyAddress[0] : {};
             setCompanyData(response, "response")
             setInvoiceData((prevData) => ({
@@ -80,7 +80,7 @@ const Index = () => {
         })
 
         const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"))
-        console.log(storedItemData, "storeddatata")
+        // console.log(storedItemData, "storeddatata")
         setFakeItems(storedItemData)    
         // setInvoiceData((prevState) => ({
         //     ...prevState,
@@ -150,7 +150,7 @@ const Index = () => {
         }
     };
     
-    console.log(variants, "variants")
+    // console.log(variants, "variants")
     const handleVariantChange = (index, e) => {
         // console.log(index, "indexing variant change")
         const { value } = e.target;
