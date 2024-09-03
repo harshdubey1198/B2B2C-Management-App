@@ -10,6 +10,7 @@ function InventoryTable() {
   const [role, setRole] = useState("");
   const [editModal, setEditModal] = useState(false);
   const [editItem, setEditItem] = useState(null);
+  const [editVariant, setEditVariant] = useState(null); // State for the variant being edited
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
@@ -18,7 +19,8 @@ function InventoryTable() {
       variants: Array.isArray(item.variants) ? item.variants.map(v => ({
         ...v,
         price: Number(v.price),
-        tax: Number(v.tax)
+        tax: Number(v.tax),
+        quantity: Number(v.quantity)
       })) : []
     })));
 
@@ -34,8 +36,9 @@ function InventoryTable() {
     }
   };
 
-  const handleEditClick = (item) => {
+  const handleEditClick = (item, variant) => {
     setEditItem(item);
+    setEditVariant(variant); // Set the variant being edited
     setEditModal(true);
   };
 
@@ -59,26 +62,34 @@ function InventoryTable() {
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
   };
+  
   const calculateTotalQuantity = (variants) => {
     return variants.reduce((acc, curr) => acc + Number(curr.quantity), 0);
   };
-  
+
   const calculatePriceAfterTax = (price, taxRate) => {
     return (price + (price * (taxRate / 100))).toFixed(2);
   };
 
   const handleModalInputChange = (e) => {
     const { name, value } = e.target;
-    setEditItem(prevState => ({
+    setEditVariant(prevState => ({
       ...prevState,
       [name]: value
     }));
   };
 
   const handleSaveChanges = () => {
-    const updatedData = inventoryData.map(item =>
-      item.id === editItem.id ? editItem : item
+    const updatedVariants = editItem.variants.map(v =>
+      v === editVariant ? editVariant : v
     );
+
+    const updatedItem = { ...editItem, variants: updatedVariants };
+
+    const updatedData = inventoryData.map(item =>
+      item.id === editItem.id ? updatedItem : item
+    );
+
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
     setEditModal(false);
@@ -95,7 +106,7 @@ function InventoryTable() {
           <Card>
             <CardBody>
               <div className="table-responsive">
-                <table className="table table-bordered mb-0">
+                <table className="table table-bordered mb=0">
                   <thead>
                     <tr>
                       <th>Name</th>
@@ -119,12 +130,10 @@ function InventoryTable() {
                             <tr
                               key={`${item.id}-${index}`}
                               onClick={() => handleRowClick(item.id)}
-                              style={{ cursor: 'pointer' }} 
+                              style={{ cursor: 'pointer' }}
                             >
                               <td>{index === 0 ? item.name : ''}</td>
                               <td>{index === 0 ? item.description : ''}</td>
-                              {/* <td>{index === 0 ? item.quantity : ''}</td>
-                               */}
                               <td>{index === 0 ? calculateTotalQuantity(item.variants) : ''}</td>
                               <td>{index === 0 ? item.brandName : ''}</td>
                               <td>{index === 0 ? item.supplier : ''}</td>
@@ -148,7 +157,7 @@ function InventoryTable() {
                                       <Icon path={mdiCheck} size={1} />
                                     </Button>
                                   )}
-                                  <Button color="warning" onClick={() => handleEditClick(item)} style={{ marginRight: '5px' }} title="Edit">
+                                  <Button color="warning" onClick={() => handleEditClick(item, variant)} style={{ marginRight: '5px' }} title="Edit">
                                     <Icon path={mdiPencil} size={1} />
                                   </Button>
                                   <Button color="danger" onClick={() => handleDeleteClick(item.id, index)} title="Delete">
@@ -173,72 +182,40 @@ function InventoryTable() {
         </Col>
 
         <Modal isOpen={editModal} toggle={() => setEditModal(!editModal)}>
-          <ModalHeader toggle={() => setEditModal(!editModal)}>Edit Inventory Item</ModalHeader>
+          <ModalHeader toggle={() => setEditModal(!editModal)}>Edit Variant</ModalHeader>
           <ModalBody>
-            {editItem && (
+            {editVariant && (
               <FormGroup>
-                <Label for="itemName">Item Name</Label>
+                <Label for="variantName">Variant Name</Label>
                 <Input
                   type="text"
-                  id="itemName"
+                  id="variantName"
                   name="name"
-                  value={editItem.name}
+                  value={editVariant.name}
                   onChange={handleModalInputChange}
                 />
-                <Label for="itemDescription">Description</Label>
-                <Input
-                  type="textarea"
-                  id="itemDescription"
-                  name="description"
-                  value={editItem.description}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="itemQuantity">Quantity</Label>
+                <Label for="variantPrice">Price</Label>
                 <Input
                   type="number"
-                  id="itemQuantity"
-                  name="quantity"
-                  value={editItem.quantity}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="itemBrand">Brand</Label>
-                <Input
-                  type="text"
-                  id="itemBrand"
-                  name="brand"
-                  value={editItem.brand}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="itemSupplier">Supplier</Label>
-                <Input
-                  type="text"
-                  id="itemSupplier"
-                  name="supplier"
-                  value={editItem.supplier}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="itemPrice">Original Price</Label>
-                <Input
-                  type="number"
-                  id="itemPrice"
+                  id="variantPrice"
                   name="price"
-                  value={editItem.price}
+                  value={editVariant.price}
                   onChange={handleModalInputChange}
                 />
-                <Label for="itemCategory">Category</Label>
+                <Label for="variantTax">Tax (%)</Label>
                 <Input
-                  type="text"
-                  id="itemCategory"
-                  name="category"
-                  value={editItem.category}
+                  type="number"
+                  id="variantTax"
+                  name="tax"
+                  value={editVariant.tax}
                   onChange={handleModalInputChange}
                 />
-                <Label for="itemType">Type</Label>
+                <Label for="variantQuantity">Quantity</Label>
                 <Input
-                  type="text"
-                  id="itemType"
-                  name="type"
-                  value={editItem.type}
+                  type="number"
+                  id="variantQuantity"
+                  name="quantity"
+                  value={editVariant.quantity}
                   onChange={handleModalInputChange}
                 />
                 <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>

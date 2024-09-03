@@ -20,7 +20,6 @@ function TaxationTable() {
   }, []);
 
   useEffect(() => {
-    // Save taxation data to local storage whenever it changes
     localStorage.setItem("taxationData", JSON.stringify(taxations));
   }, [taxations]);
 
@@ -42,7 +41,7 @@ function TaxationTable() {
       setTaxations([...taxations, { ...editingItem, id: taxations.length + 1 }]);
     }
     toggleModal();
-    setEditingItem(null); // Reset editing item
+    setEditingItem(null); 
   };
 
   const handleInputChange = (e) => {

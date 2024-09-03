@@ -37,6 +37,7 @@ function ItemConfiguration() {
         name: v.name || v,
         price: v.price || 0,
         tax: v.tax || 0,
+        quantity: v.quantity || 0,
       })),
     });
     toggleModal();
@@ -103,7 +104,7 @@ function ItemConfiguration() {
   const handleAddVariant = () => {
     setEditingItem({
       ...editingItem,
-      variants: [...editingItem.variants, { name: "", price: 0, tax: 0 }],
+      variants: [...editingItem.variants, { name: "", price: 0, tax: 0, quantity: 0 }], 
     });
   };
 
@@ -192,7 +193,7 @@ function ItemConfiguration() {
         </Col>
       </div>
 
-      <Modal isOpen={modalOpen} toggle={toggleModal}>
+      <Modal isOpen={modalOpen} toggle={toggleModal} style={{ maxWidth: '60%' }}>
         <ModalHeader toggle={toggleModal}>
           {editingItem?.id ? "Edit Item" : "Add New Item"}
         </ModalHeader>
@@ -230,6 +231,14 @@ function ItemConfiguration() {
                   onChange={(e) => handleVariantChange(index, e)}
                   style={{ flex: 1 }}
                 />
+                <Input 
+                  type="number"
+                  id="quantity"
+                  placeholder="Quantity"
+                  value={variant.quantity || ""}
+                  onChange={(e) => handleVariantChange(index, e)}
+                  style={{ flex: 1 }}
+                />
                 <FormGroup className="mb-0" style={{ flex: 1 }}>
                   <Label for={`tax-${index}`} style={{ marginBottom: "0" }}>
                     Tax
@@ -241,7 +250,7 @@ function ItemConfiguration() {
                       taxations.find((t) => t.rate === variant.tax)?.id || ""
                     }
                     onChange={(e) => handleTaxChange(index, e)}
-                    style={{ flex: 1, height: "calc(100% - 2px)" }} // Adjust height to match other inputs
+                    style={{ flex: 1, height: "calc(100% - 2px)" }} 
                   >
                     <option value="">Select Tax</option>
                     {taxations.map((tax) => (
