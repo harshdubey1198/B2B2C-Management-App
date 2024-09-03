@@ -6,19 +6,15 @@ function UserTable({ selectedFirmId, trigger }) {
   const [hoveredUserId, setHoveredUserId] = useState(null);
   const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-
   const fetchUsers = async () => {
     try {
       let firmId;
       
       if (authuser?.response.role === "firm_admin") {
         firmId = authuser?.response.firmId;
-        console.log("Fetching users for firm_admin with firmId:", firmId);
       } else if (authuser?.response.role === "client_admin") {
-        firmId = defaultFirm?.firmId;
-        console.log("Fetching users for client_admin with defaultFirmId:", firmId);
+        firmId = selectedFirmId
       }
-      console.log("Firm Id:", firmId);
       if (firmId) {
         const response = await axios.get(
           `https://b2b2c-management-app.onrender.com/api/firmadmin/firmusers/${firmId}`

@@ -6,13 +6,12 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   const [firms, setFirms] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-
   const toggleDropdown = () => setDropdownOpen(prevState => !prevState);
 
   useEffect(() => {
     const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
     if (defaultFirm && !selectedFirmId) {
-      onSelectFirm(defaultFirm.fuid);
+      onSelectFirm(defaultFirm.firmId);
     }
 
     if (authuser) {
@@ -28,7 +27,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
 
   useEffect(() => {
     if (selectedFirmId) {
-      const selectedFirm = firms.find(firm => firm.fuid === selectedFirmId);
+      const selectedFirm = firms.find(firm => firm._id === selectedFirmId);
       if (selectedFirm) {
         localStorage.setItem("defaultFirm", JSON.stringify({
           fuid: selectedFirm.fuid,
@@ -43,7 +42,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'150px'}}>
       <DropdownToggle  style={{ backgroundColor: '#0bb197' ,width:'140px'}}>
         <span style={{ marginRight: '10px' }}>
-          {firms.find(firm => firm.fuid === selectedFirmId)?.firmName || 'Select Firm'}
+          {firms.find(firm => firm._id === selectedFirmId)?.firmName || 'Select Firm'}
         </span>
 
         {dropdownOpen 
@@ -53,9 +52,9 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
       <DropdownMenu>
         {firms.map(firm => (
           <DropdownItem
-            key={firm.id}
-            onClick={() => onSelectFirm(firm.fuid)}
-            active={firm.fuid === selectedFirmId}
+            key={firm._id}
+            onClick={() => onSelectFirm(firm._id)}
+            active={firm._id === selectedFirmId}
           >
             <img
               src={firm.avatar}

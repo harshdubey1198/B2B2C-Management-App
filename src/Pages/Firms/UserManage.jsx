@@ -6,8 +6,8 @@ import UserTable from "../../components/FirmComponents/userTable";
 import ClientUserCreateForm from "../../components/FirmComponents/clientUserForm";
 import FirmUserCreateForm from "../../components/FirmComponents/firmUserForm";
 import { toast, ToastContainer } from "react-toastify";
-import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import "react-toastify/dist/ReactToastify.css";
+import FirmSwitcher from "./FirmSwitcher";
 
 function UserManage() {
   const [selectedFirmId, setSelectedFirmId] = useState(null);
@@ -16,7 +16,6 @@ function UserManage() {
   const [defaultFirm, setDefaultFirm] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const [trigger, setTrigger] = useState(0);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [formValues, setFormValues] = useState({
     firmUniqueId: "",
@@ -78,14 +77,12 @@ function UserManage() {
     setModalOpen(!modalOpen);
   };
 
-  const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
-
   const availableRoles =
     authuser.response.role === "client_admin"
       ? clientAdminRoles
       : firmAdminRoles;
 
-  return (
+  return ( 
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Firm Users" />
@@ -99,42 +96,10 @@ function UserManage() {
             Add User
           </Button>
           {authuser?.response.role === "client_admin" && (
-            <Dropdown
-              isOpen={dropdownOpen}
-              toggle={toggleDropdown}
-              style={{ width: "150px" }}
-            >
-              <DropdownToggle
-                style={{ backgroundColor: "#0bb197", width: "140px" }}
-              >
-                <span style={{ marginRight: "10px" }}>
-                  {firms.find((firm) => firm.fuid === selectedFirmId)
-                    ?.firmName || "Select Firm"}
-                </span>
-                {dropdownOpen ? (
-                  <i className="mdi mdi-chevron-up"></i>
-                ) : (
-                  <i className="mdi mdi-chevron-down"></i>
-                )}
-              </DropdownToggle>
-              <DropdownMenu>
-                {firms.map((firm) => (
-                  <DropdownItem
-                    key={firm._id}
-                    onClick={() => setSelectedFirmId(firm.fuid)}
-                    active={firm.fuid === selectedFirmId}
-                  >
-                    <img
-                      src={firm.avatar}
-                      alt={firm.firmName}
-                      className="img-fluid"
-                      style={{ maxWidth: "30px", marginRight: "10px" }}
-                    />
-                    {firm.firmName}
-                  </DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+            <FirmSwitcher
+            selectedFirmId={selectedFirmId}
+            onSelectFirm={setSelectedFirmId}
+            />
           )}
         </div>
         <Col lg={12}>

@@ -35,7 +35,7 @@ function FirmSettings() {
           setFirmsData(firms);
           // Only set selectedFirmId if it's not already set
           if (firms.length > 0 && !selectedFirmId) {
-            setSelectedFirmId(firms[0].fuid);
+            setSelectedFirmId(firms[0]._id);
           }
         } catch (error) {
           console.error("Error getting firms:", error.response || error.message);
@@ -68,7 +68,7 @@ function FirmSettings() {
 
   useEffect(() => {
     if (selectedFirmId) {
-      const selectedFirm = firmsData.find(firm => firm.fuid === selectedFirmId) || {};
+      const selectedFirm = firmsData.find(firm => firm._id === selectedFirmId) || {};
       localStorage.setItem("defaultFirm", JSON.stringify({
         firmId: selectedFirm._id || "",
         fuid: selectedFirmId || "",
@@ -81,7 +81,7 @@ function FirmSettings() {
   const handleFirmChange = (id) => {
     setSelectedFirmId(id);
     // Fetch details for the newly selected firm
-    const selectedFirm = firmsData.find(firm => firm.fuid === id) || {};
+    const selectedFirm = firmsData.find(firm => firm._id === id) || {};
     setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] })
   };
 
