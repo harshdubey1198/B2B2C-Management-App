@@ -43,7 +43,7 @@ const LockScreen = () => {
             return;
         }
         // Perform the API call here
-        axios.post(`https://b2b2c-management-app.onrender.com/api/auth/login`, {
+        axios.post(`${process.env.REACT_APP_URL}/auth/login`, {
             email: userData?.email,
             role: userData?.role,
             password: pass

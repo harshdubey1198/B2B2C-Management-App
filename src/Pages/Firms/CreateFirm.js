@@ -114,7 +114,7 @@ function CreateFirm() {
 
     try {
         const response = await axios.post(
-            `https://b2b2c-management-app.onrender.com/api/clientadmin/createFirm/${clientId}`,
+            `${process.env.REACT_APP_URL}/clientadmin/createFirm/${clientId}`,
             formValues,
             {
                 headers: {

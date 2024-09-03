@@ -12,7 +12,7 @@ function SwitchFirm() {
     // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
     // setFirms(storedFirms);
     if(authuser){
-      axios.get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`).then((response) => {
         setFirms(response)
       }).catch((error) => {
         console.log(error, "error getting firms")

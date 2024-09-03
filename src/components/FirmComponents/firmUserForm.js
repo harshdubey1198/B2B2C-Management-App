@@ -23,7 +23,7 @@ const FirmUserCreateForm = ({
   useEffect(() => {
    
       axios
-        .get(`https://b2b2c-management-app.onrender.com/api/firmadmin/firmdata/${authUser?.response._id}`)
+        .get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser?.response._id}`)
         .then((response) => {
           const firmData = response;
           // console.log(firmData, "response")
@@ -67,7 +67,7 @@ const FirmUserCreateForm = ({
     }
 
     axios
-      .post(`https://b2b2c-management-app.onrender.com/api/auth/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully.");

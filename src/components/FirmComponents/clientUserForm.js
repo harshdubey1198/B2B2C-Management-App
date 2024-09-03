@@ -50,7 +50,7 @@ const handleSubmit = (e) => {
     }
 
     axios
-      .post(`https://b2b2c-management-app.onrender.com/api/clientadmin/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/clientadmin/createUser`, formValues)
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully."); 

@@ -10,7 +10,7 @@ const Pricing = () => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   useEffect(() => {
-    axios.get(`https://b2b2c-management-app.onrender.com/api/plan/all`)
+    axios.get(`${process.env.REACT_APP_URL}/plan/all`)
       .then((response) => {
         setPlans(response); 
       })
@@ -19,7 +19,7 @@ const Pricing = () => {
       });
 
     if (authuser) {
-      axios.get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getClient/${authuser?.response._id}`)
+      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getClient/${authuser?.response._id}`)
         .then((response) => {
           const clientAdminData = response; 
           if (clientAdminData && clientAdminData.plan) {
@@ -36,7 +36,7 @@ const Pricing = () => {
   }, []);
 
   const handleRequest = (planId) => {
-    axios.post(`https://b2b2c-management-app.onrender.com/api/clientadmin/requestPlan`, {
+    axios.post(`${process.env.REACT_APP_URL}/clientadmin/requestPlan`, {
       clientId: authuser?.response._id,
       planId: planId
     }).then((response) => {

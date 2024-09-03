@@ -79,7 +79,7 @@ const Register = (props) => {
         toast.error("Confirm Password should be the same as Password!");
       }else {
       PostRequest(
-        `https://b2b2c-management-app.onrender.com/api/clientadmin/register`,
+        `${process.env.REACT_APP_URL}/clientadmin/register`,
         formInput
       )
         .then((response) => {
