@@ -25,6 +25,7 @@ const InvoiceInputs = ({
     error,
     success
 }) => {
+    // console.log(invoiceData.items,"fakeitems")
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
             {/* {error && <Alert color='danger'>{error}</Alert>}
@@ -278,6 +279,8 @@ const InvoiceInputs = ({
     {invoiceData.items.map((item, index) => (
                 <Row key={index} className="mb-3">
                     <Col md={3}>
+                    {/* {console.log(item, "item")}
+                    {console.log(index, "index")} */}
                         <FormGroup>
                             <Label for={`description${index}`}>Description</Label>
                             <Input
@@ -364,7 +367,7 @@ const InvoiceInputs = ({
                         <Button color="danger" onClick={() => removeItem(index)} className="mt-4">Remove</Button>
                     </Col>
                 </Row>
-            ))}
+    ))}
 
             <Button color="primary" onClick={addItem}>Add Item</Button>
             {/* <Button color="success" type="submit" className="ml-2">Generate Invoice</Button> */}
