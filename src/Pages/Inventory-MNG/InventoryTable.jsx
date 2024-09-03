@@ -39,8 +39,15 @@ function InventoryTable() {
     setEditModal(true);
   };
 
-  const handleDeleteClick = (id) => {
-    const updatedData = inventoryData.filter(item => item.id !== id);
+  const handleDeleteClick = (itemId, variantIndex) => {
+    const updatedData = inventoryData.map(item => {
+      if (item.id === itemId) {
+        const updatedVariants = item.variants.filter((_, index) => index !== variantIndex);
+        return { ...item, variants: updatedVariants };
+      }
+      return item;
+    }).filter(item => item.variants.length > 0); // Optionally remove items without any variants left
+
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
   };
@@ -52,7 +59,10 @@ function InventoryTable() {
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
   };
-
+  const calculateTotalQuantity = (variants) => {
+    return variants.reduce((acc, curr) => acc + Number(curr.quantity), 0);
+  };
+  
   const calculatePriceAfterTax = (price, taxRate) => {
     return (price + (price * (taxRate / 100))).toFixed(2);
   };
@@ -91,8 +101,9 @@ function InventoryTable() {
                       <th>Name</th>
                       <th>Description</th>
                       <th>Quantity</th>
+                      <th>Brand</th>
                       <th>Supplier</th>
-                      <th>Original Price</th>
+                      <th>Price</th>
                       <th>Category</th>
                       <th>Variants</th>
                       <th>Type</th>
@@ -112,7 +123,10 @@ function InventoryTable() {
                             >
                               <td>{index === 0 ? item.name : ''}</td>
                               <td>{index === 0 ? item.description : ''}</td>
-                              <td>{index === 0 ? item.quantity : ''}</td>
+                              {/* <td>{index === 0 ? item.quantity : ''}</td>
+                               */}
+                              <td>{index === 0 ? calculateTotalQuantity(item.variants) : ''}</td>
+                              <td>{index === 0 ? item.brandName : ''}</td>
                               <td>{index === 0 ? item.supplier : ''}</td>
                               <td>${variant.price.toFixed(2)}</td>
                               <td>{index === 0 ? item.category : ''}</td>
@@ -137,7 +151,7 @@ function InventoryTable() {
                                   <Button color="warning" onClick={() => handleEditClick(item)} style={{ marginRight: '5px' }} title="Edit">
                                     <Icon path={mdiPencil} size={1} />
                                   </Button>
-                                  <Button color="danger" onClick={() => handleDeleteClick(item.id)} title="Delete">
+                                  <Button color="danger" onClick={() => handleDeleteClick(item.id, index)} title="Delete">
                                     <Icon path={mdiDelete} size={1} />
                                   </Button>
                                 </div>
@@ -185,6 +199,14 @@ function InventoryTable() {
                   id="itemQuantity"
                   name="quantity"
                   value={editItem.quantity}
+                  onChange={handleModalInputChange}
+                />
+                <Label for="itemBrand">Brand</Label>
+                <Input
+                  type="text"
+                  id="itemBrand"
+                  name="brand"
+                  value={editItem.brand}
                   onChange={handleModalInputChange}
                 />
                 <Label for="itemSupplier">Supplier</Label>

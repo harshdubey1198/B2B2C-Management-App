@@ -14,6 +14,7 @@ const InventoryItemForm = () => {
     name: "",
     description: "",
     quantity: "",
+    brandName:"",
     category: "",
     supplier: "",
     hsn: "",
@@ -99,7 +100,7 @@ const InventoryItemForm = () => {
       setFormValues({
         name: "",
         description: "",
-        quantity: "",
+        // quantity: "",
         category: "",
         supplier: "",
         hsn: "",
@@ -173,7 +174,7 @@ const InventoryItemForm = () => {
                         </Label>
                       </FormGroup>
                     </FormGroup>
-                    <FormGroup>
+                    {/* <FormGroup>
                       <Label htmlFor="quantity">Quantity</Label>
                       <Input
                         type="number"
@@ -183,7 +184,7 @@ const InventoryItemForm = () => {
                         value={formValues.quantity}
                         onChange={handleChange}
                       />
-                    </FormGroup>
+                    </FormGroup> */}
                     <FormGroup>
                       <Label htmlFor="category">Category</Label>
                       <Input
@@ -192,6 +193,17 @@ const InventoryItemForm = () => {
                         name="category"
                         placeholder="Enter category"
                         value={formValues.category}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup >
+                      <Label htmlFor="brandName">Brand Name</Label>
+                      <Input
+                        type="text"
+                        id="brandName"
+                        name="brandName"
+                        placeholder="Enter brand name"
+                        value={formValues.brandName}
                         onChange={handleChange}
                       />
                     </FormGroup>
