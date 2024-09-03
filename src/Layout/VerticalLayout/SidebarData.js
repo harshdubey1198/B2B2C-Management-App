@@ -21,17 +21,17 @@ export const masterAdminSidebarData = () => [
       ],
     },
    
-    {
-      label: "Invoicing",
-      icon: "mdi mdi-printer",
-      subItem: [
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "Payments", link: "/payments-invoice" },
-        // { sublabel: "Expenses", link: "/expenses" },
-        { sublabel: "Reports", link: "/reports-invoice" },
-      ],
-    },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-printer",
+    //   subItem: [
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //     // { sublabel: "Create Invoice", link: "/create-invoice" },
+    //     { sublabel: "Payments", link: "/payments-invoice" },
+    //     // { sublabel: "Expenses", link: "/expenses" },
+    //     { sublabel: "Reports", link: "/reports-invoice" },
+    //   ],
+    // },
     {
       label:"Maintenance",
       icon:"mdi mdi-tools",
@@ -97,17 +97,17 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-cash-multiple",
       url:"/pages-pricing",
     },
-    {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        // { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Expenses", link: "/expenses" },
-        // { sublabel: "Reports", link: "/reports" },
-      ],
-    },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-cash-multiple",
+    //   subItem: [
+    //     // { sublabel: "Create Invoice", link: "/create-invoice" },
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //     // { sublabel: "Payments", link: "/payments" },
+    //     // { sublabel: "Expenses", link: "/expenses" },
+    //     // { sublabel: "Reports", link: "/reports" },
+    //   ],
+    // },
     {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
@@ -182,17 +182,17 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-cash-multiple",
       url:"/pages-pricing",
     },
-    {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        // { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Expenses", link: "/expenses" },
-        // { sublabel: "Reports", link: "/reports" },
-      ],
-    },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-cash-multiple",
+    //   subItem: [
+    //     // { sublabel: "Create Invoice", link: "/create-invoice" },
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //     // { sublabel: "Payments", link: "/payments" },
+    //     // { sublabel: "Expenses", link: "/expenses" },
+    //     // { sublabel: "Reports", link: "/reports" },
+    //   ],
+    // },
     {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
@@ -247,16 +247,16 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Reports", link: "/reports-invoice" },
-      ],
-    },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-cash-multiple",
+    //   subItem: [
+    //     { sublabel: "Create Invoice", link: "/create-invoice" },
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //     // { sublabel: "Payments", link: "/payments" },
+    //     // { sublabel: "Reports", link: "/reports-invoice" },
+    //   ],
+    // },
     {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
@@ -281,15 +281,16 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-cash-multiple",
+    //   subItem: [
+    //     { sublabel: "Create Invoice", link: "/create-invoice" },
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //     // { sublabel: "Payments", link: "/payments" },
+    //   ],
+    // },
     {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Payments", link: "/payments" },
-      ],
-    },{
       label: "Inventory",
       icon: "mdi mdi-room-service-outline",
       subItem: [
@@ -313,13 +314,13 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "View Invoices", link: "/view-invoices" },
-      ],
-    },
+    // {
+    //   label: "Invoicing",
+    //   icon: "mdi mdi-cash-multiple",
+    //   subItem: [
+    //     { sublabel: "View Invoices", link: "/view-invoices" },
+    //   ],
+    // },
   ];
   
   export const readOnlySidebarData = () => [
