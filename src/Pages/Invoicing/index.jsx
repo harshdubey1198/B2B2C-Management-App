@@ -43,14 +43,14 @@ const Index = () => {
     const authuser = JSON.parse(localStorage.getItem("authUser"))
 
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
+        axios.get(`https://b2b2c-management-app.onrender.com/api/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
             console.log(response, "response")
             const address = Array.isArray(response.companyAddress) ? response.companyAddress[0] : {};
             setCompanyData(response, "response")
             setInvoiceData((prevData) => ({
                 ...prevData,
                 companyName: response.firmName,
-                companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
+                companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}.trim() || ""`,
                 companyLogo: response.avatar,
                 officeAddress: address.h_no,
                 companyCity: address.city,
@@ -110,18 +110,16 @@ const Index = () => {
     const handleItemChange = (index, e) => {
         const { name, value } = e.target;
         const updatedItems = [...invoiceData.items];
+        const selectedQuantity = parseInt(value, 10) || 0;
     
         if (name === 'quantity') {
-            const selectedQuantity = parseInt(value, 10) || 0;
-            const availableQuantity = updatedItems[index].availableQuantity || 0;
-    
-            if (selectedQuantity <= availableQuantity) {
+            if (selectedQuantity <= updatedItems[index].availableQuantity) {
                 updatedItems[index].quantity = selectedQuantity;
             } else {
                 toast.error("Selected quantity exceeds available stock");
                 return;
             }
-        } else {    
+        } else {
             updatedItems[index][name] = parseFloat(value) || 0;
         }
     
@@ -131,7 +129,7 @@ const Index = () => {
 
     const handleDescriptionChange = (index, e) => {
         const { value } = e.target;
-        const selectedItem = fakeItems.find(item => item.id === (value));
+        const selectedItem = fakeItems.find(item => item.id === value);
         if (selectedItem) {
             const updatedItems = [...invoiceData.items];
             updatedItems[index] = {
@@ -140,31 +138,32 @@ const Index = () => {
                 price: selectedItem.price,
                 variants: selectedItem.variants,
                 id: selectedItem.id,
-                quantity: selectedItem.quantity
+                quantity: 1,  // Reset to 1 by default
+                availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + variant.quantity, 0) // Sum of all variant quantities
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-            setVariants(selectedItem.variants);
+            setVariants(selectedItem.variants || []);
         }
     };
     
     console.log(variants, "variants")
     const handleVariantChange = (index, e) => {
         const { value } = e.target;
-        const selectedItemVariant = variants.find(variant => variant.id === value);
-        
-        if (selectedItemVariant) {
+        const selectedVariant = variants.find(variant => variant.id === value);
+        if (selectedVariant) {
             const updatedItems = [...invoiceData.items];
             updatedItems[index] = {
                 ...updatedItems[index],
-                selectedVariant: selectedItemVariant.name,
-                variantId: selectedItemVariant.id,
-                quantity: 1,
-                price: selectedItemVariant.price,
-                availableQuantity: selectedItemVariant.quantity
+                selectedVariant: selectedVariant.name,
+                variantId: selectedVariant.id,
+                price: selectedVariant.price,
+                availableQuantity: selectedVariant.quantity, // Ensure correct quantity
+                quantity: 1  // Reset to 1 by default
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
     };
+    
     
 
     const addItem = () => {
@@ -180,64 +179,61 @@ const Index = () => {
     };
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+    
         if (!validatePhone(invoiceData.customerPhone)) {
             toast.error("Invalid Phone Number");
             return;
         }
     
-        const newdata = {
+        const newInvoice = {
             ...invoiceData,
             id: Math.floor(Math.random() * 1000000)
         };
     
-        setTimeout(() => {
-            const storedData = JSON.parse(localStorage.getItem("Invoice Form")) || [];
-            storedData.push(newdata);
-            localStorage.setItem("Invoice Form", JSON.stringify(storedData));
+        // Add the new invoice to localStorage
+        const storedInvoices = JSON.parse(localStorage.getItem("Invoice Form")) || [];
+        storedInvoices.push(newInvoice);
+        localStorage.setItem("Invoice Form", JSON.stringify(storedInvoices));
     
-            // Update available quantities here
-            // Example: UpdateInventory(newdata.items);
-            
+        // Clear the form state after submission
+        setInvoiceData({
+            companyName: "",
+            companyAddress: "",
+            companyCity: "",
+            officeAddress: "",
+            companyNearby: "",
+            companyZip: "",
+            companyDistrict: "",
+            companyState: "",
+            companyCountry: "",
+            companyLogo: "",
+            companyPhone: "",
+            companyEmail: "",
+            customerName: '',
+            customerAddress: '',
+            customerHouse: '',
+            customerCity: '',
+            customerNearby: '',
+            customerZip: '',
+            customerDistrict: '',
+            customerState: '',
+            customerCountry: '',
+            customerPhone: '',
+            date: '',
+            country: 'India',
+            items: [],  // Reset items array
+            paymentLink: ''
+        });
     
-            setInvoiceData({
-                companyName: "",
-                companyAddress: "",
-                companyCity: "",
-                officeAddress: "",
-                companyNearby: "",
-                companyZip: "",
-                companyDistrict: "",
-                companyState: "",
-                companyCountry: "",
-                companyLogo: "",
-                companyPhone: "",
-                companyEmail: "",
-                customerName: '',
-                customerAddress: '',
-                customerHouse: '',
-                customerCity: '',
-                customerNearby: '',
-                customerZip: '',
-                customerDistrict: '',
-                customerState: '',
-                customerCountry: '',
-                customerPhone: '',
-                date: '',
-                country: 'India',
-                items: [],
-                paymentLink: ''
-            });
-    
-            toast.success("Invoice Form Submitted Successfully");
-        }, 1000);
+        toast.success("Invoice Form Submitted Successfully");
     };
+    
     
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
     });
-    console.log(invoiceData, "invoicedata")
+    // console.log(invoiceData, "invoicedata")
     return (
         <Container>
             <div className='page-content'>

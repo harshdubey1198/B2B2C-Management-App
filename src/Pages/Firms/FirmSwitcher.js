@@ -16,7 +16,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     }
 
     if (authuser) {
-      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
+      axios.get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
           setFirms(response);  
         })

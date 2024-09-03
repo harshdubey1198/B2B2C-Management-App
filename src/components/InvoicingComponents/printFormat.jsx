@@ -33,7 +33,6 @@ const convertNumberToWords = (num) => {
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     const { country } = invoiceData;
-    console.log(invoiceData,"country")
     const taxRate = countries[country]?.gst || 0;
     const isSameState = invoiceData.companyState === invoiceData.customerState;
     const cgstSgstRate = isSameState ? taxRate / 2 : 0;
@@ -121,8 +120,8 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                                 <td>{item.description}</td>
                                 <td>{item.Hsn}</td>
                                 <td>{item.quantity}</td>
-                                <td>{Number(item.price).toFixed(2)}</td>
-                                <td>{itemTotalValue.toFixed(2)}</td>
+                                <td>{item.price}</td>
+                                <td>{item.totalAmount}</td>
                                 {isSameState ? (
                                     <>
                                         <td>{itemCgstAmount.toFixed(2)}</td>

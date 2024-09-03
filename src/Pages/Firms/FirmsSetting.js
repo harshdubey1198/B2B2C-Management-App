@@ -30,7 +30,7 @@ function FirmSettings() {
     if (authUser?.response?.role === "client_admin") {
       const fetchFirms = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser.response._id}`);
+          const response = await axios.get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authUser.response._id}`);
           const firms = response || [];
           setFirmsData(firms);
           // Only set selectedFirmId if it's not already set
@@ -51,7 +51,7 @@ function FirmSettings() {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
+          const response = await axios.get(`https://b2b2c-management-app.onrender.com/api/firmadmin/firmdata/${authUser.response._id}`);
           const firmData = response || {};
           // Ensure companyAddress is initialized as an array
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
@@ -112,7 +112,7 @@ function FirmSettings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
+      await axios.post(`https://b2b2c-management-app.onrender.com/api/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
       // setSuccess("Firm details updated successfully!");
       toast.success("Firm details updated successfully!");
       // Instead of triggering a full re-fetch of the firm list, just update the details for the current firm
@@ -150,14 +150,16 @@ function FirmSettings() {
                 {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
                   
                   <Form onSubmit={handleSubmit}>
+                     <div className=' d-flex flex-row justify-content-center'>
                      {firmDetails.avatar && (
                             <img
                               src={firmDetails.avatar}
                               alt="Firm Avatar"
-                              className="img-fluid mt-2 rounded-circle"
-                              style={{ maxWidth: '100px' }}
+                              className="img-fluid my-5 mt-0"
+                              style={{ width:'auto', height:'150px', objectFit:'cover' , borderRadius:'10px' }}
                             />
                           )}
+                     </div>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
