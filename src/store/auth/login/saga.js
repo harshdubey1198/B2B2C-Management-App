@@ -42,7 +42,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
-    yield put(apiError(error));
+    yield put(apiError("Please check your email and password"));
   }
 }
 

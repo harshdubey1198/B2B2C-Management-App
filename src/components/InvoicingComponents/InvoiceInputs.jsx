@@ -272,7 +272,40 @@ const InvoiceInputs = ({
             </Row>
             
     <h4>Items</h4>
-   
+    {fakeItems.map((item, index) => (
+        <Row key={index} className="mb-4">
+            <Col md={3}>
+
+                <FormGroup>
+                    <Label for="description">Description</Label>
+                    <Input
+                        type="text"
+                        name="description"
+                        id="description"
+                        value={item.description}
+                        onChange={(e) => handleItemChange(e, index)}
+                        required
+                    />
+                </FormGroup>
+            </Col>
+            <Col md={2}>
+
+                <FormGroup>
+                    <Label for="quantity">Quantity</Label>
+                    <Input
+                        type="number"
+                        name="quantity"
+                        id="quantity"
+                        value={item.quantity}
+                        onChange={(e) => handleItemChange(e, index)}
+                        required
+                    />
+                </FormGroup>    
+
+            </Col>
+    </Row>
+    ))}
+    
 
             <Button color="primary" onClick={addItem}>Add Item</Button>
             {/* <Button color="success" type="submit" className="ml-2">Generate Invoice</Button> */}

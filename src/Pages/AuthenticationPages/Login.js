@@ -167,11 +167,8 @@ const Login = (props) => {
                       </Link>
                     </div>
                     <h4 className="font-size-18 text-muted mt-2 text-center">
-                      Welcome Back !
+                      Login 
                     </h4>
-                    <p className="mb-3 text-center">
-                      Sign in to continue to aaMOBee.
-                    </p>
                     <Form className="form-horizontal" onSubmit={handleSubmit}>
                       {/* {error && <Alert color="danger">{error}</Alert>} */}
                       <Row>

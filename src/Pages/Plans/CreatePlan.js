@@ -117,7 +117,7 @@ function CreatePlan() {
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
-              <Card className="mt-5">
+              <Card >
                 <CardBody>
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Create Plan

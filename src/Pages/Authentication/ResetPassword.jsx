@@ -130,9 +130,9 @@ const ResetPassword = () => {
                       <h4 className="font-size-18 text-muted mt-2 text-center">
                         Reset Password
                       </h4>
-                      <p className="mb-5 text-center">
+                      {/* <p className="mb-5 text-center">
                         Reset your Password with aaMOBee.
-                      </p>
+                      </p> */}
                       {error && (
                         <Alert color="danger" className="alert-dismissible">
                           <button

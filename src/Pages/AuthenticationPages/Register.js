@@ -76,7 +76,7 @@ const Register = (props) => {
         })
         .catch((err) => {
           console.log("API Error", err);
-          dispatch(registerUserFailed(err || "An error occurred"));
+          dispatch(registerUserFailed("Something Went Wrong!"));
         });
     }
   };
@@ -180,12 +180,12 @@ const Register = (props) => {
                     </Link>
                   </div>
 
-                  <h4 className="font-size-18 text-muted text-center mt-2">
+                  {/* <h4 className="font-size-18 text-muted text-center mt-2">
                     Free Register
-                  </h4>
-                  <p className="text-muted text-center mb-4">
+                  </h4> */}
+                  {/* <p className="text-muted text-center mb-4">
                     Get your free aaMOBee account now.
-                  </p>
+                  </p> */}
                   <Form className="form-horizontal" onSubmit={handleSubmit}>
                     {user && (
                       <Alert color="success">Register User Successfully</Alert>
