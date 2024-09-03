@@ -114,7 +114,7 @@ function CreateFirm() {
 
     try {
         const response = await axios.post(
-            `http://localhost:8000/api/clientadmin/createFirm/${clientId}`,
+            `https://b2b2c-management-app.onrender.com/api/clientadmin/createFirm/${clientId}`,
             formValues,
             {
                 headers: {

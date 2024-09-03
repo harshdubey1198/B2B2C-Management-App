@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, Col } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import FirmSwitcher from "./FirmSwitcher";
 import axios from "axios";
 import UserTable from "../../components/FirmComponents/userTable";
 import ClientUserCreateForm from "../../components/FirmComponents/clientUserForm";
 import FirmUserCreateForm from "../../components/FirmComponents/firmUserForm";
 import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
-
+import "react-toastify/dist/ReactToastify.css";
+import FirmSwitcher from "./FirmSwitcher";
 
 function UserManage() {
-  const [selectedFirmId, setSelectedFirmId] = useState();
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [firms, SetFirms] = useState([]);
-  const [defaultFirm, setDefaultFirm] = useState();
+  const [firms, setFirms] = useState([]);
+  const [defaultFirm, setDefaultFirm] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const [trigger, setTrigger] = useState(0)
+  const [trigger, setTrigger] = useState(0);
 
   const [formValues, setFormValues] = useState({
     firmUniqueId: "",
@@ -45,39 +44,14 @@ function UserManage() {
         .get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
           const firmsData = response || [];
-          SetFirms(firmsData);
-          if (firmsData.length > 0) {
-            const firstFirm = firmsData[0]; 
-            setDefaultFirm(firstFirm);
-            setSelectedFirmId(firstFirm.fuid);
-            setFormValues((prevValues) => ({
-              ...prevValues,
-              firmId: firstFirm._id,
-              firmUniqueId: firstFirm.fuid,
-              firmName: firstFirm.firmName,
-            }));
-          }
+          setFirms(firmsData);
+          // Removed default firm selection here
         })
         .catch((error) => {
           console.log(error, "error getting firms");
-          // toast.error("Failed to fetch firms data");
         });
-      // console.log("Auth User Role:", authuser?.response.role);
-    }
-
-    const storedDefaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
-    if (storedDefaultFirm && storedDefaultFirm.fuid) {
-      setDefaultFirm(storedDefaultFirm);
-      setSelectedFirmId(storedDefaultFirm.fuid);
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        firmId: storedDefaultFirm.firmId,
-        firmUniqueId: storedDefaultFirm.fuid,
-        firmName: storedDefaultFirm.name,
-      }));
     }
   }, []);
-
 
   useEffect(() => {
     if (selectedFirmId && firms.length > 0) {
@@ -99,12 +73,6 @@ function UserManage() {
     }
   }, [selectedFirmId, firms]);
 
-  // const handleFirmSwitch = (firmId) => {
-  //   console.log(firmId, "firmid")
-  //   setSelectedFirmId(firmId);
-  //   setTrigger((prev) => prev + 1); // Update trigger state
-  // };
-
   const toggleModal = () => {
     setModalOpen(!modalOpen);
   };
@@ -114,7 +82,7 @@ function UserManage() {
       ? clientAdminRoles
       : firmAdminRoles;
 
-  return (
+  return ( 
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Firm Users" />
@@ -127,23 +95,25 @@ function UserManage() {
           <Button color="primary" onClick={toggleModal}>
             Add User
           </Button>
-          {authuser.response.role === "client_admin" && (
+          {authuser?.response.role === "client_admin" && (
             <FirmSwitcher
-              selectedFirmId={selectedFirmId}
-              onSelectFirm={setSelectedFirmId}
-              // onSelectFirm={handleFirmSwitch}
+            selectedFirmId={selectedFirmId}
+            onSelectFirm={setSelectedFirmId}
             />
           )}
         </div>
         <Col lg={12}>
           <Card>
             <CardBody>
-              <UserTable selectedFirmId={selectedFirmId} trigger={trigger}/>
+              {selectedFirmId ? (
+                <UserTable selectedFirmId={selectedFirmId} trigger={trigger} />
+              ) : (
+                <p>Please select a firm to view its users.</p>
+              )}
             </CardBody>
           </Card>
         </Col>
       </div>
-
       {authuser?.response.role === "client_admin" && (
         <ClientUserCreateForm
           isOpen={modalOpen}
@@ -169,7 +139,8 @@ function UserManage() {
           setFormValues={setFormValues}
           availableRoles={availableRoles}
         />
-      )}  <ToastContainer />
+      )}
+      <ToastContainer />
     </React.Fragment>
   );
 }

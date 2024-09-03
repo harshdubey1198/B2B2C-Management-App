@@ -105,8 +105,12 @@ const handleSubmit = (e) => {
     const selectedFirmName = e.target.value;
     const selectedFirm = firms.find((firm) => firm.firmName === selectedFirmName);
     if (selectedFirm) {
-      setSelectedFirmId(selectedFirm.fuid);
+      setSelectedFirmId(selectedFirm._id);
     }
+    setFormValues((prevState) => ({
+      ...prevState,
+      firmUniqueId: selectedFirm.fuid
+    }))
   };
 
   const prePermissions = [
@@ -137,7 +141,7 @@ const handleSubmit = (e) => {
                 >
                   <option value="">Select Firm</option>
                   {firms.map((firm) => (
-                    <option key={firm.fuid} value={firm.firmName}>
+                    <option key={firm._id} value={firm.firmName}>
                       {firm.firmName}
                     </option>
                   ))}
