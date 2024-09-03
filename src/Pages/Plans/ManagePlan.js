@@ -14,7 +14,7 @@ function ManagePlan() {
   const [selectedPlan, setSelectedPlan] = useState(null);
 
   useEffect(() => {
-    axios.get(`https://b2b2c-management-app.onrender.com/api/plan/all`).then((response) => {
+    axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
       setPlansData(response);
     }).catch((error) => {
       console.log(error);
@@ -36,7 +36,7 @@ function ManagePlan() {
   };
 
   const handleUpdate = () => {
-    axios.put(`https://b2b2c-management-app.onrender.com/api/plan/update/${selectedPlan._id}`, selectedPlan)
+    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan)
       .then((response) => {
         setTrigger(prev => prev + 1);
         toggleModal();

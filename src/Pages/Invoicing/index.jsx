@@ -43,7 +43,7 @@ const Index = () => {
     const authuser = JSON.parse(localStorage.getItem("authUser"))
 
     useEffect(() => {
-        axios.get(`https://b2b2c-management-app.onrender.com/api/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
+        axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`).then((response) => {
             console.log(response, "response")
             const address = Array.isArray(response.companyAddress) ? response.companyAddress[0] : {};
             setCompanyData(response, "response")

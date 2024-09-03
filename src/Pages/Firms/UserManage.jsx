@@ -41,7 +41,7 @@ function UserManage() {
   useEffect(() => {
     if (authuser?.response.role === "client_admin") {
       axios
-        .get(`https://b2b2c-management-app.onrender.com/api/clientadmin/getFirms/${authuser?.response._id}`)
+        .get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
         .then((response) => {
           const firmsData = response || [];
           setFirms(firmsData);
