@@ -46,6 +46,10 @@ function* loginUser({ payload: { user, history } }) {
   }
 }
 
+
+
+
+
 function* logoutUser() {
   try {
     localStorage.removeItem("authUser");
