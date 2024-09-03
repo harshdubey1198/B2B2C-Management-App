@@ -8,11 +8,6 @@ const countries = {
     Indonesia: { currency: 'IDR', gst: 10 }
 };
 
-// const fakeItems = [
-//     { id: 1, name: 'Item 1', price: 10.00 },
-//     { id: 2, name: 'Item 2', price: 20.00 },
-//     { id: 3, name: 'Item 3', price: 30.00 }
-// ];
 
 const InvoiceInputs = ({
     invoiceData,
@@ -30,7 +25,6 @@ const InvoiceInputs = ({
     error,
     success
 }) => {
-    // console.log(fakeItems,"fakeitems")
     const renderInputsSection = () => (
         <Form onSubmit={handleSubmit}>
             {/* {error && <Alert color='danger'>{error}</Alert>}
@@ -63,14 +57,6 @@ const InvoiceInputs = ({
                     </FormGroup>
                     <FormGroup>
                         <Label for="companyAddress">Company Address</Label>
-                        {/* <Input
-                            type="text"
-                            name="companyAddress"
-                            id="companyAddress"
-                            value={invoiceData.companyAddress}
-                            // onChange={handleInputChange}
-                            required
-                        /> */}
                         <Input 
                         type="text"
                         name="officeAddress"
@@ -316,7 +302,7 @@ const InvoiceInputs = ({
                                 type="select"
                                 name={`variant${index}`}
                                 id={`variant${index}`}
-                                value={item.variant || ''}
+                                // value={item.variant || ''}
                                 onChange={(e) => handleVariantChange(index, e)}
                             >
                                 <option value="">Select Variant</option>

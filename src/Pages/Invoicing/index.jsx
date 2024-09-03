@@ -138,8 +138,8 @@ const Index = () => {
                 price: selectedItem.price,
                 variants: selectedItem.variants,
                 id: selectedItem.id,
-                quantity: 1,  // Reset to 1 by default
-                availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + variant.quantity, 0) // Sum of all variant quantities
+                quantity: 1,  
+                availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + variant.quantity, 0)
             };
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
             setVariants(selectedItem.variants || []);
