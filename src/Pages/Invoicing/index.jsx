@@ -82,10 +82,10 @@ const Index = () => {
         const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"))
         console.log(storedItemData, "storeddatata")
         setFakeItems(storedItemData)    
-        setInvoiceData((prevState) => ({
-            ...prevState,
-            items: storedItemData ? storedItemData : []
-        }))
+        // setInvoiceData((prevState) => ({
+        //     ...prevState,
+        //     items: storedItemData ? storedItemData : []
+        // }))
     },[])
     
     const handleInputChange = (e) => {
@@ -128,7 +128,10 @@ const Index = () => {
     
 
     const handleDescriptionChange = (index, e) => {
+        // console.log(index,"indeing for description")
         const { value } = e.target;
+        // console.log(value, "descritp")
+
         const selectedItem = fakeItems.find(item => item.id === value);
         if (selectedItem) {
             const updatedItems = [...invoiceData.items];
@@ -138,6 +141,7 @@ const Index = () => {
                 price: selectedItem.price,
                 variants: selectedItem.variants,
                 id: selectedItem.id,
+                hsn: selectedItem.hsn,
                 quantity: 1,  // Reset to 1 by default
                 availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + variant.quantity, 0) // Sum of all variant quantities
             };
@@ -148,8 +152,11 @@ const Index = () => {
     
     console.log(variants, "variants")
     const handleVariantChange = (index, e) => {
+        // console.log(index, "indexing variant change")
         const { value } = e.target;
+        // console.log(value, "value")
         const selectedVariant = variants.find(variant => variant.id === value);
+        // console.log(selectedVariant, "selected variant")
         if (selectedVariant) {
             const updatedItems = [...invoiceData.items];
             updatedItems[index] = {
@@ -157,9 +164,10 @@ const Index = () => {
                 selectedVariant: selectedVariant.name,
                 variantId: selectedVariant.id,
                 price: selectedVariant.price,
-                availableQuantity: selectedVariant.quantity, // Ensure correct quantity
-                quantity: 1  // Reset to 1 by default
+                availableQuantity: selectedVariant.quantity, 
+                quantity: 1  
             };
+            // console.log(updatedItems, "updateditems")
             setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
         }
     };
