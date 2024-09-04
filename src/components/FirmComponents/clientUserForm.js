@@ -80,6 +80,7 @@ const handleSubmit = (e) => {
       });
 };
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
@@ -105,13 +106,18 @@ const handleSubmit = (e) => {
     const selectedFirmName = e.target.value;
     const selectedFirm = firms.find((firm) => firm.firmName === selectedFirmName);
     if (selectedFirm) {
-      setSelectedFirmId(selectedFirm._id);
+        setSelectedFirmId(selectedFirm._id);
+        setFormValues((prevState) => {
+            const newState = {
+                ...prevState,
+                firmUniqueId: selectedFirm.fuid,
+                firmId: selectedFirm._id,
+                firmName: selectedFirm.firmName
+            };
+            return newState;
+        });
     }
-    setFormValues((prevState) => ({
-      ...prevState,
-      firmUniqueId: selectedFirm.fuid
-    }))
-  };
+};
 
   const prePermissions = [
     "View Invoice",
