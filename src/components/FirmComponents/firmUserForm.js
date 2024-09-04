@@ -279,7 +279,7 @@ const FirmUserCreateForm = ({
                 >
                   <option value="">Select Role</option>
                   <option value="accountant">Accountant</option>
-                  <option value="generalemployee">Employee</option>
+                  <option value="g_emp">Employee</option>
                 </Input>
               </FormGroup>
               <FormGroup>
