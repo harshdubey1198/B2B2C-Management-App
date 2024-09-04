@@ -141,12 +141,12 @@ async function UserForgetPassword(body) {
               userModel = Viewer;
               break;
           default:
-              throw new Error('Invalid Role');
+                return Promise.reject('Invalid Role');
       }
 
       const user = await userModel.findOne({ email: email });
       if (!user) {
-          throw new Error('Account Not Found');
+          return Promise.reject('Account Not Found');
       }
 
       const temporaryPassword = generateTemporaryPassword();
@@ -174,7 +174,7 @@ async function UserForgetPassword(body) {
 
   } catch (error) {
       console.error('Error:', error.message);
-      throw new Error('An error occurred while processing the request.');
+      return Promise.reject('An error occurred while processing the request.');
   }
 }
 
