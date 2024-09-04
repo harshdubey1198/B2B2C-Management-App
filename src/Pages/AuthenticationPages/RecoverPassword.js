@@ -17,6 +17,7 @@ import { userForgetPassword } from "../../store/auth/forgetpwd/actions";
 import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
+import { toast } from "react-toastify";
 
 const RecoverPassword = () => {
   document.title = "Recover Password | aaMOBee";
@@ -64,12 +65,13 @@ const RecoverPassword = () => {
     setCanSubmit(false);
 
     if (checkEmptyFields(formValues)) {
-      setError("Fields must not be empty!");
+      // setError("Fields must not be empty!");
+      toast.error("All fields are required !");
       setIsSubmitting(false);
       setCanSubmit(true);
       return;
-    } else if (!validateEmail(formValues.email)) {
-      setError("Email is invalid!");
+    } else {
+      toast.error("Check your Email or Role !");
       setIsSubmitting(false);
       setCanSubmit(true);
       return;
@@ -135,7 +137,7 @@ const RecoverPassword = () => {
                       <form className="form-horizontal" onSubmit={handleSubmit}>
                         <Row>
                           <Col md={12}>
-                            {(error || forgetError || forgetSuccessMsg) && (
+                            {/* {(error || forgetError || forgetSuccessMsg) && (
                               <Alert
                                 color={forgetError ? "danger" : "success"}
                                 className="alert-dismissible"
@@ -150,7 +152,7 @@ const RecoverPassword = () => {
                                 ></button>
                                 {error || forgetError || forgetSuccessMsg}
                               </Alert>
-                            )}
+                            )} */}
                             <div className="mt-4">
                               <FormGroup>
                                 <Label className="form-label" htmlFor="email">
