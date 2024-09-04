@@ -66,12 +66,13 @@ const RecoverPassword = () => {
 
     if (checkEmptyFields(formValues)) {
       // setError("Fields must not be empty!");
-      toast.error("All fields are required !");
+      toast.error("Fields must not be empty!");
       setIsSubmitting(false);
       setCanSubmit(true);
       return;
-    } else {
-      toast.error("Check your Email or Role !");
+    } else if (!validateEmail(formValues.email)) {
+      // setError("Email is invalid!");
+      toast.error("Email is invalid!");
       setIsSubmitting(false);
       setCanSubmit(true);
       return;
