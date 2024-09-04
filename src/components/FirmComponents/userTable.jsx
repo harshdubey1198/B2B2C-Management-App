@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function UserTable({ selectedFirmId}) {
+function UserTable({ selectedFirmId, trigger}) {
   const [userData, setUserData] = useState([]);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const fetchUsers = async () => {
@@ -26,7 +26,7 @@ function UserTable({ selectedFirmId}) {
 
   useEffect(() => {
     fetchUsers();
-  }, [selectedFirmId]);
+  }, [selectedFirmId, trigger]);
 
   return (
     <>

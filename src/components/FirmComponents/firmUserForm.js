@@ -8,6 +8,7 @@ const FirmUserCreateForm = ({
   isOpen,
   toggle,
   userRoleAuthUser, 
+  setTrigger,
   formValues,
   setFormValues,
 }) => {
@@ -72,6 +73,7 @@ const FirmUserCreateForm = ({
         toast.success("User added successfully.");
         // setError("");
         // //toast.error("");
+        setTrigger((prev => prev + 1))
         setFormValues({
           firmUniqueId: "",
           firmName: "",
