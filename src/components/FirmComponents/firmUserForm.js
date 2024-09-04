@@ -26,7 +26,6 @@ const FirmUserCreateForm = ({
         .get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser?.response._id}`)
         .then((response) => {
           const firmData = response;
-          // console.log(firmData, "response")
           setFormValues((prevState) => ({
             ...prevState,
             firmId: firmData._id,
