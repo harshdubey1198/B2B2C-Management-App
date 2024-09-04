@@ -105,11 +105,9 @@ function UserManage() {
         <Col lg={12}>
           <Card>
             <CardBody>
-              {selectedFirmId ? (
+              
                 <UserTable selectedFirmId={selectedFirmId} trigger={trigger} />
-              ) : (
-                <p>Please select a firm to view its users.</p>
-              )}
+             
             </CardBody>
           </Card>
         </Col>

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-function UserTable({ selectedFirmId, trigger }) {
+function UserTable({ selectedFirmId}) {
   const [userData, setUserData] = useState([]);
-  const [hoveredUserId, setHoveredUserId] = useState(null);
-  const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const fetchUsers = async () => {
     try {
@@ -12,14 +10,16 @@ function UserTable({ selectedFirmId, trigger }) {
       
       if (authuser?.response.role === "firm_admin") {
         firmId = authuser?.response.firmId;
+        // console.log("firmId", firmId);
       } else if (authuser?.response.role === "client_admin") {
         firmId = selectedFirmId
+        // console.log("user role : client_admin", firmId);
       }
       if (firmId) {
         const response = await axios.get(
           `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
         );
-        console.log("API response data", response);
+        // console.log("API response data", response);
         setUserData(response || []);
       }
     } catch (error) {
@@ -50,8 +50,6 @@ function UserTable({ selectedFirmId, trigger }) {
               userData.map((user) => (
                 <tr
                   key={user.id}
-                  onMouseEnter={() => setHoveredUserId(user.id)}
-                  onMouseLeave={() => setHoveredUserId(null)}
                 >
                   <td>{user.uid}</td>
                   <td>{user.firstName} {user.lastName}</td>
