@@ -34,10 +34,12 @@ const Login = (props) => {
   );
 
   const { error: reduxError } = useSelector(loginpage);
+  // console.log(reduxError,"reduxerror")
 
   useEffect(() => {
     if (reduxError) {
-      toast.error(reduxError);
+      // console.log(reduxError,"in useeffect")
+      // toast.error(reduxError);
     }
   }, [reduxError]);
 

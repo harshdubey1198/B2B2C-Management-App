@@ -7,6 +7,7 @@ import './assets/scss/theme.scss';
 // Fake Backend 
 import fakeBackend from "./helpers/AuthType/fakeBackend";
 import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 // Activating fake backend
 fakeBackend();
@@ -33,7 +34,14 @@ fakeBackend();
 function App() {
   return (
     <React.Fragment>
-      <ToastContainer />
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        hideProgressBar={false} 
+        newestOnTop={false} 
+        closeOnClick 
+        pauseOnHover
+      />
       <Routes />
     </React.Fragment>
   );
