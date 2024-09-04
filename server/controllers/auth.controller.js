@@ -38,7 +38,7 @@ router.post('/reset-password', async (req,res) => {
 })
 
 router.post("/createUser", (req, res) => {
-    console.log(req.body, "body");
+    // console.log(req.body, "body");
     authServices.createUser(req.body).then((response) => {
         res.status(200).send(response);
     })

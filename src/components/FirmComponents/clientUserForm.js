@@ -177,7 +177,7 @@ const handleSubmit = (e) => {
                 <Label>Password</Label>
                 <Input
                   name="password"
-                  type={show.confirmPassword ? "text" : "password"}
+                  type={show.password ? "text" : "password"}
                     value={formValues.password}
                   onChange={handleChange}
                 />
@@ -272,7 +272,7 @@ const handleSubmit = (e) => {
                 <Input
                   name="confirmPassword"
                   type={show.confirmPassword ? "text" : "password"}
-                    value={formValues.confirmPassword}
+                  value={formValues.confirmPassword}
                   onChange={handleChange}
                 />
                  <button
@@ -281,12 +281,12 @@ const handleSubmit = (e) => {
                     onClick={() =>
                       setShow((prevState) => ({
                         ...prevState,
-                        password: !prevState.password,
+                        confirmPassword: !prevState.confirmPassword,
                       }))
                     }
                     type="button"
                   >
-                  <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                  <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
                 </button>
               </FormGroup>
               <FormGroup>
