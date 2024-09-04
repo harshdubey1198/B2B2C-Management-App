@@ -12,6 +12,7 @@ import {
   postSocialLogin,
 } from "../../../helpers/fakebackend_helper";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const fireBaseBackend = getFirebaseBackend();
 
@@ -42,6 +43,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
+    toast.error("Login failed. Please check your email, password and role.");
     yield put(apiError("Please check your email and password"));
   }
 }
