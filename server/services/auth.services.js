@@ -206,12 +206,12 @@ async function resetPassword(body) {
               userModel = Viewer;
               break;
           default:
-              throw new Error('Invalid Role');
+            return Promise.reject('Invalid Role');
       }
 
       const user = await userModel.findOne({ email: email });
       if (!user) {
-          throw new Error('Account Not Found');
+        return Promise.reject('Account Not Found');
       } else {
           // Compare the temporary password with the hashed password
           const match = await PasswordService.comparePassword(temporaryPassword, user.password);
@@ -222,12 +222,12 @@ async function resetPassword(body) {
               await user.save();
               return 'Password Updated Successfully';
           } else {
-              throw new Error('Invalid Temporary Password');
+            return Promise.reject('Invalid Temporary Password');
           }
       }
   } catch (error) {
       console.error(error);
-      throw new Error('An error occurred while processing the request.');
+      return Promise.reject('An error occurred while processing the request.');
   }
 }
 
