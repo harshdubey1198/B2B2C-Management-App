@@ -79,7 +79,7 @@
     }
 }
 
-@media (max-width: 991px) {
+@media (max-width: 995px) {
     .navbar-brand-box {
         width: auto;
     }
@@ -96,9 +96,13 @@
 }
 
 .page-content {
-    padding: calc(70px + 24px) calc(24px / 2) 60px calc(24px / 2);
+    padding: calc(70px + 24px) calc(24px / 2) 60px calc(170px / 2);
 }
-
+@media (min-width:992px){
+    .page-content {
+        padding: calc(70px + 24px) calc(24px / 2) 60px calc(24px / 2) !important;
+    }
+}
 .header-item {
     height: $header-height;
     box-shadow: none !important;

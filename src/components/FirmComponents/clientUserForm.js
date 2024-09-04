@@ -22,7 +22,10 @@ const ClientUserCreateForm = ({
       permissions: prevState.permissions.filter((p) => p !== permission),
     }));
   };
-
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
+  });
 const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -170,14 +173,27 @@ const handleSubmit = (e) => {
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup>
+              <FormGroup className="position-relative">
                 <Label>Password</Label>
                 <Input
                   name="password"
-                  type="password"
-                  value={formValues.password}
+                  type={show.confirmPassword ? "text" : "password"}
+                    value={formValues.password}
                   onChange={handleChange}
                 />
+                 <button
+                    className="cursor btn btn-link position-absolute end-0"
+                    style={{ top: "74%", transform: "translateY(-50%)" }}
+                    onClick={() =>
+                      setShow((prevState) => ({
+                        ...prevState,
+                        password: !prevState.password,
+                      }))
+                    }
+                    type="button"
+                  >
+                  <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                </button>
               </FormGroup>
               <FormGroup>
                 <Label>Emergency Contact</Label>
@@ -251,14 +267,27 @@ const handleSubmit = (e) => {
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup>
+              <FormGroup className="position-relative">
                 <Label>Confirm Password</Label>
                 <Input
                   name="confirmPassword"
-                  type="password"
-                  value={formValues.confirmPassword}
+                  type={show.confirmPassword ? "text" : "password"}
+                    value={formValues.confirmPassword}
                   onChange={handleChange}
                 />
+                 <button
+                    className="cursor btn btn-link position-absolute end-0"
+                    style={{ top: "74%", transform: "translateY(-50%)" }}
+                    onClick={() =>
+                      setShow((prevState) => ({
+                        ...prevState,
+                        password: !prevState.password,
+                      }))
+                    }
+                    type="button"
+                  >
+                  <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                </button>
               </FormGroup>
               <FormGroup>
                 <Label>Address</Label>
