@@ -118,6 +118,7 @@ function UserManage() {
           toggle={toggleModal}
           firms={firms}
           selectedFirmId={selectedFirmId}
+          setTrigger={setTrigger}
           setSelectedFirmId={setSelectedFirmId}
           defaultFirm={defaultFirm}
           formValues={formValues}
@@ -131,6 +132,7 @@ function UserManage() {
           toggle={toggleModal}
           firms={firms}
           selectedFirmId={selectedFirmId}
+          setTrigger={setTrigger}
           setSelectedFirmId={setSelectedFirmId}
           defaultFirm={defaultFirm}
           formValues={formValues}

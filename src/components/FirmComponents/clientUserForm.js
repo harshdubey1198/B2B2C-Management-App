@@ -5,7 +5,7 @@ import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Util
 import { toast } from "react-toastify";
 
 const ClientUserCreateForm = ({
-  isOpen,   toggle,   firms,   selectedFirmId,   setSelectedFirmId,   defaultFirm,   formValues,   setFormValues,   availableRoles, 
+  isOpen,   toggle, firms, setTrigger,  selectedFirmId,   setSelectedFirmId,   defaultFirm,   formValues,   setFormValues,   availableRoles, 
 }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -55,7 +55,7 @@ const handleSubmit = (e) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully."); 
         setError("");
-
+        setTrigger((prev => prev + 1))
         setFormValues({
           firmUniqueId: "",
           firmName: "",
@@ -75,7 +75,7 @@ const handleSubmit = (e) => {
         toggle();
       })
       .catch((error) => {
-        console.log("Full error object:", error); // log full error
+        console.log("Full error object:", error); 
         toast.error("Error creating user");
       });
 };
