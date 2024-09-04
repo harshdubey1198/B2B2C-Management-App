@@ -10,6 +10,7 @@ import {
   Input,
   Button,
   Alert,
+  Toast,
 } from "reactstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -44,6 +45,11 @@ const ResetPassword = () => {
     // Additional logic can be added here if needed
   }, [token]);
 
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
+  });
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -52,19 +58,23 @@ const ResetPassword = () => {
 
     // Validation
     if (checkEmptyFields(formValues)) {
-      setError("Fields must not be empty!");
+      toast.error("Fields must not be empty!");
+      // setError("Fields must not be empty!");
       setLoading(false);
       return;
     }else if (!validateEmail(formValues.email)) {
-      setError("Email is invalid!");
+      // setError("Email is invalid!");
+      toast.error("Email is invalid!");
       setLoading(false);
       return;
     }else if (!validatePassword(formValues.newPassword)) {
-      setError("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+      // setError("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+      toast.error("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
       setLoading(false);
       return;
     }else if (formValues.newPassword !== formValues.confirmPassword) {
-      setError("Confirm Password should be the same as Password!");
+      // setError("Confirm Password should be the same as Password!");
+      toast.error("Confirm Password should be the same as Password!");
       setLoading(false);
       return;
     }else{
@@ -76,9 +86,9 @@ const ResetPassword = () => {
                 navigate('/login')
             }
         }).catch((error) => {
-            setError("Error resetting password");
+            // setError("Error resetting password");
             setLoading(false);
-            toast.error("Error resetting password");
+            toast.error("Check your email and role");
         })
     }
 
@@ -133,17 +143,18 @@ const ResetPassword = () => {
                       {/* <p className="mb-5 text-center">
                         Reset your Password with aaMOBee.
                       </p> */}
-                      {error && (
-                        <Alert color="danger" className="alert-dismissible">
-                          <button
-                            type="button"
-                            className="btn-close"
-                            aria-label="Close"
-                            onClick={() => setError("")}
-                          ></button>
-                          {error}
-                        </Alert>
-                      )}
+                      {/* {error && (
+                        // <Alert color="danger" className="alert-dismissible">
+                        //   <button
+                        //     type="button"
+                        //     className="btn-close"
+                        //     aria-label="Close"
+                        //     onClick={() => setError("")}
+                        //   ></button>
+                        //   {error}
+                        // </Alert>
+                        toast.error(error);
+                      )} */}
                       {success && <Alert color="success">{success}</Alert>}
                       <form className="form-horizontal" onSubmit={handleSubmit}>
                         <FormGroup>
@@ -157,7 +168,7 @@ const ResetPassword = () => {
                             placeholder="Enter email"
                             value={formValues.email}
                             onChange={handleChange}
-                            required
+                            
                           />
                         </FormGroup>
                         <FormGroup>
@@ -170,7 +181,7 @@ const ResetPassword = () => {
                             name="role"
                             value={formValues.role}
                             onChange={handleChange}
-                            required
+                            
                           >
                             <option value="">Select User Role</option>
                             <option value="super_admin">Super Admin</option>
@@ -183,20 +194,35 @@ const ResetPassword = () => {
                             </option>
                           </Input>
                         </FormGroup>
+                        <div className="mb-4 position-relative">
                         <FormGroup>
                           <Label className="form-label" htmlFor="newPassword">
                             New Password
                           </Label>
                           <Input
-                            type="password"
+                            type={show.password ? "text": "password"}
                             id="newPassword"
                             name="newPassword"
                             placeholder="Enter new password"
                             value={formValues.newPassword}
                             onChange={handleChange}
-                            required
                           />
+                          <button
+                            className="cursor btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            onClick={() =>
+                              setShow((prevState) => ({
+                                ...prevState,
+                                password: !prevState.password,
+                              }))
+                            }
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                          </button>
                         </FormGroup>
+                        </div>
+                        <div className="mb-4 position-relative">
                         <FormGroup>
                           <Label
                             className="form-label"
@@ -205,15 +231,28 @@ const ResetPassword = () => {
                             Confirm Password
                           </Label>
                           <Input
-                            type="password"
+                            type={show.confirmPassword ? "text" : "password"}
                             id="confirmPassword"
                             name="confirmPassword"
                             placeholder="Confirm new password"
                             value={formValues.confirmPassword}
                             onChange={handleChange}
-                            required
                           />
+                          <button
+                            className="cursor btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            onClick={() =>
+                              setShow((prevState) => ({
+                                ...prevState,
+                                confirmPassword: !prevState.confirmPassword,
+                              }))
+                            }
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
+                          </button>
                         </FormGroup>
+                        </div>
                         <div className="d-grid mt-4">
                           <Button
                             color="primary"
