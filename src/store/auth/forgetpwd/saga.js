@@ -12,6 +12,7 @@ import {
   postJwtForgetPwd,
 } from "../../../helpers/fakebackend_helper"
 import axios from "axios";
+import { toast } from "react-toastify";
 
 
 const fireBaseBackend = getFirebaseBackend()
@@ -32,6 +33,7 @@ function* forgetUser({ payload: { user, history } }) {
         role: user.role
       })
       if (response) {
+        toast.success("Reset link are sended to your mailbox, check there first")
         yield put(
           userForgetPasswordSuccess(
             "Reset link are sended to your mailbox, check there first"
@@ -51,6 +53,7 @@ function* forgetUser({ payload: { user, history } }) {
       }
     }
   } catch (error) {
+    toast.error("Check your email and role")
     yield put(userForgetPasswordError(error))
   }
 }
