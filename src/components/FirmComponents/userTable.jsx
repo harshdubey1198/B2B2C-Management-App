@@ -10,16 +10,13 @@ function UserTable({ selectedFirmId}) {
       
       if (authuser?.response.role === "firm_admin") {
         firmId = authuser?.response.firmId;
-        // console.log("firmId", firmId);
       } else if (authuser?.response.role === "client_admin") {
         firmId = selectedFirmId
-        // console.log("user role : client_admin", firmId);
       }
       if (firmId) {
         const response = await axios.get(
           `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
         );
-        // console.log("API response data", response);
         setUserData(response || []);
       }
     } catch (error) {
