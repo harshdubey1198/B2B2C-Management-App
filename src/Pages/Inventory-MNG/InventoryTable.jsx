@@ -24,8 +24,8 @@ function InventoryTable() {
       })) : []
     })));
 
-    const storedRoles = JSON.parse(localStorage.getItem('role')) || "";
-    setRole(storedRoles);
+    const storedRoles = JSON.parse(localStorage.getItem('authUser')) || "";
+    setRole(storedRoles?.response.role);
   }, []);
 
   const handleRowClick = (id) => {
@@ -38,7 +38,7 @@ function InventoryTable() {
 
   const handleEditClick = (item, variant) => {
     setEditItem(item);
-    setEditVariant(variant); // Set the variant being edited
+    setEditVariant(variant); 
     setEditModal(true);
   };
 
@@ -49,7 +49,7 @@ function InventoryTable() {
         return { ...item, variants: updatedVariants };
       }
       return item;
-    }).filter(item => item.variants.length > 0); // Optionally remove items without any variants left
+    }).filter(item => item.variants.length > 0);
 
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
@@ -80,10 +80,12 @@ function InventoryTable() {
   };
 
   const handleSaveChanges = () => {
+    // console.log(editItem.variants, "variants")
+    // console.log(editVariant, "editvariants")
     const updatedVariants = editItem.variants.map(v =>
-      v === editVariant ? editVariant : v
+      v.id === editVariant.id ? editVariant : v
     );
-
+    // console.log(updatedVariants,"updatedvariants")
     const updatedItem = { ...editItem, variants: updatedVariants };
 
     const updatedData = inventoryData.map(item =>
@@ -137,10 +139,10 @@ function InventoryTable() {
                               <td>{index === 0 ? calculateTotalQuantity(item.variants) : ''}</td>
                               <td>{index === 0 ? item.brandName : ''}</td>
                               <td>{index === 0 ? item.supplier : ''}</td>
-                              <td>${variant.price.toFixed(2)}</td>
+                              <td>${Number(variant.price).toFixed(2)}</td>
                               <td>{index === 0 ? item.category : ''}</td>
                               <td>
-                                {variant.name} - ${calculatePriceAfterTax(variant.price, variant.tax)} - <span>{variant.quantity}</span>
+                                {variant.name} - ${calculatePriceAfterTax(Number(variant.price), variant.tax)} - <span>{variant.quantity}</span>
                               </td>
                               <td>{index === 0 ? item.type : ''}</td>
                               <td>
