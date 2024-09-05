@@ -57,7 +57,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         <img 
                             src={invoiceData.companyLogo}  
                             alt="Company Logo" 
-                            style={{ height: "100px", maxWidth: "200px" , marginBottom:"10px" }} 
+                            style={{ height: "100px", maxWidth: "200px" , marginBottom:"10px" , marginTop:"-50px" }} 
                         />
                     )}
                     <p className="my-1">{invoiceData?.officeAddress + ", " + invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Form, Container } from 'reactstrap';
+import { Button, Form, Container, Breadcrumb, Card, CardBody } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
 import InvoiceInputs from '../../components/InvoicingComponents/InvoiceInputs';
-// import PrintFormat from '../../components/InvoicingComponents/printFormat';
-import { validatePhone } from '../Utility/FormValidation';
 import axios from 'axios';
+import { validatePhone } from '../Utility/FormValidation';
+import Breadcrumbs from '../../components/Common/Breadcrumb';
+import PrintFormat from '../../components/InvoicingComponents/printFormat';
+import CompanyModal from '../../components/InvoicingComponents/companyModal';
 
 const Index = () => {
     const [companyData, setCompanyData] = useState({});
@@ -29,9 +31,8 @@ const Index = () => {
         paymentLink: '',
         id: ''
     });
-    const [error, setError] = useState("");
-    const [success, setSuccess] = useState("");
-    const [variants, setVariants] = useState([]);
+    const [isCompanyModalOpen, setCompanyModalOpen] = useState(false);
+    const toggleCompanyModal = () => setCompanyModalOpen(!isCompanyModalOpen);
     const [fakeItems, setFakeItems] = useState([]);
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser"));
@@ -46,23 +47,8 @@ const Index = () => {
                     companyName: response.firmName,
                     companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
                     companyLogo: response.avatar,
-                    officeAddress: address.h_no,
-                    companyCity: address.city,
-                    companyNearby: address.nearby,
-                    companyZip: address.zip_code,
-                    companyDistrict: address.district,
-                    companyState: address.state,
-                    companyCountry: address.country,
                     companyPhone: response.firmPhone,
                     companyEmail: response.firmEmail,
-                    customerHouse: '',
-                    customerCity: '',
-                    customerNearby: '',
-                    customerZip: '',
-                    customerDistrict: '',
-                    customerState: '',
-                    customerCountry: '',
-                    customerPhone: '',
                     gstin: response.gstin,
                     bankName: response.bankName,
                     IFSCCode: response.ifscCode,
@@ -95,81 +81,18 @@ const Index = () => {
             reader.readAsDataURL(file);
         }
     };
-    const handleItemChange = (index, e) => {
-        const { name, value } = e.target;
-        const updatedItems = [...invoiceData.items];
-        updatedItems[index] = { ...updatedItems[index], [name]: value };
-        setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-        if (name === "name"){
-            const selectedItem = fakeItems.find(item => item.id === value);
-            if (selectedItem) {
-                const updatedItems = [...invoiceData.items];
-                updatedItems[index] = {
-                    ...updatedItems[index],
-                    description: selectedItem.name,
-                    price: selectedItem.price,
-                    variants: selectedItem.variants,
-                    id: selectedItem.id,
-                    hsn: selectedItem.hsn,
-                    quantity: 1,  
-                    availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + (parseFloat(variant.quantity) || 0), 0) // Ensure numeric addition
-                };
-                setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-                setVariants(selectedItem.variants || []);
-        }
-    }
-    };
 
-
-    // const handleDescriptionChange = (index, e) => {
-    //     const { value } = e.target;
-    //     const selectedItem = fakeItems.find(item => item.id === value);
-    //     if (selectedItem) {
-    //         const updatedItems = [...invoiceData.items];
-    //         updatedItems[index] = {
-    //             ...updatedItems[index],
-    //             description: selectedItem.name,
-    //             price: selectedItem.price,
-    //             variants: selectedItem.variants,
-    //             id: selectedItem.id,
-    //             hsn: selectedItem.hsn,
-    //             quantity: 1,  
-    //             availableQuantity: selectedItem.variants.reduce((acc, variant) => acc + (parseFloat(variant.quantity) || 0), 0) // Ensure numeric addition
-    //         };
-    //         setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-    //         setVariants(selectedItem.variants || []);
-    //     }
-    // };
-    
-    
-    const handleVariantChange = (index, e) => {
-        const { value } = e.target;
-        const selectedVariant = variants.find(variant => variant.id === value);
-    
-        if (selectedVariant) {
-            const updatedItems = [...invoiceData.items];
-            updatedItems[index] = {
-                ...updatedItems[index],
-                selectedVariant: selectedVariant.name, 
-                id: selectedVariant.id,
-                price: selectedVariant.price,
-                availableQuantity: selectedVariant.quantity,
-                quantity: 1
-            };
-            setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
-        }
-    };
-    
     const addItem = () => {
-        setInvoiceData(prevState => ({
-            ...prevState,
-            items: [...prevState.items, { quantity: 1, availableQuantity: 0 }]
-        }));
+        setInvoiceData({
+            ...invoiceData,
+            items: [...invoiceData.items, { itemName: '', variant: '', quantity: 1, price: 0 }]
+        });
     };
 
     const removeItem = (index) => {
-        const updatedItems = invoiceData.items.filter((_, i) => i !== index);
-        setInvoiceData(prevState => ({ ...prevState, items: updatedItems }));
+        const newItems = [...invoiceData.items];
+        newItems.splice(index, 1);
+        setInvoiceData({ ...invoiceData, items: newItems });
     };
 
     const handleSubmit = (e) => {
@@ -185,38 +108,27 @@ const Index = () => {
             id: Math.floor(Math.random() * 1000000)
         };
 
-        // Add the new invoice to localStorage
         const storedInvoices = JSON.parse(localStorage.getItem("Invoice Form")) || [];
         storedInvoices.push(newInvoice);
         localStorage.setItem("Invoice Form", JSON.stringify(storedInvoices));
 
-        // Clear the form state after submission
         setInvoiceData({
             companyName: "",
             companyAddress: "",
-            companyCity: "",
-            officeAddress: "",
-            companyNearby: "",
-            companyZip: "",
-            companyDistrict: "",
-            companyState: "",
-            companyCountry: "",
             companyLogo: "",
             companyPhone: "",
             companyEmail: "",
+            gstin: "",
+            bankName: "",
+            IFSCCode: "",
+            accountNumber: "",
+            branchName: "",
             customerName: '',
             customerAddress: '',
-            customerHouse: '',
-            customerCity: '',
-            customerNearby: '',
-            customerZip: '',
-            customerDistrict: '',
-            customerState: '',
-            customerCountry: '',
             customerPhone: '',
             date: '',
             country: 'India',
-            items: [], 
+            items: [],
             paymentLink: ''
         });
 
@@ -230,28 +142,30 @@ const Index = () => {
     return (
         <Container>
             <div className='page-content'>
-                <Form onSubmit={handleSubmit}>
+                <Breadcrumbs title="aaMOBee" breadcrumbItem="Create Invoice" />
+                <Card>
+                    <CardBody>
+                    <Form onSubmit={handleSubmit}>
                     <InvoiceInputs
                         invoiceData={invoiceData}
                         handleInputChange={handleInputChange}
                         handleFileChange={handleFileChange}
-                        handleItemChange={handleItemChange}
-                        // handleItemChange={() => {}}  // Remove quantity change handler
-                        // handleDescriptionChange={handleDescriptionChange}
-                        variants={variants}
                         fakeItems={fakeItems}
-                        handleVariantChange={handleVariantChange}
+                        toggleCompanyModal={toggleCompanyModal}
+                        printInvoice={printInvoice}
                         addItem={addItem}
                         removeItem={removeItem}
                     />
-
-                    <div className='d-flex justify-content-evenly mb-4'>
-                        <Button color="success" type="submit">Submit</Button>
-                        <Button color="info" onClick={printInvoice}>Print PDF</Button>
-                    </div>
                 </Form>
-
-                {/* <PrintFormat ref={printRef} invoiceData={invoiceData} /> */}
+                    </CardBody>
+                </Card>
+                <CompanyModal
+                    isOpen={isCompanyModalOpen}
+                    toggle={toggleCompanyModal}
+                    invoiceData={invoiceData}
+                    handleInputChange={handleInputChange}
+                />
+                <PrintFormat ref={printRef} invoiceData={invoiceData} />
             </div>
         </Container>
     );

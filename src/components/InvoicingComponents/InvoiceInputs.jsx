@@ -1,362 +1,125 @@
-import React from 'react';
-import { Button, Form, FormGroup, Label, Input, Row, Col, Card, CardBody } from 'reactstrap';
+import React from "react";
+import { Button, Form, FormGroup, Label, Input, Row, Col, Card, CardBody } from "reactstrap";
+import InvoiceItems from "./InvoiceItems";
 
 const countries = {
-    India: { currency: 'INR', gst: 18 },
-    Malaysia: { currency: 'MYR', gst: 6 },
-    Dubai: { currency: 'AED', gst: 5 },
-    Indonesia: { currency: 'IDR', gst: 10 }
+  India: { currency: "INR", gst: 18 },
+  Malaysia: { currency: "MYR", gst: 6 },
+  Dubai: { currency: "AED", gst: 5 },
+  Indonesia: { currency: "IDR", gst: 10 },
 };
 
-
-const InvoiceInputs = ({
-    invoiceData,
-    handleInputChange,
-    handleItemChange,
-    // handleDescriptionChange,
-    fakeItems,
-    variants,
-    handleVariantChange,
-    addItem,
-    removeItem,
-    handleSubmit
-}) => {
-    // console.log(invoiceData.items,"fakeitems")
-    const renderInputsSection = () => (
-        <Form onSubmit={handleSubmit}>
-            {/* {error && <Alert color='danger'>{error}</Alert>}
-            {success && <Alert color='success'>{success}</Alert>} */}
-            {/* toast.error(error);
-            toast.success(success); */}
-            
-            <Row className="mb-4">
-                <Col md={6}>
-                    {/* <FormGroup>
-                        <Label for="companyLogo">Company Logo</Label>
-                        <Input
-                            type="file"
-                            name="companyLogo"
-                            id="companyLogo"
-                            // onChange={handleFileChange}
-                            required
-                        />
-                    </FormGroup> */}
-                    <FormGroup>
-                        <Label for="companyName">Company Name</Label>
-                        <Input
-                            type="text"
-                            name="companyName"
-                            id="companyName"
-                            value={invoiceData.companyName}
-                            // onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="companyAddress">Company Address</Label>
-                        <Input 
-                        type="text"
-                        name="officeAddress"
-                        id="officeAddress"
-                        value={invoiceData.officeAddress}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="companyNearby"
-                        id="companyNearby"
-                        value={invoiceData.companyNearby}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input 
-                        type="text" 
-                        name="companyDistrict"
-                        id="companyDistrict"
-                        value={invoiceData.companyDistrict}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input 
-                        type="text"
-                        name="companyCity"
-                        id="companyCity"
-                        value={invoiceData.companyCity}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="companyZip"
-                        id="companyZip"
-                        value={invoiceData.companyZip}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="companyState"
-                        id="companyState"
-                        value={invoiceData.companyState}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="companyCountry"
-                        id="companyCountry"
-                        value={invoiceData.companyCountry}
-                        // onChange={handleInputChange}
-                        required
-                        />
-                        
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="companyPhone">Company Phone</Label>
-                        <Input
-                            type="text"
-                            name="companyPhone"
-                            id="companyPhone"
-                            value={invoiceData.companyPhone}
-                            // onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="companyEmail">Company Email</Label>
-                        <Input
-                            type="text"
-                            name="companyEmail"
-                            id="companyEmail"
-                            value={invoiceData.companyEmail}
-                            // onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="country">Country</Label>
-                        <Input
-                            type="select"
-                            name="country"
-                            id="country"
-                            value={invoiceData.country}
-                            onChange={handleInputChange}
-                            required
-                        >
-                            {Object.keys(countries).map((country) => (
-                                <option key={country} value={country}>{country}</option>
-                            ))}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="invoiceType">Invoice Type</Label> <br/>
-                        {/* <Input type="radio" name="invoiceType" value="GST" onChange={handleInputChange} required /> GST &nbsp; &nbsp; &nbsp; &nbsp; 
-                        <Input type="radio" name="invoiceType" value="Non-GST" onChange={handleInputChange} required /> Non-GST  */}
-                        <Input type="select" name="invoiceType" id="invoiceType" value={invoiceData.invoiceType} onChange={handleInputChange} required>
-                            <option value="">Select Invoice Type</option>
-                            <option value="GST">GST</option>
-                            <option value="Non-GST">Non-GST</option>
-                        </Input>
-                    </FormGroup>
-                </Col>
-                <Col md={6}>
-                    <FormGroup>
-                        <Label for="customerName">Customer Name</Label>
-                        <Input
-                            type="text"
-                            name="customerName"
-                            id="customerName"
-                            value={invoiceData.customerName}
-                            onChange={handleInputChange}
-                            required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="customerAddress">Customer Address</Label>
-                        {/* <Input
-                            type="text"
-                            name="customerAddress"
-                            id="customerAddress"
-                            value={invoiceData.customerAddress}
-                            onChange={handleInputChange}
-                            required
-                        /> */}
-                         <Input 
-                        type="text"
-                        name="customerHouse"
-                        id="customerHouse"
-                        placeholder='House No.'
-                        value={invoiceData.customerHouse}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="customerNearby"
-                        id="customerNearby"
-                        placeholder='Nearby Landmark'
-                        value={invoiceData.customerNearby}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input 
-                        type="text" 
-                        name="customerDistrict"
-                        id="customerDistrict"
-                        placeholder='District'
-                        value={invoiceData.customerDistrict}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input 
-                        type="text"
-                        name="customerCity"
-                        id="customerCity"
-                        placeholder='City'
-                        value={invoiceData.customerCity}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="customerZip"
-                        id="customerZip"
-                        placeholder='Zip Code'
-                        value={invoiceData.customerZip}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="customerState"
-                        id="customerState"
-                        placeholder='State'
-                        value={invoiceData.customerState}
-                        onChange={handleInputChange}
-                        required
-                        />
-                        <Input
-                        type="text"
-                        name="customerCountry"
-                        id="customerCountry"
-                        placeholder='Country'
-                        value={invoiceData.customerCountry}
-                        onChange={handleInputChange}
-                        required
-                        />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="customerPhone">Customer Phone</Label>
-                        <Input type="text" name="customerPhone" id="customerPhone" value={invoiceData.customerPhone} onChange={handleInputChange} required />        
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="dueDate">Due Date</Label>
-                        <Input type="date" name="dueDate" id="dueDate" value={invoiceData.dueDate} onChange={handleInputChange} required/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="issueDate">Issue Date</Label>
-                        <Input type="date" name="issueDate" id="issueDate" value={invoiceData.issueDate} onChange={handleInputChange} required/>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="invoiceSubType" >Invoice Sub Type</Label>
-                        <Input type="select" name="invoiceSubType" id="invoiceSubType" value={invoiceData.invoiceSubType} onChange={handleInputChange} required>
-                            <option value="">Select Invoice Sub Type</option>
-                            <option value="Original">     Original</option>
-                            <option value="Duplicate">    Duplicate</option>
-                            <option value="Triplicate">   Triplicate</option>
-                            <option value="Quadruplicate">Quadruplicate</option>
-                        </Input>
-                    </FormGroup>
-                </Col>
-            </Row>
-            
-    <h4>Items</h4>
-    {fakeItems.map((item, index) => (
-        <Row key={index} className="mb-4">
-            <Col md={3}>
-
-                <FormGroup>
-                    <Label for="description">Description</Label>
-                    <Input
-                        type="text"
-                        name="description"
-                        id="description"
-                        value={item.description}
-                        onChange={(e) => handleItemChange(e, index)}
-                        required
-                    />
-                </FormGroup>
-            </Col>
-            <Col md={2}>
-
-                <FormGroup>
-                    <Label for="quantity">Quantity</Label>
-                    <Input
-                        type="number"
-                        name="quantity"
-                        id="quantity"
-                        value={item.quantity}
-                        onChange={(e) => handleItemChange(e, index)}
-                        required
-                    />
-                </FormGroup>    
-
-            </Col>
-    </Row>
-    ))}
-    
-
-            <Button color="primary" onClick={addItem}>Add Item</Button>
-            {/* <Button color="success" type="submit" className="ml-2">Generate Invoice</Button> */}
-        </Form>
-    );
-
-    // const renderPreviewSection = () => (
-    //     <Card className="mt-5">
-    //         <CardBody>
-    //             <h4>Invoice Preview</h4>
-    //             <div>
-    //                 <strong>Company Name:</strong> {invoiceData.companyName}
-    //             </div>
-    //             <div>
-    //                 <strong>Company Address:</strong> {invoiceData.companyAddress}
-    //             </div>
-    //             <div>
-    //                 <strong>Customer Name:</strong> {invoiceData.customerName}
-    //             </div>
-    //             <div>
-    //                 <strong>Customer Address:</strong> {invoiceData.customerAddress}
-    //             </div>
-    //             <div>
-    //                 <strong>Date:</strong> {invoiceData.date}
-    //             </div>
-    //             <div>
-    //                 <strong>Country:</strong> {invoiceData.country}
-    //             </div>
-    //             <div>
-    //                 <strong>Items:</strong>
-    //                 <ul>
-    //                     {invoiceData.items.map((item, index) => (
-    //                         <li key={index}>
-    //                             {item.description} - Quantity: {item.quantity}, Price: {item.price}, Total: {(item.quantity * item.price).toFixed(2)}
-    //                         </li>
-    //                     ))}
-    //                 </ul>
-    //             </div>
-    //             {/* <div>
-    //                 <strong>Payment Link:</strong> <a href={invoiceData.paymentLink} target="_blank" rel="noopener noreferrer">Click here to pay</a>
-    //             </div> */}
-    //         </CardBody>
-    //     </Card>
-    // );
-
+const InvoiceInputs = ({ invoiceData, handleInputChange, handleFileChange, toggleCompanyModal, printInvoice, addItem, removeItem }) => {
     return (
-        <div>
-            {renderInputsSection()}
-            {/* {renderPreviewSection()} */}
+      <>
+        <div className="invoice-form">
+          <h3>Invoice Details</h3>
+          <Row>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="customerName">Customer Name</Label>
+                <Input
+                  type="text"
+                  name="customerName"
+                  id="customerName"
+                  value={invoiceData.customerName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </FormGroup>
+            </Col>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="customerAddress">Customer Address</Label>
+                <Input
+                  type="text"
+                  name="customerAddress"
+                  id="customerAddress"
+                  value={invoiceData.customerAddress}
+                  onChange={handleInputChange}
+                  required
+                />
+              </FormGroup>
+            </Col>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="customerPhone">Customer Phone</Label>
+                <Input
+                  type="text"
+                  name="customerPhone"
+                  id="customerPhone"
+                  value={invoiceData.customerPhone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </FormGroup>
+            </Col>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="date">Date</Label>
+                <Input
+                  type="date"
+                  name="date"
+                  id="date"
+                  value={invoiceData.date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </FormGroup>
+            </Col>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="country">Country</Label>
+                <Input
+                  type="select"
+                  name="country"
+                  id="country"
+                  value={invoiceData.country}
+                  onChange={handleInputChange}
+                  required
+                >
+                  {/* Replace with actual country options */}
+                  <option value="India">India</option>
+                  <option value="Malaysia">Malaysia</option>
+                  <option value="Dubai">Dubai</option>
+                  <option value="Indonesia">Indonesia</option>
+                </Input>
+              </FormGroup>
+            </Col>
+            <Col sm={6}>
+              <FormGroup>
+                <Label for="paymentLink">Payment Link</Label>
+                <Input
+                  type="text"
+                  name="paymentLink"
+                  id="paymentLink"
+                  value={invoiceData.paymentLink}
+                  onChange={handleInputChange}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <h3>Invoice Items</h3>
+          <InvoiceItems
+            items={invoiceData.items}
+            handleItemChange={(index, field, value) => {
+              const newItems = [...invoiceData.items];
+              newItems[index] = { ...newItems[index], [field]: value };
+              handleInputChange({ target: { name: 'items', value: newItems } });
+            }}
+            removeItem={removeItem}
+          />
+          <FormGroup>
+           <div className="d-flex justify-content-evenly ">
+           <Button color="info" onClick={addItem}>Add Item</Button>
+            <Button type="submit" color="primary">Submit</Button>
+            <Button type="button" color="secondary" onClick={printInvoice}>Print Invoice</Button>
+            <Button type="button" color="info" onClick={toggleCompanyModal}>Edit Company Details</Button>
+           </div>
+          </FormGroup>
         </div>
+      </>
     );
-};
-
-export default InvoiceInputs;
+  };
+  
+  export default InvoiceInputs;
