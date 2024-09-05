@@ -15,7 +15,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, pri
         <div className="invoice-form">
           <h3>Invoice Details</h3>
           <Row>
-            <Col sm={6}>
+            {/* <Col sm={6}>
               <FormGroup>
                 <Label for="customerName">Customer Name</Label>
                 <Input
@@ -78,26 +78,169 @@ const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, pri
                   onChange={handleInputChange}
                   required
                 >
-                  {/* Replace with actual country options */}
                   <option value="India">India</option>
                   <option value="Malaysia">Malaysia</option>
                   <option value="Dubai">Dubai</option>
                   <option value="Indonesia">Indonesia</option>
                 </Input>
               </FormGroup>
-            </Col>
-            <Col sm={6}>
-              <FormGroup>
-                <Label for="paymentLink">Payment Link</Label>
-                <Input
-                  type="text"
-                  name="paymentLink"
-                  id="paymentLink"
-                  value={invoiceData.paymentLink}
-                  onChange={handleInputChange}
-                />
-              </FormGroup>
-            </Col>
+            </Col> */}
+            <Col>
+            <FormGroup>
+                        <Label for="customerName">Customer Name</Label>
+                        <Input
+                            type="text"
+                            name="customerName"
+                            placeholder='Customer Name'
+                            id="customerName"
+                            value={invoiceData.customerName}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerHouse">Customer House No.</Label>
+                        <Input
+                            type="text"
+                            name="customerHouse"
+                            id="customerHouse"
+                            placeholder='House No.'
+                            value={invoiceData.customerHouse}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerNearby">Nearby Landmark</Label>
+                        <Input
+                            type="text"
+                            name="customerNearby"
+                            id="customerNearby"
+                            placeholder='Nearby Landmark'
+                            value={invoiceData.customerNearby}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    </Col>
+                    <Col md={3}>
+                    <FormGroup>
+                        <Label for="customerDistrict">District</Label>
+                        <Input
+                            type="text"
+                            name="customerDistrict"
+                            id="customerDistrict"
+                            placeholder='District'
+                            value={invoiceData.customerDistrict}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerCity">City</Label>
+                        <Input
+                            type="text"
+                            name="customerCity"
+                            id="customerCity"
+                            placeholder='City'
+                            value={invoiceData.customerCity}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerZip">Zip Code</Label>
+                        <Input
+                            type="text"
+                            name="customerZip"
+                            id="customerZip"
+                            placeholder='Zip Code'
+                            value={invoiceData.customerZip}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    </Col>
+            <Col md={3}>
+                    <FormGroup>
+                        <Label for="customerState">State</Label>
+                        <Input
+                            type="text"
+                            name="customerState"
+                            id="customerState"
+                            placeholder='State'
+                            value={invoiceData.customerState}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerCountry">Country</Label>
+                        <Input
+                            type="text"
+                            name="customerCountry"
+                            id="customerCountry"
+                            placeholder='Country'
+                            value={invoiceData.customerCountry}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="customerPhone">Customer Phone</Label>
+                        <Input
+                            type="text"
+                            name="customerPhone"
+                            id="customerPhone"
+                            placeholder='Customer Phone'
+                            value={invoiceData.customerPhone}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                   
+                </Col>
+                <Col md={3}>
+                <FormGroup>
+                        <Label for="dueDate">Due Date</Label>
+                        <Input
+                            type="date"
+                            name="dueDate"
+                            id="dueDate"
+                            value={invoiceData.dueDate}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="issueDate">Issue Date</Label>
+                        <Input
+                            type="date"
+                            name="issueDate"
+                            id="issueDate"
+                            value={invoiceData.issueDate}
+                            onChange={handleInputChange}
+                            required
+                        />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="invoiceSubType">Invoice Sub Type</Label>
+                        <Input
+                            type="select"
+                            name="invoiceSubType"
+                            id="invoiceSubType"
+                            value={invoiceData.invoiceSubType}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="">Select Invoice Sub Type</option>
+                            <option value="Original">Original</option>
+                            <option value="Duplicate">Duplicate</option>
+                            <option value="Triplicate">Triplicate</option>
+                            <option value="Quadruplicate">Quadruplicate</option>
+                        </Input>
+                    </FormGroup>
+                    </Col>
           </Row>
           <h3>Invoice Items</h3>
           <InvoiceItems
