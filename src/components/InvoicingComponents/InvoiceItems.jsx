@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormGroup, Label, Input, Button } from 'reactstrap';
 
-const InvoiceItems = ({ items, handleItemChange, addItem, removeItem }) => {
+const InvoiceItems = ({ items, handleItemChange,  removeItem }) => {
     return (
         <div>
             {items.map((item, index) => (

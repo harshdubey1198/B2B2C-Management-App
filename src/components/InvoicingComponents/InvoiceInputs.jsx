@@ -9,7 +9,7 @@ const countries = {
   Indonesia: { currency: "IDR", gst: 10 },
 };
 
-const InvoiceInputs = ({ invoiceData, handleInputChange, handleFileChange, toggleCompanyModal, printInvoice, addItem, removeItem }) => {
+const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, printInvoice, addItem, removeItem }) => {
     return (
       <>
         <div className="invoice-form">
