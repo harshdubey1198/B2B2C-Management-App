@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Form, Container, Breadcrumb, Card, CardBody } from 'reactstrap';
+import { Button, Form, Container, Card, CardBody } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
 import InvoiceInputs from '../../components/InvoicingComponents/InvoiceInputs';
@@ -13,11 +13,12 @@ const Index = () => {
     const [companyData, setCompanyData] = useState({});
     const [invoiceData, setInvoiceData] = useState({
         companyName: "",
-        companyAddress: "",
+        companyAddresses: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
         companyLogo: "",
         companyPhone: "",
         companyEmail: "",
         bankName: "",
+        invoiceType: "Tax Invoice", 
         IFSCCode: "",
         branchName: "",
         accountNumber: "",
@@ -40,12 +41,12 @@ const Index = () => {
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`)
             .then((response) => {
-                const address = Array.isArray(response.companyAddress) ? response.companyAddress[0] : {};
+                const addresses = response.companyAddress || [];
                 setCompanyData(response, "response");
                 setInvoiceData((prevData) => ({
                     ...prevData,
                     companyName: response.firmName,
-                    companyAddress: `${address.h_no || ""} ${address.nearby || ""} ${address.zip_code || ""} ${address.district || ""} ${address.state || ""} ${address.city || ""} ${address.country || ""}`.trim() || "",
+                    companyAddresses: addresses.length > 0 ? addresses : [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
                     companyLogo: response.avatar,
                     companyPhone: response.firmPhone,
                     companyEmail: response.firmEmail,
@@ -66,6 +67,26 @@ const Index = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInvoiceData(prevState => ({ ...prevState, [name]: value }));
+    };
+
+    const handleAddressChange = (index, e) => {
+        const { name, value } = e.target;
+        const updatedAddresses = [...invoiceData.companyAddresses];
+        updatedAddresses[index][name] = value;
+        setInvoiceData(prevState => ({ ...prevState, companyAddresses: updatedAddresses }));
+    };
+
+    // const addAddress = () => {
+    //     setInvoiceData(prevState => ({
+    //         ...prevState,
+    //         companyAddresses: [...prevState.companyAddresses, { h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }]
+    //     }));
+    // };
+
+    const removeAddress = (index) => {
+        const updatedAddresses = [...invoiceData.companyAddresses];
+        updatedAddresses.splice(index, 1);
+        setInvoiceData(prevState => ({ ...prevState, companyAddresses: updatedAddresses }));
     };
 
     const handleFileChange = (e) => {
@@ -114,7 +135,7 @@ const Index = () => {
 
         setInvoiceData({
             companyName: "",
-            companyAddress: "",
+            companyAddresses: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
             companyLogo: "",
             companyPhone: "",
             companyEmail: "",
@@ -129,7 +150,8 @@ const Index = () => {
             date: '',
             country: 'India',
             items: [],
-            paymentLink: ''
+            paymentLink: '',
+            invoiceType: ''
         });
 
         toast.success("Invoice Form Submitted Successfully");
@@ -145,18 +167,18 @@ const Index = () => {
                 <Breadcrumbs title="aaMOBee" breadcrumbItem="Create Invoice" />
                 <Card>
                     <CardBody>
-                    <Form onSubmit={handleSubmit}>
-                    <InvoiceInputs
-                        invoiceData={invoiceData}
-                        handleInputChange={handleInputChange}
-                        handleFileChange={handleFileChange}
-                        fakeItems={fakeItems}
-                        toggleCompanyModal={toggleCompanyModal}
-                        printInvoice={printInvoice}
-                        addItem={addItem}
-                        removeItem={removeItem}
-                    />
-                </Form>
+                        <Form onSubmit={handleSubmit}>
+                            <InvoiceInputs
+                                invoiceData={invoiceData}
+                                handleInputChange={handleInputChange}
+                                handleFileChange={handleFileChange}
+                                fakeItems={fakeItems}
+                                toggleCompanyModal={toggleCompanyModal}
+                                printInvoice={printInvoice}
+                                addItem={addItem}
+                                removeItem={removeItem}
+                            />
+                        </Form>
                     </CardBody>
                 </Card>
                 <CompanyModal
@@ -164,8 +186,15 @@ const Index = () => {
                     toggle={toggleCompanyModal}
                     invoiceData={invoiceData}
                     handleInputChange={handleInputChange}
+                    handleAddressChange={handleAddressChange}
+                    // addAddress={addAddress}
+                    removeAddress={removeAddress}
                 />
-                <PrintFormat ref={printRef} invoiceData={invoiceData} />
+                <PrintFormat 
+                    ref={printRef} 
+                    invoiceData={invoiceData}
+                    companyData={companyData}
+                />
             </div>
         </Container>
     );

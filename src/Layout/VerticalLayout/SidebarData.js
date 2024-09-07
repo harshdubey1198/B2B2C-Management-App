@@ -173,6 +173,7 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-account-multiple-outline",
       subItem: [
         { sublabel: "Firms", link: "/firms" },
+        { sublabel: "Create New Firm", link: "/create-firm" },
         { sublabel: "Firm Users", link: "/firmusers" },
         // { sublabel: "Create Firm", link: "/create-firm" },
         // { sublabel: "Switch Firm", link: "/Switch-firm" },

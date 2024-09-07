@@ -224,6 +224,21 @@ const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, pri
                         />
                     </FormGroup>
                     <FormGroup>
+                        <Label for="invoiceType">Invoice Type</Label>
+                        <Input
+                            type="select"
+                            name="invoiceType"
+                            id="invoiceType"
+                            value={invoiceData.invoiceType}
+                            onChange={handleInputChange}
+                            required
+                        >
+                            <option value="Tax Invoice">Select Invoice Type</option>
+                            <option value="Tax Invoice">Tax Invoice</option>
+                            <option value="Bill of Supply">Bill of Supply</option>
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
                         <Label for="invoiceSubType">Invoice Sub Type</Label>
                         <Input
                             type="select"

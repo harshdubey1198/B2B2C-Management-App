@@ -1,4 +1,4 @@
-import React, {forwardRef} from 'react';
+import React, { forwardRef } from 'react';
 
 const countries = {
     India: { currency: 'INR', gst: 18 },
@@ -32,7 +32,6 @@ const convertNumberToWords = (num) => {
 };
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
-    // console.log(invoiceData, "invoicedata")
     const { country } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
     const isSameState = invoiceData.companyState === invoiceData.customerState;
@@ -42,13 +41,15 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
     const taxAmount = (totalAmount * taxRate) / 100;
     const amountDue = totalAmount + taxAmount;
-
     const netReceived = amountDue;
 
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
-            <div className="row mb-2 text-center ">
-                <h2>Tax Invoice</h2>
+            <div className="row mb-2 text-center">
+            {   invoiceData && (
+              <h2>{invoiceData.invoiceType}</h2>
+            )
+            }
             </div>
 
             <div className="row mt-2">
@@ -57,16 +58,24 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         <img 
                             src={invoiceData.companyLogo}  
                             alt="Company Logo" 
-                            style={{ height: "100px", maxWidth: "200px" , marginBottom:"10px" , marginTop:"-50px" }} 
+                            style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
-                    <p className="my-1">{invoiceData?.officeAddress + ", " + invoiceData?.companyNearby + ", " + invoiceData?.companyDistrict}</p>
-                    <p className="my-1">{invoiceData?.companyState + ", " + invoiceData?.companyCity + ", " + invoiceData?.companyCountry + ", " + invoiceData?.companyZip}</p>
-                    <p className="my-1">{invoiceData?.companyPhone}</p>
-                    <p className="my-1">{invoiceData?.companyEmail}</p>
-                    <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin}</p>
+                    {invoiceData.companyAddresses.map((address, index) => (
+                        <div key={index}>
+                            <p className="my-1">
+                                {address.h_no}, {address.nearby}, {address.district}
+                            </p>
+                            <p className="my-1">
+                                {address.city}, {address.state}, {address.country}, {address.zip_code}
+                            </p>
+                        </div>
+                    ))}
+                    <p className="my-1">{invoiceData.companyPhone}</p>
+                    <p className="my-1">{invoiceData.companyEmail}</p>
+                    <p className="my-1"><b>GSTIN:</b> {invoiceData.gstin}</p>
                 </div>
-                <div className="col-md-3 offset-md-3  right-t-col3" >
+                <div className="col-md-3 offset-md-3 right-t-col3">
                     <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
@@ -78,8 +87,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                 <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
                     <p className="my-1">{invoiceData.customerName}</p>
-                    <p className="my-1">{invoiceData?.customerHouse + ", " + invoiceData?.customerNearby+ ", " + invoiceData?.customerDistrict}</p>
-                    <p className="my-1">{invoiceData?.customerState + ", " + invoiceData?.customerCity+ ", " + invoiceData?.customerCountry+ ", "+ invoiceData?.customerZip}</p>
+                    <p className="my-1">{invoiceData.customerAddress}</p>
                     <p className="my-1">{invoiceData.customerPhone}</p>
                     <p className="my-1">{country}</p>
                 </div>
@@ -141,12 +149,12 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h5>Bank Details</h5>
-                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || 'Your Bank Name'}</p>
-                    <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber || 'XXXXXXXXXXXX'}</p>
-                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.IFSCCode || ''}</p>
-                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || 'Your Branch'}</p>
+                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData.bankName || 'Your Bank Name'}</p>
+                    <p className="my-1"><strong>Account Number:</strong> {invoiceData.accountNumber || 'XXXXXXXXXXXX'}</p>
+                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData.IFSCCode || ''}</p>
+                    <p className="my-1"><strong>Branch:</strong> {invoiceData.branchName || 'Your Branch'}</p>
                 </div>
-                <div className="col-md-6 .right-t-col3">
+                <div className="col-md-6 right-t-col3">
                     <p className="my-1"><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (
                         <>
