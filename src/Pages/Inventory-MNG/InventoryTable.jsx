@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, FormGroup, Label, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { mdiPencil, mdiDelete, mdiCheck } from '@mdi/js';
+import { mdiPencil, mdiDelete, mdiCheck, mdiEye } from '@mdi/js';
 import Icon from '@mdi/react';
+import ProductDetail from '../../Modal/ProductDetail'; // Import ProductDetail for viewing
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [role, setRole] = useState("");
-  const [editModal, setEditModal] = useState(false);
+  const [editModal, setEditModal] = useState(false); 
   const [editItem, setEditItem] = useState(null);
-  const [editVariant, setEditVariant] = useState(null); // State for the variant being edited
+  const [editVariant, setEditVariant] = useState(null);
+  const [viewProduct, setViewProduct] = useState(false); 
+  const [selectedItemDetails, setselectedItemDetails] = useState(null);
 
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
@@ -29,17 +32,18 @@ function InventoryTable() {
   }, []);
 
   const handleRowClick = (id) => {
-    if (selectedItemId === id) {
-      setSelectedItemId(null);
-    } else {
-      setSelectedItemId(id);
-    }
+    setSelectedItemId(selectedItemId === id ? null : id);
   };
 
   const handleEditClick = (item, variant) => {
     setEditItem(item);
     setEditVariant(variant); 
-    setEditModal(true);
+    setEditModal(true); // Open the edit modal
+  };
+
+  const handleViewClick = (item, variant) => {
+    setselectedItemDetails(item); 
+    setViewProduct(true); // Open the view modal (ProductDetail)
   };
 
   const handleDeleteClick = (itemId, variantIndex) => {
@@ -62,7 +66,7 @@ function InventoryTable() {
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
   };
-  
+
   const calculateTotalQuantity = (variants) => {
     return variants.reduce((acc, curr) => acc + Number(curr.quantity), 0);
   };
@@ -71,6 +75,7 @@ function InventoryTable() {
     return (price + (price * (taxRate / 100))).toFixed(2);
   };
 
+  // Handle input changes for the edit modal
   const handleModalInputChange = (e) => {
     const { name, value } = e.target;
     setEditVariant(prevState => ({
@@ -80,12 +85,9 @@ function InventoryTable() {
   };
 
   const handleSaveChanges = () => {
-    // console.log(editItem.variants, "variants")
-    // console.log(editVariant, "editvariants")
     const updatedVariants = editItem.variants.map(v =>
       v.id === editVariant.id ? editVariant : v
     );
-    // console.log(updatedVariants,"updatedvariants")
     const updatedItem = { ...editItem, variants: updatedVariants };
 
     const updatedData = inventoryData.map(item =>
@@ -94,16 +96,13 @@ function InventoryTable() {
 
     setInventoryData(updatedData);
     localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
-    setEditModal(false);
+    setEditModal(false); // Close the edit modal after saving changes
   };
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Table" />
-        <p className='mm-active'>
-          This is the Inventory Table page. Here you can view and manage your inventory items.
-        </p>
         <Col lg={12}>
           <Card>
             <CardBody>
@@ -165,6 +164,9 @@ function InventoryTable() {
                                   <Button color="danger" onClick={() => handleDeleteClick(item.id, index)} title="Delete">
                                     <Icon path={mdiDelete} size={1} />
                                   </Button>
+                                  <Button color="info" onClick={() => handleViewClick(item, variant)} style={{ marginRight: '5px' }} title="View">
+                                    <Icon path={mdiEye} size={1} />
+                                  </Button>
                                 </div>
                               </td>
                             </tr>
@@ -183,6 +185,7 @@ function InventoryTable() {
           </Card>
         </Col>
 
+        {/* Edit Modal stays in this file */}
         <Modal isOpen={editModal} toggle={() => setEditModal(!editModal)}>
           <ModalHeader toggle={() => setEditModal(!editModal)}>Edit Variant</ModalHeader>
           <ModalBody>
@@ -225,6 +228,16 @@ function InventoryTable() {
             )}
           </ModalBody>
         </Modal>
+
+        {/* View Modal using ProductDetail component */}
+        {viewProduct && (
+          <ProductDetail
+            isOpen={viewProduct}
+            toggleModal={() => setViewProduct(!viewProduct)}
+            selectedItemDetails={selectedItemDetails}
+            viewMode={true} // Set viewMode to true to make it read-only
+          />
+        )}
       </div>
     </React.Fragment>
   );
