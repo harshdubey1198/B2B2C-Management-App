@@ -153,6 +153,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     <p className="my-1"><strong>Account Number:</strong> {invoiceData.accountNumber || 'XXXXXXXXXXXX'}</p>
                     <p className="my-1"><strong>IFSC Code:</strong> {invoiceData.IFSCCode || ''}</p>
                     <p className="my-1"><strong>Branch:</strong> {invoiceData.branchName || 'Your Branch'}</p>
+                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData.invoiceSubType}</p>
                 </div>
                 <div className="col-md-6 right-t-col3">
                     <p className="my-1"><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>

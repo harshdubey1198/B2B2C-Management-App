@@ -19,6 +19,7 @@ const Index = () => {
         companyEmail: "",
         bankName: "",
         invoiceType: "Tax Invoice", 
+        invoiceSubType:"",
         IFSCCode: "",
         branchName: "",
         accountNumber: "",
@@ -151,7 +152,8 @@ const Index = () => {
             country: 'India',
             items: [],
             paymentLink: '',
-            invoiceType: ''
+            invoiceType: '',
+            invoiceSubType: '',
         });
 
         toast.success("Invoice Form Submitted Successfully");

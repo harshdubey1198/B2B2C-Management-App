@@ -151,23 +151,21 @@ function InventoryTable() {
                                   <span>Pending</span>
                                 )}
                               </td>
-                              <td>
-                                <div className='d-flex'>
+                              <td  className='d-flex justify-content-evenly px-0 py-2'>
                                   {role === "Firm_Admin" && !item.approved && (
                                     <Button color="success" onClick={() => handleApproveClick(item.id)} style={{ marginRight: '5px' }} title="Approve">
                                       <Icon path={mdiCheck} size={1} />
                                     </Button>
                                   )}
-                                  <Button color="warning" onClick={() => handleEditClick(item, variant)} style={{ marginRight: '5px' }} title="Edit">
+                                  <Button color="warning" onClick={() => handleEditClick(item, variant)}  title="Edit">
                                     <Icon path={mdiPencil} size={1} />
                                   </Button>
                                   <Button color="danger" onClick={() => handleDeleteClick(item.id, index)} title="Delete">
                                     <Icon path={mdiDelete} size={1} />
                                   </Button>
-                                  <Button color="info" onClick={() => handleViewClick(item, variant)} style={{ marginRight: '5px' }} title="View">
+                                  <Button color="info" onClick={() => handleViewClick(item, variant)}  title="View">
                                     <Icon path={mdiEye} size={1} />
                                   </Button>
-                                </div>
                               </td>
                             </tr>
                           ))
