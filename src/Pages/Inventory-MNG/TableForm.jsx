@@ -39,21 +39,41 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const handleDescriptionChange = (e) => {
+  // const handleDescriptionChange = (e) => {
+  //   const { value } = e.target;
+  //   setFormValues((prevState) => ({
+  //     ...prevState,
+  //     description: value,
+  //   }));
+
+  //   if (!manualHSN) {
+  //     const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
+  //     setFormValues((prevState) => ({
+  //       ...prevState,
+  //       hsn: matchingHSN ? matchingHSN.hsn : "",
+  //     }));
+  //   }
+  // };
+
+  const handleCategory = (e) => {
     const { value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
-      description: value,
+      category: value,
     }));
-
+    
     if (!manualHSN) {
+      // Match based on description since category is not in HSN data
       const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
+      console.log(matchingHSN, "matching hsn");
       setFormValues((prevState) => ({
         ...prevState,
         hsn: matchingHSN ? matchingHSN.hsn : "",
       }));
     }
   };
+  
+  
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
@@ -142,7 +162,18 @@ const InventoryItemForm = () => {
                         name="description"
                         placeholder="Enter item description"
                         value={formValues.description}
-                        onChange={handleDescriptionChange}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="category">Category</Label>
+                      <Input
+                        type="text"
+                        id="category"
+                        name="category"
+                        placeholder="Enter category"
+                        value={formValues.category}
+                        onChange={handleCategory}
                       />
                     </FormGroup>
                     <FormGroup>
@@ -185,17 +216,6 @@ const InventoryItemForm = () => {
                         onChange={handleChange}
                       />
                     </FormGroup> */}
-                    <FormGroup>
-                      <Label htmlFor="category">Category</Label>
-                      <Input
-                        type="text"
-                        id="category"
-                        name="category"
-                        placeholder="Enter category"
-                        value={formValues.category}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
                     <FormGroup >
                       <Label htmlFor="brandName">Brand Name</Label>
                       <Input
