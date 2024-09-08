@@ -17,6 +17,10 @@ const InventoryItemForm = () => {
     brandName:"",
     category: "",
     supplier: "",
+    subcategory: "",
+    type: "",
+    size: "",
+    color: "",
     hsn: "",
     variants: [],
     type: "",
@@ -38,22 +42,6 @@ const InventoryItemForm = () => {
       [name]: value,
     }));
   };
-
-  // const handleDescriptionChange = (e) => {
-  //   const { value } = e.target;
-  //   setFormValues((prevState) => ({
-  //     ...prevState,
-  //     description: value,
-  //   }));
-
-  //   if (!manualHSN) {
-  //     const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
-  //     setFormValues((prevState) => ({
-  //       ...prevState,
-  //       hsn: matchingHSN ? matchingHSN.hsn : "",
-  //     }));
-  //   }
-  // };
 
   const handleCategory = (e) => {
     const { value } = e.target;
@@ -124,6 +112,10 @@ const InventoryItemForm = () => {
         category: "",
         supplier: "",
         hsn: "",
+        subcategory: "",
+        type: "",
+        size: "",
+        color: "",
         variants: [],
         type: "",
       });
@@ -205,17 +197,50 @@ const InventoryItemForm = () => {
                         </Label>
                       </FormGroup>
                     </FormGroup>
-                    {/* <FormGroup>
-                      <Label htmlFor="quantity">Quantity</Label>
+                    <FormGroup>
+                      <Label htmlFor="subcategory">Sub Category</Label>
                       <Input
-                        type="number"
-                        id="quantity"
-                        name="quantity"
-                        placeholder="Enter quantity"
-                        value={formValues.quantity}
+                        type="text"
+                        id="subcategory"
+                        name="subcategory"
+                        placeholder="Enter sub category name"
+                        value={formValues.subcategory}
                         onChange={handleChange}
                       />
-                    </FormGroup> */}
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="type">Type</Label>
+                      <Input
+                        type="text"
+                        id="type"
+                        name="type"
+                        placeholder="Enter Product type"
+                        value={formValues.type}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="size">Size</Label>
+                      <Input
+                        type="text"
+                        id="size"
+                        name="size"
+                        placeholder="Enter Product Size"
+                        value={formValues.size}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="color">Color</Label>
+                      <Input
+                        type="text"
+                        id="color"
+                        name="color"
+                        placeholder="Enter Color name"
+                        value={formValues.color}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
                     <FormGroup >
                       <Label htmlFor="brandName">Brand Name</Label>
                       <Input
@@ -309,17 +334,6 @@ const InventoryItemForm = () => {
                       <Button color="success" onClick={handleAddVariant}>
                         Add Variant
                       </Button>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="type">Type</Label>
-                      <Input
-                        type="text"
-                        id="type"
-                        name="type"
-                        placeholder="Enter inventory type"
-                        value={formValues.type}
-                        onChange={handleChange}
-                      />
                     </FormGroup>
                     <Button color="primary" type="submit" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}
