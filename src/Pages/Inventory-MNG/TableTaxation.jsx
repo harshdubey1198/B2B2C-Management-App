@@ -79,7 +79,7 @@ function TaxationTable() {
                         <td>{item.name}</td>
                         <td>{item.rate}</td>
                         <td>{item.description}</td>
-                        <td className='d-flex justify-content-evenly'>
+                        <td className='d-flex justify-content-evenly'> 
                           <Button color="warning"  onClick={() => handleEdit(item)}>Edit</Button>
                           <Button color="danger" onClick={() => handleDelete(item.id)}>Delete</Button>
                         </td>
