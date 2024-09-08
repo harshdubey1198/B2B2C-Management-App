@@ -147,17 +147,6 @@ const InventoryItemForm = () => {
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="description">Description</Label>
-                      <Input
-                        type="textarea"
-                        id="description"
-                        name="description"
-                        placeholder="Enter item description"
-                        value={formValues.description}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
                       <Label htmlFor="category">Category</Label>
                       <Input
                         type="text"
@@ -238,6 +227,17 @@ const InventoryItemForm = () => {
                         name="color"
                         placeholder="Enter Color name"
                         value={formValues.color}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="description">Description</Label>
+                      <Input
+                        type="textarea"
+                        id="description"
+                        name="description"
+                        placeholder="Enter item description"
+                        value={formValues.description}
                         onChange={handleChange}
                       />
                     </FormGroup>
