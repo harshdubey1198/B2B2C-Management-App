@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FormGroup, Label, Input, Button } from 'reactstrap';
 
-const InvoiceItems = ({ items, handleItemChange, removeItem }) => {
+const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
 
   useEffect(() => {
-    const storedInventoryItems = JSON.parse(localStorage.getItem("inventoryItems")) || [];
-    setInventoryItems(storedInventoryItems);
-  }, []);
-  console.log(inventoryItems);
+    setInventoryItems(fakeItems);
+    console.log("Updated inventoryItems: ", fakeItems);
+  }, [fakeItems]);
 
   const getMaxQuantity = (name, variantName) => {
     const selectedItem = inventoryItems.find((invItem) => invItem.name === name);
@@ -44,37 +43,42 @@ const InvoiceItems = ({ items, handleItemChange, removeItem }) => {
               type="select"
               name={`name-${index}`}
               id={`name-${index}`}
-              value={item.name}
-              onChange={(e) => handleItemChange(index, 'name', e.target.value)}
+              value={item.name || ""}
+              onChange={(e) => {
+                const selectedName = e.target.value;
+                handleItemChange(index, 'name', selectedName);
+                handleItemChange(index, 'variant', ""); 
+                handleItemChange(index, 'price', 0); 
+              }}
               required
             >
               <option value="">Select Item</option>
-              {inventoryItems.map((inventoryItem) => (
-                <option key={inventoryItem.id} value={inventoryItem.name}>
-                  {inventoryItem.name}
+              {inventoryItems.map((item) => (
+                <option key={item.id} value={item.name}>
+                  {item.name}
                 </option>
               ))}
             </Input>
           </FormGroup>
 
-          <FormGroup>
-            <Label for={`variant-${index}`}>Variant</Label>
-            <Input
-              type="select"
-              name={`variant-${index}`}
-              id={`variant-${index}`}
-              value={item.variant || ""}
-              onChange={(e) => handleVariantChange(index, item.name, e.target.value)}
-              required
-            >
-              <option value="">Select Variant</option>
-              {inventoryItems.find((invItem) => invItem.name === item.name)?.variants.map((variant) => (
-                <option key={variant.id} value={variant.name}>
-                  {variant.name}
-                </option>
-              ))}
-            </Input>
-          </FormGroup>
+            <FormGroup>
+              <Label for={`variant-${index}`}>Variant</Label>
+              <Input
+                type="select"
+                name={`variant-${index}`}
+                id={`variant-${index}`}
+                value={item.variant || ""}
+                onChange={(e) => handleVariantChange(index, item.name, e.target.value)}
+                required
+              >
+                <option value="">Select Variant</option>
+                {inventoryItems.find((invItem) => invItem.name === item.name)?.variants.map((variant) => (
+                  <option key={variant.id} value={variant.name}>
+                    {variant.name}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
 
           <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
@@ -83,9 +87,9 @@ const InvoiceItems = ({ items, handleItemChange, removeItem }) => {
               name={`quantity-${index}`}
               id={`quantity-${index}`}
               min={1}
-              max={getMaxQuantity(item.name, item.variant)}
-              value={item.quantity}
-              onChange={(e) => handleItemChange(index, 'quantity', Math.max(1, Math.min(e.target.value, getMaxQuantity(item.name, item.variant))))}
+              max={getMaxQuantity(item.name || "", item.variant || "")}
+              value={item.quantity || 1}
+              onChange={(e) => handleItemChange(index, 'quantity', Math.max(1, Math.min(e.target.value, getMaxQuantity(item.name || "", item.variant || ""))))}
               required
             />
           </FormGroup>
@@ -96,10 +100,10 @@ const InvoiceItems = ({ items, handleItemChange, removeItem }) => {
               type="number"
               name={`price-${index}`}
               id={`price-${index}`}
-              value={item.price}
+              value={item.price || 0}
               onChange={(e) => handleItemChange(index, 'price', e.target.value)}
               required
-              readOnly 
+              readOnly
             />
           </FormGroup>
 
