@@ -220,8 +220,8 @@ const Login = (props) => {
                               <option value="firm_admin">Firm Manager</option>
                               <option value="accountant">Accountant</option>
                               <option value="g_emp">Employee</option>
-                              <option value="viewer">Demo User</option>
-                              <option value="customer_sp">Support Executive</option>
+                              {/* <option value="viewer">Demo User</option>
+                              <option value="customer_sp">Support Executive</option> */}
                             </Input>
                           </div>
                           <Row>
