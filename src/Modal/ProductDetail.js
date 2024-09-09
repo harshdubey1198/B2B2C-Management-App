@@ -13,6 +13,10 @@ const ProductDetail = ({ isOpen, toggleModal, selectedItemDetails }) => {
             <h4>{selectedItemDetails.name}</h4>
             <p><strong>Description:</strong> {selectedItemDetails.description}</p>
             <p><strong>Category:</strong> {selectedItemDetails.category}</p>
+            <p><strong>Sub Category:</strong> {selectedItemDetails.subcategory}</p>
+            <p><strong>Type:</strong> {selectedItemDetails.type}</p>
+            <p><strong>Size:</strong> {selectedItemDetails.size}</p>
+            <p><strong>Color:</strong> {selectedItemDetails.color}</p>
             <p><strong>Brand:</strong> {selectedItemDetails.brandName}</p>
             <p><strong>Supplier:</strong> {selectedItemDetails.supplier}</p>
 
