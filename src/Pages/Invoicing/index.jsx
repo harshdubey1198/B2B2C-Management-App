@@ -114,10 +114,13 @@ const Index = () => {
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...invoiceData.items];
+    console.log(newItems,"newitems")
     newItems[index] = { ...newItems[index], [field]: value };
+    console.log(newItems, "newitems")
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
-
 };
+
+console.log(invoiceData, "invoidata")
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -188,6 +191,7 @@ const Index = () => {
                 fakeItems={fakeItems}
                 handleItemChange={handleItemChange}
                 removeItem={removeItem}
+                setInvoiceData={setInvoiceData}
               />
               <FormGroup>
                 <div className="d-flex justify-content-evenly mt-5">
