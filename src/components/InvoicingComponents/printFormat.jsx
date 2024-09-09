@@ -46,10 +46,9 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
             <div className="row mb-2 text-center">
-            {   invoiceData && (
-              <h2>{invoiceData.invoiceType}</h2>
-            )
-            }
+                {invoiceData && (
+                    <h2>{invoiceData.invoiceType}</h2>
+                )}
             </div>
 
             <div className="row mt-2">
@@ -61,17 +60,12 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
-                    {invoiceData.companyAddresses.map((address, index) => (
+                      {invoiceData.companyAddresses && invoiceData.companyAddresses.map((address, index) => (
                         <div key={index}>
-                            <p className="my-1">
-                                {address.h_no}, {address.nearby}, {address.district}
-                            </p>
-                            <p className="my-1">
-                                {address.city}, {address.state}, {address.country}, {address.zip_code}
-                            </p>
+                            <p className="my-1">{address.h_no}, {address.nearby}, {address.district}</p>
+                            <p className="my-1">{address.city}, {address.state}, {address.country}, {address.zip_code}</p>
                         </div>
                     ))}
-                    <p className="my-1">{invoiceData.companyPhone}</p>
                     <p className="my-1">{invoiceData.companyEmail}</p>
                     <p className="my-1"><b>GSTIN:</b> {invoiceData.gstin}</p>
                 </div>
@@ -87,9 +81,9 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                 <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
                     <p className="my-1">{invoiceData.customerName}</p>
-                    <p className="my-1">{invoiceData.customerAddress}</p>
+                    <p className="my-1">{invoiceData.customerHouse}, {invoiceData.customerNearby}, {invoiceData.customerDistrict}</p>
+                    <p className="my-1">{invoiceData.customerCity}, {invoiceData.customerState}, {invoiceData.customerCountry}, {invoiceData.customerZip}</p>
                     <p className="my-1">{invoiceData.customerPhone}</p>
-                    <p className="my-1">{country}</p>
                 </div>
             </div>
 
@@ -97,6 +91,8 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                 <thead>
                     <tr>
                         <th>Sr. no</th>
+                        <th>Item Name</th>
+                        <th>Variant</th>
                         <th>Description</th>
                         <th>HSN/SAC</th>
                         <th>Quantity</th>
@@ -126,11 +122,13 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         return (
                             <tr key={index}>
                                 <td>{index + 1}</td>
+                                <td>{item.itemName}</td>
+                                <td>{item.variant}</td>
                                 <td>{item.description}</td>
                                 <td>{item.hsn}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.price}</td>
-                                <td>{item.totalAmount}</td>
+                                <td>{itemTotalValue.toFixed(2)}</td>
                                 {isSameState ? (
                                     <>
                                         <td>{itemCgstAmount.toFixed(2)}</td>
