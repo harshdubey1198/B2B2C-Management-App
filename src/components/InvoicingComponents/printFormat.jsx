@@ -25,7 +25,7 @@ const convertNumberToWords = (num) => {
     let words = `${inWords(whole)} rupees`;
     
     if (fraction) {
-        words += ` & ${inWords(fraction)} paise`;
+        words += ` and ${inWords(fraction)} paise`;
     }
     
     return words.toUpperCase();
@@ -46,14 +46,12 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
             <div className="row mb-2 text-center">
-                {invoiceData && (
-                    <h2>{invoiceData.invoiceType}</h2>
-                )}
+                <h2>{invoiceData.invoiceType}</h2>
             </div>
 
             <div className="row mt-2">
                 <div className="col-md-6 text-left">
-                    {invoiceData && (
+                    {invoiceData.companyLogo && (
                         <img 
                             src={invoiceData.companyLogo}  
                             alt="Company Logo" 
@@ -123,7 +121,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{item.name}</td>
-                                <td>{item.variant.name}</td>
+                                <td>{item.variant}</td>
                                 <td>{item.description}</td>
                                 <td>{item.hsn}</td>
                                 <td>{item.quantity}</td>

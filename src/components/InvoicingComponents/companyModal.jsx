@@ -24,6 +24,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.h_no}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -35,6 +36,8 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.nearby}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
+
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -46,6 +49,8 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.zip_code}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
+
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -57,6 +62,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.district}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
                                     />
                                 </FormGroup>
                             </Col>
@@ -70,6 +76,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.city}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -81,6 +88,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.state}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
                                     />
                                 </FormGroup>
                                 <FormGroup>
@@ -92,6 +100,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
                                         value={address.country}
                                         onChange={(e) => handleAddressChange(index, e)}
                                         required
+                                        readOnly
                                     />
                                 </FormGroup>
                             </Col>
