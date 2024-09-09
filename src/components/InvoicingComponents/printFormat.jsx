@@ -70,7 +70,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     <p className="my-1"><b>GSTIN:</b> {invoiceData.gstin}</p>
                 </div>
                 <div className="col-md-3 offset-md-3 right-t-col3">
-                    <p><strong>Invoice Number:</strong> {Math.floor(Math.random() * 1000000)}</p>
+                    <p><strong>Invoice Number:</strong> INV-24-MAG </p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
                     <p><strong>Due Date:</strong> {invoiceData.dueDate}</p>
