@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, FormGroup, Label, Input, Row, Col } from "reactstrap";
-import InvoiceItems from "./InvoiceItems";
+import { FormGroup, Label, Input, Row, Col } from "reactstrap";
+// import InvoiceItems from "./InvoiceItems";
 
 const countries = {
   India: { currency: "INR", gst: 18 },
@@ -9,7 +9,7 @@ const countries = {
   Indonesia: { currency: "IDR", gst: 10 },
 };
 
-const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, printInvoice, addItem, removeItem }) => {
+const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
   const getCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
@@ -202,24 +202,8 @@ const InvoiceInputs = ({ invoiceData, handleInputChange, toggleCompanyModal, pri
             </FormGroup>
           </Col>
         </Row>
-        <h3>Invoice Items</h3>
-        <InvoiceItems
-          items={invoiceData.items}
-          handleItemChange={(index, field, value) => {
-            const newItems = [...invoiceData.items];
-            newItems[index] = { ...newItems[index], [field]: value };
-            handleInputChange({ target: { name: 'items', value: newItems } });
-          }}
-          removeItem={removeItem}
-        />
-        <FormGroup>
-          <div className="d-flex justify-content-evenly mt-5">
-            <Button color="info" onClick={addItem}>Add Item</Button>
-            <Button type="submit" color="primary">Submit</Button>
-            <Button type="button" color="secondary" onClick={printInvoice}>Print Invoice</Button>
-            <Button type="button" color="info" onClick={toggleCompanyModal}>Edit Company Details</Button>
-          </div>
-        </FormGroup>
+      
+       
       </div>
     </>
   );

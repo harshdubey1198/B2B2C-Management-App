@@ -122,8 +122,8 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         return (
                             <tr key={index}>
                                 <td>{index + 1}</td>
-                                <td>{item.itemName}</td>
-                                <td>{item.variant}</td>
+                                <td>{item.name}</td>
+                                <td>{item.variant.name}</td>
                                 <td>{item.description}</td>
                                 <td>{item.hsn}</td>
                                 <td>{item.quantity}</td>
