@@ -60,8 +60,6 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems,setInvoic
     }
   };
 
-  console.log(inventoryItems, "inventoryitems");
-  console.log(items, "items sms");
   return (
     <div>
       {items.map((item, index) => (
