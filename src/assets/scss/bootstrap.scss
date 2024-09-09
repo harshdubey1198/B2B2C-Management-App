@@ -51,7 +51,11 @@ File: Custom Bootstrap Css File
         display: flex !important;
         flex-direction: column !important;
         // justify-content: end;
-        margin-left: 25%;
+        margin-right: 25%;
+    }
+    .value-in-words {
+        font-size: 12px !important;
+        overflow-wrap: break-word !important;
     }
     // .my-1{
     //     margin:10px 0 !important;

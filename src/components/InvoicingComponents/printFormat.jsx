@@ -169,7 +169,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         <p><strong>IGST ({igstRate}%):</strong> ₹ {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
                     <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p className="my-1"><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
+                    <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                 </div>
             </div>
