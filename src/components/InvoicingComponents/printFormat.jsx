@@ -8,33 +8,40 @@ const countries = {
 };
 
 const convertNumberToWords = (num) => {
-    const a = ['','one','two','three','four','five','six','seven','eight','nine','ten',
-        'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
-    const b = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+    const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+        'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
 
     const inWords = (n) => {
         if (n === 0) return 'zero';
         if (n < 20) return a[n];
         if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
         if (n < 1000) return a[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' and ' + inWords(n % 100) : '');
+        if (n < 100000) return inWords(Math.floor(n / 1000)) + ' thousand' + (n % 1000 ? ' ' + inWords(n % 1000) : '');
+        if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' lakh' + (n % 100000 ? ' ' + inWords(n % 100000) : '');
+        if (n < 1000000000) return inWords(Math.floor(n / 10000000)) + ' crore' + (n % 10000000 ? ' ' + inWords(n % 10000000) : '');
         return 'Number too large';
     };
 
     const [whole, fraction] = num.toString().split('.').map(Number);
 
     let words = `${inWords(whole)} rupees`;
-    
+
     if (fraction) {
         words += ` and ${inWords(fraction)} paise`;
     }
-    
+
     return words.toUpperCase();
 };
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
-    const { country } = invoiceData;
+    const { country, companyAddresses = [], customerState } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
-    const isSameState = invoiceData.companyAddresses[0]?.state.toLowerCase() === invoiceData.customerState.toLowerCase();
+
+    // Ensure companyAddresses[0] exists before accessing its properties
+    const companyState = companyAddresses[0]?.state?.toLowerCase();
+    const isSameState = companyState === customerState?.toLowerCase();
+    
     const cgstSgstRate = isSameState ? taxRate / 2 : 0;
     const igstRate = !isSameState ? taxRate : 0;
 
@@ -58,7 +65,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
-                      {invoiceData.companyAddresses && invoiceData.companyAddresses.map((address, index) => (
+                    {companyAddresses.map((address, index) => (
                         <div key={index}>
                             <p className="my-1">{address.h_no}, {address.nearby}, {address.district}</p>
                             <p className="my-1">{address.city}, {address.state}, {address.country}, {address.zip_code}</p>
@@ -162,7 +169,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         <p><strong>IGST ({igstRate}%):</strong> ₹ {(totalAmount * igstRate / 100).toFixed(2)}</p>
                     )}
                     <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p className="my-1"><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(amountDue.toFixed(2))} ONLY</p>
+                    <p className="my-1"><strong>Total Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                 </div>
             </div>
