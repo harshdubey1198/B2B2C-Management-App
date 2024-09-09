@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, Form, Container, Card, CardBody } from 'reactstrap';
+import { Button, Form, Container, Card, CardBody, FormGroup } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import { toast } from 'react-toastify';
 import InvoiceInputs from '../../components/InvoicingComponents/InvoiceInputs';
@@ -8,6 +8,7 @@ import { validatePhone } from '../Utility/FormValidation';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import CompanyModal from '../../components/InvoicingComponents/companyModal';
+import InvoiceItems from '../../components/InvoicingComponents/InvoiceItems';
 
 const Index = () => {
     const [companyData, setCompanyData] = useState({});
@@ -107,7 +108,7 @@ const Index = () => {
     const addItem = () => {
         setInvoiceData({
             ...invoiceData,
-            items: [...invoiceData.items, { itemName: '', variant: '', quantity: 1, price: 0 }]
+            items: [...invoiceData.items, { name: '', variant: '', quantity: 1, price: 0 }]
         });
     };
 
@@ -181,7 +182,25 @@ const Index = () => {
                                 removeItem={removeItem}
                             />
                         </Form>
-                    </CardBody>
+                    <h3>Invoice Items</h3>
+                    <InvoiceItems
+                    items={invoiceData.items}
+                    handleItemChange={(index, field, value) => {
+                        const newItems = [...invoiceData.items];
+                        newItems[index] = { ...newItems[index], [field]: value };
+                        handleInputChange({ target: { name: 'items', value: newItems } });
+                    }}
+                    removeItem={removeItem}
+                    />
+                </CardBody>
+                 <FormGroup>
+                    <div className="d-flex justify-content-evenly mt-5">
+                        <Button color="info" onClick={addItem}>Add Item</Button>
+                        <Button type="submit" color="primary">Submit</Button>
+                        <Button type="button" color="secondary" onClick={printInvoice}>Print Invoice</Button>
+                        <Button type="button" color="info" onClick={toggleCompanyModal}>Edit Company Details</Button>
+                    </div>
+                </FormGroup>
                 </Card>
                 <CompanyModal
                     isOpen={isCompanyModalOpen}
