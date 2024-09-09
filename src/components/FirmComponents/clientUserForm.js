@@ -9,19 +9,19 @@ const ClientUserCreateForm = ({
 }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const handleAddPermission = (permission) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      permissions: [...new Set([...prevState.permissions, permission])],
-    }));
-  };
+  // const handleAddPermission = (permission) => {
+  //   setFormValues((prevState) => ({
+  //     ...prevState,
+  //     permissions: [...new Set([...prevState.permissions, permission])],
+  //   }));
+  // };
 
-  const handleRemovePermission = (permission) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      permissions: prevState.permissions.filter((p) => p !== permission),
-    }));
-  };
+  // const handleRemovePermission = (permission) => {
+  //   setFormValues((prevState) => ({
+  //     ...prevState,
+  //     permissions: prevState.permissions.filter((p) => p !== permission),
+  //   }));
+  // };
   const [show, setShow] = useState({
     password: false,
     confirmPassword: false,
@@ -72,8 +72,8 @@ const handleSubmit = (e) => {
           address: "",
           dob: "",
           role: "",
-          permissions: [],
-          restrictions: "",
+          // permissions: [],
+          // restrictions: "",
         });
         toggle();
       })
@@ -93,17 +93,17 @@ const handleSubmit = (e) => {
     setError("");
   };
 
-  const handlePermissionChange = (e) => {
-    const selectedPermission = e.target.value;
-    if (
-      selectedPermission &&
-      !formValues.permissions.includes(selectedPermission)
-    ) {
-      handleAddPermission(selectedPermission);
-    }
-    e.target.value = "";
-    setError("");
-  };
+  // const handlePermissionChange = (e) => {
+  //   const selectedPermission = e.target.value;
+  //   if (
+  //     selectedPermission &&
+  //     !formValues.permissions.includes(selectedPermission)
+  //   ) {
+  //     handleAddPermission(selectedPermission);
+  //   }
+  //   e.target.value = "";
+  //   setError("");
+  // };
 
   const handleFirmNameChange = (e) => {
     const selectedFirmName = e.target.value;
@@ -122,14 +122,14 @@ const handleSubmit = (e) => {
     }
 };
 
-  const prePermissions = [
-    "View Invoice",
-    "Create Invoice",
-    "Edit Invoice",
-    "See Invoice",
-  ];
+  // const prePermissions = [
+  //   "View Invoice",
+  //   "Create Invoice",
+  //   "Edit Invoice",
+  //   "See Invoice",
+  // ];
 
-  const preRestrictions = ["Only View", "Not allow update"];
+  // const preRestrictions = ["Only View", "Not allow update"];
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -213,7 +213,7 @@ const handleSubmit = (e) => {
                 />
               </FormGroup>
 
-              <FormGroup>
+              {/* <FormGroup>
                 <Label>Permissions</Label>
                 <Input type="select" onChange={handlePermissionChange}>
                   <option value="">Select Permission</option>
@@ -237,7 +237,7 @@ const handleSubmit = (e) => {
                     </li>
                   ))}
                 </ul>
-              </FormGroup>
+              </FormGroup> */}
             </Col>
 
             <Col md={6}>
@@ -314,7 +314,7 @@ const handleSubmit = (e) => {
                   ))}
                 </Input>
               </FormGroup>
-              <FormGroup>
+              {/* <FormGroup>
                 <Label>Restrictions</Label>
                 <Input
                   type="select"
@@ -329,7 +329,7 @@ const handleSubmit = (e) => {
                     </option>
                   ))}
                 </Input>
-              </FormGroup>
+              </FormGroup> */}
             </Col>
           </Row>
           <ModalFooter>

@@ -43,7 +43,7 @@ export const masterAdminSidebarData = () => [
       { sublabel: "Inventory Management", link: "/inventory-table" },
       { sublabel: "Table Form", link: "/add-inventory" },
       { sublabel: "Table Taxation", link: "/table-taxation" },
-      { sublabel: "Item Config", link: "/item-configuration" },
+      // { sublabel: "Item Config", link: "/item-configuration" },
     ],
   },
   {
@@ -203,7 +203,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
-        { sublabel: "Item Config", link: "/item-configuration" },
+        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     // {
@@ -288,7 +288,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
-        { sublabel: "Item Config", link: "/item-configuration" },
+        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     // {
@@ -352,7 +352,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
-        { sublabel: "Item Config", link: "/item-configuration" },
+        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     {
@@ -385,7 +385,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
-        { sublabel: "Item Config", link: "/item-configuration" },
+        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     {

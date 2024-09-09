@@ -53,7 +53,6 @@ function FirmSettings() {
         try {
           const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
           const firmData = response || {};
-          // Ensure companyAddress is initialized as an array
           setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
@@ -107,15 +106,11 @@ function FirmSettings() {
     });
   };
 
-  // console.log(firmDetails, "firm details")
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
-      // setSuccess("Firm details updated successfully!");
       toast.success("Firm details updated successfully!");
-      // Instead of triggering a full re-fetch of the firm list, just update the details for the current firm
       setTrigger(prev => prev + 1)
       handleFirmChange(selectedFirmId); // Refresh data for the current firm
     } catch (error) {
