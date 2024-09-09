@@ -118,10 +118,7 @@ const Index = () => {
     newItems[index] = { ...newItems[index], [field]: value };
     console.log(newItems, "newitems")
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
-};
-
-console.log(invoiceData, "invoidata")
-  
+};  
   const handleSubmit = (e) => {
     e.preventDefault();
 
