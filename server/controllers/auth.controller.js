@@ -1,14 +1,25 @@
+const { response } = require("express");
 const authService = require("../services/auth.services")
 const createSecretToken = require('../utils/secretToken')
 
 const authController = {};
 
+// REGISTER
+authController.register = async (req, res) => {
+    try {
+        const user = await userService.registration(req.body);
+        return res.status(200).json({ message: "Register successfully", user });
+    } catch (error) {
+        return res.status(400).json({ message: error });
+    }
+};
+
 // Login Controller
 authController.login = async (req, res) => {
     try {
-        const user = await authService.userLogin(req.body);
-        const token = createSecretToken(user._id);
-        res.status(200).json({ user, token });
+        const response = await authService.userLogin(req.body);
+        const token = createSecretToken(response._id);
+        res.status(200).json({ response, token });
     } catch (error) {
         res.status(400).json({ error: error.toString() });
     }
