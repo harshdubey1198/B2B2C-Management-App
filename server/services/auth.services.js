@@ -3,78 +3,21 @@ const generateTemporaryPassword = require("../utils/tempPassword");
 const PasswordService = require('./password.services');
 const User = require("../schemas/user.schema");
 
-// let service = {};
-// service.userLogin = userLogin;
-// service.UserForgetPassword = UserForgetPassword;
-// service.resetPassword = resetPassword;
-// service.createUser = createUser;
 const authService = {};
 
-
-// LOGIN USER BASED ON THIER ROLE
-// async function userLogin(body) {
-//   try {
-//       const { email, password, role } = body;
-//       let userModel;
-//       switch (role) {
-//           case 'super_admin':
-//               userModel = SuperAdmin;
-//               break;
-//           case 'client_admin':
-//               userModel = ClientAdmin;
-//               break;
-//           case 'firm_admin':
-//           case 'accountant':
-//           case 'g_emp':
-//               userModel = User;
-//               break;
-//           case 'customer_sp':
-//               userModel = SupportExecutive;
-//               break;
-//           case 'viewer':
-//               userModel = Viewer;
-//               break;
-//           default:
-//               return Promise.reject('Invalid Role');
-//       }
-
-//       const user = await userModel.findOne({ email: email, role: role });
-//       if (!user) {
-//           return Promise.reject('Account Not Found Or Role Mismatch');
-//       } else {
-//           const match = await PasswordService.comparePassword(password, user.password);
-//           if (match) {
-//               const userData = await userModel.findOne({ _id: user._id }).select('-password');
-//               return userData;
-//           } else {
-//               return Promise.reject('Incorrect Password');
-//           }
-//       }
-//   } catch (error) {
-//       console.error(error);
-//       return Promise.reject('Login failed');
-//   }
-// }
+// LOGIN USER
 authService.userLogin = async (body) => {
     const { email, password } = body;
-
     try {
-        // Find user by email
         const user = await User.findOne({ email: email });
         if (!user) {
             return Promise.reject('Account Not Found');
         }
-
-        // Use passwordService to compare the provided password with the stored hashed password
         const passwordMatch = await PasswordService.comparePassword(password, user.password);
-
         if (!passwordMatch) {
             return Promise.reject("Incorrect Password");
         }
-
-        // Fetch user data without the password field
         const userData = await User.findOne({ _id: user._id }).select("-password");
-
         return userData;
     } catch (error) {
         console.error('Login failed:', error);
