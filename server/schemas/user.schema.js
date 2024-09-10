@@ -6,7 +6,7 @@ const userSchema = new Schema({
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    avatar: { type: String, default: "https://res.cloudinary.com/dixpqlscx/image/upload/v1716183744/vecteezy_account-avatar-user-business-flat-line-filled-icon-vector_13223732_ecraj9.jpg" },
+    avatar: { type: String, default: "https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg" },
     birthday: Date,
     gender: { type: String, enum: ["male", "female", "prefer not to say"], default: "prefer not to say" },
     mobile: String,
@@ -15,7 +15,7 @@ const userSchema = new Schema({
     companyEmail: String,
     companyMobile: String,
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    role: { type: String, enum: ['super_admin', 'company_admin', 'firm_admin', 'user'], required: true },
+    role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'user'], required: true },
     isActive: { type: Boolean, default: false },
 }, { timestamps: true });
 

@@ -8,12 +8,13 @@ const authService = {};
 // REGISTER 
 authService.Registration = async (body) => {
     try {
-        const existingUser = await User.findOne({ email: body.email, isActive: true });
+        const existingUser = await User.findOne({ email: body.email });
+        // const existingUser = await User.findOne({ email: body.email, isActive: true });
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
-        const updatedPassword = await PasswordService.passwordHash(newPassword);
-        existingUser.password = updatedPassword;
+        const updatedPassword = await PasswordService.passwordHash(body.password);
+        body.password = updatedPassword;
         body.role = body.role || "client_admin";
         const user = await User.create(body);
         return user;
