@@ -46,10 +46,10 @@ authController.resetPassword = async (req,res) => {
 };
 
 // CREATE USER
-authController.userRegistration = async (req,res) => {
+authController.registration = async (req,res) => {
     try {
-        const response = await authService.userRegistration(req.params.id, req.body);
-        res.status(200).json({ message: response });
+        const response = await authService.registration(req.params.id, req.body);
+        res.status(200).json( response );
     } catch (error) {
         res.status(400).json({ error: error.toString() });
     }

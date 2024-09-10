@@ -102,11 +102,19 @@ authService.resetPassword = async (body) => {
   }
 }
 
-authService.userRegistration = async (id, body) => {
+// CREATE FIRM OR CREATE USER
+authService.registration = async (id, body) => {
     try {
-        const existingUser = await User.findOne({ email: body.email });
+        const existingUser = await User.findOne({ email: body.email, adminId: id });
         if (existingUser) {
             return Promise.reject("Account already exists!");
+        }
+
+        if (body.role === 'firm_admin') {
+            const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+            if (existingFirmAdmin) {
+                return Promise.reject("There is already a firm admin for this firm!");
+            }
         }
     
         const encryptedPassword = await PasswordService.passwordHash(body.password);
