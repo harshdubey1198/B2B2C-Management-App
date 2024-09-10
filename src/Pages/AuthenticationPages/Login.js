@@ -133,10 +133,10 @@ const Login = (props) => {
 
   return (
     <React.Fragment>
-      <div className="bg-overlay"></div>
+      <div className="bg-overlay"  style={{ minHeight: "100vh" ,height:"100%" }}></div>
       <div className="account-pages h-100 mt-5">
         <Container >
-          <Row className="justify-content-center mt-5">
+          <Row className="d-flex justify-content-center mt-5  width-90">
             <Col lg={6} md={8} xl={6}>
               <Card>
                 <CardBody className="p-3">

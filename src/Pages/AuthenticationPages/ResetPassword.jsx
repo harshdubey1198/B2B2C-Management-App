@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
-  Toast,
-} from "reactstrap";
+import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert} from "reactstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
-
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
 import {
@@ -26,12 +13,12 @@ import { PostRequest } from "../Utility/Request";
 import { toast } from "react-toastify";
 
 const ResetPassword = () => {
+  document.title = "Reset Password | aaMOBee";
   const { token } = useParams();
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
     email: "",
-    role: "",
     newPassword: "",
     confirmPassword: "",
     temporaryPassword: token
@@ -88,7 +75,7 @@ const ResetPassword = () => {
         }).catch((error) => {
             // setError("Error resetting password");
             setLoading(false);
-            toast.error("Check your email and role");
+            toast.error("Check your email");
         })
     }
 
@@ -105,18 +92,18 @@ const ResetPassword = () => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: value.trim(), // Use trim to remove any leading/trailing whitespace
+      [name]: value.trim(), 
     }));
     setError("");
   };
 
   return (
     <React.Fragment>
-      <div className="bg-pattern" style={{ height: "100vh" }}>
+      <div className="bg-pattern"  style={{ minHeight: "100vh" ,height:"100%" }}>
         <div className="bg-overlay"></div>
         <div className="account-pages pt-1">
           <Container>
-            <Row className="justify-content-center">
+            <Row className="d-flex justify-content-center mt-5  width-90">
               <Col lg={6} md={8} xl={4}>
                 <Card className="mt-5">
                   <CardBody className="p-4">
@@ -171,29 +158,7 @@ const ResetPassword = () => {
                             
                           />
                         </FormGroup>
-                        <FormGroup>
-                          <Label className="form-label" htmlFor="role">
-                            Role
-                          </Label>
-                          <Input
-                            type="select"
-                            id="role"
-                            name="role"
-                            value={formValues.role}
-                            onChange={handleChange}
-                            
-                          >
-                            <option value="">Select User Role</option>
-                            <option value="super_admin">Super Admin</option>
-                            <option value="client_admin">Client Admin</option>
-                            <option value="firm_admin">Firm Manager</option>
-                            <option value="accountant">Accountant</option>
-                            <option value="g_emp">Employee</option>
-                            <option value="customer_sp">
-                              Support Executive
-                            </option>
-                          </Input>
-                        </FormGroup>
+                       
                         <div className="mb-4 position-relative">
                         <FormGroup>
                           <Label className="form-label" htmlFor="newPassword">
