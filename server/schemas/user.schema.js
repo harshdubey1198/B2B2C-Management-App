@@ -15,7 +15,7 @@ const userSchema = new Schema({
     companyEmail: String,
     companyMobile: String,
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'user'], required: true },
+    role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'], required: true },
     isActive: { type: Boolean, default: false },
 }, { timestamps: true });
 
