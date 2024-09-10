@@ -4,7 +4,7 @@ import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import {  checkEmptyFields ,  validateEmail ,  validatePhone } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 
 // const predefinedPermissions = [
 //   "Admin",
@@ -12,13 +12,18 @@ import { useNavigate } from "react-router-dom";
 // ];
 
 function CreateFirm() {
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
+  });
   document.title = "Firm Form";
 
   const [formValues, setFormValues] = useState({
-    firmName: "",
-    firmPhone: "",
-    firmEmail: "",
+    companyTitle: "",
+    companyMobile: "",
+    companyEmail: "",
     avatar: "",
+    password:"",
     // permissions: [],
     startDate: "",
     // newPermission: "",
@@ -87,13 +92,13 @@ function CreateFirm() {
 
     console.log('Form Values:', formValues);
 
-    if (!validateEmail(formValues.firmEmail)) {
-        // setError("Invalid Email");
-        toast.error("Invalid Email");
+    if (!validateEmail(formValues.companyEmail)) {
+        // setError("Invalid companyEmail");
+        toast.error("Invalid companyEmail");
         setLoading(false);
         return;
     }
-    if (!validatePhone(formValues.firmPhone)) {
+    if (!validatePhone(formValues.companyMobile)) {
         // setError("Invalid Phone Number");
         toast.error("Invalid Phone Number");
         setLoading(false);
@@ -114,7 +119,7 @@ function CreateFirm() {
 
     try {
         const response = await axios.post(
-            `${process.env.REACT_APP_URL}/clientadmin/createFirm/${clientId}`,
+            `${process.env.REACT_APP_URL}/auth/createUser/${clientId}`,
             formValues,
             {
                 headers: {
@@ -126,9 +131,10 @@ function CreateFirm() {
         // setSuccess("Firm added successfully.");
         toast.success("Firm added successfully.");
         setFormValues({
-            firmName: "",
-            firmPhone: "",
-            firmEmail: "",
+            companyTitle: "",
+            companyMobile: "",
+            companyEmail: "",
+            password:"",
             avatar: "",
             // permissions: [],
             startDate: "",
@@ -160,108 +166,83 @@ function CreateFirm() {
                   {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label htmlFor="firmName">Firm Name</Label>
+                      <Label htmlFor="companyTitle">Firm Name</Label>
                       <Input
                         type="text"
-                        id="firmName"
-                        name="firmName"
+                        id="companyTitle"
+                        name="companyTitle"
                         placeholder="Enter firm name"
-                        value={formValues.firmName}
+                        value={formValues.companyTitle}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="firmPhone">Phone</Label>
+                      <Label htmlFor="companyMobile">Phone</Label>
                       <Input
                         type="text"
-                        id="firmPhone"
-                        name="firmPhone"
+                        id="companyMobile"
+                        name="companyMobile"
                         placeholder="Enter phone number"
-                        value={formValues.firmPhone}
+                        value={formValues.companyMobile}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="firmEmail">Email</Label>
+                      <Label htmlFor="companyEmail">Firm Email</Label>
                       <Input
                         type="email"
-                        id="firmEmail"
-                        name="firmEmail"
-                        placeholder="Enter email"
-                        value={formValues.firmEmail}
+                        id="companyEmail"
+                        name="companyEmail"
+                        placeholder="Enter companyEmail"
+                        value={formValues.companyEmail}
                         onChange={handleChange}
                       />
                     </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="avatar">Firm Image</Label>
+                    <FormGroup className="position-relative">
+                      <Label htmlFor="password">Password</Label>
                       <Input
-                        type="file"
-                        id="avatar"
-                        name="avatar"
-                        onChange={handleFileChange}
+                        type={show.password ? "text" : "password"}
+                        id="password"
+                        name="password"
+                        placeholder="Enter password"
+                        value={formValues.password}
+                        onChange={handleChange}
                       />
-                      {formValues.avatar && (
-                        <img
-                          src={formValues.avatar}
-                          alt="Item Preview"
-                          className="img-fluid mt-2"
-                          style={{ maxWidth: "150px" }}
-                        />
-                      )}
-                    </FormGroup>
-                    {/* <FormGroup>
-                      <Label htmlFor="permissions">Permissions</Label>
-                      <div className="d-flex flex-column">
-                        {formValues.permissions.length > 0 ? (
-                          formValues.permissions.map((permission, index) => (
-                            <div
-                              key={index}
-                              className="d-flex justify-content-between align-items-center mb-2 border rounded p-2"
-                            >
-                              <span>{permission}</span>
-                              <Button
-                                color="danger"
-                                size="sm"
-                                onClick={() => handleRemovePermission(index)}
-                              >
-                                &times;
-                              </Button>
-                            </div>
-                          ))
-                        ) : (
-                          <p>No permissions added</p>
-                        )}
-                        <div className="d-flex align-items-center mt-2">
-                          <Input
-                            type="select"
-                            id="selectedPermission"
-                            name="selectedPermission"
-                            value={formValues.selectedPermission}
-                            onChange={handleChange}
-                            className="me-2"
+                       <button
+                            className="cursor btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            onClick={() =>
+                              setShow((prevState) => ({
+                                ...prevState,
+                                password: !prevState.password,
+                              }))
+                            }
+                            type="button"
                           >
-                            <option value="">Select Permission</option>
-                            {predefinedPermissions.map((perm, index) => (
-                              <option key={index} value={perm}>
-                                {perm}
-                              </option>
-                            ))}
-                          </Input>
-                          <Input
-                            type="text"
-                            id="newPermission"
-                            name="newPermission"
-                            placeholder="Add custom permission"
-                            value={formValues.newPermission}
-                            onChange={handleChange}
-                            className="me-2"
-                          />
-                          <Button color="success" onClick={handleAddPermission}>
-                            Add
-                          </Button>
-                        </div>
-                      </div>
-                    </FormGroup> */}
+                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                          </button>
+                    </FormGroup>
+                    <FormGroup className="position-relative">
+                      <Label htmlFor="confirmPassword">Confirm Password</Label>
+                      <Input
+                        type={show.confirmPassword ? "text" : "password"}   
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        placeholder="Confirm password"
+                        value={formValues.confirmPassword}
+                        onChange={handleChange}
+                      />
+                      <button
+                            onClick={() => setShow((prevState) => ({
+                                ...prevState, confirmPassword: !prevState.confirmPassword
+                            }))}
+                            className="btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
+                          </button>
+                    </FormGroup>
                     <FormGroup>
                       <Label htmlFor="startDate">Start Date</Label>
                       <Input
@@ -273,6 +254,7 @@ function CreateFirm() {
                         onChange={handleChange}
                       />
                     </FormGroup>
+
                     <Button color="primary" type="submit" disabled={loading}>
                       {loading ? "Adding..." : "Add Firm"}
                     </Button>

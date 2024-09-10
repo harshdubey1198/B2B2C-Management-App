@@ -1,28 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  Row,
-  Col,
-  CardBody,
-  Card,
-  Alert,
-  Container,
-  Input,
-  Label,
-  Form,
-  // FormFeedback,
-} from "reactstrap";
+import { Row, Col, CardBody, Card, Alert, Container, Input, Label, Form,} from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { createSelector } from "reselect";
 import {
-  // registerUser,
   registerUserSuccessful,
   registerUserFailed,
-  // apiError,
 } from "../../store/actions";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
+import {
+  checkEmptyFields,
+  validateEmail,
+  validatePassword,
+} from "../Utility/FormValidation";
 import { PostRequest } from "../Utility/Request";
 import { toast } from "react-toastify";
 
@@ -31,15 +22,10 @@ const Register = (props) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const registrationError = useSelector(
-    (state) => state.account.registrationError
-  );
+  const registrationError = useSelector((state) => state.account.registrationError);
 
-  // Default formInput for role and status
   const defaultRole = "client_admin";
-  // const defaultStatus = "Requested";
 
-  // State to manage form formInput and validation
   const [formInput, setFormInput] = useState({
     firstName: "",
     lastName: "",
@@ -50,7 +36,6 @@ const Register = (props) => {
     companyMobile: "",
     companyName: "",
     mobile: "",
-    // dob: "",
     address: "",
     role: defaultRole,
     status: "Requested",
@@ -61,46 +46,54 @@ const Register = (props) => {
     confirmPassword: false,
   });
 
+  const [countdown, setCountdown] = useState(2);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Validate the form
     dispatch(registerUserFailed(""));
+
     if (checkEmptyFields(formInput)) {
-      // dispatch(registerUserFailed("Fields must not be empty!"));
       toast.error("Fields must not be empty!");
     } else if (!validateEmail(formInput.email)) {
-      // dispatch(registerUserFailed("Email is invalid!"));
       toast.error("Email is invalid!");
     } else if (!validatePassword(formInput.password)) {
-        // dispatch(registerUserFailed("Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"));
-        toast.error("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+      toast.error(
+        "Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!"
+      );
     } else if (formInput.password !== formInput.confirmPassword) {
-        // dispatch(registerUserFailed("Confirm Password should be same as Password!"));
-        toast.error("Confirm Password should be the same as Password!");
-      }else {
-      PostRequest(
-        `${process.env.REACT_APP_URL}/clientadmin/register`,
-        formInput
-      )
+      toast.error("Confirm Password should be the same as Password!");
+    } else {
+      PostRequest(`${process.env.REACT_APP_URL}/auth/register`, formInput)
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
             dispatch(registerUserFailed(""));
-            navigate("/login");
+            startRedirectCountdown(); 
           } else {
-            // dispatch(registerUserFailed("Registration failed"));
             toast.error("Registration failed");
           }
         })
         .catch((err) => {
           console.log("API Error", err);
-          // dispatch(registerUserFailed(err || "An error occurred"));
           toast.error("Account already exists with this email or username");
         });
     }
   };
 
-  // NAME HANDLER
+  // Start the countdown for redirection
+  const startRedirectCountdown = () => {
+    toast.success(`Registration successful! Redirecting to login page in ${countdown} seconds...`);
+    const intervalId = setInterval(() => {
+      setCountdown((prevCountdown) => {
+        if (prevCountdown === 1) {
+          clearInterval(intervalId);
+          navigate("/login");
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
+  };
+
   const nameHandler = (e) => {
     const { name, value } = e.target;
     const cleanedValue = value.replace(/[^A-Za-z]/g, "");
@@ -111,7 +104,6 @@ const Register = (props) => {
     dispatch(registerUserFailed(""));
   };
 
-  // USERNAME HANDLER
   const userNameHandler = (e) => {
     const { name, value } = e.target;
     const cleanedValue = value.replace(" ", "");
@@ -122,7 +114,6 @@ const Register = (props) => {
     dispatch(registerUserFailed(""));
   };
 
-  // EMAIL HANDLER
   const emailHandler = (e) => {
     const { name, value } = e.target;
     const cleanedValue = value.replace(/\s/g, "");
@@ -133,7 +124,6 @@ const Register = (props) => {
     dispatch(registerUserFailed(""));
   };
 
-  // PHONE HANDLER
   const phoneHandler = (e) => {
     const { name, value } = e.target;
     const numericValue = value.replace(/\D/g, "");
@@ -146,7 +136,6 @@ const Register = (props) => {
     }
   };
 
-  // PASSWORD HANDLER
   const passwordHandler = (e) => {
     const { name, value } = e.target;
     const cleanedValue = value.replace(/\s/g, "");
@@ -174,9 +163,9 @@ const Register = (props) => {
   const { user } = useSelector(registerpage);
 
   return (
-    <div className="bg-pattern" style={{ minHeight: "100vh" ,height:"100%" }}>
+    <div className="bg-pattern" style={{ minHeight: "100vh", height: "100%" }}>
       <div className="bg-overlay"></div>
-      <div className="account-pages pt-0">
+      <div className="account-pages pt-2">
         <Container>
           <Row className="justify-content-center m-0">
             <Col lg={8} md={10} xl={8}>
@@ -204,14 +193,16 @@ const Register = (props) => {
                   </p>
                   <Form className="form-horizontal" onSubmit={handleSubmit}>
                     {user && (
-                      <Alert color="success">Register User Successfully</Alert>
+                      <Alert color="success">
+                        Register User Successfully
+                      </Alert>
                     )}
 
                     {registrationError && (
                       <Alert color="danger">{registrationError}</Alert>
                     )}
 
-                    <Row>
+                  <Row>
                       <Col md={6}>
                         <div className="mb-4">
                           <Label className="form-label">First Name</Label>
@@ -282,22 +273,6 @@ const Register = (props) => {
                             value={formInput.companyMobile}
                           />
                         </div>
-                        {/* <div className="mb-4">
-                          <Label className="form-label">Date of Birth</Label>
-                          <Input
-                            name="dob"
-                            type="date"
-                            placeholder="Enter Date of Birth"
-                            onChange={(e) => {
-                              setFormInput((prevState) => ({
-                                ...prevState,
-                                dob: e.target.value,
-                              }));
-                              dispatch(registerUserFailed(""));
-                            }}
-                            value={formInput.dob}
-                          />
-                        </div> */}
                       </Col>
                       <Col md={6}>
                         <div className="mb-4">
@@ -368,22 +343,6 @@ const Register = (props) => {
                         </div>
                       </Col>
                     </Row>
-                    <div className="form-check">
-                      <Input
-                        type="checkbox"
-                        className="form-check-input"
-                        id="term-conditionCheck"
-                      />
-                      <Label
-                        className="form-check-label fw-normal"
-                        htmlFor="term-conditionCheck"
-                      >
-                        I accept{" "}
-                        <Link to="#" className="text-primary">
-                          Terms and Conditions
-                        </Link>
-                      </Label>
-                    </div>
                     <div className="d-grid mt-3">
                       <button
                         className="btn btn-primary waves-effect waves-light"
@@ -395,14 +354,7 @@ const Register = (props) => {
                   </Form>
                 </CardBody>
               </Card>
-              <div className="mt-5 text-center">
-                <p className="text-white-50">
-                  Already have an account ?
-                  <Link to="/login" className="fw-medium text-primary">
-                    {" "}
-                    Login{" "}
-                  </Link>{" "}
-                </p>
+              <div className="mt-2 text-center">
                 <p className="text-white-50">
                   © {new Date().getFullYear()} aaMOBee.
                 </p>

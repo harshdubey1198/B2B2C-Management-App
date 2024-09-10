@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
-    email: { type: String, required: true },
+    email: { type: String },
     password: { type: String, required: true },
     avatar: { type: String, default: "https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg" },
     birthday: Date,

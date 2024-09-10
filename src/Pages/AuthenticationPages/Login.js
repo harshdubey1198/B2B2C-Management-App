@@ -32,7 +32,7 @@ const Login = (props) => {
   useEffect(() => {
     if (reduxError) {
       console.log(reduxError,"in useeffect")
-      // toast.error(reduxError);
+      toast.error(reduxError ,  "An error occurred during login");
     }
   }, [reduxError]);
   useEffect(() => {
@@ -49,22 +49,28 @@ const Login = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (checkEmptyFields(formValues)) {
-      toast.error("Fields must not be empty!");
+      toast.error('Please fill in all fields');
     } else if (!validateEmail(formValues.email)) {
-      toast.error("Email is invalid!");
+      toast.error('Invalid email address');
     } else {
-      if (rememberMe) {
-        localStorage.setItem("userCredentials", JSON.stringify({
-          email: formValues.email,
-          password: formValues.password,
-        }));
-      } else {
-        localStorage.removeItem("userCredentials");
+      try {
+        if (rememberMe) {
+          localStorage.setItem("userCredentials", JSON.stringify({
+            email: formValues.email,
+            password: formValues.password,
+          }));
+        } else {
+          localStorage.removeItem("userCredentials");
+        }
+        await dispatch(loginUser(formValues, props.router.navigate));
+      } catch (error) {
+        // Log error if any
+        console.error('Login failed:', error);
+        toast.error(error.message || 'An error occurred during login');
       }
-      dispatch(loginUser(formValues, props.router.navigate));
     }
   };
-
+  
   const emailHandler = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({

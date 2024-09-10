@@ -45,7 +45,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
-    toast.error("Login failed. Please check your email and password");
+    // toast.error("Login failed. Please check your email and password");
     yield put(apiError("Please check your email and password"));
   }
 }

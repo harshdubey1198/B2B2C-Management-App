@@ -12,8 +12,9 @@ function FirmsTable() {
     // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
     // setFirms(storedFirms);
     if(authUser){
-      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser?._id}`).then((response) => {
+      axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?._id}`).then((response) => {
         setFirms(response);
+        console.log(response);
       }).catch((error) => {
         console.error(error);
       })
@@ -36,17 +37,10 @@ function FirmsTable() {
                 <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
-                      {/* <th>Firm ID</th>
-                      <th>Client Admin</th>
-                      <th>Client ID</th> */}
-                      <th>Firm UID</th>
                       <th>Email</th>
                       <th>Name</th>
                       <th>Phone</th>
-                      {/* <th>Firm Admin</th> */}
                       <th>Avatar</th>
-                      {/* <th>Created At</th>
-                      <th>Updated At</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -59,10 +53,9 @@ function FirmsTable() {
                         {/* <td>{firm.id}</td> */}
                         {/* <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td> */}
                         {/* <td>{firm.cidm}</td> */}
-                        <td>{firm.fuid}</td>
-                        <td>{firm.firmEmail}</td>
-                        <td>{firm.firmName}</td>
-                        <td>{firm.firmPhone}</td>
+                        <td>{firm.companyTitle}</td>
+                        <td>{firm.companyEmail}</td>
+                        <td>{firm.companyMobile}</td>
                         {/* <td>{firm.firmAdmin}</td> */}
                         <td>
                           <img src={firm.avatar} alt={firm.name} width="50" height="50" />
