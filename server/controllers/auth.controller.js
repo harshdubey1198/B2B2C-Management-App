@@ -1,7 +1,4 @@
-const express = require('express')
-const router = express.Router()
-
-const authServices = require("../services/auth.services")
+const authService = require("../services/auth.services")
 const createSecretToken = require('../utils/secretToken')
 
 const authController = {};
@@ -9,9 +6,19 @@ const authController = {};
 // Login Controller
 authController.login = async (req, res) => {
     try {
-        const user = await authServices.userLogin(req.body);
+        const user = await authService.userLogin(req.body);
         const token = createSecretToken(user._id);
         res.status(200).json({ user, token });
+    } catch (error) {
+        res.status(400).json({ error: error.toString() });
+    }
+};
+
+// Forget Password Controller
+authController.forgetPassword = async (req, res) => {
+    try {
+        const response = await authService.UserForgetPassword(req.body);
+        res.status(200).json({ message: response });
     } catch (error) {
         res.status(400).json({ error: error.toString() });
     }

@@ -25,70 +25,39 @@ authService.userLogin = async (body) => {
     }
 };
 
-// async function UserForgetPassword(body) {
-//   try {
-//       const { email, role } = body;
-//       let userModel;
+authService.UserForgetPassword = async (body) => {
+    const { email } = body;
+    try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return Promise.reject('Account Not Found');
+        }
 
-//       switch (role) {
-//           case 'super_admin':
-//               userModel = SuperAdmin;
-//               break;
-//           case 'client_admin':
-//               userModel = ClientAdmin;
-//               break;
-//           case 'firm_admin':
-//               userModel = FirmAdmin;
-//               break;
-//           case 'accountant':
-//               userModel = Accountant;
-//               break;
-//           case 'g_emp':
-//               userModel = GeneralEmployee;
-//               break;
-//           case 'customer_sp':
-//               userModel = SupportExecutive;
-//               break;
-//           case 'viewer':
-//               userModel = Viewer;
-//               break;
-//           default:
-//                 return Promise.reject('Invalid Role');
-//       }
+        const temporaryPassword = generateTemporaryPassword();
+        const hashedPassword = await PasswordService.passwordHash(temporaryPassword);
+        await User.updateOne({ email: email }, { $set: { password: hashedPassword } });
 
-//       const user = await userModel.findOne({ email: email });
-//       if (!user) {
-//           return Promise.reject('Account Not Found');
-//       }
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.GOOGLE_MAIL,
+                pass: process.env.GOOGLE_PASS,
+            },
+        });
 
-//       const temporaryPassword = generateTemporaryPassword();
-//       const hashedPassword = await PasswordService.passwordHash(temporaryPassword);
-
-//       await userModel.updateOne({ email }, { $set: { password: hashedPassword } });
-
-//       const transporter = nodemailer.createTransport({
-//           service: 'gmail',
-//           auth: {
-//               user: process.env.GOOGLE_MAIL,
-//               pass: process.env.GOOGLE_PASS,
-//           },
-//       });
-
-//       const mailOptions = {
-//           from: process.env.GOOGLE_MAIL,
-//           to: email,
-//           subject: 'Password Reset',
-//           text: `Your temporary password is: ${temporaryPassword}. Please use this password to login and reset your password immediately. http://localhost:3000/reset-password/${temporaryPassword}`
-//       };
-
-//       await transporter.sendMail(mailOptions);
-//       return 'Temporary password sent to your email.';
-
-//   } catch (error) {
-//       console.error('Error:', error.message);
-//       return Promise.reject('An error occurred while processing the request.');
-//   }
-// }
+        const mailOptions = {
+            from: process.env.GOOGLE_MAIL,
+            to: email,
+            subject: 'Password Reset',
+            text: `Your temporary password is: ${temporaryPassword}. Please use this password to login and reset your password immediately. http://localhost:3000/reset-password/${temporaryPassword}`
+        };
+        await transporter.sendMail(mailOptions);
+        return 'Temporary password sent to your email.';
+    } catch (error) {
+        console.error('Error during password reset:', error.message);
+        return Promise.reject('An error occurred while processing the request.');
+    }
+};
 
 // async function resetPassword(body) {
 //   try {
