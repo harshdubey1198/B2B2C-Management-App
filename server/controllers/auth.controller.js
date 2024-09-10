@@ -55,4 +55,14 @@ authController.registration = async (req,res) => {
     }
 };
 
+// GET FIRMS 
+authController.getCompany =  async (req,res) => {
+    try {
+        const response = await authService.getCompany(req.params.id);
+        res.status(200).json( response );
+    } catch (error) {
+        res.status(400).json({ error: error.toString() });
+    }
+};
+
 module.exports = authController;

@@ -131,4 +131,14 @@ authService.registration = async (id, body) => {
     }
 }
 
+// GET FIRMS  
+authService.getCompany  = async (id) => {
+    try {
+        const data = User.find({adminId: id})
+        return data
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Error occured during fetching the company data.');
+    }
+}
 module.exports = authService;
