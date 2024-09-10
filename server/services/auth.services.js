@@ -8,8 +8,8 @@ const authService = {};
 // REGISTER 
 authService.Registration = async (body) => {
     try {
-        // const existingUser = await User.findOne({ email: body.email });
-        const existingUser = await User.findOne({ email: body.email, isActive: true });
+        const existingUser = await User.findOne({ email: body.email });
+        // const existingUser = await User.findOne({ email: body.email, isActive: true });
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
