@@ -266,18 +266,28 @@ export const masterAdminSidebarData = () => [
       label:"Company",
       icon:"mdi mdi-account-multiple-outline",
       subItem: [
+        { sublabel: "Firm Users", link: "/firmusers" },
+        { sublabel: "Firm Setting", link: "/firms-setting" }
         // { sublabel: "Firms", link: "/firms" },
         // { sublabel: "Manage Firm", link: "/manage-firm" },
-        { sublabel: "Firm Users", link: "/firmusers" },
         // { sublabel: "Create Firm", link: "/create-firm" },
         // { sublabel: "Switch Firm", link: "/Switch-firm" },
-        { sublabel: "Firm Setting", link: "/firms-setting" }
       ],
     },
     {
       label:"Pricing",
       icon:"mdi mdi-cash-multiple",
       url:"/pricing",
+    },
+    {
+      label: "Inventory",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "Inventory Table", link: "/inventory-table" },
+        { sublabel: "Table Form", link: "/add-inventory" },
+        { sublabel: "Table Taxation", link: "/table-taxation" },
+        // { sublabel: "Item Config", link: "/item-configuration" },
+      ],
     },
     // {
     //   label: "Invoicing",
@@ -290,16 +300,6 @@ export const masterAdminSidebarData = () => [
     //     // { sublabel: "Reports", link: "/reports" },
     //   ],
     // },
-    {
-      label: "Inventory",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "Inventory Table", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/add-inventory" },
-        { sublabel: "Table Taxation", link: "/table-taxation" },
-        // { sublabel: "Item Config", link: "/item-configuration" },
-      ],
-    },
     // {
     //   label: "Authentication",
     //   icon: "mdi mdi-account-circle-outline",
@@ -345,16 +345,6 @@ export const masterAdminSidebarData = () => [
       url: "/dashboard",
     },
     {
-      label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
-      subItem: [
-        { sublabel: "Create Invoice", link: "/create-invoice" },
-        { sublabel: "View Invoices", link: "/view-invoices" },
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Reports", link: "/reports-invoice" },
-      ],
-    },
-    {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
       subItem: [
@@ -362,6 +352,16 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
+      ],
+    },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        { sublabel: "Create Invoice", link: "/create-invoice" },
+        { sublabel: "View Invoices", link: "/view-invoices" },
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Reports", link: "/reports-invoice" },
       ],
     },
     {
