@@ -24,10 +24,10 @@ import EmailCompose from "../Pages/E-mail/EmailCompose";
 
 // import Login from "../Pages/Authentication/Login";
 // import ForgetPasswordPage from "../Pages/Authentication/ForgetPassword";
-import Logout from "../Pages/Authentication/Logout";
-import Register from "../Pages/Authentication/Register";
+import Logout from "../Pages/AuthenticationPages/Logout.js";
+import Register from "../Pages/AuthenticationPages/Register.js";
 import UserProfile from "../Pages/Authentication/user-profile";
-import ResetPassword from "../Pages/Authentication/ResetPassword.jsx";
+import ResetPassword from "../Pages/AuthenticationPages/ResetPassword.jsx";
 
 
 // inventory mngmnt

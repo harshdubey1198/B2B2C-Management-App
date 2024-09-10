@@ -25,7 +25,13 @@ body {
     outline: none;
   }
 }
-
+.width-90 {
+  width: 90% !important;
+  margin: 0 auto;
+}
+// .row {
+// margin: 0 !important;
+// }
 .close {
   background: transparent;
   border: 0;

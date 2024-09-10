@@ -9,26 +9,27 @@ import {
   Input,
   Label,
   Form,
-  FormFeedback,
+  // FormFeedback,
 } from "reactstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { createSelector } from "reselect";
 import {
-  registerUser,
+  // registerUser,
   registerUserSuccessful,
   registerUserFailed,
-  apiError,
+  // apiError,
 } from "../../store/actions";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
+import { checkEmptyFields, validateEmail, validatePassword } from "../Utility/FormValidation";
 import { PostRequest } from "../Utility/Request";
+import { toast } from "react-toastify";
 
 const Register = (props) => {
   document.title = "Register | aaMOBee";
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const registrationError = useSelector(
     (state) => state.account.registrationError
@@ -36,7 +37,7 @@ const Register = (props) => {
 
   // Default formInput for role and status
   const defaultRole = "client_admin";
-  const defaultStatus = "Requested";
+  // const defaultStatus = "Requested";
 
   // State to manage form formInput and validation
   const [formInput, setFormInput] = useState({
@@ -44,13 +45,20 @@ const Register = (props) => {
     lastName: "",
     email: "",
     username: "",
-    password: '',
+    password: "",
+    confirmPassword: "",
     companyMobile: "",
+    companyName: "",
     mobile: "",
-    dob: "",
+    // dob: "",
     address: "",
     role: defaultRole,
-    status: defaultStatus,
+    status: "Requested",
+  });
+
+  const [show, setShow] = useState({
+    password: false,
+    confirmPassword: false,
   });
 
   const handleSubmit = async (e) => {
@@ -58,10 +66,18 @@ const Register = (props) => {
     // Validate the form
     dispatch(registerUserFailed(""));
     if (checkEmptyFields(formInput)) {
-      dispatch(registerUserFailed("Fields must not be empty!"));
+      // dispatch(registerUserFailed("Fields must not be empty!"));
+      toast.error("Fields must not be empty!");
     } else if (!validateEmail(formInput.email)) {
-      dispatch(registerUserFailed("Email is invalid!"));
-    } else {
+      // dispatch(registerUserFailed("Email is invalid!"));
+      toast.error("Email is invalid!");
+    } else if (!validatePassword(formInput.password)) {
+        // dispatch(registerUserFailed("Password should contain atleast 8 characters and must contain one uppercase, one lowercase, one digit and one special character!"));
+        toast.error("Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!");
+    } else if (formInput.password !== formInput.confirmPassword) {
+        // dispatch(registerUserFailed("Confirm Password should be same as Password!"));
+        toast.error("Confirm Password should be the same as Password!");
+      }else {
       PostRequest(
         `${process.env.REACT_APP_URL}/clientadmin/register`,
         formInput
@@ -69,14 +85,17 @@ const Register = (props) => {
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
-            navigate('/login')
+            dispatch(registerUserFailed(""));
+            navigate("/login");
           } else {
-            dispatch(registerUserFailed("Registration failed"));
+            // dispatch(registerUserFailed("Registration failed"));
+            toast.error("Registration failed");
           }
         })
         .catch((err) => {
           console.log("API Error", err);
-          dispatch(registerUserFailed("Something Went Wrong!"));
+          // dispatch(registerUserFailed(err || "An error occurred"));
+          toast.error("Account already exists with this email or username");
         });
     }
   };
@@ -155,11 +174,11 @@ const Register = (props) => {
   const { user } = useSelector(registerpage);
 
   return (
-    <div className="bg-pattern" style={{ height: "100%" }}>
+    <div className="bg-pattern" style={{ minHeight: "100vh" ,height:"100%" }}>
       <div className="bg-overlay"></div>
       <div className="account-pages pt-0">
         <Container>
-          <Row className="justify-content-center">
+          <Row className="justify-content-center m-0">
             <Col lg={8} md={10} xl={8}>
               <Card className="mt-3">
                 <CardBody className="p-4">
@@ -180,12 +199,9 @@ const Register = (props) => {
                     </Link>
                   </div>
 
-                  {/* <h4 className="font-size-18 text-muted text-center mt-2">
-                    Free Register
-                  </h4> */}
-                  {/* <p className="text-muted text-center mb-4">
-                    Get your free aaMOBee account now.
-                  </p> */}
+                  <p className="text-muted text-center mb-4">
+                    Register Your Account
+                  </p>
                   <Form className="form-horizontal" onSubmit={handleSubmit}>
                     {user && (
                       <Alert color="success">Register User Successfully</Alert>
@@ -217,14 +233,43 @@ const Register = (props) => {
                             value={formInput.email}
                           />
                         </div>
-                        <div className="mb-4">
+                        <div className="mb-4 position-relative">
                           <Label className="form-label">Password</Label>
                           <Input
                             name="password"
-                            type="passwrod"
+                            type={show.password ? "text" : "password"}
                             placeholder="Enter Password"
                             onChange={passwordHandler}
                             value={formInput.password}
+                          />
+                          <button
+                            className="cursor btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            onClick={() =>
+                              setShow((prevState) => ({
+                                ...prevState,
+                                password: !prevState.password,
+                              }))
+                            }
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                          </button>
+                        </div>
+                        <div className="mb-4">
+                          <Label className="form-label">Company Name</Label>
+                          <Input
+                            name="companyName"
+                            type="text"
+                            placeholder="Enter Company Name"
+                            onChange={(e) => {
+                              setFormInput((prevState) => ({
+                                ...prevState,
+                                companyName: e.target.value,
+                              }));
+                              dispatch(registerUserFailed(""));
+                            }}
+                            value={formInput.companyName}
                           />
                         </div>
                         <div className="mb-4">
@@ -237,7 +282,7 @@ const Register = (props) => {
                             value={formInput.companyMobile}
                           />
                         </div>
-                        <div className="mb-4">
+                        {/* <div className="mb-4">
                           <Label className="form-label">Date of Birth</Label>
                           <Input
                             name="dob"
@@ -252,7 +297,7 @@ const Register = (props) => {
                             }}
                             value={formInput.dob}
                           />
-                        </div>
+                        </div> */}
                       </Col>
                       <Col md={6}>
                         <div className="mb-4">
@@ -274,6 +319,26 @@ const Register = (props) => {
                             onChange={userNameHandler}
                             value={formInput.username}
                           />
+                        </div>
+                        <div className="mb-4 position-relative">
+                          <Label className="form-label">Confirm Password</Label>
+                          <Input
+                            name="confirmPassword"
+                            type={show.confirmPassword ? "text" : "password"}
+                            placeholder="Enter Confirm Password"
+                            onChange={passwordHandler}
+                            value={formInput.confirmPassword}
+                          />
+                          <button
+                            onClick={() => setShow((prevState) => ({
+                                ...prevState, confirmPassword: !prevState.confirmPassword
+                            }))}
+                            className="btn btn-link position-absolute end-0"
+                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                            type="button"
+                          >
+                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
+                          </button>
                         </div>
                         <div className="mb-4">
                           <Label className="form-label">Mobile</Label>

@@ -9,7 +9,6 @@ import { getFirebaseBackend } from '../../../helpers/firebase_helper';
 
 import {
   postFakeForgetPwd,
-  postJwtForgetPwd,
 } from "../../../helpers/fakebackend_helper"
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -30,16 +29,15 @@ function* forgetUser({ payload: { user, history } }) {
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       const response = yield call(axios.post, `${process.env.REACT_APP_URL}/auth/forget-password`,{
         email: user.email,
-        role: user.role
       })
       if (response) {
-        toast.success("Reset link are sended to your mailbox, check there first")
+        toast.success("Password reset link has been sent to your email.")
         yield put(
           userForgetPasswordSuccess(
-            "Reset link are sended to your mailbox, check there first"
+            "Password reset link has been sent to your email.")
+         
           )
-        )
-      }
+        }
     } else {
       const response = yield call(postFakeForgetPwd, "/fake-forget-pwd", {
         email: user.email,
@@ -47,13 +45,13 @@ function* forgetUser({ payload: { user, history } }) {
       if (response) {
         yield put(
           userForgetPasswordSuccess(
-            "Reset link are sended to your mailbox, check there first"
+            "Password reset link has been sent to your email."
           )
         )
       }
     }
   } catch (error) {
-    toast.error("Check your email and role")
+    toast.error("Check your email")
     yield put(userForgetPasswordError(error))
   }
 }

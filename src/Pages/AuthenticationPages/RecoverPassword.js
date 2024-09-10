@@ -1,16 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  CardBody,
-  FormGroup,
-  Label,
-  Input,
-  Button,
-  Alert,
-} from "reactstrap";
+import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,} from "reactstrap";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { userForgetPassword } from "../../store/auth/forgetpwd/actions";
@@ -28,24 +17,23 @@ const RecoverPassword = () => {
   );
 
   const [formValues, setFormValues] = useState({
-    email: "",
-    role: ""
-  });
+    email: ""
+    });
 
-  const [error, setError] = useState(""); // Local error state
-  const [isSubmitting, setIsSubmitting] = useState(false); // Submitting state
-  const [canSubmit, setCanSubmit] = useState(true); // Check if we can submit
-  const timeoutRef = useRef(null); // Use ref for timeout
+  const [error, setError] = useState(""); 
+  const [isSubmitting, setIsSubmitting] = useState(false); 
+  const [canSubmit, setCanSubmit] = useState(true);
+  const timeoutRef = useRef(null); 
 
-  const roles = [
-    { value: "", label: "Select User Type" },
-    { value: "super_admin", label: "Super Admin" },
-    { value: "client_admin", label: "Client Admin" },
-    { value: "firm_admin", label: "Firm Manager" },
-    { value: "accountant", label: "Accountant" },
-    { value: "g_emp", label: "Employee" },
-    { value: "customer_sp", label: "Support Executive" },
-  ];
+  // const roles = [
+  //   { value: "", label: "Select User Type" },
+  //   { value: "super_admin", label: "Super Admin" },
+  //   { value: "client_admin", label: "Client Admin" },
+  //   { value: "firm_admin", label: "Firm Manager" },
+  //   { value: "accountant", label: "Accountant" },
+  //   { value: "g_emp", label: "Employee" },
+  //   { value: "customer_sp", label: "Support Executive" },
+  // ];
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -77,11 +65,8 @@ const RecoverPassword = () => {
       setCanSubmit(true);
       return;
     }
-
     dispatch(userForgetPassword(formValues));
-
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
-
     timeoutRef.current = setTimeout(() => {
       setCanSubmit(true);
       setIsSubmitting(false);
@@ -104,11 +89,11 @@ const RecoverPassword = () => {
 
   return (
     <React.Fragment>
-      <div className="bg-pattern" style={{ height: "100vh" }}>
+      <div className="bg-pattern"  style={{ minHeight: "100vh" ,height:"100%" }}>
         <div className="bg-overlay"></div>
         <div className="account-pages pt-5">
           <Container>
-            <Row className="justify-content-center">
+            <Row className="d-flex justify-content-center mt-5  width-90">
               <Col lg={6} md={8} xl={4}>
                 <Card className="mt-5">
                   <CardBody className="p-4">
@@ -168,24 +153,7 @@ const RecoverPassword = () => {
                                   onChange={handleChange}
                                 />
                               </FormGroup>
-                              <FormGroup className="mt-4">
-                                <Label className="form-label" htmlFor="role">
-                                  Role
-                                </Label>
-                                <Input
-                                  type="select"
-                                  className="form-control"
-                                  id="role"
-                                  value={formValues.role}
-                                  onChange={handleChange}
-                                >
-                                  {roles.map((r, index) => (
-                                    <option key={index} value={r.value}>
-                                      {r.label}
-                                    </option>
-                                  ))}
-                                </Input>
-                              </FormGroup>
+                    
                               <div className="d-grid mt-4">
                                 <Button
                                   color="primary"
@@ -205,7 +173,7 @@ const RecoverPassword = () => {
                 <div className="mt-5 text-center">
                   <p className="text-white-50">
                     Don't have an account?{" "}
-                    <Link to="/auth-register" className="fw-medium text-primary">
+                    <Link to="/register" className="fw-medium text-primary">
                       Register
                     </Link>
                   </p>
