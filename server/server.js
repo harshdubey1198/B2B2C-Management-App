@@ -8,18 +8,23 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true })); 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 mongoose.connect(process.env.MONGO_URI).then(resp => {
     console.log("Database Connected!")
 }).catch(error => console.log("Unable to connect to DB!" + error));
 
+const userRoute = require('./routers/auth.router')
+
+
+app.use('/api/auth', userRoute);
+
 // CLIENT ROUTES
-app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
-app.use('/api/plan', require("./controllers/plans.controller"))
-app.use('/api/auth', require("./controllers/auth.controller"))
-app.use('/api/firmadmin', require("./controllers/firm.controller"))
+// app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
+// app.use('/api/plan', require("./controllers/plans.controller"))
+// app.use('/api/auth', require("./controllers/auth.controller"))
+// app.use('/api/firmadmin', require("./controllers/firm.controller"))
 
 app.get("/", (req, res) => {
     res.send("Welcome to HRMS Servers!");
