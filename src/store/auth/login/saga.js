@@ -8,7 +8,7 @@ import { apiError, loginSuccess, logoutUserSuccess } from "./actions";
 import { getFirebaseBackend } from "../../../helpers/firebase_helper";
 import {
   postFakeLogin,
-  postJwtLogin,
+  // postJwtLogin,
   postSocialLogin,
 } from "../../../helpers/fakebackend_helper";
 import axios from "axios";
@@ -28,8 +28,8 @@ function* loginUser({ payload: { user, history } }) {
     } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       const response = yield call(axios.post, `${process.env.REACT_APP_URL}/auth/login`, {
         email: user.email,
-        password: user.password,
-        role: user.role
+        password: user.password
+        // role: user.role
       });
       localStorage.setItem("authUser", JSON.stringify(response));
       yield put(loginSuccess(response));
@@ -43,7 +43,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
-    toast.error("Login failed. Please check your email, password and role.");
+    toast.error("Login failed. Please check your email and password");
     yield put(apiError("Please check your email and password"));
   }
 }
