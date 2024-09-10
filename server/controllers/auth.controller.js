@@ -45,17 +45,14 @@ authController.resetPassword = async (req,res) => {
     }
 };
 
-// router.post("/createUser", (req, res) => {
-//     // console.log(req.body, "body");
-//     authServices.createUser(req.body).then((response) => {
-//         res.status(200).send(response);
-//     })
-//     .catch((error) => {
-//         console.log(error, "error creating users");
-//         res.status(500).send(error);
-//     });
-// });
-
-// module.exports = router
+// CREATE USER
+authController.registration = async (req,res) => {
+    try {
+        const response = await authService.registration(req.params.id, req.body);
+        res.status(200).json( response );
+    } catch (error) {
+        res.status(400).json({ error: error.toString() });
+    }
+};
 
 module.exports = authController;

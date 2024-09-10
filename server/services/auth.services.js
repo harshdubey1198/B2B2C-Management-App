@@ -102,48 +102,33 @@ authService.resetPassword = async (body) => {
   }
 }
 
+// CREATE FIRM OR CREATE USER
+authService.registration = async (id, body) => {
+    try {
+        const existingUser = await User.findOne({ email: body.email, adminId: id });
+        if (existingUser) {
+            return Promise.reject("Account already exists!");
+        }
 
-// async function createUser(body) {
-//     try {
-//       const { role, firmUniqueId, email, password, ...rest } = body;
-//       let uniqueIdField = "uid";
+        if (body.role === 'firm_admin') {
+            const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+            if (existingFirmAdmin) {
+                return Promise.reject("There is already a firm admin for this firm!");
+            }
+        }
+    
+        const encryptedPassword = await PasswordService.passwordHash(body.password);
+        body.password = encryptedPassword;
+        body.isActive = true;
+        body.adminId = id;
   
-//       const existingUser = await User.findOne({ email });
-//       if (existingUser) {
-//         return Promise.reject("Email already exists");
-//       }
-  
-//       let uniqueId = "";
-//       if (uniqueIdField) {
-//         uniqueId = await generateUniqueId(User, uniqueIdField, firmUniqueId,);
-//         rest[uniqueIdField] = uniqueId;
-//       }
-  
-//       const hashedPassword = await PasswordService.passwordHash(password);
-//       // Create the new user
-//       const newUser = new User({...rest, email, role, password: hashedPassword,});
-//       await newUser.save();
-  
-//       return newUser;
-//     } catch (error) {
-//       console.error("Error creating user:", error);
-//       return Promise.reject(`Error creating user`);
-//     }
-// }
-  
-// async function generateUniqueId(User, uniqueIdField, firmUniqueId) {
-//     let newUniqueId;
-//     do {
-//       const randomNumber = Math.floor(Math.random() * 1000).toString().padStart(3, "0");
-//       newUniqueId = `${firmUniqueId}-${randomNumber}`;
-  
-//       const existingId = await User.findOne({[uniqueIdField]: newUniqueId,});
-//       if (!existingId) {
-//         break;
-//       }
-//     } while (true);
-  
-//     return newUniqueId;
-// }
+       const newUser = new User(body);
+       const user = await newUser.save();
+       return user;
+    } catch (error) {
+      console.error("Error in user registration:", error);
+      return Promise.reject("Unable to create User");
+    }
+}
 
 module.exports = authService;
