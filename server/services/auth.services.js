@@ -59,58 +59,29 @@ authService.UserForgetPassword = async (body) => {
     }
 };
 
-// async function resetPassword(body) {
-//   try {
-//       const { email, role, temporaryPassword, newPassword } = body;
-//       let userModel;
+authService.resetPassword = async (body) => {
+  try {
+      const { email, temporaryPassword, newPassword } = body;
 
-//       switch (role) {
-//           case 'super_admin':
-//               userModel = SuperAdmin;
-//               break;
-//           case 'client_admin':
-//               userModel = ClientAdmin;
-//               break;
-//           case 'firm_admin':
-//               userModel = FirmAdmin;
-//               break;
-//           case 'accountant':
-//               userModel = Accountant;
-//               break;
-//           case 'g_emp':
-//               userModel = GeneralEmployee;
-//               break;
-//           case 'customer_sp':
-//               userModel = SupportExecutive;
-//               break;
-//           case 'viewer':
-//               userModel = Viewer;
-//               break;
-//           default:
-//             return Promise.reject('Invalid Role');
-//       }
-
-//       const user = await userModel.findOne({ email: email });
-//       if (!user) {
-//         return Promise.reject('Account Not Found');
-//       } else {
-//           // Compare the temporary password with the hashed password
-//           const match = await PasswordService.comparePassword(temporaryPassword, user.password);
-//           if (match) {
-//               // Hash the new password
-//               const updatedPassword = await PasswordService.passwordHash(newPassword);
-//               user.password = updatedPassword;
-//               await user.save();
-//               return 'Password Updated Successfully';
-//           } else {
-//             return Promise.reject('Invalid Temporary Password');
-//           }
-//       }
-//   } catch (error) {
-//       console.error(error);
-//       return Promise.reject('An error occurred while processing the request.');
-//   }
-// }
+      const user = await User.findOne({ email: email });
+      if (!user) {
+        return Promise.reject('Account Not Found');
+      } else {
+          const match = await PasswordService.comparePassword(temporaryPassword, user.password);
+          if (match) {
+              const updatedPassword = await PasswordService.passwordHash(newPassword);
+              user.password = updatedPassword;
+              await user.save();
+              return 'Password Updated Successfully';
+          } else {
+            return Promise.reject('Invalid Temporary Password');
+          }
+      }
+  } catch (error) {
+      console.error(error);
+      return Promise.reject('An error occurred while processing the request.');
+  }
+}
 
 
 // async function createUser(body) {

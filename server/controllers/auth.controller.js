@@ -24,23 +24,14 @@ authController.forgetPassword = async (req, res) => {
     }
 };
 
-// router.post('/forget-password', async (req, res) => {
-//     authServices.UserForgetPassword(req.body).then((response) => {
-//         res.status(200).send(response)
-//     }).catch((error) => {
-//         console.log(error, "err")
-//         res.status(500).send(error)
-//     })
-// });
-
-// router.post('/reset-password', async (req,res) => {
-//     authServices.resetPassword(req.body).then((response) => {
-//         res.status(200).send(response)
-//     }).catch((error) => {
-//         console.log(error, "err")
-//         res.status(500).send(error)
-//     })
-// })
+authController.resetPassword = async (req,res) => {
+    try {
+        const response = await authService.resetPassword(req.body);
+        res.status(200).json({ message: response });
+    } catch (error) {
+        res.status(400).json({ error: error.toString() });
+    }
+};
 
 // router.post("/createUser", (req, res) => {
 //     // console.log(req.body, "body");
