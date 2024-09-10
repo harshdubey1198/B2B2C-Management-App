@@ -24,6 +24,7 @@ authController.forgetPassword = async (req, res) => {
     }
 };
 
+// Reset Password Controller
 authController.resetPassword = async (req,res) => {
     try {
         const response = await authService.resetPassword(req.body);
