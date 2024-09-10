@@ -31,6 +31,8 @@ function* loginUser({ payload: { user, history } }) {
         password: user.password
         // role: user.role
       });
+      history("/dashboard");
+      console.log(response);
       localStorage.setItem("authUser", JSON.stringify(response));
       yield put(loginSuccess(response));
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
@@ -47,11 +49,6 @@ function* loginUser({ payload: { user, history } }) {
     yield put(apiError("Please check your email and password"));
   }
 }
-
-
-
-
-
 function* logoutUser() {
   try {
     localStorage.removeItem("authUser");

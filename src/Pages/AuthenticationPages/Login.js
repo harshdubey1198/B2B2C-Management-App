@@ -2,14 +2,11 @@ import PropTypes from "prop-types";
 import React, { useEffect, useState } from "react";
 import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
-import {Row,Col,CardBody,Card,Alert,Container,Form,Input,Label} from "reactstrap";
+import {Row,Col,CardBody,Card,Container,Form,Input,Label} from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
-import { GoogleLogin } from "react-google-login";
-import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
 import { loginUser, socialLogin } from "../../store/actions";
-import { facebook, google } from "../../config";
 import { createSelector } from "reselect";
 import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
@@ -24,24 +21,20 @@ const Login = (props) => {
   const [show, setShow] = useState(false)
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-
   const loginpage = createSelector(
     (state) => state.login,
     (state) => ({
       error: state.error,
     })
   );
-
   const { error: reduxError } = useSelector(loginpage);
   // console.log(reduxError,"reduxerror")
-
   useEffect(() => {
     if (reduxError) {
-      // console.log(reduxError,"in useeffect")
+      console.log(reduxError,"in useeffect")
       // toast.error(reduxError);
     }
   }, [reduxError]);
-
   useEffect(() => {
     const savedCredentials = JSON.parse(localStorage.getItem("userCredentials"));
     if (savedCredentials) {
@@ -56,10 +49,8 @@ const Login = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (checkEmptyFields(formValues)) {
-      // setError("Fields must not be empty!");
       toast.error("Fields must not be empty!");
     } else if (!validateEmail(formValues.email)) {
-      // setError("Email is invalid!");
       toast.error("Email is invalid!");
     } else {
       if (rememberMe) {
@@ -125,13 +116,13 @@ const Login = (props) => {
     }
   };
 
-  const googleResponse = (response) => {
-    signIn(response, "google");
-  };
+  // const googleResponse = (response) => {
+  //   signIn(response, "google");
+  // };
 
-  const facebookResponse = (response) => {
-    signIn(response, "facebook");
-  };
+  // const facebookResponse = (response) => {
+  //   signIn(response, "facebook");
+  // };
 
   useEffect(() => {
     document.body.className = "bg-pattern";
@@ -223,8 +214,8 @@ const Login = (props) => {
                                 </Label>
                               </div>
                             </Col>
-                            <Col className="col-7">
-                              <div className="text-md-end mt-3 mt-md-0">
+                            <Col className="col-7 d-flex text-end">
+                              <div className="text-md-end  mt-md-0">
                                 <Link
                                   to="/recover-password"
                                   className="text-muted"
@@ -243,43 +234,7 @@ const Login = (props) => {
                               Log In
                             </button>
                           </div>
-                          {/* <div className="mt-4 text-center">
-                            <h5 className="font-size-14 mb-3">Sign in with</h5>
-                            <ul className="list-inline">
-                              <li className="list-inline-item">
-                                <FacebookLogin
-                                  appId={facebook.APP_ID}
-                                  autoLoad={false}
-                                  callback={facebookResponse}
-                                  render={(renderProps) => (
-                                    <Link
-                                      to="#"
-                                      className="social-list-item bg-primary text-white border-primary"
-                                      onClick={renderProps.onClick}
-                                    >
-                                      <i className="mdi mdi-facebook" />
-                                    </Link>
-                                  )}
-                                />
-                              </li>
-                              <li className="list-inline-item">
-                                <GoogleLogin
-                                  clientId={google.CLIENT_ID}
-                                  render={(renderProps) => (
-                                    <Link
-                                      to="#"
-                                      className="social-list-item bg-danger text-white border-danger"
-                                      onClick={renderProps.onClick}
-                                    >
-                                      <i className="mdi mdi-google" />
-                                    </Link>
-                                  )}
-                                  onSuccess={googleResponse}
-                                  onFailure={() => {}}
-                                />
-                              </li>
-                            </ul>
-                          </div> */}
+                       
                         </Col>
                       </Row>
                     </Form>
