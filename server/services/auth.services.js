@@ -8,8 +8,8 @@ const authService = {};
 // REGISTER 
 authService.Registration = async (body) => {
     try {
-        const existingUser = await User.findOne({ email: body.email });
-        // const existingUser = await User.findOne({ email: body.email, isActive: true });
+        // const existingUser = await User.findOne({ email: body.email });
+        const existingUser = await User.findOne({ email: body.email, isActive: true });
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
@@ -134,11 +134,23 @@ authService.registration = async (id, body) => {
 // GET FIRMS  
 authService.getCompany  = async (id) => {
     try {
-        const data = User.find({adminId: id})
+        const data = User.find({adminId: id}).select("-password").populate('adminId')
         return data
     } catch (error) {
         console.error(error);
         return Promise.reject('Error occured during fetching the company data.');
     }
+}
+
+
+// update account 
+authService.updateAccount = async (id, body) => {
+    try {
+        const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
+        return data;
+    } catch (error) {
+        console.log("Error in updating account", error);
+        return Promise.reject("Unable to update account. Try again later!");
+    } 
 }
 module.exports = authService;

@@ -65,4 +65,14 @@ authController.getCompany =  async (req,res) => {
     }
 };
 
+// UPDATE ACCOUNT
+authController.updateAccount = async (req, res) => {
+    try {
+        const response = await authService.updateAccount(req.params.id, req.body);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(400).json({ error: error });
+    }
+};
+
 module.exports = authController;
