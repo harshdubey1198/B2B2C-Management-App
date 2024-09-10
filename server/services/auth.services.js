@@ -5,6 +5,24 @@ const User = require("../schemas/user.schema");
 
 const authService = {};
 
+// REGISTER 
+authService.Registration = async (body) => {
+    try {
+        const existingUser = await User.findOne({ email: body.email, isActive: true });
+        if (existingUser) {
+            return Promise.reject("Account already exists!");
+        }
+        const updatedPassword = await PasswordService.passwordHash(newPassword);
+        existingUser.password = updatedPassword;
+        body.role = body.role || "client_admin";
+        const user = await User.create(body);
+        return user;
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return Promise.reject("Unable to create User");
+    }
+};
+
 // LOGIN USER
 authService.userLogin = async (body) => {
     const { email, password } = body;
