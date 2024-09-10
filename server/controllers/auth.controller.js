@@ -7,7 +7,7 @@ const authController = {};
 // REGISTER
 authController.register = async (req, res) => {
     try {
-        const user = await userService.registration(req.body);
+        const user = await authService.Registration(req.body);
         return res.status(200).json({ message: "Register successfully", user });
     } catch (error) {
         return res.status(400).json({ message: error });
