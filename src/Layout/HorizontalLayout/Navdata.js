@@ -284,7 +284,7 @@ const Navdata = () => {
             { link: "/pages-comingsoon", title: "Coming Soon" },
             { link: "/pages-timeline", title: "Timeline" },
             { link: "/pages-faqs", title: "FAQs" },
-            { link: "/pages-pricing", title: "Pricing" },
+            { link: "/pricing", title: "Pricing" },
             { link: "/pages-404", title: "Error 404" },
             { link: "/pages-500", title: "Error 500" },
           ],

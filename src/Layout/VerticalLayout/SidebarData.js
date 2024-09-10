@@ -11,7 +11,7 @@ export const masterAdminSidebarData = () => [
       { sublabel: "Manage Firms", link: "/firms" },
       { sublabel: "Create New Firm", link: "/create-firm" },
       // { sublabel: "Switch Between Firms", link: "/firms/switch" },
-      { sublabel: "Firm-Specific Settings", link: "/firms-settings" },
+      { sublabel: "Firm-Specific Settings", link: "/firms-setting" },
     ],
   },
   {
@@ -35,6 +35,15 @@ export const masterAdminSidebarData = () => [
       { sublabel: "Supplier Information", link: "/vendors/info" },
       { sublabel: "Supplier Statements", link: "/vendors/statements" },
     ],
+  },
+  {
+    label:"Pricing & Plans",
+    icon:"mdi mdi-cash-multiple",
+    subItem:[
+      {sublabel:"Create New Plan",link:"/create-plan"},
+      {sublabel:"Manage Plans",link:"/manage-plan"},
+      {sublabel:"All Plans",link:"/pricing"},
+    ]
   },
   {
     label: "Inventory Items",
@@ -132,7 +141,7 @@ export const masterAdminSidebarData = () => [
     icon: "mdi mdi-cog-outline",
     subItem: [
       { sublabel: "General Settings", link: "/preferences/general" },
-      { sublabel: "Company Settings", link: "/firm-settings" },
+      { sublabel: "Company Settings", link: "/firms-setting" },
       { sublabel: "Security Settings", link: "/preferences/security" },
       { sublabel: "Notification Settings", link: "/preferences/notifications" },
       { sublabel: "Integration Settings", link: "/preferences/integrations" },
@@ -183,7 +192,7 @@ export const masterAdminSidebarData = () => [
     {
       label:"Pricing",
       icon:"mdi mdi-cash-multiple",
-      url:"/pages-pricing",
+      url:"/pricing",
     },
     // {
     //   label: "Invoicing",
@@ -268,7 +277,7 @@ export const masterAdminSidebarData = () => [
     {
       label:"Pricing",
       icon:"mdi mdi-cash-multiple",
-      url:"/pages-pricing",
+      url:"/pricing",
     },
     // {
     //   label: "Invoicing",

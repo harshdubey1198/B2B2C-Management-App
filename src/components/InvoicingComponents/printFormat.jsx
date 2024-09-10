@@ -34,11 +34,19 @@ const convertNumberToWords = (num) => {
     return words.toUpperCase();
 };
 
+const sliceDescription = (description = '', maxWords = 20) => {
+    if (typeof description !== 'string') return '';
+    const words = description.split(' ');
+    if (words.length > maxWords) {
+        return words.slice(0, maxWords).join(' ') + '...';
+    }
+    return description;
+};
+
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
     const { country, companyAddresses = [], customerState } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
 
-    // Ensure companyAddresses[0] exists before accessing its properties
     const companyState = companyAddresses[0]?.state?.toLowerCase();
     const isSameState = companyState === customerState?.toLowerCase();
     
@@ -75,7 +83,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     <p className="my-1"><b>GSTIN:</b> {invoiceData.gstin}</p>
                 </div>
                 <div className="col-md-3 offset-md-3 right-t-col3">
-                    <p><strong>Invoice Number:</strong> INV-24-MAG </p>
+                    <p><strong>Invoice Number:</strong>INV-24-MAG</p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
                     <p><strong>Due Date:</strong> {invoiceData.dueDate}</p>
@@ -129,7 +137,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                                 <td>{index + 1}</td>
                                 <td>{item.name}</td>
                                 <td>{item.variant}</td>
-                                <td>{item.description}</td>
+                                <td>{sliceDescription(item.description)}</td>
                                 <td>{item.hsn}</td>
                                 <td>{item.quantity}</td>
                                 <td>{item.price}</td>

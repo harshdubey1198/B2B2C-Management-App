@@ -62,7 +62,7 @@ const Pricing = () => {
           <Breadcrumbs title="Utility" breadcrumbItem="Pricing" />
           <Row className="justify-content-center">
             <Col lg={5}>
-              <div className="text-center mb-5">
+              <div className="text-center mb-2">
                 <h4>Choose your Pricing plan</h4>
               </div>
             </Col>

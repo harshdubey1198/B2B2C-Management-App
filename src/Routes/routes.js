@@ -228,7 +228,7 @@ const authProtectedRoutes = [
   { path: "/pages-starter", component: <StarterPage /> },
   { path: "/pages-timeline", component: <TimeLine /> },
   { path: "/pages-faqs", component: <FAQs /> },
-  { path: "/pages-pricing", component: <Pricing /> },
+  { path: "/pricing", component: <Pricing /> },
 
   // UiElements Pages
   { path: "/ui-alerts", component: <UiAlerts /> },
