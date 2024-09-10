@@ -20,7 +20,6 @@ const Login = (props) => {
   const [formValues, setFormValues] = useState({
     email: "",
     password: "",
-    role: "",
   });
   const [show, setShow] = useState(false)
   const [rememberMe, setRememberMe] = useState(false);
@@ -49,7 +48,6 @@ const Login = (props) => {
       setFormValues({
         email: savedCredentials.email,
         password: savedCredentials.password,
-        role: "",
       });
       setRememberMe(true);
     }
@@ -145,9 +143,9 @@ const Login = (props) => {
   return (
     <React.Fragment>
       <div className="bg-overlay"></div>
-      <div className="account-pages pt-4">
-        <Container>
-          <Row className="justify-content-center">
+      <div className="account-pages h-100 mt-5">
+        <Container >
+          <Row className="justify-content-center mt-5">
             <Col lg={6} md={8} xl={6}>
               <Card>
                 <CardBody className="p-3">
@@ -206,24 +204,7 @@ const Login = (props) => {
                               <i className={`mdi mdi-eye${show ? "-off" : ""}`}></i>
                             </button>
                           </div>
-                          <div className="mb-4">
-                            <Label className="form-label">User Type</Label>
-                            <Input
-                              name="role"
-                              type="select"
-                              onChange={handleChange}
-                              value={formValues.role}
-                            >
-                              <option value="">Select User Type</option>
-                              <option value="super_admin">Super Admin</option>
-                              <option value="client_admin">Client Admin</option>
-                              <option value="firm_admin">Firm Manager</option>
-                              <option value="accountant">Accountant</option>
-                              <option value="g_emp">Employee</option>
-                              {/* <option value="viewer">Demo User</option>
-                              <option value="customer_sp">Support Executive</option> */}
-                            </Input>
-                          </div>
+                          
                           <Row>
                             <Col>
                               <div className="form-check">
