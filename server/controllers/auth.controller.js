@@ -10,6 +10,7 @@ authController.register = async (req, res) => {
         const user = await authService.Registration(req.body);
         return res.status(200).json({ message: "Register successfully", user });
     } catch (error) {
+        console.log("error register users", error)
         return res.status(400).json({ message: error });
     }
 };
@@ -21,6 +22,7 @@ authController.login = async (req, res) => {
         const token = createSecretToken(response._id);
         res.status(200).json({ response, token });
     } catch (error) {
+        console.log("error login users", error)
         res.status(400).json({ error: error.toString() });
     }
 };
@@ -31,6 +33,7 @@ authController.forgetPassword = async (req, res) => {
         const response = await authService.UserForgetPassword(req.body);
         res.status(200).json({ message: response });
     } catch (error) {
+        console.log("error forget-password users", error)
         res.status(400).json({ error: error.toString() });
     }
 };
@@ -41,6 +44,7 @@ authController.resetPassword = async (req,res) => {
         const response = await authService.resetPassword(req.body);
         res.status(200).json({ message: response });
     } catch (error) {
+        console.log("Error reseting-password users", error)
         res.status(400).json({ error: error.toString() });
     }
 };
