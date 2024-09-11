@@ -15,7 +15,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
     }
 
     if (authuser) {
-      axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
+      axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authuser?.response._id}`)
         .then((response) => {
           setFirms(response);  
         })
@@ -62,7 +62,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
               className="img-fluid"
               style={{ maxWidth: '30px', marginRight: '10px' }}
             />
-            {firm.firmName}
+            {firm.companyTitle}
           </DropdownItem>
         ))}
       </DropdownMenu>

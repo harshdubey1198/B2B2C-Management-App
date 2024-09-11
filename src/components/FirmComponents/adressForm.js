@@ -2,7 +2,7 @@ import React from 'react';
 import { FormGroup, Label, Input } from 'reactstrap';
 
 const AddressForm = ({ address = {}, index, handleAddressChange }) => {
-    console.log(address,"address")
+    // console.log(address,"address")
     return (
         <div className="mb-3">
             <h5>Address {index + 1}</h5>

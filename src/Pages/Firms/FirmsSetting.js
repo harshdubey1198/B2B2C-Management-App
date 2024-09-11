@@ -10,7 +10,7 @@ function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
   const [selectedFirmId, setSelectedFirmId] = useState(null);
   const [firmDetails, setFirmDetails] = useState({
-    companyAddress: []
+    address: []
   });
   // const [error, setError] = useState("");
   // const [success, setSuccess] = useState("");
@@ -30,30 +30,29 @@ function FirmSettings() {
     if (authUser?.response?.role === "client_admin") {
       const fetchFirms = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authUser.response._id}`);
+          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`);
           const firms = response || [];
           setFirmsData(firms);
-          // Only set selectedFirmId if it's not already set
           if (firms.length > 0 && !selectedFirmId) {
             setSelectedFirmId(firms[0]._id);
           }
         } catch (error) {
           console.error("Error getting firms:", error.response || error.message);
-          // setError("Failed to fetch firms data");
           toast.error("Failed to fetch firms data");
         }
       };
       fetchFirms();
     }
-  }, [authUser, trigger]);
+  }, [authUser , trigger]);
   
   useEffect(() => {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser.response._id}`);
+          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`);
           const firmData = response || {};
-          setFirmDetails({ ...firmData, companyAddress: firmData.companyAddress || [] });
+          setFirmDetails({ ...firmData, address: firmData.address || [] });
+
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
           // setError("Failed to fetch firm data");
@@ -73,15 +72,17 @@ function FirmSettings() {
         fuid: selectedFirmId || "",
         name: selectedFirm.firmName || "",
       }));
-      setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] });
+      setFirmDetails({ ...selectedFirm, address: selectedFirm.address || [] });
     }
   }, [selectedFirmId, firmsData]);
+
+  // console.log(firmDetails.bankName , "firm id")
 
   const handleFirmChange = (id) => {
     setSelectedFirmId(id);
     // Fetch details for the newly selected firm
     const selectedFirm = firmsData.find(firm => firm._id === id) || {};
-    setFirmDetails({ ...selectedFirm, companyAddress: selectedFirm.companyAddress || [] })
+    setFirmDetails({ ...selectedFirm, address: selectedFirm.address || [] })
   };
 
   const handleInputChange = (e) => {
@@ -97,22 +98,22 @@ function FirmSettings() {
   const handleAddressChange = (index, e) => {
     const { name, value } = e.target;
     setFirmDetails(prevDetails => {
-      const updatedAddress = [...prevDetails.companyAddress];
-      updatedAddress[index] = {
-        ...updatedAddress[index],
-        [name]: value
-      };
-      return { ...prevDetails, companyAddress: updatedAddress };
+        const updatedAddress = [...prevDetails.address];
+        updatedAddress[index] = {
+            ...updatedAddress[index],
+            [name]: value
+        };
+        return { ...prevDetails, address: updatedAddress };  // Update address
     });
   };
-
+// console.log(firmDetails._id);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post(`${process.env.REACT_APP_URL}/clientadmin/updatefirm/${firmDetails._id}`, firmDetails);
+      await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails);
       toast.success("Firm details updated successfully!");
       setTrigger(prev => prev + 1)
-      handleFirmChange(selectedFirmId); // Refresh data for the current firm
+      handleFirmChange(selectedFirmId); 
     } catch (error) {
       console.error("Error updating firm details:", error.response?.data || error.message);
       // setError("Failed to update firm details");
@@ -163,7 +164,7 @@ function FirmSettings() {
                             type="text"
                             id="firmName"
                             name="firmName"
-                            value={firmDetails.firmName || ''}
+                            value={firmDetails.companyTitle || ''}
                             onChange={handleInputChange}
                             // //required
                           />
@@ -176,7 +177,7 @@ function FirmSettings() {
                             type="email"
                             id="firmEmail"
                             name="firmEmail"
-                            value={firmDetails.firmEmail || ''}
+                            value={firmDetails.email || ''}
                             onChange={handleInputChange}
                             //required
                           />
@@ -191,7 +192,7 @@ function FirmSettings() {
                             type="text"
                             id="firmPhone"
                             name="firmPhone"
-                            value={firmDetails.firmPhone || ''}
+                            value={firmDetails.companyMobile || ''}
                             onChange={handleInputChange}
                             //required
                           />
@@ -310,35 +311,9 @@ function FirmSettings() {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="cidm">CIDM</Label>
-                          <Input
-                            type="text"
-                            id="cidm"
-                            name="cidm"
-                            value={firmDetails.cidm || ''}
-                            readOnly
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="fuid">FUID</Label>
-                          <Input
-                            type="text"
-                            id="fuid"
-                            name="fuid"
-                            value={firmDetails.fuid || ''}
-                            readOnly
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <h5>Company Address</h5>
-                    {firmDetails.companyAddress.length > 0 ? (
-                        firmDetails.companyAddress.map((address, index) => (
+                  <h5>Company Address</h5>
+                  {firmDetails.address.length > 0 ? (
+                        firmDetails.address.map((address, index) => (
                           <AddressForm
                             key={index}
                             address={address}
@@ -352,6 +327,7 @@ function FirmSettings() {
                           handleAddressChange={handleAddressChange}
                         />
                       )}
+
                     <Button color="primary" type="submit">Save Changes</Button>
                   </Form>
                 ) : (

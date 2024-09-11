@@ -11,6 +11,7 @@ const userSchema = new Schema({
     gender: { type: String, enum: ["male", "female", "prefer not to say"], default: "prefer not to say" },
     mobile: String,
     companyTitle: { type: String },
+    companyMobile: String,
     address: [{
         h_no: { type: String },
         nearby: { type: String },
@@ -20,7 +21,13 @@ const userSchema = new Schema({
         zip_code: { type: String },
         country: { type: String }
     }],
-    companyMobile: String,
+    bankName: { type: String },
+    accountNumber: { type: String },
+    ifscCode: { type: String },
+    cifNumber: { type: String },
+    gstin: { type: String },
+    branchName: { type: String },
+    accountHolder: { type: String },
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'] },
     isActive: { type: Boolean, default: false },
