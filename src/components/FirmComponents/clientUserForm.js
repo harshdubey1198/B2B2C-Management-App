@@ -5,7 +5,7 @@ import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Util
 import { toast } from "react-toastify";
 import AddressForm from "./adressForm";
 
-const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFirmId, selectedFirm, formValues, setFormValues, availableRoles }) => {
+const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, selectedFirm, formValues, setFormValues, availableRoles }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [show, setShow] = useState({
@@ -14,23 +14,16 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
   });
   const [address, setAddress] = useState({});
 
-  const handleFirmNameChange = (e) => {
-    const selectedFirmName = e.target.value;
-    const firm = firms.find((firm) => firm.companyTitle === selectedFirmName);
-
-    if (firm) {
-      setSelectedFirmId(firm._id); 
-      console.log("Firm selected:", firm._id);
-      setFormValues((prevState) => ({
-        ...prevState,
-        firmUniqueId: firm.fuid,
-        companyTitle: firm.companyTitle,
-      }));
-    } else {
-      console.log("No firm found with name:", selectedFirmName);
-    }
+  const handleFirmChange = (e) => {
+    const selectedFirm = firms.find((firm) => firm.companyTitle === e.target.value);
+    
+    setFormValues((prevState) => ({
+      ...prevState,
+      firmName: e.target.value,
+      firmId: selectedFirm._id,  
+    }));
   };
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -46,7 +39,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
       toast.error("Invalid Email");
       return;
     }
-    if (!validatePhone(formValues.phone)) {
+    if (!validatePhone(formValues.mobile)) {
       setError("Invalid Phone Number");
       toast.error("Invalid Phone Number");
       return;
@@ -56,19 +49,24 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
       toast.error("Passwords do not match");
       return;
     }
+    if (Object.keys(address).length === 0) {
+      setError("Address is required");
+      toast.error("Address is required");
+      return;
+    }
 
-    // Check if selectedFirm is set
+    // Use selected firm's _id for the API call
     if (!selectedFirm || !selectedFirm._id) {
       setError("No firm selected");
       toast.error("No firm selected");
       return;
     }
 
-    // Post the user data to the server with selectedFirm._id
+    // Post the user data to the server with the selected firm's _id
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser/${selectedFirm._id}`, { 
-        ...formValues, 
-        address 
+      .post(`${process.env.REACT_APP_URL}/auth/createUser/${selectedFirm._id}`, {
+        ...formValues,
+        address
       })
       .then((response) => {
         toast.success("User added successfully.");
@@ -81,7 +79,6 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
           mobile: "",
           password: "",
           confirmPassword: "",
-          emergencyContact: "",
           birthday: "",
           gender: "",
           role: "",
@@ -124,7 +121,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
                 type="select"
                 name="firmName"
                 value={formValues.firmName}
-                onChange={handleFirmNameChange}
+                onChange={handleFirmChange}
               >
                 <option value="">Select Firm</option>
                 {firms.map((firm) => (
@@ -173,14 +170,6 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
                   name="email"
                   type="email"
                   value={formValues.email}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Emergency Contact</Label>
-                <Input
-                  name="emergencyContact"
-                  value={formValues.emergencyContact}
                   onChange={handleChange}
                 />
               </FormGroup>
@@ -241,10 +230,10 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
                 </Input>
               </FormGroup>
               <FormGroup>
-                <Label>Phone</Label>
+                <Label>Mobile</Label>
                 <Input
-                  name="phone"
-                  value={formValues.phone}
+                  name="mobile"
+                  value={formValues.mobile}
                   onChange={handleChange}
                 />
               </FormGroup>
@@ -266,12 +255,12 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFi
               </FormGroup>
             </Col>
           </Row>
-          
+
           <AddressForm
             address={address}
             handleAddressChange={handleAddressChange}
           />
-          
+
           <ModalFooter>
             <Button color="secondary" onClick={toggle}>
               Cancel

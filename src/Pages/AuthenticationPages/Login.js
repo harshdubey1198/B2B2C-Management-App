@@ -6,7 +6,7 @@ import {Row,Col,CardBody,Card,Container,Form,Input,Label} from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
-import { loginUser, socialLogin } from "../../store/actions";
+import { loginUser } from "../../store/actions";
 import { createSelector } from "reselect";
 import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
@@ -28,6 +28,7 @@ const Login = (props) => {
     })
   );
   const { error: reduxError } = useSelector(loginpage);
+  console.log(error,"error")
   // console.log(reduxError,"reduxerror")
   useEffect(() => {
     if (reduxError) {
@@ -64,10 +65,8 @@ const Login = (props) => {
         }
         await dispatch(loginUser(formValues, props.router.navigate));
       } catch (error) {
-        // Log error if any
         console.error('Login failed:', error);
-        toast.error(error.message || 'An error occurred during login');
-      }
+        toast.error(error.message || 'An error occurred during login');      }
     }
   };
   
@@ -89,47 +88,9 @@ const Login = (props) => {
     setError("");
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({
-      ...formValues,
-      [name]: value,
-    });
-    setError("");
-  };
-
   const handleCheckboxChange = (e) => {
     setRememberMe(e.target.checked);
   };
-
-  const signIn = (res, type) => {
-    if (type === "google" && res) {
-      const postData = {
-        name: res.profileObj.name,
-        email: res.profileObj.email,
-        token: res.tokenObj.access_token,
-        idToken: res.tokenId,
-      };
-      dispatch(socialLogin(postData, props.router.navigate, type));
-    } else if (type === "facebook" && res) {
-      const postData = {
-        name: res.name,
-        email: res.email,
-        token: res.accessToken,
-        idToken: res.tokenId,
-      };
-      dispatch(socialLogin(postData, props.router.navigate, type));
-    }
-  };
-
-  // const googleResponse = (response) => {
-  //   signIn(response, "google");
-  // };
-
-  // const facebookResponse = (response) => {
-  //   signIn(response, "facebook");
-  // };
-
   useEffect(() => {
     document.body.className = "bg-pattern";
     return () => {
@@ -140,7 +101,7 @@ const Login = (props) => {
   return (
     <React.Fragment>
       <div className="bg-overlay"  style={{ minHeight: "100vh" ,height:"100%" }}></div>
-      <div className="account-pages h-100 mt-5">
+      <div className="account-pages d-flex flex-row align-items-center" style={{minHeight:"100vh"}}>
         <Container >
           <Row className="d-flex justify-content-center mt-5  width-90">
             <Col lg={6} md={8} xl={6}>
@@ -220,7 +181,7 @@ const Login = (props) => {
                                 </Label>
                               </div>
                             </Col>
-                            <Col className="col-7 d-flex text-end">
+                            <Col className="col-7 d-flex flex-row justify-content-between">
                               <div className="text-md-end  mt-md-0">
                                 <Link
                                   to="/recover-password"

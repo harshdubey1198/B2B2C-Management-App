@@ -220,8 +220,6 @@ function FirmSettings() {
                           />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label for="accountNumber">Account Number</Label>
@@ -235,6 +233,9 @@ function FirmSettings() {
                           />
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row>
+                     
                       <Col md={6}>
                         <FormGroup>
                           <Label for="ifscCode">IFSC Code</Label>
@@ -243,6 +244,19 @@ function FirmSettings() {
                             id="ifscCode"
                             name="ifscCode"
                             value={firmDetails.ifscCode || ''}
+                            onChange={handleInputChange}
+                            //required
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label for="accountHolder">Account Holder</Label>
+                          <Input
+                            type="text"
+                            id="accountHolder"
+                            name="accountHolder"
+                            value={firmDetails.accountHolder || ''}
                             onChange={handleInputChange}
                             //required
                           />
@@ -291,21 +305,8 @@ function FirmSettings() {
                           />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label for="accountHolder">Account Holder</Label>
-                          <Input
-                            type="text"
-                            id="accountHolder"
-                            name="accountHolder"
-                            value={firmDetails.accountHolder || ''}
-                            onChange={handleInputChange}
-                            //required
-                          />
-                        </FormGroup>
-                      </Col>
+                      
                     </Row>
-                  <h5>Company Address</h5>
                   {firmDetails.address.length > 0 ? (
                         firmDetails.address.map((address, index) => (
                           <AddressForm

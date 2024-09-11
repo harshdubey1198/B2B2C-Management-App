@@ -156,7 +156,7 @@ const Register = (props) => {
   return (
     <div className="bg-pattern" style={{ minHeight: "100vh", height: "100%" }}>
       <div className="bg-overlay"></div>
-      <div className="account-pages pt-2">
+      <div className="account-pages d-flex flex-row align-items-center" style={{minHeight:"100vh"}}>
         <Container>
           <Row className="justify-content-center m-0">
             <Col lg={8} md={10} xl={8}>

@@ -35,21 +35,6 @@ function UserManage() {
   const firmAdminRoles = ["accountant", "g_emp"];
 
   useEffect(() => {
-    if (authuser?.response.role === "client_admin") {
-      axios
-        .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authuser?.response._id}`)
-        .then((response) => {
-          const firmsData = response || [];
-          setFirms(firmsData);
-          console.log(firmsData._id);
-        })
-        .catch((error) => {
-          console.log(error, "error getting firms");
-        });
-    }
-  }, []);
-
-  useEffect(() => {
     if (selectedFirmId && firms.length > 0) {
       const selectedFirm = firms.find((firm) => firm.fuid === selectedFirmId) || "";
       localStorage.setItem(

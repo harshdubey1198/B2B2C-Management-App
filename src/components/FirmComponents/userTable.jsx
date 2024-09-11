@@ -4,25 +4,18 @@ import axios from "axios";
 function UserTable({ selectedFirmId, trigger}) {
   const [userData, setUserData] = useState([]);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const defaultFirm = JSON.parse(localStorage.getItem("defaultFirm"));
+
+  let firmId = defaultFirm.firmId;
+
   const fetchUsers = async () => {
     try {
-      let firmId;
-      
-      if (authuser?.response.role === "firm_admin") {
-        firmId = authuser?.response.firmId;
-      } else if (authuser?.response.role === "client_admin") {
-        firmId = selectedFirmId
-      }
-      if (firmId) {
-        const response = await axios.get(
-          `${process.env.REACT_APP_URL}/firmadmin/firmusers/${firmId}`
-        );
-        setUserData(response || []);
-      }
+      const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${firmId}`);
+      setUserData(response);
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching users", error);
     }
-  };
+  }
 
   useEffect(() => {
     fetchUsers();

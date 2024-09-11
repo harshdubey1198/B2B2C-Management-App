@@ -37,6 +37,7 @@
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-apexcharts": "^1.4.1",
+    "react-autosuggest": "^10.1.0",
     "react-bootstrap-editable": "^0.8.2",
     "react-chartjs-2": "^5.2.0",
     "react-color": "^2.19.3",
