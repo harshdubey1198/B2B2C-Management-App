@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const FirmUserCreateForm = ({
   isOpen,
   toggle,
-  userRoleAuthUser, 
+  // userRoleAuthUser, 
   setTrigger,
   formValues,
   setFormValues,
@@ -24,7 +24,7 @@ const FirmUserCreateForm = ({
   useEffect(() => {
    
       axios
-        .get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authUser?.response._id}`)
+        .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?.response._id}`)
         .then((response) => {
           const firmData = response;
           setFormValues((prevState) => ({
@@ -67,7 +67,7 @@ const FirmUserCreateForm = ({
     }
 
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/auth/createUser/${authUser?.response._id}`, formValues)
       .then((response) => {
         // setSuccess("User added successfully.");
         toast.success("User added successfully.");

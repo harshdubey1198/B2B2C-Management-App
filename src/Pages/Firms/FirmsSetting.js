@@ -59,10 +59,9 @@ function FirmSettings() {
           toast.error("Failed to fetch firm data");
         }
       };
-
       fetchFirmAdminData();
     }
-  }, [authUser, trigger]);
+  }, [authUser]);
 
   useEffect(() => {
     if (selectedFirmId) {
@@ -103,7 +102,7 @@ function FirmSettings() {
             ...updatedAddress[index],
             [name]: value
         };
-        return { ...prevDetails, address: updatedAddress };  // Update address
+        return { ...prevDetails, address: updatedAddress };
     });
   };
 // console.log(firmDetails._id);
@@ -139,13 +138,8 @@ function FirmSettings() {
                   />
                 )}
               </div>
-
-
-                {/* {error && <Alert color="danger">{error}</Alert>}
-                {success && <Alert color="success">{success}</Alert>} */}
-                {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
-                  
-                  <Form onSubmit={handleSubmit}>
+            {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
+               <Form onSubmit={handleSubmit}>
                      <div className=' d-flex flex-row justify-content-center'>
                      {firmDetails.avatar && (
                             <img
@@ -159,11 +153,11 @@ function FirmSettings() {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label for="firmName">Firm Name</Label>
+                          <Label for="companyTitle">Firm Name</Label>
                           <Input
                             type="text"
-                            id="firmName"
-                            name="firmName"
+                            id="companyTitle"
+                            name="companyTitle"
                             value={firmDetails.companyTitle || ''}
                             onChange={handleInputChange}
                             // //required

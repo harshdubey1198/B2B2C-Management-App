@@ -26,7 +26,7 @@ function UserManage() {
     password: "",
     confirmPassword: "",
     emergencyContact: "",
-    address: [],
+    // address: [],
     birthday: "",
     role: "",
   });
@@ -41,6 +41,7 @@ function UserManage() {
         .then((response) => {
           const firmsData = response || [];
           setFirms(firmsData);
+          console.log(firmsData._id);
         })
         .catch((error) => {
           console.log(error, "error getting firms");

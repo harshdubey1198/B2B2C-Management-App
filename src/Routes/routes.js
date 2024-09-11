@@ -118,6 +118,7 @@ import SwitchFirm from "../Pages/Firms/SwitchFirm.js";
 import CreatePlan from "../Pages/Plans/CreatePlan.js";
 import ManagePlan from "../Pages/Plans/ManagePlan.js";
 import UserManage from "../Pages/Firms/UserManage.jsx";
+import VerifyOtp from "../Pages/AuthenticationPages/VerifyOtp.jsx";
 
 
 const authProtectedRoutes = [
@@ -305,6 +306,7 @@ const publicRoutes = [
   { path: "/register", component: <Register /> },
   {path:"/reset-password/:token", component: <ResetPassword />},
   {path:"/reset-password", component: <Navigate to ="/login" />},
+  {path:"/verify-email", component: <VerifyOtp/>},
 
   // Authentication Inner Pages
   { path: "/auth-login", component: <Login1 /> },

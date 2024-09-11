@@ -30,13 +30,13 @@ const Register = (props) => {
     firstName: "",
     lastName: "",
     email: "",
-    username: "",
+    // username: "",
     password: "",
     confirmPassword: "",
-    companyMobile: "",
-    companyName: "",
+    // companyMobile: "",
+    // companyName: "",
     mobile: "",
-    address: "",
+    // address: "",
     role: defaultRole,
     status: "Requested",
   });
@@ -87,7 +87,7 @@ const Register = (props) => {
       setCountdown((prevCountdown) => {
         if (prevCountdown === 1) {
           clearInterval(intervalId);
-          navigate("/login");
+          navigate("/verify-email");
         }
         return prevCountdown - 1;
       });
@@ -104,15 +104,6 @@ const Register = (props) => {
     dispatch(registerUserFailed(""));
   };
 
-  const userNameHandler = (e) => {
-    const { name, value } = e.target;
-    const cleanedValue = value.replace(" ", "");
-    setFormInput((prevState) => ({
-      ...prevState,
-      [name]: cleanedValue,
-    }));
-    dispatch(registerUserFailed(""));
-  };
 
   const emailHandler = (e) => {
     const { name, value } = e.target;
@@ -247,32 +238,6 @@ const Register = (props) => {
                             <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
                           </button>
                         </div>
-                        <div className="mb-4">
-                          <Label className="form-label">Company Name</Label>
-                          <Input
-                            name="companyName"
-                            type="text"
-                            placeholder="Enter Company Name"
-                            onChange={(e) => {
-                              setFormInput((prevState) => ({
-                                ...prevState,
-                                companyName: e.target.value,
-                              }));
-                              dispatch(registerUserFailed(""));
-                            }}
-                            value={formInput.companyName}
-                          />
-                        </div>
-                        <div className="mb-4">
-                          <Label className="form-label">Company Mobile</Label>
-                          <Input
-                            name="companyMobile"
-                            type="text"
-                            placeholder="Enter Company Mobile"
-                            onChange={phoneHandler}
-                            value={formInput.companyMobile}
-                          />
-                        </div>
                       </Col>
                       <Col md={6}>
                         <div className="mb-4">
@@ -286,13 +251,13 @@ const Register = (props) => {
                           />
                         </div>
                         <div className="mb-4">
-                          <Label className="form-label">Username</Label>
+                          <Label className="form-label">Mobile</Label>
                           <Input
-                            name="username"
+                            name="mobile"
                             type="text"
-                            placeholder="Enter username"
-                            onChange={userNameHandler}
-                            value={formInput.username}
+                            placeholder="Enter Mobile"
+                            onChange={phoneHandler}
+                            value={formInput.mobile}
                           />
                         </div>
                         <div className="mb-4 position-relative">
@@ -315,35 +280,13 @@ const Register = (props) => {
                             <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
                           </button>
                         </div>
-                        <div className="mb-4">
-                          <Label className="form-label">Mobile</Label>
-                          <Input
-                            name="mobile"
-                            type="text"
-                            placeholder="Enter Mobile"
-                            onChange={phoneHandler}
-                            value={formInput.mobile}
-                          />
-                        </div>
-                        <div className="mb-4">
-                          <Label className="form-label">Address</Label>
-                          <Input
-                            name="address"
-                            type="text"
-                            placeholder="Enter Address"
-                            onChange={(e) => {
-                              setFormInput((prevState) => ({
-                                ...prevState,
-                                address: e.target.value,
-                              }));
-                              dispatch(registerUserFailed(""));
-                            }}
-                            value={formInput.address}
-                          />
-                        </div>
+                      
+                       
                       </Col>
                     </Row>
-                    <div className="d-grid mt-3">
+                 
+                   
+                    <div className="d-grid">
                       <button
                         className="btn btn-primary waves-effect waves-light"
                         type="submit"
@@ -351,10 +294,20 @@ const Register = (props) => {
                         Register
                       </button>
                     </div>
+                    <div className="d-flex flex-row justify-content-center m-0 mt-2">
+                    <p className="text-black m-0">
+                          Already have an account ?
+                          <Link to="/login" className="fw-medium text-primary">
+                            {" "}
+                            Login{" "}
+                          </Link>{" "}
+                        </p>
+                   </div>
                   </Form>
                 </CardBody>
               </Card>
               <div className="mt-2 text-center">
+              
                 <p className="text-white-50">
                   © {new Date().getFullYear()} aaMOBee.
                 </p>

@@ -1,20 +1,35 @@
 import React, { useState } from "react";
-import {  Button,  Col,  FormGroup,  Input,  Label,  Modal,  ModalBody,  ModalFooter,  ModalHeader,  Row,} from "reactstrap";
+import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import axios from "axios";
 import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
 import { toast } from "react-toastify";
 import AddressForm from "./adressForm";
-import { Form } from "react-router-dom";
 
-const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelectedFirmId,  formValues,  setFormValues,  availableRoles,}) => {
+const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, setSelectedFirmId, selectedFirm, formValues, setFormValues, availableRoles }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [show, setShow] = useState({
     password: false,
     confirmPassword: false,
   });
-
   const [address, setAddress] = useState({});
+
+  const handleFirmNameChange = (e) => {
+    const selectedFirmName = e.target.value;
+    const firm = firms.find((firm) => firm.companyTitle === selectedFirmName);
+
+    if (firm) {
+      setSelectedFirmId(firm._id); 
+      console.log("Firm selected:", firm._id);
+      setFormValues((prevState) => ({
+        ...prevState,
+        firmUniqueId: firm.fuid,
+        companyTitle: firm.companyTitle,
+      }));
+    } else {
+      console.log("No firm found with name:", selectedFirmName);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,8 +57,19 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
       return;
     }
 
+    // Check if selectedFirm is set
+    if (!selectedFirm || !selectedFirm._id) {
+      setError("No firm selected");
+      toast.error("No firm selected");
+      return;
+    }
+
+    // Post the user data to the server with selectedFirm._id
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser`, { ...formValues, address })
+      .post(`${process.env.REACT_APP_URL}/auth/createUser/${selectedFirm._id}`, { 
+        ...formValues, 
+        address 
+      })
       .then((response) => {
         toast.success("User added successfully.");
         setError("");
@@ -57,10 +83,10 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
           confirmPassword: "",
           emergencyContact: "",
           birthday: "",
-          gender:"",
+          gender: "",
           role: "",
         });
-        setAddress({}); 
+        setAddress({});
         toggle();
       })
       .catch((error) => {
@@ -78,21 +104,6 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
     setError("");
   };
 
-  const handleFirmNameChange = (e) => {
-    const selectedFirmName = e.target.value;
-    const selectedFirm = firms.find((firm) => firm.firmName === selectedFirmName);
-    if (selectedFirm) {
-      setSelectedFirmId(selectedFirm._id);
-      setFormValues((prevState) => ({
-        ...prevState,
-        firmUniqueId: selectedFirm.fuid,
-        firmId: selectedFirm._id,
-        firmName: selectedFirm.firmName,
-      }));
-    }
-  };
-
-  // Handle address changes
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
     setAddress((prevAddress) => ({
@@ -107,22 +118,22 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
       <ModalBody>
         <form onSubmit={handleSubmit}>
           <Row>
-          <FormGroup>
-                <Label>Firm Name</Label>
-                <Input
-                  type="select"
-                  name="firmName"
-                  value={formValues.firmName}
-                  onChange={handleFirmNameChange}
-                >
-                  <option value="">Select Firm</option>
-                  {firms.map((firm) => (
-                    <option key={firm._id} value={firm.firmName}>
-                      {firm.companyTitle}
-                    </option>
-                  ))}
-                </Input>
-              </FormGroup>
+            <FormGroup>
+              <Label>Firm Name</Label>
+              <Input
+                type="select"
+                name="firmName"
+                value={formValues.firmName}
+                onChange={handleFirmNameChange}
+              >
+                <option value="">Select Firm</option>
+                {firms.map((firm) => (
+                  <option key={firm._id} value={firm.companyTitle}>
+                    {firm.companyTitle}
+                  </option>
+                ))}
+              </Input>
+            </FormGroup>
           </Row>
           <Row>
             <Col md={6}>
@@ -134,7 +145,6 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
                   onChange={handleChange}
                 />
               </FormGroup>
-              
               <FormGroup className="position-relative">
                 <Label>Password</Label>
                 <Input
@@ -186,7 +196,6 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
             </Col>
 
             <Col md={6}>
-              
               <FormGroup>
                 <Label>Last Name</Label>
                 <Input
@@ -229,7 +238,7 @@ const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelect
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                   <option value="prefer not to say">Other</option>
-                  </Input>
+                </Input>
               </FormGroup>
               <FormGroup>
                 <Label>Phone</Label>
