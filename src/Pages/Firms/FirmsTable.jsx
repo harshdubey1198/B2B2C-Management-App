@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label } from "reactstrap";
+import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label, Toast } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 
@@ -14,8 +14,9 @@ function FirmsTable() {
     if(authUser){
       axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?._id}`).then((response) => {
         setFirms(response);
-        console.log(response);
+        // console.log(response);
       }).catch((error) => {
+        Toast.error("Error fetching firms");
         console.error(error);
       })
     }
@@ -54,7 +55,7 @@ function FirmsTable() {
                         {/* <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td> */}
                         {/* <td>{firm.cidm}</td> */}
                         <td>{firm.companyTitle}</td>
-                        <td>{firm.companyEmail}</td>
+                        <td>{firm.email}</td>
                         <td>{firm.companyMobile}</td>
                         {/* <td>{firm.firmAdmin}</td> */}
                         <td>
@@ -67,12 +68,12 @@ function FirmsTable() {
                   </tbody>
                 </table>
               </div>
-              {hoveredFirmId && (
+              {/* {hoveredFirmId && (
                 <div className="hover-details">
                   <h5>Firm Details:</h5>
                   <p>ID: {hoveredFirmId}</p>
                 </div>
-              )}
+              )} */}
             </CardBody>
           </Card>
         </Col>

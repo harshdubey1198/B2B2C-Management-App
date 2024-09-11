@@ -1,15 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
-import {  Container,  Row,  Col,  Card,  CardBody,  FormGroup,  Label,  Input,  Button,  Alert,} from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import {  checkEmptyFields ,  validateEmail ,  validatePhone } from "../Utility/FormValidation";
+import { validateEmail, validatePhone } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
-import { Form, useNavigate } from "react-router-dom";
-
-// const predefinedPermissions = [
-//   "Admin",
-//   "User",
-// ];
+import { useNavigate } from "react-router-dom";
 
 function CreateFirm() {
   const [show, setShow] = useState({
@@ -21,18 +16,14 @@ function CreateFirm() {
   const [formValues, setFormValues] = useState({
     companyTitle: "",
     companyMobile: "",
-    companyEmail: "",
+    email: "",
     avatar: "",
-    password:"",
-    // permissions: [],
+    password: "",
     startDate: "",
-    // newPermission: "",
-    // selectedPermission: "",
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,8 +31,6 @@ function CreateFirm() {
       ...prevState,
       [name]: value,
     }));
-    // setError("");
-    //toast.error("");
   };
 
   const handleFileChange = (e) => {
@@ -58,95 +47,56 @@ function CreateFirm() {
     }
   };
 
-  // const handleAddPermission = () => {
-  //   if (formValues.newPermission) {
-  //     setFormValues((prevState) => ({
-  //       ...prevState,
-  //       permissions: [...prevState.permissions, prevState.newPermission],
-  //       newPermission: "",
-  //     }));
-  //   }
-  //   if (formValues.selectedPermission) {
-  //     setFormValues((prevState) => ({
-  //       ...prevState,
-  //       permissions: [...prevState.permissions, prevState.selectedPermission],
-  //       selectedPermission: "",
-  //     }));
-  //   }
-  // };
-
-  // const handleRemovePermission = (index) => {
-  //   setFormValues((prevState) => ({
-  //     ...prevState,
-  //     permissions: prevState.permissions.filter((_, i) => i !== index),
-  //   }));
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    // setError("");
-    // setSuccess("");
-     //toast.success("");
-    //toast.error("");
 
-    console.log('Form Values:', formValues);
-
-    if (!validateEmail(formValues.companyEmail)) {
-        // setError("Invalid companyEmail");
-        toast.error("Invalid companyEmail");
-        setLoading(false);
-        return;
+    if (!validateEmail(formValues.email)) {
+      toast.error("Invalid email");
+      setLoading(false);
+      return;
     }
     if (!validatePhone(formValues.companyMobile)) {
-        // setError("Invalid Phone Number");
-        toast.error("Invalid Phone Number");
-        setLoading(false);
-        return;
+      toast.error("Invalid Phone Number");
+      setLoading(false);
+      return;
     }
 
     const authUserData = JSON.parse(localStorage.getItem("authUser"));
     const authUser = authUserData?.response;
     const clientId = authUser?._id;
-    console.log('Client ID:', clientId);
 
     if (!clientId) {
-        // setError("User ID not found");
-        setLoading(false);
-        toast.error("User ID not found");
-        return;
+      setLoading(false);
+      toast.error("User ID not found");
+      return;
     }
 
     try {
-        const response = await axios.post(
-            `${process.env.REACT_APP_URL}/auth/createUser/${clientId}`,
-            formValues,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            }
-        );
+      const response = await axios.post(
+        `${process.env.REACT_APP_URL}/auth/createUser/${clientId}`,
+        formValues,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-        // setSuccess("Firm added successfully.");
-        toast.success("Firm added successfully.");
-        setFormValues({
-            companyTitle: "",
-            companyMobile: "",
-            companyEmail: "",
-            password:"",
-            avatar: "",
-            // permissions: [],
-            startDate: "",
-            // newPermission: "",
-            // selectedPermission: "",
-        });
-        navigate('/firms')
+      toast.success("Firm added successfully.");
+      setFormValues({
+        companyTitle: "",
+        companyMobile: "",
+        email: "",
+        password: "",
+        avatar: "",
+        startDate: "",
+      });
+      navigate('/firms');
     } catch (error) {
-        // setError("Error creating firm: " + error.message);
-        toast.error("Error creating firm" + error.message);
+      toast.error("Error creating firm: " + error.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -157,13 +107,11 @@ function CreateFirm() {
         <Container>
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
-              <Card className="mt-5">
+              <Card className="mt-1">
                 <CardBody>
                   <h4 className="font-size-18 text-muted mt-2 text-center">
                     Create Firm
                   </h4>
-                  {/* {error && <Alert color="danger">{error}</Alert>}
-                  {success && <Alert color="success">{success}</Alert>} */}
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label htmlFor="companyTitle">Firm Name</Label>
@@ -191,10 +139,10 @@ function CreateFirm() {
                       <Label htmlFor="companyEmail">Firm Email</Label>
                       <Input
                         type="email"
-                        id="companyEmail"
-                        name="companyEmail"
-                        placeholder="Enter companyEmail"
-                        value={formValues.companyEmail}
+                        id="email"
+                        name="email"
+                        placeholder="Enter Email"
+                        value={formValues.email}
                         onChange={handleChange}
                       />
                     </FormGroup>
@@ -208,24 +156,24 @@ function CreateFirm() {
                         value={formValues.password}
                         onChange={handleChange}
                       />
-                       <button
-                            className="cursor btn btn-link position-absolute end-0"
-                            style={{ top: "74%", transform: "translateY(-50%)" }}
-                            onClick={() =>
-                              setShow((prevState) => ({
-                                ...prevState,
-                                password: !prevState.password,
-                              }))
-                            }
-                            type="button"
-                          >
-                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
-                          </button>
+                      <button
+                        className="cursor btn btn-link position-absolute end-0"
+                        style={{ top: "74%", transform: "translateY(-50%)" }}
+                        onClick={() =>
+                          setShow((prevState) => ({
+                            ...prevState,
+                            password: !prevState.password,
+                          }))
+                        }
+                        type="button"
+                      >
+                        <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                      </button>
                     </FormGroup>
                     <FormGroup className="position-relative">
                       <Label htmlFor="confirmPassword">Confirm Password</Label>
                       <Input
-                        type={show.confirmPassword ? "text" : "password"}   
+                        type={show.confirmPassword ? "text" : "password"}
                         id="confirmPassword"
                         name="confirmPassword"
                         placeholder="Confirm password"
@@ -233,16 +181,30 @@ function CreateFirm() {
                         onChange={handleChange}
                       />
                       <button
-                            onClick={() => setShow((prevState) => ({
-                                ...prevState, confirmPassword: !prevState.confirmPassword
-                            }))}
-                            className="btn btn-link position-absolute end-0"
-                            style={{ top: "74%", transform: "translateY(-50%)" }}
-                            type="button"
-                          >
-                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
-                          </button>
+                        onClick={() =>
+                          setShow((prevState) => ({
+                            ...prevState,
+                            confirmPassword: !prevState.confirmPassword,
+                          }))
+                        }
+                        className="btn btn-link position-absolute end-0"
+                        style={{ top: "74%", transform: "translateY(-50%)" }}
+                        type="button"
+                      >
+                        <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
+                      </button>
                     </FormGroup>
+                    <FormGroup>
+                      <Label htmlFor="avatar">Avatar</Label>
+                      <Input
+                        type="file"
+                        id="avatar"
+                        name="avatar"
+                        placeholder="Select avatar"
+                        onChange={handleFileChange}
+                      />
+                    </FormGroup>
+
                     <FormGroup>
                       <Label htmlFor="startDate">Start Date</Label>
                       <Input
