@@ -142,7 +142,6 @@ authService.getCompany  = async (id) => {
     }
 }
 
-
 // update account 
 authService.updateAccount = async (id, body) => {
     try {

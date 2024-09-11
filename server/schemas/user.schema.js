@@ -11,8 +11,15 @@ const userSchema = new Schema({
     gender: { type: String, enum: ["male", "female", "prefer not to say"], default: "prefer not to say" },
     mobile: String,
     companyTitle: { type: String },
-    companyAddress: { type: String },
-    companyEmail: String,
+    address: [{
+        h_no: { type: String },
+        nearby: { type: String },
+        district: { type: String },
+        city: { type: String },
+        state: { type: String, required: true },
+        zip_code: { type: String },
+        country: { type: String }
+    }],
     companyMobile: String,
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'] },
