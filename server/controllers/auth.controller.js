@@ -55,6 +55,7 @@ authController.registration = async (req,res) => {
         const response = await authService.registration(req.params.id, req.body);
         res.status(200).json( response );
     } catch (error) {
+        console.log("Error Creating User", error)
         res.status(400).json({ error: error.toString() });
     }
 };
@@ -65,6 +66,7 @@ authController.getCompany =  async (req,res) => {
         const response = await authService.getCompany(req.params.id);
         res.status(200).json( response );
     } catch (error) {
+        console.log("Error Getting Account", error)
         res.status(400).json({ error: error.toString() });
     }
 };
@@ -75,6 +77,7 @@ authController.updateAccount = async (req, res) => {
         const response = await authService.updateAccount(req.params.id, req.body);
         res.status(200).json(response);
     } catch (error) {
+        console.log("Error Updating Account", error)
         res.status(400).json({ error: error });
     }
 };

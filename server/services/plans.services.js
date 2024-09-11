@@ -1,19 +1,16 @@
 const Plan = require('../schemas/plans.schema');
 const SuperAdmin = require('../schemas/superadmin.schema');
+const User = require('../schemas/user.schema');
 
-let services = {};
-services.createPlan = createPlan;
-services.getAllPlans = getAllPlans;
-services.getPlanById = getPlanById;
-services.updatePlan = updatePlan;
-services.deletePlan = deletePlan;
-services.approvePlan = approvePlan;
-services.checkPlanValidity = checkPlanValidity;
+let authService = {};
 
-async function createPlan(id, data) {
+authService.createPlan = async (id,data) => {
     try {
-        const superAdmin = await SuperAdmin.findById(id).select("-password");
+        const superAdmin = await User.findById(id).select("-password");
         if (!superAdmin) {
+            return Promise.reject("Not authorized to add plan");
+        }
+        if(superAdmin.role !== 'super_admin'){
             return Promise.reject("Not authorized to add plan");
         }
 
@@ -30,7 +27,7 @@ async function createPlan(id, data) {
     }
 }
 
-async function getAllPlans() {
+authService.getAllPlans = async () => {
     try {
         const plans = await Plan.find();
         return plans;
@@ -40,7 +37,7 @@ async function getAllPlans() {
     }
 }
 
-async function getPlanById(planId) {
+authService.getPlanById = async (planId) => {
     try {
         const plan = await Plan.findById(planId);
         if (!plan) {
@@ -53,10 +50,14 @@ async function getPlanById(planId) {
     }
 }
 
-async function updatePlan(planId, updateData) {
+authService.updatePlan = async (planId, updateData)  => {
     try {
-        const data = await Plan.findOneAndUpdate( { _id: planId }, updateData, { new: true } );
-        return data
+        const updatedPlan = await Plan.findOneAndUpdate( { _id: planId }, updateData, { new: true } );
+        if (!updatedPlan) {
+            return Promise.reject("Plan not found or update failed");
+        }
+        
+        return updatedPlan
     } catch (error) {
         console.error("Error updating plan:", error);
         return Promise.reject("Unable to Update Plan");
@@ -112,4 +113,4 @@ async function checkPlanValidity(planId) {
     }
 }
 
-module.exports = services;
+module.exports = authService;
