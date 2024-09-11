@@ -31,6 +31,7 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "list.js": "^2.3.1",
     "metismenujs": "^1.4.0",
+    "mongoose-paranoid-plugin": "^1.1.2",
     "namor": "^3.0.1",
     "node-sass": "^9.0.0",
     "prop-types": "^15.8.1",
