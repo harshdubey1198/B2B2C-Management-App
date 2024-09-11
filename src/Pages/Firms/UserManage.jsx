@@ -18,21 +18,17 @@ function UserManage() {
   const [trigger, setTrigger] = useState(0);
 
   const [formValues, setFormValues] = useState({
-    firmUniqueId: "",
-    firmName: "",
-    firmId: "",
+    adminId:"",
     firstName: "",
     lastName: "",
     email: "",
-    phone: "",
+    mobile: "",
     password: "",
     confirmPassword: "",
     emergencyContact: "",
-    address: "",
-    dob: "",
+    address: [],
+    birthday: "",
     role: "",
-    permissions: [],
-    restrictions: "",
   });
 
   const clientAdminRoles = ["firm_admin", "accountant", "g_emp"];
@@ -41,11 +37,10 @@ function UserManage() {
   useEffect(() => {
     if (authuser?.response.role === "client_admin") {
       axios
-        .get(`${process.env.REACT_APP_URL}/clientadmin/getFirms/${authuser?.response._id}`)
+        .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authuser?.response._id}`)
         .then((response) => {
           const firmsData = response || [];
           setFirms(firmsData);
-          // Removed default firm selection here
         })
         .catch((error) => {
           console.log(error, "error getting firms");

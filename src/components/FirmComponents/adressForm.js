@@ -5,7 +5,7 @@ const AddressForm = ({ address = {}, index, handleAddressChange }) => {
     // console.log(address,"address")
     return (
         <div className="mb-3">
-            <h5>Address {index + 1}</h5>
+            <h5>Address</h5>
             <FormGroup>
                 <Label for={`h_no${index}`}>House Number</Label>
                 <Input

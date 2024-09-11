@@ -75,20 +75,16 @@ const FirmUserCreateForm = ({
         // //toast.error("");
         setTrigger((prev => prev + 1))
         setFormValues({
-          firmUniqueId: "",
-          firmName: "",
           firstName: "",
           lastName: "",
           email: "",
-          phone: "",
+          mobile: "",
           password: "",
           confirmPassword: "",
           emergencyContact: "",
-          address: "",
-          dob: "",
+          birthday: "",
+          gender:"",
           role: "",
-          permissions: [],
-          restrictions: "",
         });
         toggle();
       })

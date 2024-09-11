@@ -1,32 +1,22 @@
 import React, { useState } from "react";
-import {  Alert,  Button,  Col,  FormGroup,  Input,  Label,  Modal,  ModalBody,  ModalFooter,  ModalHeader,  Row,} from "reactstrap";
+import {  Button,  Col,  FormGroup,  Input,  Label,  Modal,  ModalBody,  ModalFooter,  ModalHeader,  Row,} from "reactstrap";
 import axios from "axios";
 import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
 import { toast } from "react-toastify";
+import AddressForm from "./adressForm";
+import { Form } from "react-router-dom";
 
-const ClientUserCreateForm = ({
-  isOpen,   toggle, firms, setTrigger,  selectedFirmId,   setSelectedFirmId,   defaultFirm,   formValues,   setFormValues,   availableRoles, 
-}) => {
+const ClientUserCreateForm = ({ isOpen,  toggle,  firms,  setTrigger,  setSelectedFirmId,  formValues,  setFormValues,  availableRoles,}) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  // const handleAddPermission = (permission) => {
-  //   setFormValues((prevState) => ({
-  //     ...prevState,
-  //     permissions: [...new Set([...prevState.permissions, permission])],
-  //   }));
-  // };
-
-  // const handleRemovePermission = (permission) => {
-  //   setFormValues((prevState) => ({
-  //     ...prevState,
-  //     permissions: prevState.permissions.filter((p) => p !== permission),
-  //   }));
-  // };
   const [show, setShow] = useState({
     password: false,
     confirmPassword: false,
   });
-const handleSubmit = (e) => {
+
+  const [address, setAddress] = useState({});
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -53,36 +43,31 @@ const handleSubmit = (e) => {
     }
 
     axios
-      .post(`${process.env.REACT_APP_URL}/clientadmin/createUser`, formValues)
+      .post(`${process.env.REACT_APP_URL}/auth/createUser`, { ...formValues, address })
       .then((response) => {
-        // setSuccess("User added successfully.");
-        toast.success("User added successfully."); 
+        toast.success("User added successfully.");
         setError("");
-        setTrigger((prev => prev + 1))
+        setTrigger((prev) => prev + 1);
         setFormValues({
-          firmUniqueId: "",
-          firmName: "",
           firstName: "",
           lastName: "",
           email: "",
-          phone: "",
+          mobile: "",
           password: "",
           confirmPassword: "",
           emergencyContact: "",
-          address: "",
-          dob: "",
+          birthday: "",
+          gender:"",
           role: "",
-          // permissions: [],
-          // restrictions: "",
         });
+        setAddress({}); 
         toggle();
       })
       .catch((error) => {
-        console.log("Full error object:", error); 
+        console.log("Full error object:", error);
         toast.error("Error creating user");
       });
-};
-
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -93,54 +78,36 @@ const handleSubmit = (e) => {
     setError("");
   };
 
-  // const handlePermissionChange = (e) => {
-  //   const selectedPermission = e.target.value;
-  //   if (
-  //     selectedPermission &&
-  //     !formValues.permissions.includes(selectedPermission)
-  //   ) {
-  //     handleAddPermission(selectedPermission);
-  //   }
-  //   e.target.value = "";
-  //   setError("");
-  // };
-
   const handleFirmNameChange = (e) => {
     const selectedFirmName = e.target.value;
     const selectedFirm = firms.find((firm) => firm.firmName === selectedFirmName);
     if (selectedFirm) {
-        setSelectedFirmId(selectedFirm._id);
-        setFormValues((prevState) => {
-            const newState = {
-                ...prevState,
-                firmUniqueId: selectedFirm.fuid,
-                firmId: selectedFirm._id,
-                firmName: selectedFirm.firmName
-            };
-            return newState;
-        });
+      setSelectedFirmId(selectedFirm._id);
+      setFormValues((prevState) => ({
+        ...prevState,
+        firmUniqueId: selectedFirm.fuid,
+        firmId: selectedFirm._id,
+        firmName: selectedFirm.firmName,
+      }));
     }
-};
+  };
 
-  // const prePermissions = [
-  //   "View Invoice",
-  //   "Create Invoice",
-  //   "Edit Invoice",
-  //   "See Invoice",
-  // ];
-
-  // const preRestrictions = ["Only View", "Not allow update"];
+  // Handle address changes
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddress((prevAddress) => ({
+      ...prevAddress,
+      [name]: value,
+    }));
+  };
 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>Add New User</ModalHeader>
       <ModalBody>
-        {/* {error && <Alert color="danger">{error}</Alert>} */}
-        {/* {success && <Alert color="success">{success}</Alert>} */}
         <form onSubmit={handleSubmit}>
           <Row>
-            <Col md={6}>
-              <FormGroup>
+          <FormGroup>
                 <Label>Firm Name</Label>
                 <Input
                   type="select"
@@ -151,11 +118,14 @@ const handleSubmit = (e) => {
                   <option value="">Select Firm</option>
                   {firms.map((firm) => (
                     <option key={firm._id} value={firm.firmName}>
-                      {firm.firmName}
+                      {firm.companyTitle}
                     </option>
                   ))}
                 </Input>
               </FormGroup>
+          </Row>
+          <Row>
+            <Col md={6}>
               <FormGroup>
                 <Label>First Name</Label>
                 <Input
@@ -163,6 +133,29 @@ const handleSubmit = (e) => {
                   value={formValues.firstName}
                   onChange={handleChange}
                 />
+              </FormGroup>
+              
+              <FormGroup className="position-relative">
+                <Label>Password</Label>
+                <Input
+                  name="password"
+                  type={show.password ? "text" : "password"}
+                  value={formValues.password}
+                  onChange={handleChange}
+                />
+                <button
+                  className="cursor btn btn-link position-absolute end-0"
+                  style={{ top: "74%", transform: "translateY(-50%)" }}
+                  onClick={() =>
+                    setShow((prevState) => ({
+                      ...prevState,
+                      password: !prevState.password,
+                    }))
+                  }
+                  type="button"
+                >
+                  <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
+                </button>
               </FormGroup>
               <FormGroup>
                 <Label>Email</Label>
@@ -172,28 +165,6 @@ const handleSubmit = (e) => {
                   value={formValues.email}
                   onChange={handleChange}
                 />
-              </FormGroup>
-              <FormGroup className="position-relative">
-                <Label>Password</Label>
-                <Input
-                  name="password"
-                  type={show.password ? "text" : "password"}
-                    value={formValues.password}
-                  onChange={handleChange}
-                />
-                 <button
-                    className="cursor btn btn-link position-absolute end-0"
-                    style={{ top: "74%", transform: "translateY(-50%)" }}
-                    onClick={() =>
-                      setShow((prevState) => ({
-                        ...prevState,
-                        password: !prevState.password,
-                      }))
-                    }
-                    type="button"
-                  >
-                  <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
-                </button>
               </FormGroup>
               <FormGroup>
                 <Label>Emergency Contact</Label>
@@ -212,58 +183,15 @@ const handleSubmit = (e) => {
                   onChange={handleChange}
                 />
               </FormGroup>
-
-              {/* <FormGroup>
-                <Label>Permissions</Label>
-                <Input type="select" onChange={handlePermissionChange}>
-                  <option value="">Select Permission</option>
-                  {prePermissions.map((permission) => (
-                    <option key={permission} value={permission}>
-                      {permission}
-                    </option>
-                  ))}
-                </Input>
-                <ul>
-                  {formValues.permissions.map((permission) => (
-                    <li key={permission}>
-                      {permission}{" "}
-                      <Button
-                        color="danger"
-                        size="sm"
-                        onClick={() => handleRemovePermission(permission)}
-                      >
-                        Remove
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </FormGroup> */}
             </Col>
 
             <Col md={6}>
-              <FormGroup>
-                <Label for="firmUniqueId">FirmId</Label>
-                <Input
-                  type="text"
-                  id="firmUniqueId"
-                  name="firmUniqueId"
-                  value={formValues.firmUniqueId}
-                  readOnly
-                />
-              </FormGroup>
+              
               <FormGroup>
                 <Label>Last Name</Label>
                 <Input
                   name="lastName"
                   value={formValues.lastName}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Phone</Label>
-                <Input
-                  name="phone"
-                  value={formValues.phone}
                   onChange={handleChange}
                 />
               </FormGroup>
@@ -275,29 +203,42 @@ const handleSubmit = (e) => {
                   value={formValues.confirmPassword}
                   onChange={handleChange}
                 />
-                 <button
-                    className="cursor btn btn-link position-absolute end-0"
-                    style={{ top: "74%", transform: "translateY(-50%)" }}
-                    onClick={() =>
-                      setShow((prevState) => ({
-                        ...prevState,
-                        confirmPassword: !prevState.confirmPassword,
-                      }))
-                    }
-                    type="button"
-                  >
+                <button
+                  className="cursor btn btn-link position-absolute end-0"
+                  style={{ top: "74%", transform: "translateY(-50%)" }}
+                  onClick={() =>
+                    setShow((prevState) => ({
+                      ...prevState,
+                      confirmPassword: !prevState.confirmPassword,
+                    }))
+                  }
+                  type="button"
+                >
                   <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
                 </button>
               </FormGroup>
               <FormGroup>
-                <Label>Address</Label>
+                <Label>Gender</Label>
                 <Input
-                  name="address"
-                  value={formValues.address}
+                  type="select"
+                  name="gender"
+                  value={formValues.gender}
+                  onChange={handleChange}
+                >
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="prefer not to say">Other</option>
+                  </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label>Phone</Label>
+                <Input
+                  name="phone"
+                  value={formValues.phone}
                   onChange={handleChange}
                 />
               </FormGroup>
-
               <FormGroup>
                 <Label>Role</Label>
                 <Input
@@ -314,24 +255,14 @@ const handleSubmit = (e) => {
                   ))}
                 </Input>
               </FormGroup>
-              {/* <FormGroup>
-                <Label>Restrictions</Label>
-                <Input
-                  type="select"
-                  name="restrictions"
-                  value={formValues.restrictions}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Restriction</option>
-                  {preRestrictions.map((restriction) => (
-                    <option key={restriction} value={restriction}>
-                      {restriction}
-                    </option>
-                  ))}
-                </Input>
-              </FormGroup> */}
             </Col>
           </Row>
+          
+          <AddressForm
+            address={address}
+            handleAddressChange={handleAddressChange}
+          />
+          
           <ModalFooter>
             <Button color="secondary" onClick={toggle}>
               Cancel
