@@ -64,53 +64,60 @@ authService.updatePlan = async (planId, updateData)  => {
     }
 }
 
-async function deletePlan(planId) {
+authService.deletePlan = async (planId) => {
     try {
-        const plan = await Plan.findByIdAndDelete(planId);
+        // Use findByIdAndUpdate to set the deleted_at field (soft delete)
+        const plan = await Plan.findByIdAndUpdate(
+            planId,
+            { deleted_at: new Date() }, 
+            { new: true }             
+        );
+
         if (!plan) {
             return Promise.reject("Unable to Find Plan");
         }
-        return 'Plan deleted successfully';
+
+        return 'Plan soft deleted successfully';  // Success response
     } catch (error) {
-        console.error("Error deleting plan:", error);
+        console.error("Error soft deleting plan:", error);
         return Promise.reject("Unable to Delete Plan");
     }
-}
+};
 
-async function approvePlan(planId) {
-    try {
-        const plan = await Plan.findById(planId);
-        if (!plan) {
-            return { success: false, error: 'Plan not found' };
-        }
+// async function approvePlan(planId) {
+//     try {
+//         const plan = await Plan.findById(planId);
+//         if (!plan) {
+//             return { success: false, error: 'Plan not found' };
+//         }
 
-        plan.approvalDate = new Date();
-        plan.validityEndDate = new Date();
-        plan.validityEndDate.setDate(plan.validityEndDate.getDate() + 90);
+//         plan.approvalDate = new Date();
+//         plan.validityEndDate = new Date();
+//         plan.validityEndDate.setDate(plan.validityEndDate.getDate() + 90);
 
-        await plan.save();
-        return { success: true, plan };
-    } catch (error) {
-        console.error("Error approving plan:", error);
-        return { success: false, error: 'Unable to approve plan' };
-    }
-}
+//         await plan.save();
+//         return { success: true, plan };
+//     } catch (error) {
+//         console.error("Error approving plan:", error);
+//         return { success: false, error: 'Unable to approve plan' };
+//     }
+// }
 
-async function checkPlanValidity(planId) {
-    try {
-        const plan = await Plan.findById(planId);
-        if (!plan) {
-            return { success: false, error: 'Plan not found' };
-        }
+// async function checkPlanValidity(planId) {
+//     try {
+//         const plan = await Plan.findById(planId);
+//         if (!plan) {
+//             return { success: false, error: 'Plan not found' };
+//         }
 
-        const currentDate = new Date();
-        const isValid = plan.validityEndDate && currentDate <= plan.validityEndDate;
+//         const currentDate = new Date();
+//         const isValid = plan.validityEndDate && currentDate <= plan.validityEndDate;
 
-        return { success: true, isValid, validityEndDate: plan.validityEndDate };
-    } catch (error) {
-        console.error("Error checking plan validity:", error);
-        return { success: false, error: 'Unable to check plan validity' };
-    }
-}
+//         return { success: true, isValid, validityEndDate: plan.validityEndDate };
+//     } catch (error) {
+//         console.error("Error checking plan validity:", error);
+//         return { success: false, error: 'Unable to check plan validity' };
+//     }
+// }
 
 module.exports = authService;
