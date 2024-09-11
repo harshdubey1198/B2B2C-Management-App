@@ -16,9 +16,11 @@ mongoose.connect(process.env.MONGO_URI).then(resp => {
 }).catch(error => console.log("Unable to connect to DB!" + error));
 
 const userRoute = require('./routers/auth.router')
-
+const planRoute = require('./routers/plan.router')
 
 app.use('/api/auth', userRoute);
+app.use('/api/plan', planRoute);
+
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))

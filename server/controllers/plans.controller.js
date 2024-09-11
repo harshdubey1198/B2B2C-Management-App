@@ -1,61 +1,68 @@
-const express = require('express');
-const router = express.Router();
-
 const PlansServices = require('../services/plans.services');
 
+const planController = {}
 // CREATE PLAN
-router.post('/create/:id', async (req, res) => {
+planController.createPlan = async (req, res) => {
     try {
         const response = await PlansServices.createPlan(req.params.id, req.body);
-        res.status(200).send(response);
+        return res.status(200).json({ message: "Plan created Succesfully", response });
     } catch (error) {
-        console.log('Create Plan Error:', error);
-        res.status(500).send(error);
+        console.log("error register users", error)
+        return res.status(500).json({ message: error });
     }
-});
+}
 
 // GET ALL PLANS
-router.get('/all', async (req, res) => {
+planController.getAllPLans = async  (req, res) => {
     try {
         const response = await PlansServices.getAllPlans();
-        res.status(200).send(response);
+        return res.status(200).json({ message: "Get All Plans", response });
     } catch (error) {
         console.log('Get All Plans Error:', error);
-        res.status(500).send(error);
+        return res.status(500).json({ message: error });
     }
-});
+};
 
-// GET PLAN
-router.get('/:id', async (req, res) => {
+// // GET PLAN
+planController.getPLan = async  (req, res) => {
     try {
         const response = await PlansServices.getPlanById(req.params.id);
-        res.status(200).send(response);
+        return res.status(200).json({ message: "Get Plans", response });
     } catch (error) {
         console.log('Get Plan By ID Error:', error);
-        res.status(500).send(error);
+        return res.status(500).json({ message: error });
     }
-});
+}
 
-// UPDATE PLAN
-router.put('/update/:id', async (req, res) => {
+// // UPDATE PLAN
+planController.updatePlan = async  (req, res) => {
     try {
         const response = await PlansServices.updatePlan(req.params.id, req.body);
-        res.status(200).send(response);
+        return res.status(200).json({ message: "Succesfully Updated Plan", response });
     } catch (error) {
-        console.log('Update Plan Error:', error);
-        res.status(500).send(error);
+        console.log('Error Updating plan:', error);
+        return res.status(500).json({ message: error });
     }
-});
+}
+// router.put('/update/:id', async (req, res) => {
+//     try {
+//         const response = await PlansServices.updatePlan(req.params.id, req.body);
+//         res.status(200).send(response);
+//     } catch (error) {
+//         console.log('Update Plan Error:', error);
+//         res.status(500).send(error);
+//     }
+// });
 
-// DELETE PLAN
-router.delete('/delete/:id', async (req, res) => {
-    try {
-        const response = await PlansServices.deletePlan(req.params.id);
-        res.status(200).send(response);
-    } catch (error) {
-        console.log('Delete Plan Error:', error);
-        res.status(500).send( error );
-    }
-});
+// // DELETE PLAN
+// router.delete('/delete/:id', async (req, res) => {
+//     try {
+//         const response = await PlansServices.deletePlan(req.params.id);
+//         res.status(200).send(response);
+//     } catch (error) {
+//         console.log('Delete Plan Error:', error);
+//         res.status(500).send( error );
+//     }
+// });
 
-module.exports = router;
+module.exports = planController;

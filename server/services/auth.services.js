@@ -105,7 +105,7 @@ authService.resetPassword = async (body) => {
 // CREATE FIRM OR CREATE USER
 authService.registration = async (id, body) => {
     try {
-        const existingUser = await User.findOne({ email: body.email, adminId: id });
+        const existingUser = await User.findOne({ email: body.email });
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
