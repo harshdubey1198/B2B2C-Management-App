@@ -154,7 +154,7 @@ authService.verifyOtp = async (body) => {
             return Promise.reject("User Not Exist")
         }
 
-        if(user.otp !== otp){
+        if(user.otp !== Number(otp)){
             return Promise.reject("Invalid OTP")
         }
 
@@ -169,7 +169,7 @@ authService.verifyOtp = async (body) => {
         user.otpExpiry = null; 
         await user.save();
 
-        return { message: "OTP verified successfully", user };
+        return { message: "OTP verified successfully" };
     } catch (error) {
         console.error("Error verifying OTP:", error);
         return Promise.reject("Unable to verify OTP");
