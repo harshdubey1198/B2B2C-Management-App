@@ -16,6 +16,7 @@ authService.Registration = async (body) => {
         const updatedPassword = await PasswordService.passwordHash(body.password);
         body.password = updatedPassword;
         body.role = body.role || "client_admin";
+        body.adminId = body.adminId || "66e12a6702eac32b99a2dda7";
         const user = await User.create(body);
         return user;
     } catch (error) {

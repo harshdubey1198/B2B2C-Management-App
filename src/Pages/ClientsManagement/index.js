@@ -24,6 +24,7 @@ function ClientManagement() {
   const [modal, setModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   const toggleDropdown = (id) => {
     setDropdownOpen((prev) => ({
@@ -32,6 +33,8 @@ function ClientManagement() {
     }));
   };
 
+  const _id = authuser?.response?._id;
+  console.log(authuser?.response?._id, "authuser");
   const toggleModal = () => {
     setModal(!modal);
   };
@@ -71,10 +74,10 @@ function ClientManagement() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_URL}/clientadmin/getClients`)
+      .get(`${process.env.REACT_APP_URL}/auth/getCompany/${_id}`)
       .then((response) => {
         setRequestedData(response);
-
+        console.log(response);
         response.data.forEach((client) => {
           if (client.plan?.status === "requested") {
             alert(
@@ -85,6 +88,7 @@ function ClientManagement() {
       })
       .catch((error) => {
         console.log(error);
+
       });
   }, [trigger]);
 
@@ -160,8 +164,8 @@ function ClientManagement() {
                         <tr key={client._id}>
                           <td>{client.firstName + " " + client.lastName}</td>
                           <td>{client.email}</td>
-                          <td>{client.companyName}</td>
-                          <td>{client.companyMobile}</td>
+                          <td>{client.companyTitle}</td>
+                          <td>{client.mobile}</td>
                           <td>{client.status}</td>
                           <td>
                             {/* {client.plan ? ( */}

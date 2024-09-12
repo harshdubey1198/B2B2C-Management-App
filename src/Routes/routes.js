@@ -308,10 +308,10 @@ const publicRoutes = [
   {path:"/reset-password", component: <Navigate to ="/login" />},
   {path:"/verify-email", component: <VerifyOtp/>},
 
-  // Authentication Inner Pages
-  { path: "/auth-login", component: <Login1 /> },
-  { path: "/auth-register", component: <Register /> },
-  { path: "/recover-password", component: <RecoverPassword /> },
+  // // Authentication Inner Pages
+  // { path: "/auth-login", component: <Login1 /> },
+  // { path: "/auth-register", component: <Register /> },
+  // { path: "/recover-password", component: <RecoverPassword /> },
   { path: "/auth-lock-screen", component: <LockScreen /> },
 
   // Utility Pages
