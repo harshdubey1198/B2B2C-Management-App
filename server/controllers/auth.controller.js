@@ -42,7 +42,7 @@ authController.resendOtp = async (req, res) => {
 authController.login = async (req, res) => {
     try {
         const response = await authService.userLogin(req.body);
-        const token = createSecretToken(response._id);
+        const token = createSecretToken(response);
         res.status(200).json({ response, token });
     } catch (error) {
         console.log("error login users", error)
