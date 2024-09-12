@@ -11,9 +11,32 @@ authController.register = async (req, res) => {
         return res.status(200).json({ message: "Register successfully", user });
     } catch (error) {
         console.log("error register users", error)
-        return res.status(400).json({ message: error });
+        return res.status(500).json({ message: error });
     }
 };
+
+// VERIFY OTP
+authController.verifyOtp = async (req, res) => {
+    try {
+        const user = await authService.verifyOtp(req.body);
+        return res.status(200).json({ message: "Otp Verify successfully", user });
+    } catch (error) {
+        console.log("error verify otp", error)
+        return res.status(500).json({ message: error });
+    }
+}
+
+// RESET OTP
+authController.resendOtp = async (req, res) => {
+    try {
+        const user = await authService.resendOtp(req.body);
+        return res.status(200).json({ message: "Otp Resend successfully", user });
+    } catch (error) {
+        console.log("error sending otp again", error)
+        return res.status(500).json({ message: error });
+    }
+}
+
 
 // Login Controller
 authController.login = async (req, res) => {
@@ -23,7 +46,7 @@ authController.login = async (req, res) => {
         res.status(200).json({ response, token });
     } catch (error) {
         console.log("error login users", error)
-        res.status(400).json({ error: error.toString() });
+        res.status(400).json({ error: error.toString()});
     }
 };
 
