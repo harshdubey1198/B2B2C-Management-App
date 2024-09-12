@@ -21,7 +21,7 @@ authService.Registration = async (body) => {
 
         const otp = Math.floor(100000 + Math.random() * 900000);
         user.otp = otp;
-        user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
+        user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000);
         await user.save();
 
         // Send OTP via email
@@ -191,7 +191,7 @@ authService.resendOtp = async (body) => {
 
         const newOtp = Math.floor(100000 + Math.random() * 900000);
         user.otp = newOtp;
-        user.otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+        user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
         await user.save();
 
         // Send new OTP

@@ -28,8 +28,6 @@ const Login = (props) => {
     })
   );
   const { error: reduxError } = useSelector(loginpage);
-  console.log(error,"error")
-  // console.log(reduxError,"reduxerror")
   useEffect(() => {
     if (reduxError) {
       console.log(reduxError,"in useeffect")
@@ -181,7 +179,7 @@ const Login = (props) => {
                                 </Label>
                               </div>
                             </Col>
-                            <Col className="col-7 d-flex flex-row justify-content-between">
+                            <Col className="col-7 d-flex flex-row justify-content-flex-end">
                               <div className="text-md-end  mt-md-0">
                                 <Link
                                   to="/recover-password"
