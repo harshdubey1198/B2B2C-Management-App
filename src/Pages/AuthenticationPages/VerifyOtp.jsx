@@ -1,18 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-const VerifyOtp = ({ email }) => {
+const VerifyOtp = () => {
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [canResend, setCanResend] = useState(true); 
+  const [resendTimeout, setResendTimeout] = useState(null); 
   const navigate = useNavigate();
 
+  const email = localStorage.getItem("email");
+
+  useEffect(() => {
+    if (!canResend) {
+      const timeoutId = setTimeout(() => {
+        setCanResend(true);
+      }, 30000); 
+
+      setResendTimeout(timeoutId);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [canResend]);
+
   const handleChange = (e) => {
-    setOtp(e.target.value);
-    setError("");
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setOtp(value);
+      setError("");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -27,23 +47,56 @@ const VerifyOtp = ({ email }) => {
     setError("");
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_URL}/auth/verifyOtp`, {
+      const otpNumber = Number(otp);
+      const response = await axios.post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
         email,
-        otp,
+        otp: otpNumber,
       });
 
-      if (response.data.success) {
+      if (response.message === "OTP verified successfully") {
         toast.success("OTP Verified Successfully");
+        localStorage.removeItem("email"); 
         navigate("/login");
-      } else {
-        setError(response.data.message || "Failed to verify OTP");
+      } else if (response.message === "Existing OTP is still valid. Please wait.") {
+        setError(response.message);
         toast.error("Failed to verify OTP");
       }
     } catch (err) {
-      setError("Error verifying OTP");
-      toast.error("Error verifying OTP");
+      setError(err);
+      toast.error(err);
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!email) {
+      toast.error("Email not found. Please try again.");
+      return;
+    }
+
+    if (!canResend) {
+      toast.info("Please wait before requesting a new OTP.");
+      return;
+    }
+
+    setIsResending(true);
+    setCanResend(false); 
+
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_URL}/auth/resend-otp`, {
+        email,
+      });
+
+      if (response.message) {
+        toast.success(response.message);
+      } else {
+        toast.error(response.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.message || "Error resending OTP");
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -72,6 +125,7 @@ const VerifyOtp = ({ email }) => {
                           placeholder="Enter the 6-digit OTP"
                           value={otp}
                           onChange={handleChange}
+                          maxLength={6}
                         />
                       </FormGroup>
 
@@ -80,7 +134,17 @@ const VerifyOtp = ({ email }) => {
                       </Button>
                     </form>
                     {error && <p className="text-danger text-center mt-2">{error}</p>}
-                    <div className="mt-4 text-center">
+                    <div className="mt-2 text-center">
+                      <p className="text-muted">
+                        <Button 
+                          color="link" 
+                          onClick={handleResendOtp} 
+                          className="p-0 text-primary"
+                          disabled={isResending || !canResend}
+                        >
+                          {isResending ? "Resending..." : "Resend OTP"}
+                        </Button>
+                      </p>
                       <p className="text-muted">
                         Email already verified! {" "}
                         <Button 

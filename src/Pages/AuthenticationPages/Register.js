@@ -67,6 +67,7 @@ const Register = (props) => {
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
+            localStorage.setItem("email", formInput.email);
             dispatch(registerUserFailed(""));
             startRedirectCountdown(); 
           } else {
