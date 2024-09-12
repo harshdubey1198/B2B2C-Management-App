@@ -114,17 +114,13 @@ const RolewiseDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
   return (
-    <div>
+    <div className='d-flex flex-row w-100'>
       {user ? (
-        <div>
-          <h1>Welcome, {user?.firstName}</h1>
+        <div className='d-flex flex-row w-100 justify-content-evenly'>
+          <h1>Welcome {user.firstName}</h1>
           <h2>Role: {user.role}</h2>
-          <h3>Permissions:</h3>
-          <ul>
-            {rolePermissions[user.role].map(permission => (
-              <li key={permission}>{permission}</li>
-            ))}
-          </ul>
+          
+
         </div>
       ) : (
         <div>Loading user data...</div>

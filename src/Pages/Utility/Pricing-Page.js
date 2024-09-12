@@ -47,7 +47,7 @@ const Pricing = () => {
               <Col xl={4} md={6} key={key}>
                 <Card className="d-flex flex-column h-100">
                   <CardBody className="p-4 d-flex flex-column flex-grow-1">
-                    <div className="text-center">
+                    <div className="text-left">
                       <div className="d-flex mb-1 pt-3" style={{minHeight:"120px"}}>
                             <div className="flex-shrink-0 me-3 ">
                               <div className="avatar-sm">
