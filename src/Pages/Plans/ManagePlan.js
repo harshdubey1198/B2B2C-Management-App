@@ -3,6 +3,7 @@ import { Button, Card, CardBody, Col, Dropdown, DropdownToggle, DropdownMenu, Dr
 } from "reactstrap";
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const predefinedIcons = ["fas fa-cube", "fas fa-trophy", "fas fa-shield-alt"];
 
@@ -15,9 +16,11 @@ function ManagePlan() {
 
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
-      setPlansData(response);
+      setPlansData(response.response); 
+      // console.log(response.response);
     }).catch((error) => {
-      console.log(error);
+      // console.log(error);
+      toast.error('Error fetching data');
     });
   }, [trigger]);
 
@@ -31,11 +34,25 @@ function ManagePlan() {
   const toggleModal = () => setModal(!modal);
 
   const handleEdit = (plan) => {
-    setSelectedPlan(plan);
-    toggleModal();
+    setSelectedPlan(plan);  
+    toggleModal();  
   };
-
+  const handleDelete = (id) => {
+    const confirmed = window.confirm("Are you sure you want to delete this plan?");
+    if (confirmed) {
+      axios.delete(`${process.env.REACT_APP_URL}/plan/delete/${id}`)
+        .then((response) => {
+          setTrigger(prev => prev + 1);
+          toast.success('Plan deleted successfully');
+        })
+        .catch((error) => {
+          console.log(error, "error deleting data");
+          toast.error('Error deleting plan');
+        });
+    }
+  };
   const handleUpdate = () => {
+    // console.log("Updating plan with maxFirms:", selectedPlan.maxFirms);  
     axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan)
       .then((response) => {
         setTrigger(prev => prev + 1);
@@ -43,14 +60,25 @@ function ManagePlan() {
       })
       .catch((error) => {
         console.log(error, "error updating data");
+        toast.error('Error updating data');
       });
   };
-
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setSelectedPlan({ ...selectedPlan, [name]: value });
   };
 
+  const handleFirmChange = (e) => {
+    const value = e.target.value;
+    if (!isNaN(value)) {
+      setSelectedPlan((prevState) => ({
+        ...prevState,
+        maxFirms: parseInt(value, 10),
+      }));
+    }
+  };
+  
   const handleIconChange = (iconClass) => {
     setSelectedPlan((prevState) => ({
       ...prevState,
@@ -61,6 +89,7 @@ function ManagePlan() {
   const getDropdownItems = (plan) => (
     <>
       <DropdownItem key="edit" onClick={() => handleEdit(plan)}>Edit</DropdownItem>
+      <DropdownItem key="delete" onClick={() => handleDelete(plan._id)}>Delete</DropdownItem>
     </>
   );
 
@@ -105,7 +134,7 @@ function ManagePlan() {
                         <td>{plan.features.join(', ')}</td>
                         <td>
                           <Dropdown isOpen={dropdownOpen[plan._id]} toggle={() => toggleDropdown(plan._id)}>
-                            <DropdownToggle caret color="secondary">
+                            <DropdownToggle caret color="info">
                               Actions
                             </DropdownToggle>
                             <DropdownMenu>
@@ -138,7 +167,7 @@ function ManagePlan() {
                 </FormGroup>
                 <FormGroup>
                   <Label for="maxFirms">Max Firms</Label>
-                  <Input type="number" name="maxFirms" id="maxFirms" value={selectedPlan.maxFirms} onChange={handleChange} />
+                  <Input type="number" name="maxFirms" id="maxFirms" value={selectedPlan.maxFirms} onChange={handleFirmChange} />
                 </FormGroup>
                 <FormGroup>
                   <Label for="icon">Select an Icon</Label>

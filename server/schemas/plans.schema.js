@@ -18,6 +18,7 @@ const planSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    maxFirms: { type: Number },
     features: {
         type: [String],
         required: true,

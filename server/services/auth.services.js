@@ -16,8 +16,7 @@ authService.Registration = async (body) => {
         const hashedPassword = await PasswordService.passwordHash(body.password);
         body.password = hashedPassword;
         body.role = body.role || "client_admin";
-
-        // Create the user
+        body.adminId = body.adminId || "66e12a6702eac32b99a2dda7";
         const user = await User.create(body);
 
         const otp = Math.floor(100000 + Math.random() * 900000);
