@@ -33,7 +33,6 @@ const superAdminTokenVerification = (req, res, next) => {
   if (!token) {
     return res.send(utills.createResult("Token is required", null, "User is not logged in"));
   }
-  
   token = token.replace("Bearer ", "");
   try {
     jwt.verify(token, process.env.TOKEN_KEY, function (err, decoded) {
