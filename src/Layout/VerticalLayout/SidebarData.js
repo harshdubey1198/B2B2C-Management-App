@@ -5,16 +5,6 @@ export const masterAdminSidebarData = () => [
     url: "/dashboard",
   },
   {
-    label: "Firms",
-    icon: "mdi mdi-domain",
-    subItem: [
-      { sublabel: "Manage Firms", link: "/firms" },
-      { sublabel: "Create New Firm", link: "/create-firm" },
-      // { sublabel: "Switch Between Firms", link: "/firms/switch" },
-      { sublabel: "Firm-Specific Settings", link: "/firms-setting" },
-    ],
-  },
-  {
     label: "Clients/Customers",
     icon: "mdi mdi-account-multiple-outline",
     subItem: [
@@ -44,6 +34,16 @@ export const masterAdminSidebarData = () => [
       {sublabel:"Manage Plans",link:"/manage-plan"},
       {sublabel:"All Plans",link:"/pricing"},
     ]
+  },
+  {
+    label: "Firms",
+    icon: "mdi mdi-domain",
+    subItem: [
+      { sublabel: "Manage Firms", link: "/firms" },
+      { sublabel: "Create New Firm", link: "/create-firm" },
+      // { sublabel: "Switch Between Firms", link: "/firms/switch" },
+      { sublabel: "Firm-Specific Settings", link: "/firms-setting" },
+    ],
   },
   {
     label: "Inventory Items",

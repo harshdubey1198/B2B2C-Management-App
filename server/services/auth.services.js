@@ -337,4 +337,58 @@ authService.updateAccount = async (id, body) => {
         return Promise.reject("Unable to update account. Try again later!");
     } 
 }
+
+// COUNT CLIENT ADMIN 
+authService.countUsers = async (body) => {
+    try {
+        const { role, userId } = body;
+
+        if (!role || !userId) {
+            return Promise.reject("Role and User ID are required");
+        }
+
+        if (role === 'super_admin') {
+            const clientAdmins = await User.countDocuments({adminId: userId });
+            return { message: "Client Admins under Super Admin", data: clientAdmins };
+         }
+
+        if (role === 'client_admin') {
+            const firms = await User.countDocuments({ adminId: userId });
+            return { message: "Firms under Client Admin", data: firms };
+        }
+
+        if (role === 'firm') {
+            const users = await User.countDocuments({ adminId: userId });
+            return { message: "Users under Firm Admin", data: users };
+        }
+
+        return Promise.reject("Invalid role provided. Use 'super_admin', 'client_admin', or 'firm'");
+    } catch (error) {
+        console.log("Error in fetching child entities", error);
+        return Promise.reject("Unable to fetch child entities. Try again later!");
+    }
+}
+
+// Firms Under Client Admin
+authService.getFirmUnderClient = async () => {
+    try {
+        const clientAdmins = await User.find({role: "client_admin"}).select("-password -otp")
+        if (!clientAdmins) {
+            return res.status(404).json({ message: 'Client Admin not found' });
+        }
+        const response = []
+        await Promise.all(clientAdmins.map(async (admin) => {
+            const firms = await User.find({adminId : admin._id}).select("-avatar -password -otp")
+            response.push({
+                ...admin.toObject(),
+                firms: firms 
+            });        
+        }))
+        return response
+    } catch (error) {
+        console.log("Error Getting Firms under clientaccount", error);
+        return Promise.reject("Error Getting Firms under clientaccount. Try again later!");
+    }
+}
+
 module.exports = authService;

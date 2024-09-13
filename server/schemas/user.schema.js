@@ -31,7 +31,7 @@ const userSchema = new Schema({
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'] },
     otp: { type: Number },
-    otpExpiry: { type: Date }, // Expiry time for OTP
+    otpExpiry: { type: Date },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
 }, { timestamps: true });
