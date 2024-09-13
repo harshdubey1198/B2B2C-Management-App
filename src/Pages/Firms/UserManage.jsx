@@ -97,7 +97,7 @@ function UserManage() {
         <ClientUserCreateForm
           isOpen={modalOpen}
           toggle={toggleModal}
-          firms={firms}
+          // firms={firms}
           selectedFirmId={selectedFirmId}
           setTrigger={setTrigger}
           setSelectedFirmId={setSelectedFirmId}

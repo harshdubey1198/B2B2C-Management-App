@@ -1,39 +1,54 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import axios from "axios";
 import { checkEmptyFields, validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
 import { toast } from "react-toastify";
 import AddressForm from "./adressForm";
 
-const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, selectedFirm, formValues, setFormValues, availableRoles }) => {
+const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formValues, setFormValues, availableRoles }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [firms, setFirms] = useState([]);
   const [show, setShow] = useState({
     password: false,
     confirmPassword: false,
   });
   const [address, setAddress] = useState({});
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
 
   const handleFirmChange = (e) => {
     const selectedFirm = firms.find((firm) => firm.companyTitle === e.target.value);
-    
-    setFormValues((prevState) => ({
-      ...prevState,
-      firmName: e.target.value,
-      firmId: selectedFirm._id,  
-    }));
+    if (selectedFirm) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        firmName: e.target.value,
+        firmId: selectedFirm._id,
+      }));
+    }
   };
-  
+  const firmId = formValues.firmId;
+  useEffect(() => {
+    if (authuser) {
+      axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authuser?.response._id}`)
+        .then((response) => {
+          setFirms(response);  
+          console.log(response, "Firms");
+        })
+        .catch((error) => {
+          console.log(error, "Error getting firms");
+        });
+    }
+  }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (checkEmptyFields(formValues)) {
-      setError("Fill All the Fields");
-      toast.error("Fill All the Fields");
-      return;
-    }
+    // if (checkEmptyFields(formValues)) {
+    //   setError("Fill All the Fields");
+    //   toast.error("Fill All the Fields");
+    //   return;
+    // }
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
       toast.error("Invalid Email");
@@ -54,17 +69,14 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, selectedFirm,
       toast.error("Address is required");
       return;
     }
-
-    // Use selected firm's _id for the API call
-    if (!selectedFirm || !selectedFirm._id) {
+    if (!formValues.firmId) {
       setError("No firm selected");
       toast.error("No firm selected");
       return;
     }
 
-    // Post the user data to the server with the selected firm's _id
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser/${selectedFirm._id}`, {
+      .post(`${process.env.REACT_APP_URL}/auth/createUser/${firmId}`, {
         ...formValues,
         address
       })
@@ -91,6 +103,8 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, selectedFirm,
         toast.error("Error creating user");
       });
   };
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,7 +134,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, firms, setTrigger, selectedFirm,
               <Input
                 type="select"
                 name="firmName"
-                value={formValues.firmName}
+                value={formValues.firmName}  // Fix the value prop to match formValues
                 onChange={handleFirmChange}
               >
                 <option value="">Select Firm</option>

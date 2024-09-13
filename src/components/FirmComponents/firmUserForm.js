@@ -122,15 +122,7 @@ const FirmUserCreateForm = ({
     //toast.error("");
   };
 
-  const prePermissions = [
-    "View Invoice",
-    "Create Invoice",
-    "Edit Invoice",
-    "See Invoice",
-  ];
-
-  const preRestrictions = ["Only View", "Not allow update"];
-
+ 
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>Add New User</ModalHeader>
@@ -193,31 +185,7 @@ const FirmUserCreateForm = ({
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup>
-                <Label>Permissions</Label>
-                <Input type="select" onChange={handlePermissionChange}>
-                  <option value="">Select Permission</option>
-                  {prePermissions.map((permission) => (
-                    <option key={permission} value={permission}>
-                      {permission}
-                    </option>
-                  ))}
-                </Input>
-                <ul>
-                  {formValues.permissions.map((permission) => (
-                    <li key={permission}>
-                      {permission}{" "}
-                      <Button
-                        color="danger"
-                        size="sm"
-                        onClick={() => handleRemovePermission(permission)}
-                      >
-                        Remove
-                      </Button>
-                    </li>
-                  ))}
-                </ul>
-              </FormGroup>
+         
             </Col>
 
             <Col md={6}>
@@ -278,22 +246,7 @@ const FirmUserCreateForm = ({
                   <option value="g_emp">Employee</option>
                 </Input>
               </FormGroup>
-              <FormGroup>
-                <Label>Restrictions</Label>
-                <Input
-                  type="select"
-                  name="restrictions"
-                  value={formValues.restrictions}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Restriction</option>
-                  {preRestrictions.map((restriction) => (
-                    <option key={restriction} value={restriction}>
-                      {restriction}
-                    </option>
-                  ))}
-                </Input>
-              </FormGroup>
+             
             </Col>
           </Row>
           <ModalFooter>

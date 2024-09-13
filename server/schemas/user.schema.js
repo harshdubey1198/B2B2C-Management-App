@@ -29,9 +29,9 @@ const userSchema = new Schema({
     branchName: { type: String },
     accountHolder: { type: String },
     adminId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'] },
+    role: { type: String, enum: ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee' ,'firm'] },
     otp: { type: Number },
-    otpExpiry: { type: Date }, // Expiry time for OTP
+    otpExpiry: { type: Date },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
 }, { timestamps: true });

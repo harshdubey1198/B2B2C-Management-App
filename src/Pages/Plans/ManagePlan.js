@@ -13,9 +13,15 @@ function ManagePlan() {
   const [dropdownOpen, setDropdownOpen] = useState({});
   const [modal, setModal] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState(null);
-
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const token = authuser?.token; 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}/plan/all`).then((response) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    axios.get(`${process.env.REACT_APP_URL}/plan/all`, config ).then((response) => {
       setPlansData(response.response); 
       // console.log(response.response);
     }).catch((error) => {

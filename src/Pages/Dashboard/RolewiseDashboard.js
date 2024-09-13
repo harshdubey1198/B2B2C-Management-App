@@ -119,8 +119,6 @@ const RolewiseDashboard = () => {
         <div className='d-flex flex-row w-100 justify-content-evenly'>
           <h1>Welcome {user.firstName}</h1>
           <h2>Role: {user.role}</h2>
-          
-
         </div>
       ) : (
         <div>Loading user data...</div>
