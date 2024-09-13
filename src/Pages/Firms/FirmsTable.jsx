@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { Alert, Button, Card, CardBody, Col, FormGroup, Input, Label, Toast } from "reactstrap";
+import { Toast, Button, Card, CardBody, Col } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 
 function FirmsTable() {
   const [firms, setFirms] = useState([]);
   const [hoveredFirmId, setHoveredFirmId] = useState(null);
-  const authUser = JSON.parse(localStorage.getItem("authUser"))?.response
-  
+  const authUser = JSON.parse(localStorage.getItem("authUser"))?.response;
+
   useEffect(() => {
-    // const storedFirms = JSON.parse(localStorage.getItem("Firms")) || [];
-    // setFirms(storedFirms);
-    if(authUser){
-      axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?._id}`).then((response) => {
-        setFirms(response);
-        // console.log(response);
-      }).catch((error) => {
-        Toast.error("Error fetching firms");
-        console.error(error);
-      })
+    if (authUser) {
+      axios
+        .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?._id}`)
+        .then((response) => {
+          const allFirms = response;
+          const filteredFirms = allFirms.filter(firm => firm.role === 'firm');
+          setFirms(filteredFirms);
+        })
+        .catch((error) => {
+          Toast.error("Error fetching firms");
+          console.error(error);
+        });
     }
   }, []);
 
@@ -38,8 +40,8 @@ function FirmsTable() {
                 <table className="table table-bordered mb-0">
                   <thead>
                     <tr>
-                      <th>Email</th>
                       <th>Name</th>
+                      <th>Email</th>
                       <th>Phone</th>
                       <th>Avatar</th>
                     </tr>
@@ -51,29 +53,18 @@ function FirmsTable() {
                         onMouseEnter={() => setHoveredFirmId(firm._id)}
                         onMouseLeave={() => setHoveredFirmId(null)}
                       >
-                        {/* <td>{firm.id}</td> */}
-                        {/* <td>{firm.clientAdmin.firstName + " " + firm.clientAdmin.lastName}</td> */}
-                        {/* <td>{firm.cidm}</td> */}
                         <td>{firm.companyTitle}</td>
                         <td>{firm.email}</td>
                         <td>{firm.companyMobile}</td>
-                        {/* <td>{firm.firmAdmin}</td> */}
                         <td>
-                          <img src={firm.avatar} alt={firm.name} width="50" height="50" />
+                          <img src={firm.avatar} alt={firm.companyTitle} width="50" height="50" />
                         </td>
-                        {/* <td>{new Date(firm.createdAt).toLocaleString()}</td>
-                        <td>{new Date(firm.updatedAt).toLocaleString()}</td> */}
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              {/* {hoveredFirmId && (
-                <div className="hover-details">
-                  <h5>Firm Details:</h5>
-                  <p>ID: {hoveredFirmId}</p>
-                </div>
-              )} */}
+            
             </CardBody>
           </Card>
         </Col>

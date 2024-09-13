@@ -201,73 +201,35 @@ const ProfileSettings = () => {
               </Card>
             </Col>
             <Col md={6}>
-              <Card>
-                <CardBody>
-                  <h2>Account Verification</h2>
-                  <Form>
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="emailVerification">Email Verification</Label>
-                          <div className="d-flex justify-content-center">
-                            <Button color="info" onClick={() => alert('Verification email sent!')}>Send Verification Email</Button>
-                          </div>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="mobileVerification">Mobile Verification</Label>
-                          <div className="d-flex justify-content-center">
-                            <Button color="info" onClick={() => alert('Verification SMS sent!')}>Send Verification SMS</Button>
-                          </div>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={12}>
-                        <FormGroup>
-                          <Label for="twoFactorAuth">Two-Factor Authentication</Label>
-                          <div className="d-flex justify-content-center">
-                            <Button color="info" onClick={() => alert('Two-factor authentication setup!')}>Setup 2FA</Button>
-                          </div>
-                        </FormGroup>
-                      </Col>
-                    </Row>
-                  </Form>
-                </CardBody>
-              </Card>
-            </Col>
+            <Card>
+              <CardBody>
+                <h2>Profile Picture</h2>
+                <Form>
+                  <FormGroup>
+                    <Label for="profilePicture">Upload Profile Picture</Label>
+                    <Input
+                      type="file"
+                      name="profilePicture"
+                      id="profilePicture"
+                      onChange={handleFileChange}
+                    />
+                    {preview && (
+                      <div className="mt-2 d-flex justify-content-center">
+                        <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
+                      </div>
+                    )}
+                    <FormText color="muted">
+                      Choose a profile picture to upload.
+                    </FormText>
+                  </FormGroup>
+                  <Button color="primary" onClick={() => alert('Profile picture updated!')}>Update Profile Picture</Button>
+                </Form>
+              </CardBody>
+            </Card>
+          </Col>
           </Row>
           <Row>
-  <Col md={6}>
-    <Card>
-      <CardBody>
-        <h2>Profile Picture</h2>
-        <Form>
-          <FormGroup>
-            <Label for="profilePicture">Upload Profile Picture</Label>
-            <Input
-              type="file"
-              name="profilePicture"
-              id="profilePicture"
-              onChange={handleFileChange}
-            />
-            {preview && (
-              <div className="mt-2 d-flex justify-content-center">
-                <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
-              </div>
-            )}
-            <FormText color="muted">
-              Choose a profile picture to upload.
-            </FormText>
-          </FormGroup>
-          <Button color="primary" onClick={() => alert('Profile picture updated!')}>Update Profile Picture</Button>
-        </Form>
-      </CardBody>
-    </Card>
-  </Col>
+
 
   <Col md={6}>
     <Card>
@@ -298,7 +260,7 @@ const ProfileSettings = () => {
   </Col>
 </Row>
 
-          <Row>
+          {/* <Row>
             <Col md={6}>
               <Card>
                 <CardBody>
@@ -328,7 +290,6 @@ const ProfileSettings = () => {
                     </FormGroup>
                     <Button color="primary" type="submit">Send OTP to New Email</Button>
                   </Form>
-                  {/* OTP Verification Form */}
                   <Form onSubmit={handleEmailOtpSubmit} className="mt-3">
                     <FormGroup>
                       <Label for="emailOtp">Enter OTP</Label>
@@ -404,7 +365,7 @@ const ProfileSettings = () => {
                 </CardBody>
               </Card>
             </Col>
-          </Row>
+          </Row> */}
         </Container>
       </div>
     </React.Fragment>

@@ -1,19 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  Col,
-  Dropdown,
-  DropdownToggle,
-  ButtonGroup,
-  DropdownMenu,
-  DropdownItem,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-} from "reactstrap";
+import {  Button,  Card,  CardBody,  Col,  Dropdown,  DropdownToggle,   DropdownMenu,  DropdownItem,  Modal,  ModalHeader,  ModalBody,  ModalFooter,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 
@@ -76,15 +62,12 @@ function ClientManagement() {
     axios
       .get(`${process.env.REACT_APP_URL}/auth/getCompany/${_id}`)
       .then((response) => {
-        setRequestedData(response);
-        console.log(response);
-        response.data.forEach((client) => {
-          if (client.plan?.status === "requested") {
-            alert(
-              `Client ${client.firstName} ${client.lastName} has requested the ${client.plan.planId.title} plan.`
-            );
-          }
-        });
+        console.log(response , "response");
+        const allclients = response;
+        const filteredClients = allclients.filter((client) => client.role === "client_admin");
+
+        setRequestedData(filteredClients);
+        
       })
       .catch((error) => {
         console.log(error);
@@ -151,8 +134,8 @@ function ClientManagement() {
                     <tr>
                       <th>Name</th>
                       <th>Email</th>
-                      <th>Company Name</th>
-                      <th>Company Phone</th>
+                      {/* <th>Company Name</th> */}
+                      <th>Mobile</th>
                       <th>Status</th>
                       <th>Plan Title</th>
                       <th>Actions</th>
@@ -164,7 +147,7 @@ function ClientManagement() {
                         <tr key={client._id}>
                           <td>{client.firstName + " " + client.lastName}</td>
                           <td>{client.email}</td>
-                          <td>{client.companyTitle}</td>
+                          {/* <td>{client.companyTitle}</td> */}
                           <td>{client.mobile}</td>
                           <td>{client.status}</td>
                           <td>

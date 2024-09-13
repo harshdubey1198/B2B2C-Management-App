@@ -106,14 +106,19 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
 
 
 
+  const formatDate = (date) => {
+    const [year, month, day] = date.split("-");
+    return `${day}-${month}-${year}`;
+  };
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: name === "dob" ? formatDate(value) : value,
     }));
-    setError("");
   };
+  
 
   const handleAddressChange = (e) => {
     const { name, value } = e.target;
@@ -284,6 +289,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
             </Button>
           </ModalFooter>
         </form>
+        
       </ModalBody>
     </Modal>
   );

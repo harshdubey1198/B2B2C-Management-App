@@ -1,79 +1,64 @@
 import React, { useState, useEffect } from "react";
-import {Alert,Button,Col,FormGroup,Input,Label,Modal,ModalBody,ModalFooter,ModalHeader,Row,} from "reactstrap";
+import { Alert, Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from "reactstrap";
 import axios from "axios";
-import {   checkEmptyFields,   validateEmail,   validatePhone, } from "../../Pages/Utility/FormValidation";
+import { validateEmail, validatePhone } from "../../Pages/Utility/FormValidation";
 import { toast } from "react-toastify";
+import AddressForm from "./adressForm";
 
-const FirmUserCreateForm = ({
-  isOpen,
-  toggle,
-  // userRoleAuthUser, 
-  setTrigger,
-  formValues,
-  setFormValues,
-}) => {
+const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormValues }) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const authUser = JSON.parse(localStorage.getItem("authUser"))
-  const handleRemovePermission = (permission) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      permissions: prevState.permissions.filter((p) => p !== permission),
-    }));
-  };
+  const authUser = JSON.parse(localStorage.getItem("authUser"));
+  const [firmData, setFirmData] = useState(null);
+  const [address, setAddress] = useState({});
+
   useEffect(() => {
-   
-      axios
-        .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?.response._id}`)
-        .then((response) => {
-          const firmData = response;
-          setFormValues((prevState) => ({
-            ...prevState,
-            firmId: firmData._id,
-            firmUniqueId: firmData.fuid,
-            firmName: firmData.firmName,
-          }));
-        })
-        .catch((error) => {
-          console.log("Error fetching firm data", error);
-          setError("Failed to fetch firm data");
-        });
-  }, []);
+    axios
+      .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?.response.adminId}`)
+      .then((response) => {
+        const firmData = response; // Directly use response without accessing data property
+        setFirmData(firmData);
+        setFormValues((prevState) => ({
+          ...prevState,
+          firmId: firmData._id, 
+        }));
+      })
+      .catch((error) => {
+        console.log("Error fetching firm data", error);
+        setError("Failed to fetch firm data");
+      });
+  }, [authUser?.response.adminId, setFormValues]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (checkEmptyFields(formValues)) {
-      // setError("Fill All the Fields");
-      toast.error("Fill All the Fields");
-      return;
-    }
     if (!validateEmail(formValues.email)) {
-      // setError("Invalid Email");
       toast.error("Invalid Email");
       return;
     }
-    if (!validatePhone(formValues.phone)) {
-      // setError("Invalid Phone Number");
+    if (!validatePhone(formValues.mobile)) {
       toast.error("Invalid Phone Number");
       return;
     }
     if (formValues.password !== formValues.confirmPassword) {
-      // setError("Passwords do not match");
       toast.error("Passwords do not match");
+      return;
+    }
+    if (Object.keys(address).length === 0) {
+      toast.error("Address is required");
       return;
     }
 
     axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser/${authUser?.response._id}`, formValues)
-      .then((response) => {
-        // setSuccess("User added successfully.");
+      .post(`${process.env.REACT_APP_URL}/auth/createUser/${formValues.firmId}`, {
+        ...formValues,
+        address,
+      })
+      .then(() => {
         toast.success("User added successfully.");
-        // setError("");
-        // //toast.error("");
-        setTrigger((prev => prev + 1))
+        setTrigger((prev) => prev + 1);
         setFormValues({
           firstName: "",
           lastName: "",
@@ -83,65 +68,43 @@ const FirmUserCreateForm = ({
           confirmPassword: "",
           emergencyContact: "",
           birthday: "",
-          gender:"",
+          gender: "",
           role: "",
         });
+        setAddress({});
         toggle();
       })
       .catch((error) => {
         console.log("Error creating user", error);
-        // setError("Failed to create user");
         toast.error("Error creating user");
       });
   };
-  const handleAddPermission = (permission) => {
-    setFormValues((prevState) => ({
-      ...prevState,
-      permissions: [...new Set([...prevState.permissions, permission])],
-    }));
-  };
-  const handlePermissionChange = (e) => {
-    const selectedPermission = e.target.value;
-    if (
-      selectedPermission &&
-      !formValues.permissions.includes(selectedPermission)
-    ) {
-      handleAddPermission(selectedPermission);
-    }
-    e.target.value = "";
-    // setError("");
-    //toast.error("");
-  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
       [name]: value,
     }));
-    // setError("");
-    //toast.error("");
   };
 
- 
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target;
+    setAddress((prevAddress) => ({
+      ...prevAddress,
+      [name]: value,
+    }));
+  };
+
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
       <ModalHeader toggle={toggle}>Add New User</ModalHeader>
       <ModalBody>
-        {/* {error && <Alert color="danger">{error}</Alert>}
-        {success && <Alert color="success">{success}</Alert>} */}
         <form onSubmit={handleSubmit}>
+          <Label>Fill in the details below</Label>
+          {firmData && <h5>{firmData.companyTitle}</h5>}
           <Row>
             <Col md={6}>
-              <FormGroup>
-                <Label for="firmName">Firm Name</Label>
-                <Input
-                  type="text"
-                  id="firmName"
-                  name="firmName"
-                  value={formValues.firmName}
-                  readOnly
-                />
-              </FormGroup>
               <FormGroup>
                 <Label>First Name</Label>
                 <Input
@@ -150,6 +113,20 @@ const FirmUserCreateForm = ({
                   onChange={handleChange}
                 />
               </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Last Name</Label>
+                <Input
+                  name="lastName"
+                  value={formValues.lastName}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
               <FormGroup>
                 <Label>Email</Label>
                 <Input
@@ -159,6 +136,20 @@ const FirmUserCreateForm = ({
                   onChange={handleChange}
                 />
               </FormGroup>
+            </Col>
+            <Col md={6}>
+              <FormGroup>
+                <Label>Mobile</Label>
+                <Input
+                  name="mobile"
+                  value={formValues.mobile}
+                  onChange={handleChange}
+                />
+              </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
               <FormGroup>
                 <Label>Password</Label>
                 <Input
@@ -168,53 +159,8 @@ const FirmUserCreateForm = ({
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup>
-                <Label>Emergency Contact</Label>
-                <Input
-                  name="emergencyContact"
-                  value={formValues.emergencyContact}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Date of Birth</Label>
-                <Input
-                  name="dob"
-                  type="date"
-                  value={formValues.dob}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-         
             </Col>
-
             <Col md={6}>
-              <FormGroup>
-                <Label for="firmUniqueId">Firm ID</Label>
-                <Input
-                  type="text"
-                  id="firmUniqueId"
-                  name="firmUniqueId"
-                  value={formValues.firmUniqueId}
-                  readOnly
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Last Name</Label>
-                <Input
-                  name="lastName"
-                  value={formValues.lastName}
-                  onChange={handleChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label>Phone</Label>
-                <Input
-                  name="phone"
-                  value={formValues.phone}
-                  onChange={handleChange}
-                />
-              </FormGroup>
               <FormGroup>
                 <Label>Confirm Password</Label>
                 <Input
@@ -224,15 +170,21 @@ const FirmUserCreateForm = ({
                   onChange={handleChange}
                 />
               </FormGroup>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={6}>
               <FormGroup>
-                <Label>Address</Label>
+                <Label>Date of Birth</Label>
                 <Input
-                  name="address"
-                  value={formValues.address}
+                  name="dob"
+                  type="date"
+                  value={formValues.dob}
                   onChange={handleChange}
                 />
               </FormGroup>
-
+            </Col>
+            <Col md={6}>
               <FormGroup>
                 <Label>Role</Label>
                 <Input
@@ -241,14 +193,20 @@ const FirmUserCreateForm = ({
                   value={formValues.role}
                   onChange={handleChange}
                 >
-                  <option value="">Select Role</option>
+                  {/* <option value="">Select Role</option> */}
                   <option value="accountant">Accountant</option>
                   <option value="g_emp">Employee</option>
                 </Input>
               </FormGroup>
-             
             </Col>
           </Row>
+  
+                <AddressForm
+                  address={address}
+                  handleAddressChange={handleAddressChange}
+                />
+            
+          
           <ModalFooter>
             <Button color="secondary" onClick={toggle}>
               Cancel
