@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const authController = require('../controllers/auth.controller');
-const { tokenVerification } = require('../middleware/auth.middleware');
+const { tokenVerification, superAdminTokenVerification } = require('../middleware/auth.middleware');
 
 
 router.post('/register', authController.register);
@@ -13,5 +13,7 @@ router.get('/getCompany/:id', authController.getCompany);
 router.put('/update/:id', tokenVerification, authController.updateAccount);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/resend-otp', authController.resendOtp);
+router.get('/count-company',tokenVerification, authController.countUsers);
+router.get('/getCompanyFirms',tokenVerification, superAdminTokenVerification, authController.getFirmUnderClient);
 
 module.exports = router

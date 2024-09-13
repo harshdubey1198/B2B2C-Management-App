@@ -105,4 +105,26 @@ authController.updateAccount = async (req, res) => {
     }
 };
 
+// COUNT CLIENT ADMIN
+authController.countUsers = async (req, res) => {
+    try {
+        const response = await authService.countUsers(req.body);
+        res.status(200).json({message: "Client Admin Count Retrieved Successfully", count : response});
+    } catch (error) {
+        console.log("Error Retrieving Client Admin Count", error)
+        res.status(400).json({ error: error });
+    }
+};
+
+// FIRMS UNDER CLIENT ADMIN
+authController.getFirmUnderClient = async (req, res) => {
+    try {
+        const response = await authService.getFirmUnderClient();
+        res.status(200).json({message: "Firms Under Client Admin Retrieved Successfully", response : response});
+    } catch (error) {
+        console.log("Error Retrieving Firms Under Client Admin", error)
+        res.status(400).json({ error: error });
+    }
+};
+
 module.exports = authController;
