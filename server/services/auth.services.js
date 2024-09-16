@@ -287,6 +287,17 @@ authService.resetPassword = async (body) => {
   }
 }
 
+// GET ACCOUNT 
+authService.getAccount  = async (id) => {
+    try {
+        const data = User.find({_id: id}).select("-password")
+        return data
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Error occured during fetching the company data.');
+    }
+}
+
 // CREATE FIRM OR CREATE USER
 authService.registration = async (id, body) => {
     try {
@@ -378,7 +389,7 @@ authService.getFirmUnderClient = async () => {
         }
         const response = []
         await Promise.all(clientAdmins.map(async (admin) => {
-            const firms = await User.find({adminId : admin._id}).select("-avatar -password -otp")
+            const firms = await User.find({adminId : admin._id}).select("-password -otp")
             response.push({
                 ...admin.toObject(),
                 firms: firms 

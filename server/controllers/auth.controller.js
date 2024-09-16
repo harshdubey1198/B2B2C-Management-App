@@ -83,6 +83,17 @@ authController.registration = async (req,res) => {
     }
 };
 
+// GET ACCOUNT 
+authController.getAccount = async (req,res) => {
+    try {
+        const response = await authService.getAccount(req.params.id);
+        res.status(200).json( response );
+    } catch (error) {
+        console.log("Error Creating User", error)
+        res.status(400).json({ error: error.toString() });
+    }
+};
+
 // GET FIRMS 
 authController.getCompany =  async (req,res) => {
     try {
