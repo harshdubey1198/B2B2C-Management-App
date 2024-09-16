@@ -29,12 +29,12 @@ paymentController.getPayment = async (req, res) => {
 
 paymentController.updatePayment = async (req, res) => {
   try {
-    const paymentId = req.params.id; // Assuming payment ID is passed as a URL parameter
-    const updateData = req.body; // Data to update
+    // const paymentId = req.params.id; // Assuming payment ID is passed as a URL parameter
+    // const updateData = req.body; // Data to update
 
     const updatedPayment = await PaymentService.updatePayment(
-      paymentId,
-      updateData
+        req.params.id,
+        req.body
     );
 
     if (updatedPayment) {
