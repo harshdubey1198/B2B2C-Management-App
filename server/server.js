@@ -17,10 +17,11 @@ mongoose.connect(process.env.MONGO_URI).then(resp => {
 
 const userRoute = require('./routers/auth.router')
 const planRoute = require('./routers/plan.router')
+const paymentRoute = require('./routers/payment.router')
 
 app.use('/api/auth', userRoute);
 app.use('/api/plan', planRoute);
-
+app.use('/api/payment', paymentRoute);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
