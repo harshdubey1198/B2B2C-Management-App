@@ -290,7 +290,7 @@ authService.resetPassword = async (body) => {
 // GET ACCOUNT 
 authService.getAccount  = async (id) => {
     try {
-        const data = User.find({_id: id}).select("-password")
+        const data = User.findOne({_id: id}).select("-password")
         return data
     } catch (error) {
         console.error(error);

@@ -19,10 +19,7 @@ const planSchema = new mongoose.Schema({
         required: true,
     },
     maxFirms: { type: Number },
-    features: {
-        type: [String],
-        required: true,
-    },
+    features: [{type: String}]
 }, { timestamps: true, paranoid: true });
 
 // Apply the paranoid plugin at the schema level

@@ -2,9 +2,9 @@ const Plan = require('../schemas/plans.schema');
 const SuperAdmin = require('../schemas/superadmin.schema');
 const User = require('../schemas/user.schema');
 
-let authService = {};
+let PlansServices = {};
 
-authService.createPlan = async (id,data) => {
+PlansServices.createPlan = async (id,data) => {
     try {
         const superAdmin = await User.findById(id).select("-password");
         if (!superAdmin) {
@@ -27,7 +27,7 @@ authService.createPlan = async (id,data) => {
     }
 }
 
-authService.getAllPlans = async () => {
+PlansServices.getAllPlans = async () => {
     try {
         const plans = await Plan.find();
         return plans;
@@ -37,7 +37,7 @@ authService.getAllPlans = async () => {
     }
 }
 
-authService.getPlanById = async (planId) => {
+PlansServices.getPlanById = async (planId) => {
     try {
         const plan = await Plan.findById(planId);
         if (!plan) {
@@ -50,7 +50,7 @@ authService.getPlanById = async (planId) => {
     }
 }
 
-authService.updatePlan = async (planId, updateData)  => {
+PlansServices.updatePlan = async (planId, updateData)  => {
     try {
         const updatedPlan = await Plan.findOneAndUpdate( { _id: planId }, updateData, { new: true } );
         if (!updatedPlan) {
@@ -64,7 +64,7 @@ authService.updatePlan = async (planId, updateData)  => {
     }
 }
 
-authService.deletePlan = async (planId) => {
+PlansServices.deletePlan = async (planId) => {
     try {
         // Use findByIdAndUpdate to set the deleted_at field (soft delete)
         const plan = await Plan.findByIdAndUpdate(
@@ -120,4 +120,4 @@ authService.deletePlan = async (planId) => {
 //     }
 // }
 
-module.exports = authService;
+module.exports = PlansServices;
