@@ -1,108 +1,97 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Alert, Card, CardBody, FormText } from 'reactstrap';
+import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody, FormText } from 'reactstrap';
+import axios from 'axios';
 
 const ProfileSettings = () => {
-  const [logoPreview, setLogoPreview] = useState(null);
-  const [formData, setFormData] = useState({
-    name: 'Super Admin',
-    email: 'master@gmail.com',
-    phone: '1234567890',
-    profilePicture: null,
-    newEmail: '',
-    confirmEmail: '',
-    newPassword: '',
-    confirmPassword: '',
-    otp: '',
-    emailOtp: ''  // Add state for email OTP
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', profilePicture: null, newEmail: '',confirmEmail: '',newPassword: '',confirmPassword: '',    otp: '',    emailOtp: '',  });
 
   const [editMode, setEditMode] = useState({
     name: false,
     email: false,
-    phone: false
+    phone: false,
   });
 
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [logoPreview, setLogoPreview] = useState(null);
   const [preview, setPreview] = useState(null);
+
+  const authUser = JSON.parse(localStorage.getItem('authUser'));
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,);
+        const userData = response[0];
+        setFormData({
+          ...formData,
+          name: `${userData.firstName} ${userData.lastName}`,
+          email: userData.email,
+          phone: userData.mobile,
+          profilePicture: userData.avatar,
+        });
+        setPreview(userData.avatar);
+      } catch (error) {
+        toast.error('Failed to load user data');
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (e.target.name === "profilePicture") {
-        setFormData({
-          ...formData,
-          profilePicture: file
-        });
-        setPreview(URL.createObjectURL(file));
-      } else if (e.target.name === "companyLogo") {
-        setFormData({
-          ...formData,
-          companyLogo: file
-        });
-        setLogoPreview(URL.createObjectURL(file));
-      }
-    }
-  };
-  const handleEmailOtpSubmit = (e) => {
-    e.preventDefault();
-    if (formData.emailOtp) {
-      // setSuccessMessage('Email OTP verified successfully!');
-      toast.success('Email OTP verified successfully!');
-      // setErrorMessage('');
-    } else {
-      // setSuccessMessage('');
-      // setErrorMessage('Invalid OTP!');
-      toast.error('Invalid OTP!');
+      setFormData({
+        ...formData,
+        profilePicture: file,
+      });
+      setPreview(URL.createObjectURL(file));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // setSuccessMessage('Profile updated successfully!');
-    toast.success('Profile updated successfully!');
-    // setErrorMessage('');
-  };
 
-  const handleEmailChange = (e) => {
-    e.preventDefault();
-    if (formData.newEmail === formData.confirmEmail) {
-      toast.success('Verification email sent for email change!');
-      // setSuccessMessage('Verification email sent for email change!');
-      // setErrorMessage('');
-    } else {
-      setSuccessMessage('');
-      toast.error('Emails do not match!');
-      // setErrorMessage('Emails do not match!');
+    const updatedData = new FormData();
+    updatedData.append('name', formData.name);
+    updatedData.append('email', formData.email);
+    updatedData.append('phone', formData.phone);
+    if (formData.profilePicture instanceof File) {
+      updatedData.append('profilePicture', formData.profilePicture);
     }
-  };
-
-  const handlePasswordChange = (e) => {
-    e.preventDefault();
-    if (formData.newPassword === formData.confirmPassword) {
-      // setSuccessMessage('Password change requested. Please check your email for the OTP.');
-      toast.success('Password change requested. Please check your email for the OTP.');
-      // setErrorMessage('');
-    } else {
-      setSuccessMessage('');
-      toast.error('Passwords do not match!');
-      // setErrorMessage('Passwords do not match!');
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const response = await axios.put(
+        `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,updatedData,config      );
+      toast.success('Profile updated successfully!');
+      setFormData({
+        ...formData,
+        profilePicture: response.avatar,
+      });
+      setPreview(response.avatar);
+    } catch (error) {
+      // toast.error('Failed to update profile');
+      console.error('Failed to update profile', error);
     }
   };
 
   const toggleEditMode = (field) => {
     setEditMode({
       ...editMode,
-      [field]: !editMode[field]
+      [field]: !editMode[field],
     });
   };
 
@@ -115,8 +104,6 @@ const ProfileSettings = () => {
               <Card>
                 <CardBody>
                   <h2>Profile Settings</h2>
-                  {/* {successMessage && <Alert color="success">{successMessage}</Alert>} */}
-                  {/* {errorMessage && <Alert color="danger">{errorMessage}</Alert>} */}
                   <Form onSubmit={handleSubmit}>
                     <FormGroup>
                       <Label for="name">Name</Label>
@@ -196,176 +183,39 @@ const ProfileSettings = () => {
                         </div>
                       )}
                     </FormGroup>
+                    <Button color="primary" type="submit">Update Profile</Button>
                   </Form>
                 </CardBody>
               </Card>
             </Col>
             <Col md={6}>
-            <Card>
-              <CardBody>
-                <h2>Profile Picture</h2>
-                <Form>
-                  <FormGroup>
-                    <Label for="profilePicture">Upload Profile Picture</Label>
-                    <Input
-                      type="file"
-                      name="profilePicture"
-                      id="profilePicture"
-                      onChange={handleFileChange}
-                    />
-                    {preview && (
-                      <div className="mt-2 d-flex justify-content-center">
-                        <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
-                      </div>
-                    )}
-                    <FormText color="muted">
-                      Choose a profile picture to upload.
-                    </FormText>
-                  </FormGroup>
-                  <Button color="primary" onClick={() => alert('Profile picture updated!')}>Update Profile Picture</Button>
-                </Form>
-              </CardBody>
-            </Card>
-          </Col>
+              <Card>
+                <CardBody>
+                  <h2>Profile Picture</h2>
+                  <Form>
+                    <FormGroup>
+                      <Label for="profilePicture">Upload Profile Picture</Label>
+                      <Input
+                        type="file"
+                        name="profilePicture"
+                        id="profilePicture"
+                        onChange={handleFileChange}
+                      />
+                      {preview && (
+                        <div className="mt-2 d-flex justify-content-center">
+                          <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '98px', height: '98.81px' }} />
+                        </div>
+                      )}
+                      <FormText color="muted">
+                        Choose a profile picture to upload.
+                      </FormText>
+                    </FormGroup>
+                    <Button color="primary" type="submit">Update Profile Picture</Button>
+                  </Form>
+                </CardBody>
+              </Card>
+            </Col>
           </Row>
-          <Row>
-
-
-  <Col md={6}>
-    <Card>
-      <CardBody>
-        <h2>Company Logo</h2>
-        <Form>
-          <FormGroup>
-            <Label for="companyLogo">Upload Company Logo</Label>
-            <Input
-              type="file"
-              name="companyLogo"
-              id="companyLogo"
-              onChange={handleFileChange}
-            />
-            {logoPreview && (
-              <div className="mt-2 d-flex justify-content-center">
-                <img src={logoPreview} alt="Company Logo Preview" className="img-thumbnail" style={{ width: '200px', height: '200px' }} />
-              </div>
-            )}
-            <FormText color="muted">
-              Choose a company logo to upload.
-            </FormText>
-          </FormGroup>
-          <Button color="primary" onClick={() => alert('Company logo updated!')}>Update Company Logo</Button>
-        </Form>
-      </CardBody>
-    </Card>
-  </Col>
-</Row>
-
-          {/* <Row>
-            <Col md={6}>
-              <Card>
-                <CardBody>
-                  <h2>Email Change</h2>
-                  <Form onSubmit={handleEmailChange}>
-                    <FormGroup>
-                      <Label for="newEmail">New Email</Label>
-                      <Input
-                        type="email"
-                        name="newEmail"
-                        id="newEmail"
-                        value={formData.newEmail}
-                        onChange={handleChange}
-                        placeholder="Enter your new email"
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="confirmEmail">Confirm New Email</Label>
-                      <Input
-                        type="email"
-                        name="confirmEmail"
-                        id="confirmEmail"
-                        value={formData.confirmEmail}
-                        onChange={handleChange}
-                        placeholder="Confirm your new email"
-                      />
-                    </FormGroup>
-                    <Button color="primary" type="submit">Send OTP to New Email</Button>
-                  </Form>
-                  <Form onSubmit={handleEmailOtpSubmit} className="mt-3">
-                    <FormGroup>
-                      <Label for="emailOtp">Enter OTP</Label>
-                      <Row>
-                        <Col xs={9}>
-                          <Input
-                            type="text"
-                            name="emailOtp"
-                            id="emailOtp"
-                            value={formData.emailOtp}
-                            onChange={handleChange}
-                            placeholder="Enter the OTP sent to your new email"
-                            className="otp-input"
-                          />
-                        </Col>
-                        <Col xs={3}>
-                          <Button color="secondary" className="otp-button" type="submit">Verify</Button>
-                        </Col>
-                      </Row>
-                    </FormGroup>
-                  </Form>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md={6}>
-              <Card>
-                <CardBody>
-                  <h2>Password Change</h2>
-                  <Form onSubmit={handlePasswordChange}>
-                    <FormGroup>
-                      <Label for="newPassword">New Password</Label>
-                      <Input
-                        type="password"
-                        name="newPassword"
-                        id="newPassword"
-                        value={formData.newPassword}
-                        onChange={handleChange}
-                        placeholder="Enter your new password"
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="confirmPassword">Confirm Password</Label>
-                      <Input
-                        type="password"
-                        name="confirmPassword"
-                        id="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        placeholder="Confirm your new password"
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="otp">OTP</Label>
-                      <Row>
-                        <Col xs={9}>
-                          <Input
-                            type="text"
-                            name="otp"
-                            id="otp"
-                            value={formData.otp}
-                            onChange={handleChange}
-                            placeholder="Enter the OTP sent to your email"
-                            className="otp-input"
-                          />
-                        </Col>
-                        <Col xs={3}>
-                          <Button color="secondary" className="otp-button" type="submit">Verify</Button>
-                        </Col>
-                      </Row>
-                    </FormGroup>
-                    <Button color="primary" type="submit">Change Password</Button>
-                  </Form>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row> */}
         </Container>
       </div>
     </React.Fragment>
