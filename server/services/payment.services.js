@@ -36,7 +36,7 @@ paymentService.createPayment = async (body) => {
 
 paymentService.getPayment = async (filters) => {
     try {
-        const payments = await Payment.find(filters);
+        const payments = await Payment.find(filters).populate('userId').populate('planId');
         return {
             count: payments.length,
             data: payments,
