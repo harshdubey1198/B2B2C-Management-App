@@ -59,7 +59,13 @@ function ManagePlan() {
   };
   const handleUpdate = () => {
     // console.log("Updating plan with maxFirms:", selectedPlan.maxFirms);  
-    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan)
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    console.log(config, "config")
+    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan, config)
       .then((response) => {
         setTrigger(prev => prev + 1);
         toggleModal();
