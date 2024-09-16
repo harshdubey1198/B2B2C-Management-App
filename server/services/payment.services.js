@@ -5,7 +5,7 @@ const User = require('../schemas/user.schema')
 paymentService.createPayment = async (body) => {
     try {
         const {userId, amount, planId} = body
-        const user = await User.findById({userId})
+        const user = await User.findOne({_id: userId})
         if(!user){
             return Promise.reject({messages: "You are not register to buy this plan"})
         }
@@ -17,6 +17,7 @@ paymentService.createPayment = async (body) => {
             status: "pending"
         })
 
+        // add payment gateway later to this for updating the status
         payment.status = "completed",
         await payment.save()
 
