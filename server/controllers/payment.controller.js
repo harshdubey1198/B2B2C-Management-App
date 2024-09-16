@@ -12,4 +12,19 @@ paymentController.createPayment = async (req, res) => {
     }
 }
 
+
+paymentController.getPayment = async (req, res) => {
+    try {
+        const payment = await PaymentService.getPayment(req.body);
+        return res.status(200).json({
+            message: 'Payment details fetched successfully',
+            data: payment
+        });
+    } catch (error) {
+        console.error("Error fetching payment:", error.message || error);
+        return res.status(500).json({ message: 'Unable to fetch payment details' });
+    }
+};
+
+
 module.exports = paymentController

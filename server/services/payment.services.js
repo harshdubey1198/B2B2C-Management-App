@@ -32,4 +32,19 @@ paymentService.createPayment = async (body) => {
     }
 }
 
+
+paymentService.getPayment = async (filters) => {
+    try {
+        const payments = await Payment.find(filters);
+        return {
+            count: payments.length,
+            data: payments,
+            message: 'Payments fetched successfully'
+        };
+    } catch (error) {
+        console.error("Error fetching payments:", error.message || error);
+        throw new Error("Unable to Fetch Payments");
+    }
+};
+
 module.exports = paymentService
