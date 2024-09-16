@@ -34,6 +34,7 @@ const userSchema = new Schema({
     otpExpiry: { type: Date },
     isVerified: { type: Boolean, default: false },
     isActive: { type: Boolean, default: false },
+    planId: { type: mongoose.Schema.Types.ObjectId, ref: 'Plan' },
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
