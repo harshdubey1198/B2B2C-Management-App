@@ -33,4 +33,41 @@ paymentService.createPayment = async (body) => {
     }
 }
 
+
+paymentService.getPayment = async (filters) => {
+    try {
+        const payments = await Payment.find(filters);
+        return {
+            count: payments.length,
+            data: payments,
+            message: 'Payments fetched successfully'
+        };
+    } catch (error) {
+        console.error("Error fetching payments:", error.message || error);
+        throw new Error("Unable to Fetch Payments");
+    }
+};
+
+
+paymentService.updatePayment = async (paymentId, updateData) => {
+    try {
+        const updatedPayment = await Payment.findByIdAndUpdate(paymentId, updateData, { new: true });
+        return updatedPayment;
+    } catch (error) {
+        console.error("Error updating payment:", error.message || error);
+        throw new Error("Unable to update payment");
+    }
+};
+
+
+paymentService.deletePayment = async (paymentId) => {
+    try {
+        const result = await Payment.findByIdAndDelete(paymentId);
+        return result;
+    } catch (error) {
+        console.error("Error deleting payment:", error.message || error);
+        throw new Error("Unable to delete payment");
+    }
+};
+
 module.exports = paymentService
