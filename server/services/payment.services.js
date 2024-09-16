@@ -47,4 +47,26 @@ paymentService.getPayment = async (filters) => {
     }
 };
 
+
+paymentService.updatePayment = async (paymentId, updateData) => {
+    try {
+        const updatedPayment = await Payment.findByIdAndUpdate(paymentId, updateData, { new: true });
+        return updatedPayment;
+    } catch (error) {
+        console.error("Error updating payment:", error.message || error);
+        throw new Error("Unable to update payment");
+    }
+};
+
+
+paymentService.deletePayment = async (paymentId) => {
+    try {
+        const result = await Payment.findByIdAndDelete(paymentId);
+        return result;
+    } catch (error) {
+        console.error("Error deleting payment:", error.message || error);
+        throw new Error("Unable to delete payment");
+    }
+};
+
 module.exports = paymentService
