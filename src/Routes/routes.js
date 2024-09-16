@@ -119,12 +119,14 @@ import CreatePlan from "../Pages/Plans/CreatePlan.js";
 import ManagePlan from "../Pages/Plans/ManagePlan.js";
 import UserManage from "../Pages/Firms/UserManage.jsx";
 import VerifyOtp from "../Pages/AuthenticationPages/VerifyOtp.jsx";
+import ClientsPayments from "../Pages/ClientsManagement/clientPayments.js";
 
 
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
   { path: "/clients-management", component: <ClientManagement /> },
+  { path: "/clients-payments", component: <ClientsPayments /> },
 
   // plans
   { path: "/create-plan", component: <CreatePlan /> },
