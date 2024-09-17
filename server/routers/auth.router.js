@@ -13,7 +13,7 @@ router.get('/getCompany/:id', authController.getCompany);
 router.put('/update/:id', tokenVerification, authController.updateAccount);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/resend-otp', authController.resendOtp);
-router.get('/count-company',tokenVerification, authController.countUsers);
+router.post('/count-company',tokenVerification, authController.countUsers);
 router.get('/getCompanyFirms',tokenVerification, superAdminTokenVerification, authController.getFirmUnderClient);
 
 module.exports = router
