@@ -1,16 +1,9 @@
 import React from "react";
 import UsePanel from "./UserPanel";
-import OrderStatus from "./OrderStatus";
-import Notifications from "./Notifications";
 import SocialSource from "./SocialSource";
 import OverView from "./OverView";
-import RevenueByLocation from "./RevenueByLocation";
-import LatestTransation from "./LatestTransation";
-
-
 import { Row, Container, Button } from "reactstrap";
 
-//Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import RolewiseDashboard from "./RolewiseDashboard";
 import { useNavigate } from "react-router-dom";
