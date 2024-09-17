@@ -1,19 +1,15 @@
 import React from "react";
 import UsePanel from "./UserPanel";
-import OrderStatus from "./OrderStatus";
-import Notifications from "./Notifications";
 import SocialSource from "./SocialSource";
 import OverView from "./OverView";
-import RevenueByLocation from "./RevenueByLocation";
-import LatestTransation from "./LatestTransation";
+import { Row, Container, Button } from "reactstrap";
 
-import { Row, Container } from "reactstrap";
-
-//Import Breadcrumb
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import RolewiseDashboard from "./RolewiseDashboard";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+const navigate = useNavigate();
   document.title = "Dashboard | aaMOBee";
   return (
     <React.Fragment>
@@ -33,15 +29,18 @@ const Dashboard = () => {
 
           <Row>
             {/* Order Stats */}
-            <OrderStatus />
+            {/* <OrderStatus /> */}
             {/* Notifications */}
-            <Notifications />
+            {/* <Notifications /> */}
             {/* Revenue by Location Vector Map */}
-            <RevenueByLocation />
+            {/* <RevenueByLocation /> */}
+            <Button color="primary" onClick={() => navigate('/create-firm')}>
+              Create Firms
+            </Button>
           </Row>
 
           {/* Latest Transaction Table */}
-          <LatestTransation />
+          {/* <LatestTransation /> */}
         </Container>
       </div>
     </React.Fragment>

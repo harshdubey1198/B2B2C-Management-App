@@ -8,32 +8,23 @@ import hsnData from '../../data/hsn.json';
 import { mdiDelete } from '@mdi/js';
 import Icon from '@mdi/react';
 
-
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
-    name: "",
-    description: "",
-    quantity: "",
-    brandName:"",
-    category: "",
-    supplier: "",
-    subcategory: "",
-    type: "",
-    size: "",
-    color: "",
-    hsn: "",
+    itemName: "",
+    itemDescription: "",
+    costPrice: "",
+    sellingPrice: "",
+    ProductsHsn: "",
+    unitType: "",
+    categoryId: "",
+    subcategoryId: "",
+    quantityInStock: "",
+    reorderLevel: "",
     variants: [],
-    type: "",
   });
-  
-  const [loading, setLoading] = useState(false);
-  const [taxationData, setTaxationData] = useState([]);
-  const [manualHSN, setManualHSN] = useState(false);
 
-  useEffect(() => {
-    const storedTaxationTable = JSON.parse(localStorage.getItem("taxationData")) || [];
-    setTaxationData(storedTaxationTable);
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [manualHSN, setManualHSN] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,21 +38,17 @@ const InventoryItemForm = () => {
     const { value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
-      category: value,
+      categoryId: value,
     }));
-    
+
     if (!manualHSN) {
-      // Match based on description since category is not in HSN data
       const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
-      console.log(matchingHSN, "matching hsn");
       setFormValues((prevState) => ({
         ...prevState,
-        hsn: matchingHSN ? matchingHSN.hsn : "",
+        ProductsHsn: matchingHSN ? matchingHSN.hsn : "",
       }));
     }
   };
-  
-  
 
   const handleVariantChange = (index, e) => {
     const { name, value } = e.target;
@@ -73,7 +60,7 @@ const InventoryItemForm = () => {
   const handleAddVariant = () => {
     setFormValues({
       ...formValues,
-      variants: [...formValues.variants, { id: uuidv4(), name: "", price: "", tax: "", quantity: "" }],
+      variants: [...formValues.variants, { id: uuidv4(), variantName: "", sku: "", quantityInStock: "" }],
     });
   };
 
@@ -106,18 +93,17 @@ const InventoryItemForm = () => {
       setLoading(false);
 
       setFormValues({
-        name: "",
-        description: "",
-        // quantity: "",
-        category: "",
-        supplier: "",
-        hsn: "",
-        subcategory: "",
-        type: "",
-        size: "",
-        color: "",
+        itemName: "",
+        itemDescription: "",
+        costPrice: "",
+        sellingPrice: "",
+        ProductsHsn: "",
+        unitType: "",
+        categoryId: "",
+        subcategoryId: "",
+        quantityInStock: "",
+        reorderLevel: "",
         variants: [],
-        type: "",
       });
     }, 1000);
   };
@@ -136,40 +122,40 @@ const InventoryItemForm = () => {
                   </h4>
                   <form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label htmlFor="name">Item Name</Label>
+                      <Label htmlFor="itemName">Item Name</Label>
                       <Input
                         type="text"
-                        id="name"
-                        name="name"
+                        id="itemName"
+                        name="itemName"
                         placeholder="Enter item name"
-                        value={formValues.name}
+                        value={formValues.itemName}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="category">Category</Label>
+                      <Label htmlFor="categoryId">Category</Label>
                       <Input
                         type="text"
-                        id="category"
-                        name="category"
+                        id="categoryId"
+                        name="categoryId"
                         placeholder="Enter category"
-                        value={formValues.category}
+                        value={formValues.categoryId}
                         onChange={handleCategory}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="hsn">HSN Code</Label>
+                      <Label htmlFor="ProductsHsn">HSN Code</Label>
                       <Input
                         type="text"
-                        id="hsn"
-                        name="hsn"
+                        id="ProductsHsn"
+                        name="ProductsHsn"
                         placeholder="HSN number will be suggested here"
-                        value={formValues.hsn}
+                        value={formValues.ProductsHsn}
                         onChange={(e) => {
                           if (manualHSN) {
                             setFormValues((prevState) => ({
                               ...prevState,
-                              hsn: e.target.value,
+                              ProductsHsn: e.target.value,
                             }));
                           }
                         }}
@@ -187,101 +173,75 @@ const InventoryItemForm = () => {
                       </FormGroup>
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="subcategory">Sub Category</Label>
+                      <Label htmlFor="subcategoryId">Sub Category</Label>
                       <Input
                         type="text"
-                        id="subcategory"
-                        name="subcategory"
-                        placeholder="Enter sub category name"
-                        value={formValues.subcategory}
+                        id="subcategoryId"
+                        name="subcategoryId"
+                        placeholder="Enter sub category"
+                        value={formValues.subcategoryId}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="type">Type</Label>
+                      <Label htmlFor="costPrice">Cost Price</Label>
                       <Input
-                        type="text"
-                        id="type"
-                        name="type"
-                        placeholder="Enter Product type"
-                        value={formValues.type}
+                        type="number"
+                        id="costPrice"
+                        name="costPrice"
+                        placeholder="Enter cost price"
+                        value={formValues.costPrice}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="size">Size</Label>
+                      <Label htmlFor="sellingPrice">Selling Price</Label>
                       <Input
-                        type="text"
-                        id="size"
-                        name="size"
-                        placeholder="Enter Product Size"
-                        value={formValues.size}
+                        type="number"
+                        id="sellingPrice"
+                        name="sellingPrice"
+                        placeholder="Enter selling price"
+                        value={formValues.sellingPrice}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="color">Color</Label>
+                      <Label htmlFor="quantityInStock">Quantity in Stock</Label>
                       <Input
-                        type="text"
-                        id="color"
-                        name="color"
-                        placeholder="Enter Color name"
-                        value={formValues.color}
+                        type="number"
+                        id="quantityInStock"
+                        name="quantityInStock"
+                        placeholder="Enter quantity in stock"
+                        value={formValues.quantityInStock}
                         onChange={handleChange}
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="description">Description</Label>
+                      <Label htmlFor="unitType">Unit Type</Label>
                       <Input
-                        type="textarea"
-                        id="description"
-                        name="description"
-                        placeholder="Enter item description"
-                        value={formValues.description}
+                        type="select"
+                        id="unitType"
+                        name="unitType"
+                        value={formValues.unitType}
                         onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup >
-                      <Label htmlFor="brandName">Brand Name</Label>
-                      <Input
-                        type="text"
-                        id="brandName"
-                        name="brandName"
-                        placeholder="Enter brand name"
-                        value={formValues.brandName}
-                        onChange={handleChange}
-                      />
+                      >
+                        <option value="">Select Unit Type</option>
+                        <option value="litres">Litres</option>
+                        <option value="kg">Kg</option>
+                        <option value="packets">Packets</option>
+                        <option value="pieces">Pieces</option>
+                        <option value="single unit">Single Unit</option>
+                        <option value="gm">Grams</option>
+                      </Input>
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="supplier">Supplier</Label>
-                      <Input
-                        type="text"
-                        id="supplier"
-                        name="supplier"
-                        placeholder="Enter supplier"
-                        value={formValues.supplier}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="variants" style={{ marginRight: "20px" }}>Variants</Label>
+                      <Label htmlFor="variants">Variants</Label>
                       {formValues.variants.map((variant, index) => (
-                        <div
-                          key={index}
-                          className="mb-3 p-3 border rounded position-relative"
-                          style={{ border: "1px solid #ddd", padding: "1.5rem" }}
-                        >
+                        <div key={index} className="mb-3 p-3 border rounded position-relative">
                           <Button
                             color="danger"
                             onClick={() => handleRemoveVariant(index)}
-                            style={{ 
-                              position: 'absolute', 
-                              top: '7px', 
-                              right: '7px', 
-                              cursor: 'pointer',
-                              zIndex: 10,
-                              padding: '0',
-                            }}
+                            style={{ position: 'absolute', top: '7px', right: '7px' }}
                           >
                             <Icon path={mdiDelete} size={1} />
                           </Button>
@@ -289,53 +249,38 @@ const InventoryItemForm = () => {
                             <div className="col-md-6 mb-2">
                               <Input
                                 type="text"
-                                name="name"
+                                name="variantName"
                                 placeholder={`Variant Name ${index + 1}`}
-                                value={variant.name}
+                                value={variant.variantName}
+                                onChange={(e) => handleVariantChange(index, e)}
+                              />
+                            </div>
+                            <div className="col-md-6 mb-2">
+                              <Input
+                                type="text"
+                                name="sku"
+                                placeholder={`SKU ${index + 1}`}
+                                value={variant.sku}
                                 onChange={(e) => handleVariantChange(index, e)}
                               />
                             </div>
                             <div className="col-md-6 mb-2">
                               <Input
                                 type="number"
-                                name="price"
-                                placeholder={`Price ${index + 1}`}
-                                value={variant.price}
+                                name="quantityInStock"
+                                placeholder={`Quantity in Stock ${index + 1}`}
+                                value={variant.quantityInStock}
                                 onChange={(e) => handleVariantChange(index, e)}
                               />
-                            </div>
-                            <div className="col-md-6 mb-2">
-                              <Input
-                                type="number"
-                                name="quantity"
-                                placeholder={`Quantity ${index + 1}`}
-                                value={variant.quantity}
-                                onChange={(e) => handleVariantChange(index, e)}
-                              />
-                            </div>
-                            <div className="col-md-6 mb-2">
-                              <Input
-                                type="select"
-                                name="tax"
-                                value={variant.tax}
-                                onChange={(e) => handleVariantChange(index, e)}
-                              >
-                                <option value="">Select Tax</option>
-                                {taxationData.map((tax) => (
-                                  <option key={tax.id} value={tax.rate}>
-                                    {tax.name} ({tax.rate}%)
-                                  </option>
-                                ))}
-                              </Input>
                             </div>
                           </div>
                         </div>
                       ))}
-                      <Button color="success" onClick={handleAddVariant}>
+                      <Button color="primary" onClick={handleAddVariant}>
                         Add Variant
                       </Button>
                     </FormGroup>
-                    <Button color="primary" type="submit" disabled={loading}>
+                    <Button type="submit" color="success" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}
                     </Button>
                   </form>

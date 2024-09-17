@@ -29,7 +29,7 @@ const UserPanel = () => {
           `${process.env.REACT_APP_URL}/auth/count-company`, body, config
         );
         setUserCount(response.count.data); 
-        console.log("User count:", response);
+        // console.log("User count:", response);
       } catch (error) {
         console.error("Error fetching user count:", error);
       }
