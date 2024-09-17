@@ -83,7 +83,6 @@ const ProfileSettings = () => {
       });
       setPreview(response.avatar);
     } catch (error) {
-      // toast.error('Failed to update profile');
       console.error('Failed to update profile', error);
     }
   };
