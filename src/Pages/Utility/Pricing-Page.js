@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
   const [plans, setPlans] = useState([]);
-  const [paymentSuccess, setPaymentSuccess] = useState(false); // New state for tracking payment success
+  const [paymentSuccess, setPaymentSuccess] = useState(false); 
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const token = authuser?.token; 
   console.log(authuser, "authuser")
