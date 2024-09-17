@@ -6,10 +6,12 @@ import { toast } from "react-toastify";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
+
   const [plans, setPlans] = useState([]); 
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null); 
   const [showAllPlans, setShowAllPlans] = useState(false); 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const token = authuser?.token;
 

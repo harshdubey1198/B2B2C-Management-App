@@ -10,6 +10,10 @@ paymentService.createPayment = async (body) => {
             return Promise.reject({messages: "You are not register to buy this plan"})
         }
 
+        if(user.planId && user.planId.toString() === planId){
+            return Promise.reject({message: "You have already Purchased this Plan"})
+        }
+
         const payment = new Payment({
             userId: user._id,
             amount: amount,
@@ -36,7 +40,7 @@ paymentService.createPayment = async (body) => {
 
 paymentService.getPayment = async (filters) => {
     try {
-        const payments = await Payment.find(filters);
+        const payments = await Payment.find(filters).populate('userId').populate('planId');
         return {
             count: payments.length,
             data: payments,
