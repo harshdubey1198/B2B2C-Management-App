@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
@@ -121,165 +121,186 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                    <FormGroup>
-                      <Label htmlFor="itemName">Item Name</Label>
-                      <Input
-                        type="text"
-                        id="itemName"
-                        name="itemName"
-                        placeholder="Enter item name"
-                        value={formValues.itemName}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="categoryId">Category</Label>
-                      <Input
-                        type="text"
-                        id="categoryId"
-                        name="categoryId"
-                        placeholder="Enter category"
-                        value={formValues.categoryId}
-                        onChange={handleCategory}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="ProductsHsn">HSN Code</Label>
-                      <Input
-                        type="text"
-                        id="ProductsHsn"
-                        name="ProductsHsn"
-                        placeholder="HSN number will be suggested here"
-                        value={formValues.ProductsHsn}
-                        onChange={(e) => {
-                          if (manualHSN) {
-                            setFormValues((prevState) => ({
-                              ...prevState,
-                              ProductsHsn: e.target.value,
-                            }));
-                          }
-                        }}
-                        readOnly={!manualHSN}
-                      />
-                      <FormGroup check>
-                        <Label check>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="itemName">Item Name</Label>
                           <Input
-                            type="checkbox"
-                            checked={manualHSN}
-                            onChange={() => setManualHSN(!manualHSN)}
-                          />{' '}
-                          Enter HSN Code Manually
-                        </Label>
-                      </FormGroup>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="subcategoryId">Sub Category</Label>
-                      <Input
-                        type="text"
-                        id="subcategoryId"
-                        name="subcategoryId"
-                        placeholder="Enter sub category"
-                        value={formValues.subcategoryId}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="costPrice">Cost Price</Label>
-                      <Input
-                        type="number"
-                        id="costPrice"
-                        name="costPrice"
-                        placeholder="Enter cost price"
-                        value={formValues.costPrice}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="sellingPrice">Selling Price</Label>
-                      <Input
-                        type="number"
-                        id="sellingPrice"
-                        name="sellingPrice"
-                        placeholder="Enter selling price"
-                        value={formValues.sellingPrice}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="quantityInStock">Quantity in Stock</Label>
-                      <Input
-                        type="number"
-                        id="quantityInStock"
-                        name="quantityInStock"
-                        placeholder="Enter quantity in stock"
-                        value={formValues.quantityInStock}
-                        onChange={handleChange}
-                      />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="unitType">Unit Type</Label>
-                      <Input
-                        type="select"
-                        id="unitType"
-                        name="unitType"
-                        value={formValues.unitType}
-                        onChange={handleChange}
-                      >
-                        <option value="">Select Unit Type</option>
-                        <option value="litres">Litres</option>
-                        <option value="kg">Kg</option>
-                        <option value="packets">Packets</option>
-                        <option value="pieces">Pieces</option>
-                        <option value="single unit">Single Unit</option>
-                        <option value="gm">Grams</option>
-                      </Input>
-                    </FormGroup>
-                    <FormGroup>
-                      <Label htmlFor="variants">Variants</Label>
-                      {formValues.variants.map((variant, index) => (
-                        <div key={index} className="mb-3 p-3 border rounded position-relative">
-                          <Button
-                            color="danger"
-                            onClick={() => handleRemoveVariant(index)}
-                            style={{ position: 'absolute', top: '7px', right: '7px' }}
+                            type="text"
+                            id="itemName"
+                            name="itemName"
+                            placeholder="Enter item name"
+                            value={formValues.itemName}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="categoryId">Category</Label>
+                          <Input
+                            type="text"
+                            id="categoryId"
+                            name="categoryId"
+                            placeholder="Enter category"
+                            value={formValues.categoryId}
+                            onChange={handleCategory}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      {/* <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="ProductsHsn">HSN Code</Label>
+                          <Input
+                            type="text"
+                            id="ProductsHsn"
+                            name="ProductsHsn"
+                            placeholder="HSN number will be suggested here"
+                            value={formValues.ProductsHsn}
+                            onChange={(e) => {
+                              if (manualHSN) {
+                                setFormValues((prevState) => ({
+                                  ...prevState,
+                                  ProductsHsn: e.target.value,
+                                }));
+                              }
+                            }}
+                            readOnly={!manualHSN}
+                          />
+                          <FormGroup check>
+                            <Label check>
+                              <Input
+                                type="checkbox"
+                                checked={manualHSN}
+                                onChange={() => setManualHSN(!manualHSN)}
+                              />{' '}
+                              Enter HSN Code Manually
+                            </Label>
+                          </FormGroup>
+                        </FormGroup>
+                      </Col> */}
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="itemDescription">Item Description</Label>
+                          <Input
+                            type="text"
+                            id="itemDescription"
+                            name="itemDescription"
+                            placeholder="Enter item description"
+                            value={formValues.itemDescription}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="subcategoryId">Sub Category</Label>
+                          <Input
+                            type="text"
+                            id="subcategoryId"
+                            name="subcategoryId"
+                            placeholder="Enter sub category"
+                            value={formValues.subcategoryId}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="costPrice">Cost Price</Label>
+                          <Input
+                            type="number"
+                            id="costPrice"
+                            name="costPrice"
+                            placeholder="Enter cost price"
+                            value={formValues.costPrice}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="sellingPrice">Selling Price</Label>
+                          <Input
+                            type="number"
+                            id="sellingPrice"
+                            name="sellingPrice"
+                            placeholder="Enter selling price"
+                            value={formValues.sellingPrice}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="quantityInStock">Quantity in Stock</Label>
+                          <Input
+                            type="number"
+                            id="quantityInStock"
+                            name="quantityInStock"
+                            placeholder="Enter quantity in stock"
+                            value={formValues.quantityInStock}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="unitType">Unit Type</Label>
+                          <Input
+                            type="select"
+                            id="unitType"
+                            name="unitType"
+                            value={formValues.unitType}
+                            onChange={handleChange}
                           >
-                            <Icon path={mdiDelete} size={1} />
-                          </Button>
-                          <div className="row mt-3">
-                            <div className="col-md-6 mb-2">
-                              <Input
-                                type="text"
-                                name="variantName"
-                                placeholder={`Variant Name ${index + 1}`}
-                                value={variant.variantName}
-                                onChange={(e) => handleVariantChange(index, e)}
-                              />
-                            </div>
-                            <div className="col-md-6 mb-2">
-                              <Input
-                                type="text"
-                                name="sku"
-                                placeholder={`SKU ${index + 1}`}
-                                value={variant.sku}
-                                onChange={(e) => handleVariantChange(index, e)}
-                              />
-                            </div>
-                            <div className="col-md-6 mb-2">
-                              <Input
-                                type="number"
-                                name="quantityInStock"
-                                placeholder={`Quantity in Stock ${index + 1}`}
-                                value={variant.quantityInStock}
-                                onChange={(e) => handleVariantChange(index, e)}
-                              />
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      <Button color="primary" onClick={handleAddVariant}>
-                        Add Variant
-                      </Button>
-                    </FormGroup>
+                            <option value="">Select Unit Type</option>
+                            <option value="litres">Litres</option>
+                            <option value="kg">Kg</option>
+                            <option value="packets">Packets</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="single unit">Single Unit</option>
+                            <option value="gm">Grams</option>
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="Manufacturer" >Manufacturer</Label>
+                          <Input
+                            type="text"
+                            id="Manufacturer"
+                            name="Manufacturer"
+                            placeholder="Enter Manufacturer"
+                            
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="Brand" >Brand</Label>
+                          <Input
+                            type="text"
+                            id="Brand"
+                            name="Brand"
+                            placeholder="Enter Brand"
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+              
+
                     <Button type="submit" color="success" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}
                     </Button>
