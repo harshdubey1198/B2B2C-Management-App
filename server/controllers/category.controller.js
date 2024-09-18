@@ -13,6 +13,16 @@ categoryController.createCategory = async (req, res) => {
     }
 };
 
+// GET SUB CATEGORIES
+categoryController.getSubcategories = async (req, res) => {
+    try {
+        const subcategories = await CategoryServices.getSubcategories(req.params.id);
+        return res.status(200).json(createResult("Subcategories fetched successfully", subcategories));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 // GET ALL CATEGORIES
 categoryController.getCategory = async (req, res) => {
     try {
