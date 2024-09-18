@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import hsnData from '../../data/hsn.json';
 import { mdiDelete } from '@mdi/js';
 import Icon from '@mdi/react';
+import axios from "axios";  
 
 const InventoryItemForm = () => {
   const [formValues, setFormValues] = useState({
@@ -16,13 +17,14 @@ const InventoryItemForm = () => {
     sellingPrice: "",
     ProductsHsn: "",
     unitType: "",
-    categoryId: "",
+    categoryName: "",
     subcategoryId: "",
     quantityInStock: "",
     reorderLevel: "",
     variants: [],
   });
-
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  console.log(token);
   const [loading, setLoading] = useState(false);
   const [manualHSN, setManualHSN] = useState(false);
 
@@ -50,28 +52,7 @@ const InventoryItemForm = () => {
     }
   };
 
-  const handleVariantChange = (index, e) => {
-    const { name, value } = e.target;
-    const newVariants = [...formValues.variants];
-    newVariants[index] = { ...newVariants[index], [name]: value };
-    setFormValues({ ...formValues, variants: newVariants });
-  };
-
-  const handleAddVariant = () => {
-    setFormValues({
-      ...formValues,
-      variants: [...formValues.variants, { id: uuidv4(), variantName: "", sku: "", quantityInStock: "" }],
-    });
-  };
-
-  const handleRemoveVariant = (index) => {
-    setFormValues({
-      ...formValues,
-      variants: formValues.variants.filter((_, i) => i !== index),
-    });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
@@ -80,32 +61,33 @@ const InventoryItemForm = () => {
       setLoading(false);
       return;
     }
-
-    setTimeout(() => {
-      const storedData = JSON.parse(localStorage.getItem("inventoryItems")) || [];
-      const newItems = {
-        ...formValues,
-        id: uuidv4(),
-      };
-      storedData.push(newItems);
-      localStorage.setItem("inventoryItems", JSON.stringify(storedData));
-      toast.success("Item added successfully.");
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+    try {
+      const response = await axios.post("http://localhost:8000/api/category/create-category", formValues,config);
+      if (response.status === 200) {
+        toast.success("Item added successfully.");
+        setFormValues({
+          itemName: "",
+          itemDescription: "",
+          costPrice: "",
+          sellingPrice: "",
+          ProductsHsn: "",
+          unitType: "",
+          categoryId: "",
+          subcategoryId: "",
+          quantityInStock: "",
+        });
+      }
+    } catch (error) {
+      toast.error("Failed to add item. Please try again.");
+      console.error(error.message);
+    } finally {
       setLoading(false);
-
-      setFormValues({
-        itemName: "",
-        itemDescription: "",
-        costPrice: "",
-        sellingPrice: "",
-        ProductsHsn: "",
-        unitType: "",
-        categoryId: "",
-        subcategoryId: "",
-        quantityInStock: "",
-        reorderLevel: "",
-        variants: [],
-      });
-    }, 1000);
+    }
   };
 
   return (
@@ -151,37 +133,6 @@ const InventoryItemForm = () => {
                     </Row>
 
                     <Row>
-                      {/* <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="ProductsHsn">HSN Code</Label>
-                          <Input
-                            type="text"
-                            id="ProductsHsn"
-                            name="ProductsHsn"
-                            placeholder="HSN number will be suggested here"
-                            value={formValues.ProductsHsn}
-                            onChange={(e) => {
-                              if (manualHSN) {
-                                setFormValues((prevState) => ({
-                                  ...prevState,
-                                  ProductsHsn: e.target.value,
-                                }));
-                              }
-                            }}
-                            readOnly={!manualHSN}
-                          />
-                          <FormGroup check>
-                            <Label check>
-                              <Input
-                                type="checkbox"
-                                checked={manualHSN}
-                                onChange={() => setManualHSN(!manualHSN)}
-                              />{' '}
-                              Enter HSN Code Manually
-                            </Label>
-                          </FormGroup>
-                        </FormGroup>
-                      </Col> */}
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="itemDescription">Item Description</Label>
@@ -274,32 +225,6 @@ const InventoryItemForm = () => {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="Manufacturer" >Manufacturer</Label>
-                          <Input
-                            type="text"
-                            id="Manufacturer"
-                            name="Manufacturer"
-                            placeholder="Enter Manufacturer"
-                            
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="Brand" >Brand</Label>
-                          <Input
-                            type="text"
-                            id="Brand"
-                            name="Brand"
-                            placeholder="Enter Brand"
-                          />
-                        </FormGroup>
-                      </Col>
-                    </Row>
-              
 
                     <Button type="submit" color="success" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}

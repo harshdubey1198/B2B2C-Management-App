@@ -51,6 +51,7 @@ export const masterAdminSidebarData = () => [
     subItem: [
       { sublabel: "Inventory Management", link: "/inventory-table" },
       { sublabel: "Table Form", link: "/add-inventory" },
+      {sublabel : "Categories" ,link :"/manage-category"},
       { sublabel: "Table Taxation", link: "/table-taxation" },
       // { sublabel: "Item Config", link: "/item-configuration" },
     ],
