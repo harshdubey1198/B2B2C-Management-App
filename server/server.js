@@ -21,10 +21,12 @@ mongoose
 const userRoute = require("./routers/auth.router");
 const planRoute = require("./routers/plan.router");
 const paymentRoute = require("./routers/payment.router");
+const categoryRoute = require("./routers/category.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
 app.use("/api/payment", paymentRoute);
+app.use("/api/category", categoryRoute);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))

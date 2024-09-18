@@ -12,7 +12,6 @@ const InventoryItemSchema = new Schema({
     subcategoryId: { type: Schema.Types.ObjectId, ref: 'Subcategory' }, 
     quantityInStock: { type: Number }, 
     reorderLevel: { type: Number }, 
-    variants: [VariantSchema]     
 }, {timestamps: true});
 
 const InventoryItem = mongoose.model('InventoryItem', InventoryItemSchema);
