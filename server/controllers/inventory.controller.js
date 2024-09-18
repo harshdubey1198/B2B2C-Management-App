@@ -1,5 +1,6 @@
 const inventoryServices = require('../services/inventory.services');
-const { createResult } = require('../utils/utills')
+const { createResult } = require('../utils/utills');
+
 const inventoryController = {};
 
 // CREATE INVENTORY ITEM WITH VARIANTS
@@ -16,10 +17,9 @@ inventoryController.createItem = async (req, res) => {
 inventoryController.getItems = async (req, res) => {
     try {
         const items = await inventoryServices.getItems();
-        return res.status(200).json(items);
+        return res.status(200).json(createResult("Inventory items fetched successfully", items));
     } catch (error) {
-        console.log("Error fetching inventory items:", error);
-        return res.status(500).json({ message: error });
+        return res.status(500).json(createResult(null, null, error.message));
     }
 };
 
@@ -27,10 +27,9 @@ inventoryController.getItems = async (req, res) => {
 inventoryController.updateItem = async (req, res) => {
     try {
         const updatedItem = await inventoryServices.updateItem(req.params.id, req.body);
-        return res.status(200).json({ message: "Inventory Item updated successfully", updatedItem });
+        return res.status(200).json(createResult("Inventory item updated successfully", updatedItem));
     } catch (error) {
-        console.log("Error updating inventory item:", error);
-        return res.status(500).json({ message: error });
+        return res.status(400).json(createResult(null, null, error.message));
     }
 };
 
@@ -38,10 +37,9 @@ inventoryController.updateItem = async (req, res) => {
 inventoryController.deleteItem = async (req, res) => {
     try {
         const deletedItem = await inventoryServices.deleteItem(req.params.id);
-        return res.status(200).json({ message: "Inventory Item deleted successfully", deletedItem });
+        return res.status(200).json(createResult("Inventory item deleted successfully", deletedItem));
     } catch (error) {
-        console.log("Error deleting inventory item:", error);
-        return res.status(500).json({ message: error });
+        return res.status(400).json(createResult(null, null, error.message));
     }
 };
 

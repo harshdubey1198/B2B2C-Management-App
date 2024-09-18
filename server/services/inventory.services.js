@@ -36,8 +36,8 @@ inventoryServices.createItem = async (body) => {
         brand,
         costPrice,
         sellingPrice,
-        category,
-        subcategory: subcategoryId || null
+        categoryId,
+        subcategoryId: subcategoryId || null
     });
     await newItem.save();
     return newItem;
@@ -45,55 +45,68 @@ inventoryServices.createItem = async (body) => {
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getItems = async () => {
-    try {
-        const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
-        const itemsWithVariants = await Promise.all(items.map(async (item) => {
-            const variants = await Variant.find({ productId: item._id });
-            return { ...item.toObject(), variants };
-        }));
-        return itemsWithVariants;
-    } catch (err) {
-        console.log("Error fetching inventory items:", err);
-        return Promise.reject("Error fetching inventory items.");
+    const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
+    if(!items){
+        throw new Error('No items found')
     }
+    return items
 };
 
 // UPDATE INVENTORY ITEM
-inventoryServices.updateItem = async (id, data) => {
-    try {
-        const updatedItem = await InventoryItem.findByIdAndUpdate(id, data, { new: true });
-
-        // If there are variants to update, update them separately
-        if (data.variants && data.variants.length > 0) {
-            await Variant.deleteMany({ productId: id });  // Remove old variants
-            const variants = data.variants.map(variant => ({
-                ...variant,
-                productId: id  // Link the variants to the product
-            }));
-            await Variant.insertMany(variants);
-        }
-
-        return updatedItem;
-    } catch (err) {
-        console.log("Error updating inventory item:", err);
-        return Promise.reject("Error updating inventory item.");
+inventoryServices.updateItem = async (id, body) => {
+    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId } = body;
+    const existingItem = await InventoryItem.findById(id);
+    if (!existingItem) {
+        throw new Error('Inventory item not found');
     }
+
+    if(categoryId){
+        const category = await Category.findOne({_id: categoryId})
+        if(!category){
+            throw new Error('This category is not Available')
+        }
+    }
+
+    if(subcategoryId){
+        const subcategory = await Category.findOne({_id: subcategoryId})
+        if (!subcategory || String(subcategory.parentId) !== String(existingItem.categoryId)) {
+            throw new Error('Invalid subcategory or subcategory does not belong to the parent category');
+        }
+    }
+
+    const updatedItem = await InventoryItem.findByIdAndUpdate(
+        id,
+        {
+            name,
+            description,
+            quantity,
+            qtyType,
+            supplier,
+            manufacturer,
+            brand,
+            costPrice,
+            sellingPrice,
+            categoryId,
+            subcategoryId: subcategoryId || null 
+        },
+        { new: true } 
+    );
+    return updatedItem;
 };
 
 // DELETE INVENTORY ITEM
 inventoryServices.deleteItem = async (id) => {
-    try {
-        // Delete the item
-        const deletedItem = await InventoryItem.findByIdAndDelete(id);
-
-        // Delete associated variants
-        await Variant.deleteMany({ productId: id });
-
-        return deletedItem;
-    } catch (err) {
-        console.log("Error deleting inventory item:", err);
-        return Promise.reject("Error deleting inventory item.");
+    const existingItem = await InventoryItem.findOne({_id: id})
+    if (!existingItem) {
+        throw new Error('Inventory item not found');
     }
+
+    const deletedItem = await InventoryItem.findByIdAndUpdate(
+        id,
+        {deleted_at: Date.now()},
+        {new: true}
+    )
+    return deletedItem
 };
 
 module.exports = inventoryServices;
