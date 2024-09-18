@@ -54,4 +54,27 @@ categoryServices.updateCategory = async (id, body) => {
     return updateCategory
 } 
 
+// DELETE CATEGORY
+categoryServices.deleteCategory = async (id) => {
+    const existingCategory = await Category.findById(id);
+    if (!existingCategory) {
+        throw new Error('Category does not exist')
+    }
+
+    const subcategory = await Category.find({parentId: id})
+    if(subcategory.length > 0){
+        throw new Error('Cannot delete category with subcategories. Delete or reassign subcategories first.');
+    }
+
+    const deletedCategory = await Category.findByIdAndUpdate(
+        id,
+        { deleted_at: new Date() },  // Set `deleted_at` to the current date (soft delete)
+        { new: true } 
+    );
+    if (!deletedCategory) {
+        throw new Error("Unable to find category");
+    }
+    return deletedCategory;
+}
+
 module.exports = categoryServices;

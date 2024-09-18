@@ -7,6 +7,6 @@ const { tokenVerification } = require('../middleware/auth.middleware');
 router.post('/create-category', tokenVerification, categoryController.createCategory);
 router.get('/get-categories', tokenVerification, categoryController.getCategory);
 router.put('/update-category/:id', tokenVerification, categoryController.updateCategory);
-// router.delete('/delete-item/:id', tokenVerification, categoryController.deleteItem);
+router.delete('/delete-category/:id', tokenVerification, categoryController.deleteCategory);
 
 module.exports = router;
