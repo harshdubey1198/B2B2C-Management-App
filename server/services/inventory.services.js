@@ -45,17 +45,11 @@ inventoryServices.createItem = async (body) => {
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getItems = async () => {
-    try {
-        const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
-        const itemsWithVariants = await Promise.all(items.map(async (item) => {
-            const variants = await Variant.find({ productId: item._id });
-            return { ...item.toObject(), variants };
-        }));
-        return itemsWithVariants;
-    } catch (err) {
-        console.log("Error fetching inventory items:", err);
-        return Promise.reject("Error fetching inventory items.");
+    const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
+    if(!items){
+        throw new Error('No items found')
     }
+    return items
 };
 
 // UPDATE INVENTORY ITEM
