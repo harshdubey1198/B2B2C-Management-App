@@ -46,7 +46,7 @@ const CategoryManager = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post('http://localhost:8000/api/category/create-category', formValues);
+      await axios.post('http://localhost:8000/api/category/create-category', formValues,config);
       toast.success('Category added successfully.');
       setModal(false);  
       setFormValues({
@@ -54,7 +54,7 @@ const CategoryManager = () => {
         description: "",
         parentId: ""
       });
-      const response = await axios.get('http://localhost:8000/api/category/get-categories');
+      const response = await axios.get('http://localhost:8000/api/category/get-categories' , config);
       setCategories(response.data);
       setParentCategories(response.data.filter(category => !category.parentId));
     } catch (error) {
