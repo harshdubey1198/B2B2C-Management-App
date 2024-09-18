@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
-const { string } = require('prop-types');
 const Schema = mongoose.Schema;
 
 const InventoryItemSchema = new Schema({
-    name: { type: String }, 
+    name: { type: String, required: true }, 
     description: { type: String },                  
-    costPrice: { type: Number},   
-    hsnNumber: {type: String}, 
-    sellingPrice: { type: Number}, 
-    categoryId: { type: Schema.Types.ObjectId, ref: 'Category'}, 
-    subcategoryId: { type: Schema.Types.ObjectId, ref: 'Subcategory' }, 
-    quantityInStock: { type: Number }, 
-    reorderLevel: { type: Number }, 
-}, {timestamps: true});
+    quantity: { type: Number }, 
+    qtyType: { type: String },   
+    supplier: { type: String },  
+    manufacturer: { type: String }, 
+    brand: { type: String },    
+    costPrice: { type: Number }, 
+    sellingPrice: { type: Number },
+    categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
+    subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' }
+}, { timestamps: true });
 
 const InventoryItem = mongoose.model('InventoryItem', InventoryItemSchema);
 module.exports = InventoryItem;

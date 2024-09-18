@@ -1,41 +1,50 @@
-const InventoryItem = require('../schemas/inventory.schema');
 const Variant = require('../schemas/variant.schema');
+const Category = require('../schemas/category.schema');
+const InventoryItem = require('../schemas/inventoryItem.schema');
 
-let InventoryServices = {};
+let inventoryServices = {};
 
 // CREATE INVENTORY ITEM WITH VARIANTS
-InventoryServices.createItem = async (data) => {
-    const session = await InventoryItem.startSession();
-    session.startTransaction();
+inventoryServices.createItem = async (body) => {
+    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId } = body;
 
-    try {
-        // First, create the Inventory Item
-        const newItem = await InventoryItem.create([data], { session });
-
-        // Now create variants if they exist in the request data
-        if (data.variants && data.variants.length > 0) {
-            const variants = data.variants.map(variant => ({
-                ...variant,
-                productId: newItem[0]._id  // Link the variant to the newly created product
-            }));
-
-            await Variant.insertMany(variants, { session });
-        }
-
-        await session.commitTransaction();
-        session.endSession();
-
-        return newItem;
-    } catch (err) {
-        await session.abortTransaction();
-        session.endSession();
-        console.log("Error creating inventory item:", err);
-        return Promise.reject("Error creating inventory item. Try again later.");
+    const existingItem = await InventoryItem.findOne({name: name})
+    if(existingItem) {
+        throw new Error('Item already exists')
     }
+
+    const category = await Category.findOne({_id: categoryId})
+    if(!category){
+        throw new Error('This category is not Available')
+    }
+
+    if(subcategoryId){
+        const subcategory = await Category.findOne({_id: subcategoryId})
+        console.log(subcategory, "subcategory")
+        if (!subcategory || String(subcategory.parentId) !== String(categoryId)) {
+            throw new Error('Invalid subcategory or subcategory does not belong to the parent category');
+        }
+    }
+
+    const newItem = new InventoryItem({
+        name,
+        description,
+        quantity,
+        qtyType,
+        supplier,
+        manufacturer,
+        brand,
+        costPrice,
+        sellingPrice,
+        category,
+        subcategory: subcategoryId || null
+    });
+    await newItem.save();
+    return newItem;
 };
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
-InventoryServices.getItems = async () => {
+inventoryServices.getItems = async () => {
     try {
         const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
         const itemsWithVariants = await Promise.all(items.map(async (item) => {
@@ -50,7 +59,7 @@ InventoryServices.getItems = async () => {
 };
 
 // UPDATE INVENTORY ITEM
-InventoryServices.updateItem = async (id, data) => {
+inventoryServices.updateItem = async (id, data) => {
     try {
         const updatedItem = await InventoryItem.findByIdAndUpdate(id, data, { new: true });
 
@@ -72,7 +81,7 @@ InventoryServices.updateItem = async (id, data) => {
 };
 
 // DELETE INVENTORY ITEM
-InventoryServices.deleteItem = async (id) => {
+inventoryServices.deleteItem = async (id) => {
     try {
         // Delete the item
         const deletedItem = await InventoryItem.findByIdAndDelete(id);
@@ -87,4 +96,4 @@ InventoryServices.deleteItem = async (id) => {
     }
 };
 
-module.exports = InventoryServices;
+module.exports = inventoryServices;
