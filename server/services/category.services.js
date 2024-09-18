@@ -29,6 +29,12 @@ categoryServices.createCategory = async (body) => {
 
 // GET CATEGORY
 categoryServices.getCategory = async () => {
-
+    const data = await Category.find().populate("parentId")
+    if(!data){
+        throw new Error('There is no category')
+    }
+    return data
 }
+
+
 module.exports = categoryServices;
