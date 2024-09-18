@@ -26,7 +26,6 @@ categoryServices.createCategory = async (body) => {
     return newCategory;
 };
 
-
 // GET CATEGORY
 categoryServices.getCategory = async () => {
     const data = await Category.find().populate("parentId")
@@ -35,6 +34,20 @@ categoryServices.getCategory = async () => {
     }
     return data
 }
+
+// GET SUB CATEGORY
+categoryServices.getSubcategories = async (id) => {
+    try {
+        // Find subcategories that have the provided parentId
+        const subcategories = await Category.find({ parentId: id });
+        if (subcategories.length === 0) {
+            throw new Error('No subcategories found');
+        }
+        return subcategories;
+    } catch (error) {
+        throw new Error(`Error fetching subcategories: ${error.message}`);
+    }
+};  
 
 //  UPDATE CATEGORY
 categoryServices.updateCategory = async (id, body) => {
