@@ -14,19 +14,24 @@ const CategoryManager = () => {
   });
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+
   const token = JSON.parse(localStorage.getItem("authUser")).token;
+
   const toggleModal = () => setModal(!modal);
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/category/get-categories',config);
+        const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
         setCategories(response.data);
-        setParentCategories(response.data.filter(category => !category.parentId)); 
+        setParentCategories(response.data.filter(category => !category.parentId));
       } catch (error) {
         toast.error('Failed to fetch categories.');
       }
@@ -45,23 +50,78 @@ const CategoryManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+  
+    const updatedFormValues = { ...formValues };
+    if (!updatedFormValues.parentId) {
+      updatedFormValues.parentId = null;  
+    }
+  
     try {
-      await axios.post('http://localhost:8000/api/category/create-category', formValues,config);
-      toast.success('Category added successfully.');
-      setModal(false);  
+      if (editMode) {
+        await axios.put(
+          `http://localhost:8000/api/category/update-category/${selectedCategoryId}`,
+          updatedFormValues,
+          config
+        );
+        toast.success('Category updated successfully.');
+      } else {
+        await axios.post(
+          'http://localhost:8000/api/category/create-category',
+          updatedFormValues,
+          config
+        );
+        toast.success('Category added successfully.');
+      }
+      setModal(false);
       setFormValues({
         categoryName: "",
         description: "",
         parentId: ""
       });
-      const response = await axios.get('http://localhost:8000/api/category/get-categories' , config);
+      const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
       setCategories(response.data);
       setParentCategories(response.data.filter(category => !category.parentId));
     } catch (error) {
-      toast.error('Failed to add category.');
+      toast.error('Failed to save category.');
     } finally {
       setLoading(false);
     }
+  };
+  
+  const handleEdit = (category) => {
+    setFormValues({
+      categoryName: category.categoryName,
+      description: category.description,
+      parentId: category.parentId || ""
+    });
+    setSelectedCategoryId(category._id);
+    setEditMode(true);
+    setModal(true);
+  };
+
+  const handleDelete = async (categoryId) => {
+    if (window.confirm("Are you sure you want to delete this category?")) {
+      try {
+        await axios.delete(`http://localhost:8000/api/category/delete-category/${categoryId}`, config);
+        toast.success('Category deleted successfully.');
+        const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
+        setCategories(response.data);
+        setParentCategories(response.data.filter(category => !category.parentId));
+      } catch (error) {
+        toast.error('Failed to delete category.');
+      }
+    }
+  };
+
+  const openAddCategoryModal = () => {
+    setFormValues({
+      categoryName: "",
+      description: "",
+      parentId: ""
+    });
+    setEditMode(false);
+    setSelectedCategoryId(null);
+    setModal(true);
   };
 
   return (
@@ -72,19 +132,12 @@ const CategoryManager = () => {
           <Row>
             <Col lg={12}>
               <Card>
-                <CardBody>
-                  <Row>
-                    <Col md={6}>
-                      <h4 className="card-title">Categories</h4>
-                    </Col>
-                    <Col md={6} className="text-right">
-                      <Button color="primary" onClick={toggleModal}>
-                        Add Category
-                      </Button>
-                    </Col>
-                  </Row>
+                <CardBody className='relative'>
+                  <Button className='position-absolute top-0 end-0' style={{ margin: '1.2rem' }} color="primary" onClick={openAddCategoryModal}>
+                    Add Category
+                  </Button>
 
-                  <Table className="table table-bordered mt-4">
+                  <Table className="table table-bordered mt-5">
                     <thead>
                       <tr>
                         <th>#</th>
@@ -92,6 +145,7 @@ const CategoryManager = () => {
                         <th>Description</th>
                         <th>Parent Category</th>
                         <th>Status</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -105,18 +159,26 @@ const CategoryManager = () => {
                               {category.parentId ? category.parentId.categoryName : "None"}
                             </td>
                             <td>{category.status}</td>
+                            <td>
+                              <Button color="warning" className="mr-2" onClick={() => handleEdit(category)}>
+                                Edit
+                              </Button>
+                              <Button color="danger" onClick={() => handleDelete(category._id)}>
+                                Delete
+                              </Button>
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td colSpan="5" className="text-center">No categories found.</td>
+                          <td colSpan="6" className="text-center">No categories found.</td>
                         </tr>
                       )}
                     </tbody>
                   </Table>
 
                   <Modal isOpen={modal} toggle={toggleModal}>
-                    <ModalHeader toggle={toggleModal}>Add Category</ModalHeader>
+                    <ModalHeader toggle={toggleModal}>{editMode ? "Edit Category" : "Add Category"}</ModalHeader>
                     <ModalBody>
                       <form onSubmit={handleSubmit}>
                         <FormGroup>
@@ -167,7 +229,7 @@ const CategoryManager = () => {
                         Cancel
                       </Button>
                       <Button color="primary" onClick={handleSubmit} disabled={loading}>
-                        {loading ? "Adding..." : "Add Category"}
+                        {loading ? (editMode ? "Updating..." : "Adding...") : (editMode ? "Update Category" : "Add Category")}
                       </Button>
                     </ModalFooter>
                   </Modal>
