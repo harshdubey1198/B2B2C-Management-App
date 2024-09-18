@@ -8,7 +8,7 @@ import CreateInvoice from "../Pages/Invoicing/index";
 import ViewInvoice from "../Pages/Invoicing/view.jsx";
 import PaymentsInvoice from "../Pages/Invoicing/payments.jsx";
 import ReportsInvoice from "../Pages/Invoicing/reports.jsx";
-
+import CategoryManager from "../Pages/Inventory-MNG/categoryManager.jsx";
 
 import Firm from "../Pages/Firms/FirmsTable.jsx";
 // Import Calender
@@ -143,7 +143,7 @@ const authProtectedRoutes = [
   {path:"/add-inventory", component: <TableForm />},
   {path:"/table-taxation", component: <TableTaxation />},
   {path:"/item-configuration", component: <ItemConfiguration />},
-
+  {path:"/manage-category", component: <CategoryManager />},
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firmusers", component: <UserManage />},
