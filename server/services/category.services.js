@@ -1,30 +1,34 @@
 const Category = require("../schemas/category.schema");
 
-let categoryServices = {}
+const categoryServices = {};
 
+// CREATE CATEGORY
 categoryServices.createCategory = async (body) => {
-    try {
-        const { categoryName, parentId } = body;
-        if (!categoryName) {
-            throw new Error('Category name is required');
-        }
-
-        if (parentId) {
-            const parentCategory = await Category.findById(parentId);
-            if (!parentCategory) {
-                throw new Error('Parent category does not exist');
-            }
-        }
-
-        const newCategory = new Category({
-            categoryName,
-            parentId: parentId || null
-        });
-        await newCategory.save();
-        return newCategory;
-    } catch (error) {
-        throw new Error(`Error creating category: ${error.message}`);
+    const { categoryName, parentId } = body;
+    if (!categoryName) {
+        throw new Error('Category name is required');
     }
-} 
+    const existingCategory = await Category.findOne({ categoryName });
+    if (existingCategory) {
+        throw new Error('Category with this name already exists');
+    }
+    if (parentId) {
+        const parentCategory = await Category.findById(parentId);
+        if (!parentCategory) {
+            throw new Error('Parent category does not exist');
+        }
+    }
+    const newCategory = new Category({
+        categoryName,
+        parentId: parentId || null
+    });
+    await newCategory.save();
+    return newCategory;
+};
 
-module.exports = categoryServices
+
+// GET CATEGORY
+categoryServices.getCategory = async () => {
+
+}
+module.exports = categoryServices;

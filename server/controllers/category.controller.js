@@ -1,26 +1,25 @@
 const CategoryServices = require('../services/category.services');
+const { createResult } = require('../utils/utills');
 
 const categoryController = {};
 
 // CREATE CATEGORY
 categoryController.createCategory = async (req, res) => {
     try {
-        const response = await CategoryServices.createCategory(req.body);
-        return res.status(200).json({ message: "Category created successfully", response });
+        const newCategory = await CategoryServices.createCategory(req.body);
+        return res.status(200).json(createResult("Category created successfully", newCategory));
     } catch (error) {
-        console.log("Error creating category:", error);
-        return res.status(500).json({ message: error });
+        return res.status(400).json(createResult(null, null, error.message));
     }
 };
 
 // GET ALL CATEGORIES
-categoryController.getCategories = async (req, res) => {
+categoryController.getCategory = async (req, res) => {
     try {
-        const categories = await CategoryServices.getCategories();
-        return res.status(200).json(categories);
+        const categories = await CategoryServices.getCategory();
+        return res.status(200).json(createResult("Categories fetched successfully", categories));
     } catch (error) {
-        console.log("Error fetching categories:", error);
-        return res.status(500).json({ message: error });
+        return res.status(500).json(createResult(null, null, error.message));
     }
 };
 
@@ -28,10 +27,9 @@ categoryController.getCategories = async (req, res) => {
 categoryController.updateCategory = async (req, res) => {
     try {
         const updatedCategory = await CategoryServices.updateCategory(req.params.id, req.body);
-        return res.status(200).json({ message: "Category updated successfully", updatedCategory });
+        return res.status(200).json(createResult("Category updated successfully", updatedCategory));
     } catch (error) {
-        console.log("Error updating category:", error);
-        return res.status(500).json({ message: error });
+        return res.status(400).json(createResult(null, null, error.message));
     }
 };
 
@@ -39,10 +37,9 @@ categoryController.updateCategory = async (req, res) => {
 categoryController.deleteCategory = async (req, res) => {
     try {
         const deletedCategory = await CategoryServices.deleteCategory(req.params.id);
-        return res.status(200).json({ message: "Category deleted successfully", deletedCategory });
+        return res.status(200).json(createResult("Category deleted successfully", deletedCategory));
     } catch (error) {
-        console.log("Error deleting category:", error);
-        return res.status(500).json({ message: error });
+        return res.status(400).json(createResult(null, null, error.message));
     }
 };
 
