@@ -9,7 +9,6 @@ const CategorySchema = new Schema({
   status: { type: String, enum: ['active', 'inactive', 'archived'], default: 'active' }
 }, { timestamps: true, paranoid: true });
 
-// Apply the paranoid plugin at the schema level
 CategorySchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
 
 const Category = mongoose.model('Category', CategorySchema);
