@@ -6,7 +6,7 @@ const { tokenVerification } = require('../middleware/auth.middleware');
 // Create a new Inventory Item
 router.post('/create-category', tokenVerification, categoryController.createCategory);
 router.get('/get-categories', tokenVerification, categoryController.getCategory);
-// router.put('/update-item/:id', tokenVerification, categoryController.updateItem);
+router.put('/update-category/:id', tokenVerification, categoryController.updateCategory);
 // router.delete('/delete-item/:id', tokenVerification, categoryController.deleteItem);
 
 module.exports = router;
