@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const InventoryItemSchema = new Schema({
     name: { type: String, required: true }, 
@@ -13,7 +14,9 @@ const InventoryItemSchema = new Schema({
     sellingPrice: { type: Number },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
     subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' }
-}, { timestamps: true });
+}, { timestamps: true, paranoid: true });
+
+InventoryItemSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
 
 const InventoryItem = mongoose.model('InventoryItem', InventoryItemSchema);
 module.exports = InventoryItem;
