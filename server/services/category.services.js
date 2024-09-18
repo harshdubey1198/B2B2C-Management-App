@@ -4,7 +4,7 @@ const categoryServices = {};
 
 // CREATE CATEGORY
 categoryServices.createCategory = async (body) => {
-    const { categoryName, parentId } = body;
+    const { categoryName, parentId , description } = body;
     if (!categoryName) {
         throw new Error('Category name is required');
     }
@@ -20,6 +20,7 @@ categoryServices.createCategory = async (body) => {
     }
     const newCategory = new Category({
         categoryName,
+        description,
         parentId: parentId || null
     });
     await newCategory.save();
