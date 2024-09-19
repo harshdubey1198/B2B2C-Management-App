@@ -3,8 +3,10 @@ import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import axios from "axios";  
+import { useNavigate } from "react-router-dom";
 
 const InventoryItemForm = () => {
+  const navigate = useNavigate();
   const [subcategories, setSubcategories] = useState([]);
   const [formValues, setFormValues] = useState({
     name: "",
@@ -23,7 +25,19 @@ const InventoryItemForm = () => {
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-
+  const handleReset = () => {
+    setFormValues({
+      name: "",
+      description: "",
+      costPrice: "",
+      sellingPrice: "",
+      ProductsHsn: "",
+      qtyType: "",
+      categoryId: "",
+      subcategoryId: "",
+      quantity: "",
+    });
+  };
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -145,6 +159,22 @@ const InventoryItemForm = () => {
                       </Col>
                       <Col md={6}>
                         <FormGroup>
+                          <Label htmlFor="description">Item Description</Label>
+                          <Input
+                            type="text"
+                            id="description"
+                            name="description"
+                            placeholder="Enter item description"
+                            value={formValues.description}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                    
+                    </Row>
+                    <Row>
+                    <Col md={6}>
+                        <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
                           <Input
                             type="select"
@@ -162,8 +192,6 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="subcategoryId">Subcategory</Label>
@@ -183,19 +211,7 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="ProductsHsn">HSN Code</Label>
-                          <Input
-                            type="text"
-                            id="ProductsHsn"
-                            name="ProductsHsn"
-                            placeholder="Enter HSN code"
-                            value={formValues.ProductsHsn}
-                            onChange={handleChange}
-                          />
-                        </FormGroup>
-                      </Col>
+                      
                     </Row>
                     <Row>
                       <Col md={6}>
@@ -261,23 +277,73 @@ const InventoryItemForm = () => {
                       </Col>
                     </Row>
                     <Row>
+                     
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="description">Item Description</Label>
+                          <Label htmlFor="ProductsHsn">HSN Code</Label>
                           <Input
-                            type="textarea"
-                            id="description"
-                            name="description"
-                            placeholder="Enter item description"
-                            value={formValues.description}
+                            type="text"
+                            id="ProductsHsn"
+                            name="ProductsHsn"
+                            placeholder="Enter HSN code"
+                            value={formValues.ProductsHsn}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="brand">Brand</Label>
+                          <Input
+                            type="text"
+                            id="brand"
+                            name="brand"
+                            placeholder="Enter brand"
+                            value={formValues.brand}
                             onChange={handleChange}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="manufacturer">Manufacturer</Label>
+                          <Input
+                            type="text"
+                            id="manufacturer"
+                            name="manufacturer"
+                            placeholder="Enter manufacturer"
+                            value={formValues.manufacturer}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="supplier">Supplier</Label>
+                          <Input
+                            type="text"
+                            id="supplier"
+                            name="supplier"
+                            placeholder="Enter supplier"
+                            value={formValues.supplier}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <div className="d-flex gap-2 ">  
                     <Button type="submit" color="success" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}
-                    </Button>
+                    </Button> 
+                    <Button type="reset" color="danger" className="ml-2" onClick={handleReset}>
+                      Clear
+                    </Button> 
+                    <Button type="button" color="primary" className="ml-2" onClick={() => navigate('/inventory-table')} >
+                      View Items
+                      </Button>
+                    </div>
                   </form>
                 </CardBody>
               </Card>

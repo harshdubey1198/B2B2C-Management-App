@@ -1,241 +1,136 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, FormGroup, Label, Input } from 'reactstrap';
+import { Table, Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { mdiPencil, mdiDelete, mdiCheck, mdiEye } from '@mdi/js';
-import Icon from '@mdi/react';
-import ProductDetail from '../../Modal/ProductDetail'; // Import ProductDetail for viewing
+import axios from 'axios'; 
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
-  const [selectedItemId, setSelectedItemId] = useState(null);
-  const [role, setRole] = useState("");
-  const [editModal, setEditModal] = useState(false); 
-  const [editItem, setEditItem] = useState(null);
-  const [editVariant, setEditVariant] = useState(null);
-  const [viewProduct, setViewProduct] = useState(false); 
-  const [selectedItemDetails, setselectedItemDetails] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);  
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem('inventoryItems')) || [];
-    setInventoryData(storedData.map(item => ({
-      ...item,
-      variants: Array.isArray(item.variants) ? item.variants.map(v => ({
-        ...v,
-        price: Number(v.price),
-        tax: Number(v.tax),
-        quantity: Number(v.quantity)
-      })) : []
-    })));
-
-    const storedRoles = JSON.parse(localStorage.getItem('authUser')) || "";
-    setRole(storedRoles?.response.role);
-  }, []);
-
-  const handleRowClick = (id) => {
-    setSelectedItemId(selectedItemId === id ? null : id);
-  };
-
-  const handleEditClick = (item, variant) => {
-    setEditItem(item);
-    setEditVariant(variant); 
-    setEditModal(true); // Open the edit modal
-  };
-
-  const handleViewClick = (item, variant) => {
-    setselectedItemDetails(item); 
-    setViewProduct(true); // Open the view modal (ProductDetail)
-  };
-
-  const handleDeleteClick = (itemId, variantIndex) => {
-    const updatedData = inventoryData.map(item => {
-      if (item.id === itemId) {
-        const updatedVariants = item.variants.filter((_, index) => index !== variantIndex);
-        return { ...item, variants: updatedVariants };
+    const fetchInventoryData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/api/inventory/get-items', config);
+        setInventoryData(response.data); 
+      } catch (error) {
+        console.error('Error fetching inventory data:', error);
       }
-      return item;
-    }).filter(item => item.variants.length > 0);
+    };
+    fetchInventoryData();
+  },[]);
 
-    setInventoryData(updatedData);
-    localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
-  };
-
-  const handleApproveClick = (id) => {
-    const updatedData = inventoryData.map(item =>
-      item.id === id ? { ...item, approved: true } : item
-    );
-    setInventoryData(updatedData);
-    localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
-  };
-
-  const calculateTotalQuantity = (variants) => {
-    return variants.reduce((acc, curr) => acc + Number(curr.quantity), 0);
-  };
-
-  const calculatePriceAfterTax = (price, taxRate) => {
-    return (price + (price * (taxRate / 100))).toFixed(2);
-  };
-
-  // Handle input changes for the edit modal
-  const handleModalInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditVariant(prevState => ({
-      ...prevState,
-      [name]: value
-    }));
-  };
-
-  const handleSaveChanges = () => {
-    const updatedVariants = editItem.variants.map(v =>
-      v.id === editVariant.id ? editVariant : v
-    );
-    const updatedItem = { ...editItem, variants: updatedVariants };
-
-    const updatedData = inventoryData.map(item =>
-      item.id === editItem.id ? updatedItem : item
-    );
-
-    setInventoryData(updatedData);
-    localStorage.setItem('inventoryItems', JSON.stringify(updatedData));
-    setEditModal(false); // Close the edit modal after saving changes
+  const handleViewDetails = (item) => {
+    setSelectedItem(item);
+    setModalOpen(true);
   };
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Table" />
-        <Col lg={12}>
-          <Card>
-            <CardBody>
-              <div className="table-responsive">
-                <table className="table table-bordered mb=0">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>Quantity</th>
-                      <th>Brand</th>
-                      <th>Supplier</th>
-                      <th>Price</th>
-                      <th>Category</th>
-                      <th>Variants</th>
-                      <th>Type</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {inventoryData.map(item => (
-                      <React.Fragment key={item.id}>
-                        {item.variants.length > 0 ? (
-                          item.variants.map((variant, index) => (
-                            <tr
-                              key={`${item.id}-${index}`}
-                              onClick={() => handleRowClick(item.id)}
-                              style={{ cursor: 'pointer' }}
-                            >
-                              <td>{index === 0 ? item.name : ''}</td>
-                              <td>{index === 0 ? item.description : ''}</td>
-                              <td>{index === 0 ? calculateTotalQuantity(item.variants) : ''}</td>
-                              <td>{index === 0 ? item.brandName : ''}</td>
-                              <td>{index === 0 ? item.supplier : ''}</td>
-                              <td>${Number(variant.price).toFixed(2)}</td>
-                              <td>{index === 0 ? item.category : ''}</td>
-                              <td>
-                                {variant.name} - ${calculatePriceAfterTax(Number(variant.price), variant.tax)} - <span>{variant.quantity}</span>
-                              </td>
-                              <td>{index === 0 ? item.type : ''}</td>
-                              <td>
-                                {item.approved ? (
-                                  <span>Approved</span>
-                                ) : (
-                                  <span>Pending</span>
-                                )}
-                              </td>
-                              <td  className='d-flex justify-content-evenly px-0 py-2'>
-                                  {role === "Firm_Admin" && !item.approved && (
-                                    <Button color="success" onClick={() => handleApproveClick(item.id)} style={{ marginRight: '5px' }} title="Approve">
-                                      <Icon path={mdiCheck} size={1} />
-                                    </Button>
-                                  )}
-                                  <Button color="warning" onClick={() => handleEditClick(item, variant)}  title="Edit">
-                                    <Icon path={mdiPencil} size={1} />
-                                  </Button>
-                                  <Button color="danger" onClick={() => handleDeleteClick(item.id, index)} title="Delete">
-                                    <Icon path={mdiDelete} size={1} />
-                                  </Button>
-                                  <Button color="info" onClick={() => handleViewClick(item, variant)}  title="View">
-                                    <Icon path={mdiEye} size={1} />
-                                  </Button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="10">No variants available</td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardBody>
-          </Card>
-        </Col>
 
-        {/* Edit Modal stays in this file */}
-        <Modal isOpen={editModal} toggle={() => setEditModal(!editModal)}>
-          <ModalHeader toggle={() => setEditModal(!editModal)}>Edit Variant</ModalHeader>
-          <ModalBody>
-            {editVariant && (
-              <FormGroup>
-                <Label for="variantName">Variant Name</Label>
-                <Input
-                  type="text"
-                  id="variantName"
-                  name="name"
-                  value={editVariant.name}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="variantPrice">Price</Label>
-                <Input
-                  type="number"
-                  id="variantPrice"
-                  name="price"
-                  value={editVariant.price}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="variantTax">Tax (%)</Label>
-                <Input
-                  type="number"
-                  id="variantTax"
-                  name="tax"
-                  value={editVariant.tax}
-                  onChange={handleModalInputChange}
-                />
-                <Label for="variantQuantity">Quantity</Label>
-                <Input
-                  type="number"
-                  id="variantQuantity"
-                  name="quantity"
-                  value={editVariant.quantity}
-                  onChange={handleModalInputChange}
-                />
-                <Button color="primary" onClick={handleSaveChanges}>Save Changes</Button>
-              </FormGroup>
+        <div className="table-responsive">
+          <Table bordered className="mb-0">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Quantity</th>
+                <th>Brand</th>
+                <th>Cost Price</th>
+                <th>Selling Price</th>
+                <th>Actions</th> 
+              </tr>
+            </thead>
+            <tbody>
+              {inventoryData.length > 0 ? (
+                inventoryData.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.name}</td>
+                    <td>{item.description}</td>
+                    <td>{item.quantity} {item.qtyType}</td>
+                    <td>{item.brand}</td>
+                    <td>${item.costPrice?.toFixed(2)}</td>
+                    <td>${item.sellingPrice?.toFixed(2)}</td>
+                    <td>
+                      <Button color="info" onClick={() => handleViewDetails(item)}>
+                        View Details
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7">No inventory items found</td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+        </div>
+
+        <Modal modalClassName="custom-modal-width" isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
+          <ModalHeader  toggle={() => setModalOpen(!modalOpen)}>
+            {selectedItem?.name} Details
+          </ModalHeader>
+          <ModalBody >
+            {selectedItem && (
+              <div>
+                <p><strong>Description:</strong> {selectedItem.description}</p>
+                <p><strong>Quantity:</strong> {selectedItem.quantity} {selectedItem.qtyType}</p>
+                <p><strong>Brand:</strong> {selectedItem.brand}</p>
+                <p><strong>Cost Price:</strong> ${selectedItem.costPrice?.toFixed(2)}</p>
+                <p><strong>Selling Price:</strong> ${selectedItem.sellingPrice?.toFixed(2)}</p>
+                <p><strong>Supplier:</strong> {selectedItem.supplier}</p>
+                <p><strong>Manufacturer:</strong> {selectedItem.manufacturer}</p>
+                <p><strong>HSN Code:</strong> {selectedItem.ProductHsn}</p>
+                
+               {/* Variants Section */}
+                <div>
+                  <strong>Variants:</strong>
+                  {selectedItem.variants.length > 0 ? (
+                    <Table bordered className="mt-3">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Variation Type</th>
+                          <th>Option Label</th>
+                          <th>Price Adjustment</th>
+                          <th>Stock</th>
+                          <th>SKU</th>
+                          <th>Barcode</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedItem.variants.map((variant, vIndex) => (
+                          <tr key={vIndex}>
+                            <td>{vIndex + 1}</td>
+                            <td>{variant.variationType}</td>
+                            <td>{variant.optionLabel}</td>
+                            <td>${variant.priceAdjustment}</td>
+                            <td>{variant.stock}</td>
+                            <td>{variant.sku}</td>
+                            <td>{variant.barcode}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    <p>No Variants</p>
+                  )}
+                </div>
+
+              </div>
             )}
           </ModalBody>
         </Modal>
-
-        {/* View Modal using ProductDetail component */}
-        {viewProduct && (
-          <ProductDetail
-            isOpen={viewProduct}
-            toggleModal={() => setViewProduct(!viewProduct)}
-            selectedItemDetails={selectedItemDetails}
-            viewMode={true} // Set viewMode to true to make it read-only
-          />
-        )}
       </div>
     </React.Fragment>
   );
