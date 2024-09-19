@@ -6,7 +6,7 @@ let inventoryServices = {};
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (body) => {
-    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId } = body;
+    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({name: name})
     if(existingItem) {
@@ -37,15 +37,25 @@ inventoryServices.createItem = async (body) => {
         costPrice,
         sellingPrice,
         categoryId,
-        subcategoryId: subcategoryId || null
+        subcategoryId: subcategoryId || null,
+        variants: variants || []
     });
     await newItem.save();
     return newItem;
 };
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
-inventoryServices.getItems = async () => {
+inventoryServices.getAllItems = async () => {
     const items = await InventoryItem.find().populate('categoryId').populate('subcategoryId');
+    if(!items){
+        throw new Error('No items found')
+    }
+    return items
+};
+
+// GET SINGLE ITEM 
+inventoryServices.getItem = async (id) => {
+    const items = await InventoryItem.findOne({_id: id}).populate('categoryId').populate('subcategoryId');
     if(!items){
         throw new Error('No items found')
     }

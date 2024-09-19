@@ -5,7 +5,8 @@ const { tokenVerification } = require('../middleware/auth.middleware');
 
 // Create a new Inventory Item
 router.post('/create-item', tokenVerification, inventoryController.createItem);
-router.get('/get-items', tokenVerification, inventoryController.getItems);
+router.get('/get-items', tokenVerification, inventoryController.getAllItems);
+router.get('/get-item/:id', tokenVerification, inventoryController.getItem);
 router.put('/update-item/:id', tokenVerification, inventoryController.updateItem);
 router.delete('/delete-item/:id', tokenVerification, inventoryController.deleteItem);
 

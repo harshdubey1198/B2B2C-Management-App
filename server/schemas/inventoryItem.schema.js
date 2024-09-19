@@ -13,7 +13,15 @@ const InventoryItemSchema = new Schema({
     costPrice: { type: Number }, 
     sellingPrice: { type: Number },
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
-    subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' }
+    subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
+    variants: [{
+        variationType: { type: String }, 
+        optionLabel: { type: String}, 
+        price: { type: Number, default: 0 }, 
+        stock: { type: Number, default: 0 }, 
+        sku: { type: String },
+        barcode: { type: String }
+    }]
 }, { timestamps: true, paranoid: true });
 
 InventoryItemSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
