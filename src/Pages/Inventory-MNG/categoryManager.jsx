@@ -29,7 +29,7 @@ const CategoryManager = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
         setCategories(response.data);
         setParentCategories(response.data.filter(category => !category.parentId));
       } catch (error) {
@@ -59,14 +59,14 @@ const CategoryManager = () => {
     try {
       if (editMode) {
         await axios.put(
-          `http://localhost:8000/api/category/update-category/${selectedCategoryId}`,
+          `${process.env.REACT_APP_URL}/category/update-category/${selectedCategoryId}`,
           updatedFormValues,
           config
         );
         toast.success('Category updated successfully.');
       } else {
         await axios.post(
-          'http://localhost:8000/api/category/create-category',
+          `${process.env.REACT_APP_URL}/category/create-category`,
           updatedFormValues,
           config
         );
@@ -78,7 +78,7 @@ const CategoryManager = () => {
         description: "",
         parentId: ""
       });
-      const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
+      const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
       setCategories(response.data);
       setParentCategories(response.data.filter(category => !category.parentId));
     } catch (error) {
@@ -102,9 +102,9 @@ const CategoryManager = () => {
   const handleDelete = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        await axios.delete(`http://localhost:8000/api/category/delete-category/${categoryId}`, config);
+        await axios.delete(`${process.env.REACT_APP_URL}/category/delete-category/${categoryId}`, config);
         toast.success('Category deleted successfully.');
-        const response = await axios.get('http://localhost:8000/api/category/get-categories', config);
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
         setCategories(response.data);
         setParentCategories(response.data.filter(category => !category.parentId));
       } catch (error) {

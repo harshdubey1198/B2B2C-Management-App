@@ -8,6 +8,7 @@ const InventoryItemSchema = new Schema({
     quantity: { type: Number }, 
     qtyType: { type: String },   
     supplier: { type: String },  
+    ProductHsn: { type: String },
     manufacturer: { type: String }, 
     brand: { type: String },    
     costPrice: { type: Number }, 

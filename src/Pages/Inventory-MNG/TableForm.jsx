@@ -1,32 +1,47 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
-import { checkEmptyFields } from "../Utility/FormValidation";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { v4 as uuidv4 } from 'uuid';
 import { toast } from "react-toastify";
-import hsnData from '../../data/hsn.json';
-import { mdiDelete } from '@mdi/js';
-import Icon from '@mdi/react';
 import axios from "axios";  
 
 const InventoryItemForm = () => {
+  const [subcategories, setSubcategories] = useState([]);
   const [formValues, setFormValues] = useState({
-    itemName: "",
-    itemDescription: "",
+    name: "",
+    description: "",
     costPrice: "",
     sellingPrice: "",
+    supplier : "",
+    manufacturer: "",
+    brand : "",
     ProductsHsn: "",
-    unitType: "",
-    categoryName: "",
+    qtyType: "",
+    categoryId: "",
     subcategoryId: "",
-    quantityInStock: "",
-    reorderLevel: "",
-    variants: [],
+    quantity: "",
   });
   const token = JSON.parse(localStorage.getItem("authUser")).token;
-  console.log(token);
   const [loading, setLoading] = useState(false);
-  const [manualHSN, setManualHSN] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
+        const parentCategories = response.data.filter(category => category.parentId === null);
+        setCategories(parentCategories);
+      } catch (error) {
+        toast.error("Failed to fetch categories.");
+        console.error(error.message);
+      }
+    };
+    fetchCategories();
+  }, [token]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,50 +51,61 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const handleCategory = (e) => {
+  const handleCategory = async (e) => {
     const { value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
       categoryId: value,
     }));
-
-    if (!manualHSN) {
-      const matchingHSN = hsnData.find((item) => item.description.toLowerCase().includes(value.toLowerCase()));
-      setFormValues((prevState) => ({
-        ...prevState,
-        ProductsHsn: matchingHSN ? matchingHSN.hsn : "",
-      }));
+  
+    if (value) {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`, config);
+        setSubcategories(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch subcategories.");
+        console.error(error.message);
+      }
+    } else {
+      setSubcategories([]);
     }
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (checkEmptyFields({ formValues })) {
-      toast.error("Please fill in all fields.");
+    if (!formValues.name || !formValues.categoryId) {
+      toast.error("Please fill in all required fields.");
       setLoading(false);
       return;
     }
+
     const config = {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     };
     try {
-      const response = await axios.post("http://localhost:8000/api/category/create-category", formValues,config);
+      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item`, formValues, config);
       if (response.status === 200) {
         toast.success("Item added successfully.");
         setFormValues({
-          itemName: "",
-          itemDescription: "",
+          name: "",
+          description: "",
           costPrice: "",
           sellingPrice: "",
           ProductsHsn: "",
-          unitType: "",
+          qtyType: "",
           categoryId: "",
           subcategoryId: "",
-          quantityInStock: "",
+          quantity: "",
+          variants: [],
         });
       }
     } catch (error) {
@@ -106,13 +132,13 @@ const InventoryItemForm = () => {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="itemName">Item Name</Label>
+                          <Label htmlFor="name">Item Name</Label>
                           <Input
                             type="text"
-                            id="itemName"
-                            name="itemName"
+                            id="name"
+                            name="name"
                             placeholder="Enter item name"
-                            value={formValues.itemName}
+                            value={formValues.name}
                             onChange={handleChange}
                           />
                         </FormGroup>
@@ -121,46 +147,56 @@ const InventoryItemForm = () => {
                         <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
                           <Input
-                            type="text"
+                            type="select"
                             id="categoryId"
                             name="categoryId"
-                            placeholder="Enter category"
                             value={formValues.categoryId}
                             onChange={handleCategory}
-                          />
+                          >
+                            <option value="">Select Category</option>
+                            {categories.map(category => (
+                              <option key={category._id} value={category._id}>
+                                {category.categoryName}
+                              </option>
+                            ))}
+                          </Input>
                         </FormGroup>
                       </Col>
                     </Row>
-
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="itemDescription">Item Description</Label>
+                          <Label htmlFor="subcategoryId">Subcategory</Label>
                           <Input
-                            type="text"
-                            id="itemDescription"
-                            name="itemDescription"
-                            placeholder="Enter item description"
-                            value={formValues.itemDescription}
+                            type="select"
+                            id="subcategoryId"
+                            name="subcategoryId"
+                            value={formValues.subcategoryId}
                             onChange={handleChange}
-                          />
+                          >
+                            <option value="">Select Subcategory</option>
+                            {subcategories.map(subcategory => (
+                              <option key={subcategory._id} value={subcategory._id}>
+                                {subcategory.categoryName}
+                              </option>
+                            ))}
+                          </Input>
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="subcategoryId">Sub Category</Label>
+                          <Label htmlFor="ProductsHsn">HSN Code</Label>
                           <Input
                             type="text"
-                            id="subcategoryId"
-                            name="subcategoryId"
-                            placeholder="Enter sub category"
-                            value={formValues.subcategoryId}
+                            id="ProductsHsn"
+                            name="ProductsHsn"
+                            placeholder="Enter HSN code"
+                            value={formValues.ProductsHsn}
                             onChange={handleChange}
                           />
                         </FormGroup>
                       </Col>
                     </Row>
-
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -189,34 +225,20 @@ const InventoryItemForm = () => {
                         </FormGroup>
                       </Col>
                     </Row>
-
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="quantityInStock">Quantity in Stock</Label>
-                          <Input
-                            type="number"
-                            id="quantityInStock"
-                            name="quantityInStock"
-                            placeholder="Enter quantity in stock"
-                            value={formValues.quantityInStock}
-                            onChange={handleChange}
-                          />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="unitType">Unit Type</Label>
+                          <Label htmlFor="qtyType">Unit Type</Label>
                           <Input
                             type="select"
-                            id="unitType"
-                            name="unitType"
-                            value={formValues.unitType}
+                            id="qtyType"
+                            name="qtyType"
+                            value={formValues.qtyType}
                             onChange={handleChange}
                           >
                             <option value="">Select Unit Type</option>
                             <option value="litres">Litres</option>
-                            <option value="kg">Kg</option>
+                            <option value="kg">Kilograms</option>
                             <option value="packets">Packets</option>
                             <option value="pieces">Pieces</option>
                             <option value="single unit">Single Unit</option>
@@ -224,8 +246,35 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="quantity">Quantity In Stock</Label>
+                          <Input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            placeholder="Enter quantity in stock"
+                            value={formValues.quantity}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
                     </Row>
-
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="description">Item Description</Label>
+                          <Input
+                            type="textarea"
+                            id="description"
+                            name="description"
+                            placeholder="Enter item description"
+                            value={formValues.description}
+                            onChange={handleChange}
+                          />
+                        </FormGroup>
+                      </Col>
+                    </Row>
                     <Button type="submit" color="success" disabled={loading}>
                       {loading ? "Adding..." : "Add Item"}
                     </Button>
