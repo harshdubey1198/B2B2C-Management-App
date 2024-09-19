@@ -3,8 +3,10 @@ import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import axios from "axios";  
+import { useNavigate } from "react-router-dom";
 
 const InventoryItemForm = () => {
+  const navigate = useNavigate();
   const [subcategories, setSubcategories] = useState([]);
   const [formValues, setFormValues] = useState({
     name: "",
@@ -337,7 +339,10 @@ const InventoryItemForm = () => {
                     </Button> 
                     <Button type="reset" color="danger" className="ml-2" onClick={handleReset}>
                       Clear
-                    </Button>
+                    </Button> 
+                    <Button type="button" color="primary" className="ml-2" onClick={() => navigate('/inventory-table')} >
+                      View Items
+                      </Button>
                     </div>
                   </form>
                 </CardBody>
