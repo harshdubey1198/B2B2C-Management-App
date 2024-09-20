@@ -139,7 +139,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
               <Input
                 type="select"
                 name="firmName"
-                value={formValues.firmName}  // Fix the value prop to match formValues
+                value={formValues.firmName} 
                 onChange={handleFirmChange}
               >
                 <option value="">Select Firm</option>
