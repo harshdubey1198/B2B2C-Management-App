@@ -45,6 +45,7 @@ inventoryServices.createItem = async (userId, body) => {
         sellingPrice,
         categoryId,
         createdBy: user._id,
+        firmId: user.adminId,
         subcategoryId: subcategoryId || null,
         variants: variants || []
     });
@@ -53,8 +54,14 @@ inventoryServices.createItem = async (userId, body) => {
 };
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
-inventoryServices.getAllItems = async (userId) => {
-    const items = await InventoryItem.find({createdBy: userId}).populate('categoryId').populate('subcategoryId');
+inventoryServices.getAllItems = async (adminId) => {
+    const items = await InventoryItem.find({firmId:adminId})
+    .populate('categoryId')
+    .populate('subcategoryId')
+    .populate({
+        path: 'createdBy',
+        select: "firstName lastName email"
+    });
     if(!items){
         throw new Error('No items found')
     }
