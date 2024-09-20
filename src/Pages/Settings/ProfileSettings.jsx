@@ -4,10 +4,23 @@ import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardB
 import axios from 'axios';
 
 const ProfileSettings = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', profilePicture: null, newEmail: '',confirmEmail: '',newPassword: '',confirmPassword: '',    otp: '',    emailOtp: '',  });
+  const [formData, setFormData] = useState({ 
+    firstName: '', 
+    lastName: '', 
+    email: '', 
+    phone: '', 
+    profilePicture: null, 
+    newEmail: '',
+    confirmEmail: '',
+    newPassword: '',
+    confirmPassword: '',
+    otp: '',
+    emailOtp: '',  
+  });
 
   const [editMode, setEditMode] = useState({
-    name: false,
+    firstName: false,
+    lastName: false,
     email: false,
     phone: false,
   });
@@ -16,17 +29,22 @@ const ProfileSettings = () => {
   const [preview, setPreview] = useState(null);
 
   const authUser = JSON.parse(localStorage.getItem('authUser'));
-  const token = localStorage.getItem('token');
-
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
           `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,);
-        const userData = response[0];
+        const userData = response;
         setFormData({
           ...formData,
-          name: `${userData.firstName} ${userData.lastName}`,
+          firstName: userData.firstName,
+          lastName: userData.lastName,
           email: userData.email,
           phone: userData.mobile,
           profilePicture: userData.avatar,
@@ -62,20 +80,20 @@ const ProfileSettings = () => {
     e.preventDefault();
 
     const updatedData = new FormData();
-    updatedData.append('name', formData.name);
+    updatedData.append('firstName', formData.firstName);
+    updatedData.append('lastName', formData.lastName);
     updatedData.append('email', formData.email);
     updatedData.append('phone', formData.phone);
     if (formData.profilePicture instanceof File) {
       updatedData.append('profilePicture', formData.profilePicture);
     }
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
+     
       const response = await axios.put(
-        `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,updatedData,config      );
+        `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
+        updatedData,
+        config
+      );
       toast.success('Profile updated successfully!');
       setFormData({
         ...formData,
@@ -84,6 +102,7 @@ const ProfileSettings = () => {
       setPreview(response.avatar);
     } catch (error) {
       console.error('Failed to update profile', error);
+      toast.error('Failed to update profile');
     }
   };
 
@@ -104,32 +123,63 @@ const ProfileSettings = () => {
                 <CardBody>
                   <h2>Profile Settings</h2>
                   <Form onSubmit={handleSubmit}>
+                    {/* First Name */}
                     <FormGroup>
-                      <Label for="name">Name</Label>
-                      {editMode.name ? (
+                      <Label for="firstName">First Name</Label>
+                      {editMode.firstName ? (
                         <div className='d-flex align-items-center'>
                           <Input
                             type="text"
-                            name="name"
-                            id="name"
-                            value={formData.name}
+                            name="firstName"
+                            id="firstName"
+                            value={formData.firstName}
                             onChange={handleChange}
-                            placeholder="Enter your name"
+                            placeholder="Enter your first name"
                             className='flex-grow-1'
                           />
-                          <Button color="info" onClick={() => toggleEditMode('name')} className='ml-2'>
+                          <Button color="info" onClick={() => toggleEditMode('firstName')} className='ml-2'>
                             Save
                           </Button>
                         </div>
                       ) : (
                         <div className='d-flex align-items-center'>
-                          <div className='flex-grow-1'>{formData.name || 'No name set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('name')}>
+                          <div className='flex-grow-1'>{formData.firstName || 'No first name set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('firstName')}>
                             Edit
                           </Button>
                         </div>
                       )}
                     </FormGroup>
+
+                    {/* Last Name */}
+                    <FormGroup>
+                      <Label for="lastName">Last Name</Label>
+                      {editMode.lastName ? (
+                        <div className='d-flex align-items-center'>
+                          <Input
+                            type="text"
+                            name="lastName"
+                            id="lastName"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                            placeholder="Enter your last name"
+                            className='flex-grow-1'
+                          />
+                          <Button color="info" onClick={() => toggleEditMode('lastName')} className='ml-2'>
+                            Save
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className='d-flex align-items-center'>
+                          <div className='flex-grow-1'>{formData.lastName || 'No last name set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('lastName')}>
+                            Edit
+                          </Button>
+                        </div>
+                      )}
+                    </FormGroup>
+
+                    {/* Email */}
                     <FormGroup>
                       <Label for="email">Email</Label>
                       {editMode.email ? (
@@ -156,6 +206,8 @@ const ProfileSettings = () => {
                         </div>
                       )}
                     </FormGroup>
+
+                    {/* Phone */}
                     <FormGroup>
                       <Label for="phone">Phone</Label>
                       {editMode.phone ? (
@@ -187,6 +239,8 @@ const ProfileSettings = () => {
                 </CardBody>
               </Card>
             </Col>
+
+            {/* Profile Picture Section */}
             <Col md={6}>
               <Card>
                 <CardBody>

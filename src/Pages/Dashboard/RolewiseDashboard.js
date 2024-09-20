@@ -80,7 +80,7 @@ const rolePermissions = {
   client_admin: ['View Client Data', 'Manage Client Users'],
   firm_admin: ['View Firm Data', 'Manage Firm Users'],
   accountant: ['View Financial Data', 'Manage Transactions'],
-  g_emp: ['View General Data']
+  employee: ['View General Data']
 };
 
 const RolewiseDashboard = () => {

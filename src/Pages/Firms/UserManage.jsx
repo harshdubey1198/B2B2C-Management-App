@@ -31,8 +31,8 @@ function UserManage() {
     role: "",
   });
 
-  const clientAdminRoles = ["firm_admin", "accountant", "g_emp"];
-  const firmAdminRoles = ["accountant", "g_emp"];
+  const clientAdminRoles = ["firm_admin", "accountant", "employee"];
+  const firmAdminRoles = ["accountant", "employee"];
 
   useEffect(() => {
     if (selectedFirmId && firms.length > 0) {

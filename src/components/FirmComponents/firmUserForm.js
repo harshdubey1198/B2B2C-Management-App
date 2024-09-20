@@ -195,7 +195,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
                 >
                   {/* <option value="">Select Role</option> */}
                   <option value="accountant">Accountant</option>
-                  <option value="g_emp">Employee</option>
+                  <option value="employee">Employee</option>
                 </Input>
               </FormGroup>
             </Col>

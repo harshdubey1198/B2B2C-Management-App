@@ -115,7 +115,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
     const { name, value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
-      [name]: name === "dob" ? formatDate(value) : value,
+      [name]: value,
     }));
   };
   
@@ -195,9 +195,9 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
               <FormGroup>
                 <Label>Date of Birth</Label>
                 <Input
-                  name="dob"
+                  name="birthday"
                   type="date"
-                  value={formValues.dob}
+                  value={formValues.birthday}
                   onChange={handleChange}
                 />
               </FormGroup>
