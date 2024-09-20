@@ -460,7 +460,7 @@ export const masterAdminSidebarData = () => [
           return accountantSidebarData();
       case 'readOnly':
         return readOnlySidebarData();
-      case 'g_emp':
+      case 'employee':
         return generalEmployeeSidebarData();
       case 'Viewer':
         return viewerSidebarData();
