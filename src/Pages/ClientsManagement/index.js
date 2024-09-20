@@ -71,7 +71,7 @@ function ClientManagement() {
                       <th>Email</th>
                       <th>Mobile</th>
                       <th>Details</th>
-                      <th>Actions</th>
+                      {/* <th>Actions</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -90,7 +90,7 @@ function ClientManagement() {
                               View Details
                             </Button>
                           </td>
-                          <td>
+                          {/* <td>
                             <Dropdown
                               isOpen={dropdownOpen[client._id]}
                               toggle={() => toggleDropdown(client._id)}
@@ -102,7 +102,7 @@ function ClientManagement() {
                                 <DropdownItem onClick={() => handleViewDetails(client._id)}>View Details</DropdownItem>
                               </DropdownMenu>
                             </Dropdown>
-                          </td>
+                          </td> */}
                         </tr>
                       ))}
                   </tbody>
