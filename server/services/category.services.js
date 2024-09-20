@@ -13,7 +13,7 @@ categoryServices.createCategory = async (userId, body) => {
     if (!user) {
         throw new Error('User not found')
     } 
-    const existingCategory = await Category.findOne({ categoryName });
+    const existingCategory = await Category.findOne({ categoryName, firmId: user.adminId });
     if (existingCategory) {
         throw new Error('Category with this name already exists');
     }
@@ -27,15 +27,16 @@ categoryServices.createCategory = async (userId, body) => {
         categoryName,
         description,
         parentId: parentId || null,
-        createdBy: user._id
+        createdBy: user._id,
+        firmId: user.adminId
     });
     await newCategory.save();
     return newCategory;
 };
 
 // GET CATEGORY
-categoryServices.getCategory = async (userId) => {
-    const data = await Category.find({createdBy: userId}).populate("parentId")
+categoryServices.getCategory = async (adminId) => {
+    const data = await Category.find({firmId: adminId}).populate("parentId")
     if(!data){
         throw new Error('There is no category')
     }
