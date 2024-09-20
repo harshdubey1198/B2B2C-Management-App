@@ -1,6 +1,7 @@
 const { response } = require("express");
 const authService = require("../services/auth.services")
-const createSecretToken = require('../utils/secretToken')
+const createSecretToken = require('../utils/secretToken');
+const uploadToCloudinary = require("../utils/cloudinary");
 
 const authController = {};
 
@@ -75,7 +76,14 @@ authController.resetPassword = async (req,res) => {
 // CREATE USER
 authController.registration = async (req,res) => {
     try {
-        const response = await authService.registration(req.params.id, req.body);
+        const data = req.body;
+
+        if (req.file) {
+            // Upload the profile picture to Cloudinary
+            const imageUrl = await uploadToCloudinary(req.file.buffer);
+            data.avatar = imageUrl; 
+        }
+        const response = await authService.registration(req.params.id, data);
         res.status(200).json( response );
     } catch (error) {
         console.log("Error Creating User", error)
@@ -108,7 +116,14 @@ authController.getCompany =  async (req,res) => {
 // UPDATE ACCOUNT
 authController.updateAccount = async (req, res) => {
     try {
-        const response = await authService.updateAccount(req.params.id, req.body);
+        const updateData = req.body;
+
+        if (req.file) {
+            // Upload the profile picture to Cloudinary
+            const imageUrl = await uploadToCloudinary(req.file.buffer);
+            updateData.avatar = imageUrl; 
+        }
+        const response = await authService.updateAccount(req.params.id, updateData);
         res.status(200).json(response);
     } catch (error) {
         console.log("Error Updating Account", error)

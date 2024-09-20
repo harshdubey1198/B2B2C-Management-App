@@ -299,26 +299,26 @@ authService.getAccount  = async (id) => {
 }
 
 // CREATE FIRM OR CREATE USER
-authService.registration = async (id, body) => {
+authService.registration = async (id, data) => {
     try {
-        const existingUser = await User.findOne({ email: body.email });
+        const existingUser = await User.findOne({ email: data.email });
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
 
-        if (body.role === 'firm_admin') {
+        if (data.role === 'firm_admin') {
             const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
             if (existingFirmAdmin) {
                 return Promise.reject("There is already a firm admin for this firm!");
             }
         }
     
-        const encryptedPassword = await PasswordService.passwordHash(body.password);
-        body.password = encryptedPassword;
-        body.isActive = true;
-        body.adminId = id;
+        const encryptedPassword = await PasswordService.passwordHash(data.password);
+        data.password = encryptedPassword;
+        data.isActive = true;
+        data.adminId = id;
   
-       const newUser = new User(body);
+       const newUser = new User(data);
        const user = await newUser.save();
        return user;
     } catch (error) {
@@ -339,9 +339,9 @@ authService.getCompany  = async (id) => {
 }
 
 // update account 
-authService.updateAccount = async (id, body) => {
+authService.updateAccount = async (id, updateData) => {
     try {
-        const data = await User.findOneAndUpdate({ _id: id }, body, { new: true });
+        const data = await User.findOneAndUpdate({ _id: id }, updateData, { new: true });
         return data;
     } catch (error) {
         console.log("Error in updating account", error);

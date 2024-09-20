@@ -41,7 +41,7 @@ app.get("/", (req, res) => {
 });
 
 app.all("*", function (req, res) {
-  res.status(404).send("HRMS Servers!");
+  res.status(404).send("aaMOBee Servers!");
 });
 
 const server = app.listen(process.env.PORT, process.env.IP, () => {
