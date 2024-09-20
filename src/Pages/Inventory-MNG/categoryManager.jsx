@@ -10,7 +10,8 @@ const CategoryManager = () => {
   const [formValues, setFormValues] = useState({
     categoryName: "",
     description: "",
-    parentId: ""
+    parentId: "",
+    
   });
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -26,18 +27,21 @@ const CategoryManager = () => {
     },
   };
 
+  const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
+  const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`, config);
+      setCategories(response.data);
+      setParentCategories(response.data.filter(category => !category.parentId));
+    } catch (error) {
+      toast.error('Failed to fetch categories.');
+    }
+  };
+
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
-        setCategories(response.data);
-        setParentCategories(response.data.filter(category => !category.parentId));
-      } catch (error) {
-        toast.error('Failed to fetch categories.');
-      }
-    };
-    fetchCategories();
-  });
+    fetchCategories(); 
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,9 +55,9 @@ const CategoryManager = () => {
     e.preventDefault();
     setLoading(true);
   
-    const updatedFormValues = { ...formValues };
+    const updatedFormValues = { ...formValues, createdBy, firmId }; 
     if (!updatedFormValues.parentId) {
-      updatedFormValues.parentId = null;  
+      updatedFormValues.parentId = null;
     }
   
     try {
@@ -66,7 +70,7 @@ const CategoryManager = () => {
         toast.success('Category updated successfully.');
       } else {
         await axios.post(
-          `${process.env.REACT_APP_URL}/category/create-category`,
+          `${process.env.REACT_APP_URL}/category/create-category/${createdBy}`,
           updatedFormValues,
           config
         );
@@ -78,9 +82,9 @@ const CategoryManager = () => {
         description: "",
         parentId: ""
       });
-      const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
-      setCategories(response.data);
-      setParentCategories(response.data.filter(category => !category.parentId));
+  
+      fetchCategories();
+  
     } catch (error) {
       toast.error('Failed to save category.');
     } finally {
@@ -88,6 +92,7 @@ const CategoryManager = () => {
     }
   };
   
+
   const handleEdit = (category) => {
     setFormValues({
       categoryName: category.categoryName,
@@ -104,9 +109,7 @@ const CategoryManager = () => {
       try {
         await axios.delete(`${process.env.REACT_APP_URL}/category/delete-category/${categoryId}`, config);
         toast.success('Category deleted successfully.');
-        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
-        setCategories(response.data);
-        setParentCategories(response.data.filter(category => !category.parentId));
+        fetchCategories(); 
       } catch (error) {
         toast.error('Failed to delete category.');
       }
