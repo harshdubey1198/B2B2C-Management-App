@@ -92,7 +92,6 @@ function InventoryTable() {
                 <p><strong>Manufacturer:</strong> {selectedItem.manufacturer}</p>
                 <p><strong>HSN Code:</strong> {selectedItem.ProductHsn}</p>
                 
-               {/* Variants Section */}
                 <div>
                   <strong>Variants:</strong>
                   {selectedItem.variants.length > 0 ? (
@@ -102,7 +101,7 @@ function InventoryTable() {
                           <th>#</th>
                           <th>Variation Type</th>
                           <th>Option Label</th>
-                          <th>Price Adjustment</th>
+                          <th>Price ⬆️</th>
                           <th>Stock</th>
                           <th>SKU</th>
                           <th>Barcode</th>
