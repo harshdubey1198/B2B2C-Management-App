@@ -6,7 +6,7 @@ const categoryController = {};
 // CREATE CATEGORY
 categoryController.createCategory = async (req, res) => {
     try {
-        const newCategory = await CategoryServices.createCategory(req.body);
+        const newCategory = await CategoryServices.createCategory(req.params.id, req.body);
         return res.status(200).json(createResult("Category created successfully", newCategory));
     } catch (error) {
         return res.status(400).json(createResult(null, null, error.message));
@@ -26,7 +26,7 @@ categoryController.getSubcategories = async (req, res) => {
 // GET ALL CATEGORIES
 categoryController.getCategory = async (req, res) => {
     try {
-        const categories = await CategoryServices.getCategory();
+        const categories = await CategoryServices.getCategory(req.params.id);
         return res.status(200).json(createResult("Categories fetched successfully", categories));
     } catch (error) {
         return res.status(500).json(createResult(null, null, error.message));
