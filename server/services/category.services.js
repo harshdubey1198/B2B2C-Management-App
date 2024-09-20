@@ -1,13 +1,18 @@
 const Category = require("../schemas/category.schema");
+const User = require("../schemas/user.schema");
 
 const categoryServices = {};
 
 // CREATE CATEGORY
-categoryServices.createCategory = async (body) => {
+categoryServices.createCategory = async (userId, body) => {
     const { categoryName, parentId , description } = body;
     if (!categoryName) {
         throw new Error('Category name is required');
     }
+    const user = await User.findOne({_id: userId})
+    if (!user) {
+        throw new Error('User not found')
+    } 
     const existingCategory = await Category.findOne({ categoryName });
     if (existingCategory) {
         throw new Error('Category with this name already exists');
@@ -21,15 +26,16 @@ categoryServices.createCategory = async (body) => {
     const newCategory = new Category({
         categoryName,
         description,
-        parentId: parentId || null
+        parentId: parentId || null,
+        createdBy: user._id
     });
     await newCategory.save();
     return newCategory;
 };
 
 // GET CATEGORY
-categoryServices.getCategory = async () => {
-    const data = await Category.find().populate("parentId")
+categoryServices.getCategory = async (userId) => {
+    const data = await Category.find({createdBy: userId}).populate("parentId")
     if(!data){
         throw new Error('There is no category')
     }

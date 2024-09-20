@@ -6,7 +6,8 @@ const CategorySchema = new Schema({
   categoryName: { type: String },
   description: { type: String },
   parentId: { type: Schema.Types.ObjectId, ref: 'Category', default: null },
-  status: { type: String, enum: ['active', 'inactive', 'archived'], default: 'active' }
+  status: { type: String, enum: ['active', 'inactive', 'archived'], default: 'active' },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User' } 
 }, { timestamps: true, paranoid: true });
 
 CategorySchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
