@@ -2,7 +2,7 @@ const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const mongoose = require("mongoose");
+const connectDB = require("./config/db.config")
 
 dotenv.config();
 const app = express();
@@ -11,12 +11,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then((resp) => {
-    console.log("Database Connected!");
-  })
-  .catch((error) => console.log("Unable to connect to DB!" + error));
+connectDB()
 
 const userRoute = require("./routers/auth.router");
 const planRoute = require("./routers/plan.router");
