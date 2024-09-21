@@ -11,7 +11,7 @@ router.post('/reset-password', authController.resetPassword);
 router.post('/createUser/:id', authController.registration);
 router.get('/getAccount/:id', authController.getAccount);
 router.get('/getCompany/:id', authController.getCompany);
-router.put('/update/:id', tokenVerification, upload.single('avatar') ,authController.updateAccount);
+router.put('/update/:id', tokenVerification, authController.updateAccount);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/resend-otp', authController.resendOtp);
 router.post('/count-company',tokenVerification, authController.countUsers);
