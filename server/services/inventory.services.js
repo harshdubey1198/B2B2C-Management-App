@@ -81,7 +81,7 @@ inventoryServices.getItem = async (id) => {
 
 // UPDATE INVENTORY ITEM
 inventoryServices.updateItem = async (id, body) => {
-    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId } = body;
+    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
     const existingItem = await InventoryItem.findById(id);
     if (!existingItem) {
         throw new Error('Inventory item not found');
@@ -101,10 +101,26 @@ inventoryServices.updateItem = async (id, body) => {
         }
     }
 
+    if(variants && variants.length > 0){
+        for (const variant of variants){
+            const {_id, price, optionLabel, stock, sku, barcode} = variant;
+            await InventoryItem.updateOne(
+            { _id:id, "variants._id": _id },
+            {
+                $set: {
+                    "variants.$.price": price,
+                    "variants.$.optionLabel": optionLabel,
+                    "variants.$.stock": stock,
+                    "variants.$.sku": sku,
+                    "variants.$.barcode": barcode
+                }
+            }
+            )
+        }
+    }
     const updatedItem = await InventoryItem.findByIdAndUpdate(
         id,
-        {
-            name,
+        {   name,
             description,
             quantity,
             qtyType,
@@ -136,6 +152,38 @@ inventoryServices.deleteItem = async (id) => {
     return deletedItem
 };
 
+
+// DELETE VARIANTS FROM EXISTING ITEM
+inventoryServices.deleteVariant = async (itemId, variantId) => {
+    const result = await InventoryItem.findByIdAndUpdate(
+        {_id: itemId},
+        {$pull: {variants: {_id: variantId}}},
+        {new: true}
+    )
+    return result
+}
+
+// ADD VARINST TO THE EXISTING ITEM AND ARRAY
+inventoryServices.addVariant = async (itemId, variant) => {
+    const existingItem = await InventoryItem.findOne({_id: itemId})
+    if (!existingItem) {
+        throw new Error('Inventory item not found');
+    }
+
+    const existingVariant = existingItem.variants.some(
+        (existingVariant) => existingVariant.sku === variant.sku && existingVariant.barcode === variant.barcode
+    )
+    if (existingVariant) {
+        throw new Error('Variant already exist')
+    }    
+
+    const result =  await InventoryItem.findByIdAndUpdate(
+        {_id: itemId},
+        {$push: {variants: variant}},
+        {new: true}
+    )
+    return result 
+}
 // // GET CATEGORY VARIANTS
 // inventoryServices.getCategoryVariants = async (categoryId) => {
 //     const category = await Category.findOne({_id: categoryId})

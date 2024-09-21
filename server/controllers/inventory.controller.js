@@ -53,6 +53,28 @@ inventoryController.deleteItem = async (req, res) => {
     }
 };
 
+// DELETE VARIANTS FROM ARRAY 
+inventoryController.deleteVariant = async (req, res) => {
+    try {
+        const {itemId, variantId} = req.params
+        const deletedItem = await inventoryServices.deleteVariant(itemId, variantId);
+        return res.status(200).json(createResult("Inventory Variants deleted successfully", deletedItem));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
+// ADD VARIANTS TO THE ARRAY
+inventoryController.addVariant = async (req, res) => {
+    try {
+        const {itemId} = req.params
+        const updateVaraint = await inventoryServices.addVariant(itemId, req.body);
+        return res.status(200).json(createResult("Inventory Variants added successfully", updateVaraint));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 // // GET CATEGORY BASED VARIANTS
 // inventoryController.getCategoryVariants = async (req, res) => {
 //     try {
