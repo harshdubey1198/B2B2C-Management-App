@@ -9,6 +9,8 @@ router.get('/get-items/:id', tokenVerification, inventoryController.getAllItems)
 router.get('/get-item/:id', tokenVerification, inventoryController.getItem);
 router.put('/update-item/:id', tokenVerification, inventoryController.updateItem);
 router.delete('/delete-item/:id', tokenVerification, inventoryController.deleteItem);
+router.delete('/:itemId/delete-variant/:variantId', tokenVerification, inventoryController.deleteVariant);
+router.put('/add-variant/:itemId', tokenVerification, inventoryController.addVariant);
 // router.get('/getcategoryVariants/:id', tokenVerification, inventoryController.getCategoryVariants);
 // router.post('/createcategoryVariants', tokenVerification, inventoryController.createCategoryVariants);
 
