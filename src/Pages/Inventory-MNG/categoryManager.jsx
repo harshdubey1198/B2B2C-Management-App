@@ -162,7 +162,7 @@ const CategoryManager = () => {
                               {category.parentId ? category.parentId.categoryName : "None"}
                             </td>
                             <td>{category.status}</td>
-                            <td>
+                            <td className='d-flex gap-2'>
                               <Button color="warning" className="mr-2" onClick={() => handleEdit(category)}>
                                 Edit
                               </Button>

@@ -6,6 +6,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const InventoryItemForm = () => {
+  const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
+  const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [subcategories, setSubcategories] = useState([]);
   const [formValues, setFormValues] = useState({
@@ -46,7 +48,7 @@ const InventoryItemForm = () => {
             Authorization: `Bearer ${token}`,
           },
         };
-        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories`, config);
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`, config);
         const parentCategories = response.data.filter(category => category.parentId === null);
         setCategories(parentCategories);
       } catch (error) {
@@ -80,7 +82,11 @@ const InventoryItemForm = () => {
           },
         };
         const response = await axios.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`, config);
-        setSubcategories(response.data);
+        const subcategoryData = response.data;
+        if (subcategoryData.length === 0) {
+          toast.info("This category doesn't have any subcategories.");
+        }
+        setSubcategories(subcategoryData);
       } catch (error) {
         toast.error("Failed to fetch subcategories.");
         console.error(error.message);
@@ -333,15 +339,10 @@ const InventoryItemForm = () => {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <div className="d-flex gap-2 ">  
-                    <Button type="submit" color="success" disabled={loading}>
-                      {loading ? "Adding..." : "Add Item"}
-                    </Button> 
-                    <Button type="reset" color="danger" className="ml-2" onClick={handleReset}>
-                      Clear
-                    </Button> 
-                    <Button type="button" color="primary" className="ml-2" onClick={() => navigate('/inventory-table')} >
-                      View Items
+
+                    <div className="text-center mt-4">
+                      <Button color="primary" type="submit" disabled={loading}>
+                        {loading ? "Saving..." : "Save Item"}
                       </Button>
                     </div>
                   </form>
