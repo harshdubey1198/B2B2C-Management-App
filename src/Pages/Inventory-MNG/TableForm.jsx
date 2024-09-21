@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import axios from "axios";  
@@ -9,15 +9,29 @@ const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
+  
+  const [modal, setModal] = useState(false);
+  const [variant, setVariant] = useState({
+    variationType: "",
+    optionLabel: "",
+    priceAdjustment: "",
+    stock: "",
+    sku: "",
+    barcode: "",
+  });
+  
+  const [variants, setVariants] = useState([]);
+  const toggleModal = () => setModal(!modal);
+
   const [subcategories, setSubcategories] = useState([]);
   const [formValues, setFormValues] = useState({
     name: "",
     description: "",
     costPrice: "",
     sellingPrice: "",
-    supplier : "",
+    supplier: "",
     manufacturer: "",
-    brand : "",
+    brand: "",
     ProductsHsn: "",
     qtyType: "",
     categoryId: "",
@@ -27,6 +41,7 @@ const InventoryItemForm = () => {
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
+  
   const handleReset = () => {
     setFormValues({
       name: "",
@@ -40,6 +55,7 @@ const InventoryItemForm = () => {
       quantity: "",
     });
   };
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -67,13 +83,45 @@ const InventoryItemForm = () => {
     }));
   };
 
+  const handleVariantChange = (e) => {
+    const { name, value } = e.target;
+    setVariant((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const addVariant = () => {
+    if (
+      variant.variationType &&
+      variant.optionLabel &&
+      variant.priceAdjustment &&
+      variant.stock &&
+      variant.sku &&
+      variant.barcode
+    ) {
+      setVariants([...variants, variant]);
+      setVariant({
+        variationType: "",
+        optionLabel: "",
+        priceAdjustment: "",
+        stock: "",
+        sku: "",
+        barcode: "",
+      });
+      toggleModal();
+    } else {
+      toast.error("Please fill in all variant details");
+    }
+  };
+
   const handleCategory = async (e) => {
     const { value } = e.target;
     setFormValues((prevState) => ({
       ...prevState,
       categoryId: value,
     }));
-  
+
     if (value) {
       try {
         const config = {
@@ -95,7 +143,7 @@ const InventoryItemForm = () => {
       setSubcategories([]);
     }
   };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -112,7 +160,7 @@ const InventoryItemForm = () => {
       },
     };
     try {
-      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item`, formValues, config);
+      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item`, { ...formValues, variants }, config);
       if (response.status === 200) {
         toast.success("Item added successfully.");
         setFormValues({
@@ -125,8 +173,8 @@ const InventoryItemForm = () => {
           categoryId: "",
           subcategoryId: "",
           quantity: "",
-          variants: [],
         });
+        setVariants([]);
       }
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
@@ -149,7 +197,7 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                    <Row>
+                  <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
@@ -340,7 +388,10 @@ const InventoryItemForm = () => {
                       </Col>
                     </Row>
 
-                    <div className="text-center mt-4">
+                    <div className=" d-flex gap-2 justify-content-center mt-4">
+                      <Button color="info" onClick={toggleModal}>
+                        Add Variant
+                      </Button>
                       <Button color="primary" type="submit" disabled={loading}>
                         {loading ? "Saving..." : "Save Item"}
                       </Button>
@@ -350,6 +401,76 @@ const InventoryItemForm = () => {
               </Card>
             </Col>
           </Row>
+
+          <Modal isOpen={modal} toggle={toggleModal}>
+            <ModalHeader toggle={toggleModal}>Add Variant</ModalHeader>
+            <ModalBody>
+              <FormGroup>
+                <Label for="variationType">Variant Type</Label>
+                <Input
+                  type="text"
+                  id="variationType"
+                  name="variationType"
+                  value={variant.variationType}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="optionLabel">Option Label</Label>
+                <Input
+                  type="text"
+                  id="optionLabel"
+                  name="optionLabel"
+                  value={variant.optionLabel}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="priceAdjustment">Price Adjustment</Label>
+                <Input
+                  type="number"
+                  id="priceAdjustment"
+                  name="priceAdjustment"
+                  value={variant.priceAdjustment}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="stock">Stock</Label>
+                <Input
+                  type="number"
+                  id="stock"
+                  name="stock"
+                  value={variant.stock}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="sku">SKU</Label>
+                <Input
+                  type="text"
+                  id="sku"
+                  name="sku"
+                  value={variant.sku}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="barcode">Barcode</Label>
+                <Input
+                  type="text"
+                  id="barcode"
+                  name="barcode"
+                  value={variant.barcode}
+                  onChange={handleVariantChange}
+                />
+              </FormGroup>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" onClick={addVariant}>Add Variant</Button>
+              <Button color="secondary" onClick={toggleModal}>Cancel</Button>
+            </ModalFooter>
+          </Modal>
         </Container>
       </div>
     </React.Fragment>
