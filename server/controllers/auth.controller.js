@@ -76,14 +76,7 @@ authController.resetPassword = async (req,res) => {
 // CREATE USER
 authController.registration = async (req,res) => {
     try {
-        const data = req.body;
-
-        if (req.file) {
-            // Upload the profile picture to Cloudinary
-            const imageUrl = await uploadToCloudinary(req.file.buffer);
-            data.avatar = imageUrl; 
-        }
-        const response = await authService.registration(req.params.id, data);
+        const response = await authService.registration(req.params.id, req);
         res.status(200).json( response );
     } catch (error) {
         console.log("Error Creating User", error)

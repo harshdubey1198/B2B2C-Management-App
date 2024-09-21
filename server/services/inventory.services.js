@@ -70,7 +70,9 @@ inventoryServices.getAllItems = async (adminId) => {
 
 // GET SINGLE ITEM 
 inventoryServices.getItem = async (id) => {
-    const items = await InventoryItem.findOne({_id: id}).populate('categoryId').populate('subcategoryId');
+    const items = await InventoryItem.findOne({_id: id})
+    .populate('categoryId')
+    .populate('subcategoryId');
     if(!items){
         throw new Error('No items found')
     }
