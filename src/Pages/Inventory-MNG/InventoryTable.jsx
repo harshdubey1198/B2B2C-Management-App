@@ -10,7 +10,7 @@ function InventoryTable() {
   const [selectedItem, setSelectedItem] = useState(null);  
   const [modalOpen, setModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
-  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
   const [variantIndex, setVariantIndex] = useState(null);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
@@ -31,7 +31,7 @@ function InventoryTable() {
       }
     };
 
-    const timeoutId = setTimeout(fetchInventoryData, 10000); 
+    const timeoutId = setTimeout(fetchInventoryData, 1000); 
 
     return () => clearTimeout(timeoutId); 
   }, [userId, config]); 
@@ -47,7 +47,7 @@ function InventoryTable() {
   };
 
   const addOrUpdateVariant = async () => {
-    if (variant.variationType && variant.optionLabel && variant.priceAdjustment && variant.stock && variant.sku && variant.barcode) {
+    if (variant.variationType && variant.optionLabel && variant.price && variant.stock && variant.sku && variant.barcode) {
       if (variantIndex !== null) {
         const updatedVariants = [...selectedItem.variants];
         updatedVariants[variantIndex] = variant;
@@ -68,7 +68,7 @@ function InventoryTable() {
         }
       }
 
-      setVariant({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+      setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
       setVariantIndex(null);
       setVariantModalOpen(false);
     } else {
@@ -171,17 +171,17 @@ function InventoryTable() {
                             <td>{vIndex + 1}</td>
                             <td>{variant.variationType}</td>
                             <td>{variant.optionLabel}</td>
-                            <td>${variant.priceAdjustment}</td>
+                            <td>${variant.price}</td>
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
                             <td>
                               <Button color="danger" onClick={() => deleteVariant(variant._id)}>Delete</Button>
-                              {/* <Button color="warning" onClick={() => { 
+                              <Button color="warning" onClick={() => { 
                                 setVariant(variant);
                                 setVariantIndex(vIndex);
                                 setVariantModalOpen(true);
-                              }}>Edit</Button> */}
+                              }}>Edit</Button>
                             </td>
                           </tr>
                         ))}
@@ -194,7 +194,7 @@ function InventoryTable() {
 
                 <Button color="primary" onClick={() => { 
                   setVariantModalOpen(true); 
-                  setVariant({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+                  setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
                   setVariantIndex(null);
                 }}>Add Variant</Button>
               </div>
