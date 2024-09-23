@@ -27,6 +27,7 @@ function InventoryTable() {
       try {
         const response = await axios.get(`http://localhost:8000/api/inventory/get-items/${userId}`, config);
         setInventoryData(response.data); 
+        
       } catch (error) {
         console.error('Error fetching inventory data:', error);
       }
@@ -51,6 +52,7 @@ function InventoryTable() {
     try {
       await axios.delete(`http://localhost:8000/api/inventory/delete-item/${item._id}`, config);
       setTrigger(prev => prev + 1);
+      // setModalOpen(!modalOpen);
     } catch (error) {
       console.error('Error deleting Inventory:', error);
     }
@@ -61,6 +63,8 @@ function InventoryTable() {
       try {
         await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
         setSelectedItem({ ...selectedItem, variants: [...selectedItem.variants, variant] });
+        setTrigger(prev => prev + 1);
+        setModalOpen(!modalOpen);
         toast.success("Variant added successfully!");
       } catch (error) {
         console.error('Error adding variant:', error);
@@ -81,6 +85,8 @@ function InventoryTable() {
           ...prevState,
           variants: prevState.variants.filter(v => v._id !== variantId),
         }));
+        setTrigger(prev => prev + 1);
+        setModalOpen(!modalOpen);
         toast.success("Variant deleted successfully!");
       } catch (error) {
         console.error('Error deleting variant:', error);
@@ -93,7 +99,8 @@ function InventoryTable() {
       await axios.put(`http://localhost:8000/api/inventory/update-item/${selectedItem._id}`, updatedFields, config);
       setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
       toast.success("Item updated successfully!");
-      setModalOpen(false);
+      setModalOpen(!modalOpen);
+      setTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Error updating item:', error);
     }
@@ -168,6 +175,7 @@ function InventoryTable() {
               value={selectedItem.quantity} 
               onChange={(e) => setSelectedItem({ ...selectedItem, quantity: e.target.value })} 
               className="form-control" 
+              readOnly
             />
             <select 
               id="qtyType" 
