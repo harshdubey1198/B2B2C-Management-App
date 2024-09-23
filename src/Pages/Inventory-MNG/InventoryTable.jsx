@@ -12,6 +12,7 @@ function InventoryTable() {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
   const [variantIndex, setVariantIndex] = useState(null);
+  const [trigger, setTrigger] = useState(0)
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
 
@@ -34,7 +35,7 @@ function InventoryTable() {
     const timeoutId = setTimeout(fetchInventoryData, 1000); 
 
     return () => clearTimeout(timeoutId); 
-  }, [userId, config]); 
+  }, [userId, trigger]); 
 
   const handleViewDetails = (item) => {
     setSelectedItem(item);
@@ -44,6 +45,15 @@ function InventoryTable() {
   const handleVariantChange = (e) => {
     const { name, value } = e.target;
     setVariant((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const handleDeleteInventory = async (item) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/inventory/delete-item/${item._id}`, config);
+      setTrigger(prev => prev + 1)
+    } catch (error) {
+      console.error('Error deleting Inventory:', error);
+    }
   };
 
   const addOrUpdateVariant = async () => {
@@ -122,6 +132,9 @@ function InventoryTable() {
                     <td>
                       <Button color="info" onClick={() => handleViewDetails(item)}>
                         View Details
+                      </Button>
+                      <Button color="danger" onClick={() => handleDeleteInventory(item)}>
+                        Delete Inventory
                       </Button>
                     </td>
                   </tr>
