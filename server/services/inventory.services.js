@@ -162,16 +162,19 @@ inventoryServices.deleteItem = async (id) => {
     return deletedItem
 };
 
-
 // DELETE VARIANTS FROM EXISTING ITEM
 inventoryServices.deleteVariant = async (itemId, variantId) => {
-    const result = await InventoryItem.findByIdAndUpdate(
-        {_id: itemId},
-        {$pull: {variants: {_id: variantId}}},
-        {new: true}
-    )
-    return result
-}
+    const item = await InventoryItem.findById(itemId);
+
+    if (!item){
+        throw new Error('Item not found');
+    } 
+    item.variants.pull({_id: variantId});
+    item.quantity = calculateStock(item.variants);
+    const updatedItem = await item.save();
+
+    return updatedItem;
+};
 
 // ADD VARINST TO THE EXISTING ITEM AND ARRAY
 inventoryServices.addVariant = async (itemId, variant) => {
@@ -187,12 +190,10 @@ inventoryServices.addVariant = async (itemId, variant) => {
         throw new Error('Variant already exist')
     }    
 
-    const result =  await InventoryItem.findByIdAndUpdate(
-        {_id: itemId},
-        {$push: {variants: variant}},
-        {new: true}
-    )
-    return result 
+    existingItem.variants.push(variant)
+    existingItem.quantity = calculateStock(existingItem.variants)
+    const updatedItem = await existingItem.save()
+    return updatedItem 
 }
 // // GET CATEGORY VARIANTS
 // inventoryServices.getCategoryVariants = async (categoryId) => {
