@@ -2,14 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { Table, Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios'; 
+import { toast } from 'react-toastify';
+import VariantModal from './VariantModal';
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);  
   const [modalOpen, setModalOpen] = useState(false);
-
+  const [variantModalOpen, setVariantModalOpen] = useState(false);
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+  const [variantIndex, setVariantIndex] = useState(null);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -25,12 +30,65 @@ function InventoryTable() {
         console.error('Error fetching inventory data:', error);
       }
     };
-    fetchInventoryData();
-  },[]);
+
+    const timeoutId = setTimeout(fetchInventoryData, 10000); 
+
+    return () => clearTimeout(timeoutId); 
+  }, [userId, config]); 
 
   const handleViewDetails = (item) => {
     setSelectedItem(item);
     setModalOpen(true);
+  };
+
+  const handleVariantChange = (e) => {
+    const { name, value } = e.target;
+    setVariant((prevState) => ({ ...prevState, [name]: value }));
+  };
+
+  const addOrUpdateVariant = async () => {
+    if (variant.variationType && variant.optionLabel && variant.priceAdjustment && variant.stock && variant.sku && variant.barcode) {
+      if (variantIndex !== null) {
+        const updatedVariants = [...selectedItem.variants];
+        updatedVariants[variantIndex] = variant;
+        try {
+          await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
+          setSelectedItem({ ...selectedItem, variants: updatedVariants });
+          toast.success("Variant updated successfully!");
+        } catch (error) {
+          console.error('Error updating variant:', error);
+        }
+      } else {
+        try {
+          await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
+          setSelectedItem({ ...selectedItem, variants: [...selectedItem.variants, variant] });
+          toast.success("Variant added successfully!");
+        } catch (error) {
+          console.error('Error adding variant:', error);
+        }
+      }
+
+      setVariant({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+      setVariantIndex(null);
+      setVariantModalOpen(false);
+    } else {
+      toast.error("Please fill in all variant details");
+    }
+  };
+
+  const deleteVariant = async (variantId) => {
+    if (selectedItem) {
+      try {
+        await axios.delete(`http://localhost:8000/api/inventory/${selectedItem._id}/delete-variant/${variantId}`, config);
+        setSelectedItem((prevState) => ({
+          ...prevState,
+          variants: prevState.variants.filter(v => v._id !== variantId),
+        }));
+        toast.success("Variant deleted successfully!");
+      } catch (error) {
+        console.error('Error deleting variant:', error);
+      }
+    }
   };
 
   return (
@@ -78,10 +136,8 @@ function InventoryTable() {
         </div>
 
         <Modal modalClassName="custom-modal-width" isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
-          <ModalHeader  toggle={() => setModalOpen(!modalOpen)}>
-            {selectedItem?.name} Details
-          </ModalHeader>
-          <ModalBody >
+          <ModalHeader toggle={() => setModalOpen(!modalOpen)}> {selectedItem?.name} Details </ModalHeader>
+          <ModalBody>
             {selectedItem && (
               <div>
                 <p><strong>Description:</strong> {selectedItem.description}</p>
@@ -92,7 +148,7 @@ function InventoryTable() {
                 <p><strong>Supplier:</strong> {selectedItem.supplier}</p>
                 <p><strong>Manufacturer:</strong> {selectedItem.manufacturer}</p>
                 <p><strong>HSN Code:</strong> {selectedItem.ProductHsn}</p>
-                
+
                 <div>
                   <strong>Variants:</strong>
                   {selectedItem.variants.length > 0 ? (
@@ -106,6 +162,7 @@ function InventoryTable() {
                           <th>Stock</th>
                           <th>SKU</th>
                           <th>Barcode</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -118,6 +175,14 @@ function InventoryTable() {
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
+                            <td>
+                              <Button color="danger" onClick={() => deleteVariant(variant._id)}>Delete</Button>
+                              {/* <Button color="warning" onClick={() => { 
+                                setVariant(variant);
+                                setVariantIndex(vIndex);
+                                setVariantModalOpen(true);
+                              }}>Edit</Button> */}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -127,10 +192,23 @@ function InventoryTable() {
                   )}
                 </div>
 
+                <Button color="primary" onClick={() => { 
+                  setVariantModalOpen(true); 
+                  setVariant({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
+                  setVariantIndex(null);
+                }}>Add Variant</Button>
               </div>
             )}
           </ModalBody>
         </Modal>
+
+        <VariantModal 
+          modal={variantModalOpen} 
+          toggleModal={() => setVariantModalOpen(!variantModalOpen)} 
+          variant={variant} 
+          handleVariantChange={handleVariantChange} 
+          addVariant={addOrUpdateVariant}
+        />
       </div>
     </React.Fragment>
   );

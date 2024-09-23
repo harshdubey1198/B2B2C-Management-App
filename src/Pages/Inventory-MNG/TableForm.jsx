@@ -11,21 +11,22 @@ const InventoryItemForm = () => {
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
-  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
-  const [variantIndex, setVariantIndex] = useState(null);
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "", });
+  
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "" });
+  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-
+  
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "" });
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
+    });
   };
-
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -61,7 +62,7 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const addOrUpdateVariant = () => {
+  const addVariant = () => {
     if (
       variant.variationType &&
       variant.optionLabel &&
@@ -70,31 +71,48 @@ const InventoryItemForm = () => {
       variant.sku &&
       variant.barcode
     ) {
-      if (variantIndex !== null) {
-        const updatedVariants = [...variants];
-        updatedVariants[variantIndex] = variant;
-        setVariants(updatedVariants);
-      } else {
-        setVariants([...variants, variant]);
-      }
-
-      setVariant({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "" });
-      setVariantIndex(null);
+      setVariants([...variants, variant]);
+      setVariant({
+        variationType: "",
+        optionLabel: "",
+        priceAdjustment: "",
+        stock: "",
+        sku: "",
+        barcode: "",
+      });
       toggleModal();
     } else {
       toast.error("Please fill in all variant details");
     }
   };
 
-  const handleEditVariant = (index) => {
-    setVariant(variants[index]);
-    setVariantIndex(index);
-    toggleModal();
-  };
+  const handleCategory = async (e) => {
+    const { value } = e.target;
+    setFormValues((prevState) => ({
+      ...prevState,
+      categoryId: value,
+    }));
 
-  const handleDeleteVariant = (index) => {
-    const filteredVariants = variants.filter((_, i) => i !== index);
-    setVariants(filteredVariants);
+    if (value) {
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`, config);
+        const subcategoryData = response.data;
+        if (subcategoryData.length === 0) {
+          toast.info("This category doesn't have any subcategories.");
+        }
+        setSubcategories(subcategoryData);
+      } catch (error) {
+        toast.error("Failed to fetch subcategories.");
+        console.error(error.message);
+      }
+    } else {
+      setSubcategories([]);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -116,7 +134,7 @@ const InventoryItemForm = () => {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
       if (response.status === 200) {
         toast.success("Item added successfully.");
-        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "" });
+        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", });
         setVariants([]);
       }
     } catch (error) {
@@ -136,9 +154,11 @@ const InventoryItemForm = () => {
             <Col lg={8} md={10}>
               <Card>
                 <CardBody>
-                  <h4 className="font-size-18 text-muted mt-2 text-center">Add Inventory Item</h4>
+                  <h4 className="font-size-18 text-muted mt-2 text-center">
+                    Add Inventory Item
+                  </h4>
                   <form onSubmit={handleSubmit}>
-                    <Row>
+                  <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
@@ -151,12 +171,13 @@ const InventoryItemForm = () => {
                           <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
                         </FormGroup>
                       </Col>
+                    
                     </Row>
                     <Row>
-                      <Col md={6}>
+                    <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
-                          <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleChange}>
+                          <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleCategory} >
                             <option value="">Select Category</option>
                             {categories.map(category => (
                               <option key={category._id} value={category._id}>
@@ -169,7 +190,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="subcategoryId">Subcategory</Label>
-                          <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange}>
+                          <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange} >
                             <option value="">Select Subcategory</option>
                             {subcategories.map(subcategory => (
                               <option key={subcategory._id} value={subcategory._id}>
@@ -179,6 +200,7 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
+                      
                     </Row>
                     <Row>
                       <Col md={6}>
@@ -198,7 +220,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="qtyType">Unit Type</Label>
-                          <Input type="select" id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange}>
+                          <Input type="select" id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} >
                             <option value="">Select Unit Type</option>
                             <option value="litres">Litres</option>
                             <option value="kg">Kilograms</option>
@@ -244,57 +266,46 @@ const InventoryItemForm = () => {
                         </FormGroup>
                       </Col>
                     </Row>
-                    <div className="d-flex gap-2 justify-content-center mt-4">
-                      <Button color="info" onClick={toggleModal}>Add Variant</Button>
-                      <Button color="primary" type="submit" disabled={loading}>{loading ? "Saving..." : "Save Item"}</Button>
-                    </div>
+                  <div className=" d-flex gap-2 justify-content-center mt-4">
+                    <Button color="info" onClick={toggleModal}>Add Variant</Button>
+                    <Button color="primary" type="submit" disabled={loading}> {loading ? "Saving..." : "Save Item"} </Button>
+                  </div>
                   </form>
                   {variants.length > 0 && (
-                    <div className="mt-4">
-                      <h5 className="font-size-16 text-muted">Added Variants</h5>
-                      <table className="table table-bordered">
-                        <thead>
-                          <tr>
-                            <th>Variation Type</th>
-                            <th>Option Label</th>
-                            <th>Price Adjustment</th>
-                            <th>Stock</th>
-                            <th>SKU</th>
-                            <th>Barcode</th>
-                            <th>Actions</th>
+                  <div className="mt-4">
+                    <h5 className="font-size-16 text-muted">Added Variants</h5>
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Variation Type</th>
+                          <th>Option Label</th>
+                          <th>Price Adjustment</th>
+                          <th>Stock</th>
+                          <th>SKU</th>
+                          <th>Barcode</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {variants.map((variant, index) => (
+                          <tr key={index}>
+                            <td>{variant.variationType}</td>
+                            <td>{variant.optionLabel}</td>
+                            <td>{variant.priceAdjustment}</td>
+                            <td>{variant.stock}</td>
+                            <td>{variant.sku}</td>
+                            <td>{variant.barcode}</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          {variants.map((variant, index) => (
-                            <tr key={index}>
-                              <td>{variant.variationType}</td>
-                              <td>{variant.optionLabel}</td>
-                              <td>{variant.priceAdjustment}</td>
-                              <td>{variant.stock}</td>
-                              <td>{variant.sku}</td>
-                              <td>{variant.barcode}</td>
-                              <td  className="d-flex gap-2">
-                                <Button color="warning" size="sm" onClick={() => handleEditVariant(index)}>Edit</Button>
-                                <Button color="danger" size="sm" onClick={() => handleDeleteVariant(index)}>Delete</Button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
                 </CardBody>
               </Card>
             </Col>
           </Row>
 
-          <VariantModal 
-            modal={modal} 
-            toggleModal={toggleModal} 
-            variant={variant} 
-            handleVariantChange={handleVariantChange} 
-            addVariant={addOrUpdateVariant}
-          />
+          <VariantModal modal={modal} toggleModal={toggleModal} variant={variant} handleVariantChange={handleVariantChange} addVariant={addVariant}/>
         </Container>
       </div>
     </React.Fragment>
