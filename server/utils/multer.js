@@ -20,7 +20,9 @@ const upload = multer({
     storage, 
     fileFilter, 
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
-});
+}).fields([
+    { name: 'avatar', maxCount: 1 } // Single file upload for avatar
+]);
 
 module.exports = {
     upload

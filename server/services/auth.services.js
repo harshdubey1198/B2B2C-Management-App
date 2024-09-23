@@ -2,7 +2,6 @@ const nodemailer = require("nodemailer");
 const generateTemporaryPassword = require("../utils/tempPassword");
 const PasswordService = require('./password.services');
 const User = require("../schemas/user.schema");
-const { upload } = require("../utils/multer");
 const multer = require("multer");
 
 const authService = {};
@@ -341,24 +340,56 @@ authService.getCompany  = async (id) => {
 }
 
 // update account 
-authService.updateAccount = async (id, req) => {
+// authService.updateAccount = async (id, req) => {
+//     try {
+//         const data = req.body;
+
+//         await new Promise((resolve, reject) => {
+//             upload.single('avatar')(req, null, (err) => {
+//                 if (err instanceof multer.MulterError) {
+//                     return reject(new Error('File upload error: ' + err.message));
+//                 } else if (err) {
+//                     return reject(new Error('File validation error: ' + err.message));
+//                 }
+//                 resolve();
+//             });
+//         });
+
+//         if (req.file) {
+//             // Upload the profile picture to Cloudinary
+//             const imageUrl = await uploadToCloudinary(req.file.buffer);
+//             data.avatar = imageUrl;
+//         } else {
+//             console.log("No file uploaded.");
+//         }
+
+//         const updatedAccount = await User.findOneAndUpdate({ _id: id }, data, { new: true });
+//         return updatedAccount;
+//     } catch (error) {
+//         console.log("Error in updating account", error);
+//         return Promise.reject("Unable to update account. Try again later!");
+//     } 
+// }
+
+
+authService.updateAccount = async (id, data) => {
     try {
-        const data = req.body;
+        if (data.avatar) {
+            let imageUrl;
+            if (typeof data.avatar === 'string' && data.avatar.startsWith('http')) {
+                imageUrl = data.avatar;
+            } else if (typeof data.avatar === 'string' && data.avatar.startsWith('data:image')) {
+                const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
+                const buffer = Buffer.from(base64Data, 'base64');
+                const uploadResponse = await uploadToCloudinary(buffer);
+                imageUrl = uploadResponse.secure_url;
+            } else if (Buffer.isBuffer(data.avatar)) {
+                const uploadResponse = await uploadToCloudinary(data.avatar);
+                imageUrl = uploadResponse.secure_url;
+            } else {
+                throw new Error("Invalid avatar format");
+            }
 
-        await new Promise((resolve, reject) => {
-            upload.single('avatar')(req, null, (err) => {
-                if (err instanceof multer.MulterError) {
-                    return reject(new Error('File upload error: ' + err.message));
-                } else if (err) {
-                    return reject(new Error('File validation error: ' + err.message));
-                }
-                resolve();
-            });
-        });
-
-        if (req.file) {
-            // Upload the profile picture to Cloudinary
-            const imageUrl = await uploadToCloudinary(req.file.buffer);
             data.avatar = imageUrl;
         } else {
             console.log("No file uploaded.");
@@ -369,8 +400,11 @@ authService.updateAccount = async (id, req) => {
     } catch (error) {
         console.log("Error in updating account", error);
         return Promise.reject("Unable to update account. Try again later!");
-    } 
-}
+    }
+};
+
+
+
 
 // COUNT CLIENT ADMIN 
 authService.countUsers = async (body) => {
