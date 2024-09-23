@@ -1,58 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import axios from "axios";  
 import { useNavigate } from "react-router-dom";
+import VariantModal from "./VariantModal";  
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
-  
   const [modal, setModal] = useState(false);
-  const [variant, setVariant] = useState({
-    variationType: "",
-    optionLabel: "",
-    priceAdjustment: "",
-    stock: "",
-    sku: "",
-    barcode: "",
-  });
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "", });
   
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [formValues, setFormValues] = useState({
-    name: "",
-    description: "",
-    costPrice: "",
-    sellingPrice: "",
-    supplier: "",
-    manufacturer: "",
-    brand: "",
-    ProductsHsn: "",
-    qtyType: "",
-    categoryId: "",
-    subcategoryId: "",
-    quantity: "",
-  });
+  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   
   const handleReset = () => {
-    setFormValues({
-      name: "",
-      description: "",
-      costPrice: "",
-      sellingPrice: "",
-      ProductsHsn: "",
-      qtyType: "",
-      categoryId: "",
-      subcategoryId: "",
-      quantity: "",
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
     });
   };
   
@@ -163,17 +134,7 @@ const InventoryItemForm = () => {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item`, { ...formValues, variants }, config);
       if (response.status === 200) {
         toast.success("Item added successfully.");
-        setFormValues({
-          name: "",
-          description: "",
-          costPrice: "",
-          sellingPrice: "",
-          ProductsHsn: "",
-          qtyType: "",
-          categoryId: "",
-          subcategoryId: "",
-          quantity: "",
-        });
+        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", });
         setVariants([]);
       }
     } catch (error) {
@@ -201,27 +162,13 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
-                          <Input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Enter item name"
-                            value={formValues.name}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="description">Item Description</Label>
-                          <Input
-                            type="text"
-                            id="description"
-                            name="description"
-                            placeholder="Enter item description"
-                            value={formValues.description}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     
@@ -230,13 +177,7 @@ const InventoryItemForm = () => {
                     <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
-                          <Input
-                            type="select"
-                            id="categoryId"
-                            name="categoryId"
-                            value={formValues.categoryId}
-                            onChange={handleCategory}
-                          >
+                          <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleCategory} >
                             <option value="">Select Category</option>
                             {categories.map(category => (
                               <option key={category._id} value={category._id}>
@@ -249,13 +190,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="subcategoryId">Subcategory</Label>
-                          <Input
-                            type="select"
-                            id="subcategoryId"
-                            name="subcategoryId"
-                            value={formValues.subcategoryId}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange} >
                             <option value="">Select Subcategory</option>
                             {subcategories.map(subcategory => (
                               <option key={subcategory._id} value={subcategory._id}>
@@ -271,27 +206,13 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="costPrice">Cost Price</Label>
-                          <Input
-                            type="number"
-                            id="costPrice"
-                            name="costPrice"
-                            placeholder="Enter cost price"
-                            value={formValues.costPrice}
-                            onChange={handleChange}
-                          />
+                          <Input type="number" id="costPrice" name="costPrice" placeholder="Enter cost price" value={formValues.costPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="sellingPrice">Selling Price</Label>
-                          <Input
-                            type="number"
-                            id="sellingPrice"
-                            name="sellingPrice"
-                            placeholder="Enter selling price"
-                            value={formValues.sellingPrice}
-                            onChange={handleChange}
-                          />
+                          <Input type="number" id="sellingPrice" name="sellingPrice" placeholder="Enter selling price" value={formValues.sellingPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -299,13 +220,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="qtyType">Unit Type</Label>
-                          <Input
-                            type="select"
-                            id="qtyType"
-                            name="qtyType"
-                            value={formValues.qtyType}
-                            onChange={handleChange}
-                          >
+                          <Input type="select" id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} >
                             <option value="">Select Unit Type</option>
                             <option value="litres">Litres</option>
                             <option value="kg">Kilograms</option>
@@ -319,43 +234,21 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="quantity">Quantity In Stock</Label>
-                          <Input
-                            type="number"
-                            id="quantity"
-                            name="quantity"
-                            placeholder="Enter quantity in stock"
-                            value={formValues.quantity}
-                            onChange={handleChange}
-                          />
+                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity in stock" value={formValues.quantity} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
-                     
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductsHsn">HSN Code</Label>
-                          <Input
-                            type="text"
-                            id="ProductsHsn"
-                            name="ProductsHsn"
-                            placeholder="Enter HSN code"
-                            value={formValues.ProductsHsn}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="ProductsHsn" name="ProductsHsn" placeholder="Enter HSN code" value={formValues.ProductsHsn} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="brand">Brand</Label>
-                          <Input
-                            type="text"
-                            id="brand"
-                            name="brand"
-                            placeholder="Enter brand"
-                            value={formValues.brand}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="brand" name="brand" placeholder="Enter brand" value={formValues.brand} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -363,114 +256,27 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="manufacturer">Manufacturer</Label>
-                          <Input
-                            type="text"
-                            id="manufacturer"
-                            name="manufacturer"
-                            placeholder="Enter manufacturer"
-                            value={formValues.manufacturer}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="manufacturer" name="manufacturer" placeholder="Enter manufacturer" value={formValues.manufacturer} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="supplier">Supplier</Label>
-                          <Input
-                            type="text"
-                            id="supplier"
-                            name="supplier"
-                            placeholder="Enter supplier"
-                            value={formValues.supplier}
-                            onChange={handleChange}
-                          />
+                          <Input type="text" id="supplier" name="supplier" placeholder="Enter supplier" value={formValues.supplier} onChange={handleChange}/>
                         </FormGroup>
                       </Col>
                     </Row>
-
-                    <div className=" d-flex gap-2 justify-content-center mt-4">
-                      <Button color="info" onClick={toggleModal}>
-                        Add Variant
-                      </Button>
-                      <Button color="primary" type="submit" disabled={loading}>
-                        {loading ? "Saving..." : "Save Item"}
-                      </Button>
-                    </div>
+                  <div className=" d-flex gap-2 justify-content-center mt-4">
+                    <Button color="info" onClick={toggleModal}>Add Variant</Button>
+                    <Button color="primary" type="submit" disabled={loading}> {loading ? "Saving..." : "Save Item"} </Button>
+                  </div>
                   </form>
                 </CardBody>
               </Card>
             </Col>
           </Row>
 
-          <Modal isOpen={modal} toggle={toggleModal}>
-            <ModalHeader toggle={toggleModal}>Add Variant</ModalHeader>
-            <ModalBody>
-              <FormGroup>
-                <Label for="variationType">Variant Type</Label>
-                <Input
-                  type="text"
-                  id="variationType"
-                  name="variationType"
-                  value={variant.variationType}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="optionLabel">Option Label</Label>
-                <Input
-                  type="text"
-                  id="optionLabel"
-                  name="optionLabel"
-                  value={variant.optionLabel}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="priceAdjustment">Price Adjustment</Label>
-                <Input
-                  type="number"
-                  id="priceAdjustment"
-                  name="priceAdjustment"
-                  value={variant.priceAdjustment}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="stock">Stock</Label>
-                <Input
-                  type="number"
-                  id="stock"
-                  name="stock"
-                  value={variant.stock}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="sku">SKU</Label>
-                <Input
-                  type="text"
-                  id="sku"
-                  name="sku"
-                  value={variant.sku}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="barcode">Barcode</Label>
-                <Input
-                  type="text"
-                  id="barcode"
-                  name="barcode"
-                  value={variant.barcode}
-                  onChange={handleVariantChange}
-                />
-              </FormGroup>
-            </ModalBody>
-            <ModalFooter>
-              <Button color="primary" onClick={addVariant}>Add Variant</Button>
-              <Button color="secondary" onClick={toggleModal}>Cancel</Button>
-            </ModalFooter>
-          </Modal>
+          <VariantModal modal={modal} toggleModal={toggleModal} variant={variant} handleVariantChange={handleVariantChange} addVariant={addVariant}/>
         </Container>
       </div>
     </React.Fragment>
