@@ -6,6 +6,12 @@ const VariantMaster = require('../schemas/mastervariant.schema');
 
 let inventoryServices = {};
 
+
+// CALCULATE STOCK FUNCTION FOR REUSABILITY
+const calculateStock = (variants) => {
+    return variants.reduce((sum, variant) => sum + (variant.stock || 0), 0 )
+}
+
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
     const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
@@ -27,16 +33,16 @@ inventoryServices.createItem = async (userId, body) => {
 
     if(subcategoryId){
         const subcategory = await Category.findOne({_id: subcategoryId})
-        console.log(subcategory, "subcategory")
         if (!subcategory || String(subcategory.parentId) !== String(categoryId)) {
             throw new Error('Invalid subcategory or subcategory does not belong to the parent category');
         }
     }
 
+    const totalStock = calculateStock(variants)
     const newItem = new InventoryItem({
         name,
         description,
-        quantity,
+        quantity: totalStock,
         qtyType,
         supplier,
         manufacturer,
