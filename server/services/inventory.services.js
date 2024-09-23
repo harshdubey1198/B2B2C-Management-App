@@ -9,6 +9,7 @@ let inventoryServices = {};
 
 // CALCULATE STOCK FUNCTION FOR REUSABILITY
 const calculateStock = (variants) => {
+    console.log(variants, "varianst")
     return variants.reduce((sum, variant) => sum + (variant.stock || 0), 0 )
 }
 
@@ -107,6 +108,7 @@ inventoryServices.updateItem = async (id, body) => {
         }
     }
 
+    let totalStock = existingItem.quantity;
     if(variants && variants.length > 0){
         for (const variant of variants){
             const {_id, price, optionLabel, stock, sku, barcode} = variant;
@@ -124,11 +126,13 @@ inventoryServices.updateItem = async (id, body) => {
             )
         }
     }
+    const updateItem = await InventoryItem.findById(id);
+    totalStock = calculateStock(updateItem.variants);
     const updatedItem = await InventoryItem.findByIdAndUpdate(
         id,
         {   name,
             description,
-            quantity,
+            quantity: totalStock,
             qtyType,
             supplier,
             manufacturer,
