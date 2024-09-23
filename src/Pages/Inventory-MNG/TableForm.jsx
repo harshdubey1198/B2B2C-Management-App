@@ -131,7 +131,7 @@ const InventoryItemForm = () => {
       },
     };
     try {
-      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item`, { ...formValues, variants }, config);
+      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
       if (response.status === 200) {
         toast.success("Item added successfully.");
         setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", });
@@ -271,6 +271,35 @@ const InventoryItemForm = () => {
                     <Button color="primary" type="submit" disabled={loading}> {loading ? "Saving..." : "Save Item"} </Button>
                   </div>
                   </form>
+                  {variants.length > 0 && (
+                  <div className="mt-4">
+                    <h5 className="font-size-16 text-muted">Added Variants</h5>
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Variation Type</th>
+                          <th>Option Label</th>
+                          <th>Price Adjustment</th>
+                          <th>Stock</th>
+                          <th>SKU</th>
+                          <th>Barcode</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {variants.map((variant, index) => (
+                          <tr key={index}>
+                            <td>{variant.variationType}</td>
+                            <td>{variant.optionLabel}</td>
+                            <td>{variant.priceAdjustment}</td>
+                            <td>{variant.stock}</td>
+                            <td>{variant.sku}</td>
+                            <td>{variant.barcode}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
                 </CardBody>
               </Card>
             </Col>

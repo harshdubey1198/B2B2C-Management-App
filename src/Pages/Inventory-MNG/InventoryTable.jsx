@@ -9,6 +9,7 @@ function InventoryTable() {
   const [modalOpen, setModalOpen] = useState(false);
 
   const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -18,7 +19,7 @@ function InventoryTable() {
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/inventory/get-items', config);
+        const response = await axios.get(`http://localhost:8000/api/inventory/get-items/${userId}`, config);
         setInventoryData(response.data); 
       } catch (error) {
         console.error('Error fetching inventory data:', error);
