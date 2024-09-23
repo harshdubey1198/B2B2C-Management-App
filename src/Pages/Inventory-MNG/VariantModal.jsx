@@ -4,7 +4,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Bu
 const VariantModal = ({ modal, toggleModal, variant, handleVariantChange, addVariant }) => {
   return (
     <Modal isOpen={modal} toggle={toggleModal}>
-      <ModalHeader toggle={toggleModal}>Add Variant</ModalHeader>
+      <ModalHeader toggle={toggleModal}>{variant.variationType ? "Edit Variant" : "Add Variant"}</ModalHeader>
       <ModalBody>
         <FormGroup>
           <Label for="variationType">Variant Type</Label>
@@ -32,8 +32,12 @@ const VariantModal = ({ modal, toggleModal, variant, handleVariantChange, addVar
         </FormGroup>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={addVariant}>Add Variant</Button>
-        <Button color="secondary" onClick={toggleModal}>Cancel</Button>
+        <Button color="primary" onClick={addVariant}>
+          {variant.variationType ? "Update Variant" : "Add Variant"}
+        </Button>{" "}
+        <Button color="secondary" onClick={toggleModal}>
+          Cancel
+        </Button>
       </ModalFooter>
     </Modal>
   );
