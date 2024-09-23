@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Modal, ModalHeader, ModalBody, Button } from 'reactstrap';
+import { Table, Modal, ModalHeader, ModalBody, Button, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios'; 
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ function InventoryTable() {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
   const [variantIndex, setVariantIndex] = useState(null);
-  const [trigger, setTrigger] = useState(0)
+  const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
 
@@ -44,13 +44,13 @@ function InventoryTable() {
 
   const handleVariantChange = (e) => {
     const { name, value } = e.target;
-    setVariant((prevState) => ({ ...prevState, [name]: value }));
+    setVariant((prevState) => ({ ...prevState, [name]: value })); 
   };
 
   const handleDeleteInventory = async (item) => {
     try {
       await axios.delete(`http://localhost:8000/api/inventory/delete-item/${item._id}`, config);
-      setTrigger(prev => prev + 1)
+      setTrigger(prev => prev + 1);
     } catch (error) {
       console.error('Error deleting Inventory:', error);
     }
@@ -58,28 +58,15 @@ function InventoryTable() {
 
   const addOrUpdateVariant = async () => {
     if (variant.variationType && variant.optionLabel && variant.price && variant.stock && variant.sku && variant.barcode) {
-      if (variantIndex !== null) {
-        const updatedVariants = [...selectedItem.variants];
-        updatedVariants[variantIndex] = variant;
-        try {
-          await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
-          setSelectedItem({ ...selectedItem, variants: updatedVariants });
-          toast.success("Variant updated successfully!");
-        } catch (error) {
-          console.error('Error updating variant:', error);
-        }
-      } else {
-        try {
-          await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
-          setSelectedItem({ ...selectedItem, variants: [...selectedItem.variants, variant] });
-          toast.success("Variant added successfully!");
-        } catch (error) {
-          console.error('Error adding variant:', error);
-        }
+      try {
+        await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
+        setSelectedItem({ ...selectedItem, variants: [...selectedItem.variants, variant] });
+        toast.success("Variant added successfully!");
+      } catch (error) {
+        console.error('Error adding variant:', error);
       }
-
+  
       setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
-      setVariantIndex(null);
       setVariantModalOpen(false);
     } else {
       toast.error("Please fill in all variant details");
@@ -101,11 +88,22 @@ function InventoryTable() {
     }
   };
 
+  const updateItem = async (updatedFields) => {
+    try {
+      await axios.put(`http://localhost:8000/api/inventory/update-item/${selectedItem._id}`, updatedFields, config);
+      setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
+      toast.success("Item updated successfully!");
+      setModalOpen(false);
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Table" />
-
+    
         <div className="table-responsive">
           <Table bordered className="mb-0">
             <thead>
@@ -151,68 +149,165 @@ function InventoryTable() {
         <Modal modalClassName="custom-modal-width" isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
           <ModalHeader toggle={() => setModalOpen(!modalOpen)}> {selectedItem?.name} Details </ModalHeader>
           <ModalBody>
-            {selectedItem && (
-              <div>
-                <p><strong>Description:</strong> {selectedItem.description}</p>
-                <p><strong>Quantity:</strong> {selectedItem.quantity} {selectedItem.qtyType}</p>
-                <p><strong>Brand:</strong> {selectedItem.brand}</p>
-                <p><strong>Cost Price:</strong> ${selectedItem.costPrice?.toFixed(2)}</p>
-                <p><strong>Selling Price:</strong> ${selectedItem.sellingPrice?.toFixed(2)}</p>
-                <p><strong>Supplier:</strong> {selectedItem.supplier}</p>
-                <p><strong>Manufacturer:</strong> {selectedItem.manufacturer}</p>
-                <p><strong>HSN Code:</strong> {selectedItem.ProductHsn}</p>
+  {selectedItem && (
+    <div>
+      <Row>
+        <Col md={6}>
+          <label><strong>Description:</strong></label>
+          <input 
+            type="text" 
+            value={selectedItem.description} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, description: e.target.value })} 
+            className="form-control" 
+          />
+        </Col>
+        <Col md={6}>
+            <label><strong>Quantity Type:</strong></label>
+            <input 
+              type="number" 
+              value={selectedItem.quantity} 
+              onChange={(e) => setSelectedItem({ ...selectedItem, quantity: e.target.value })} 
+              className="form-control" 
+            />
+            <select 
+              id="qtyType" 
+              name="qtyType" 
+              value={selectedItem.qtyType} 
+              onChange={(e) => setSelectedItem({ ...selectedItem, qtyType: e.target.value })} 
+              className="form-control"
+            >
+              <option value="">Select Unit Type</option>
+              <option value="litres">Litres</option>
+              <option value="kg">Kilograms</option>
+              <option value="packets">Packets</option>
+              <option value="pieces">Pieces</option>
+              <option value="single unit">Single Unit</option>
+              <option value="gm">Grams</option>
+            </select>
+          </Col>
 
-                <div>
-                  <strong>Variants:</strong>
-                  {selectedItem.variants.length > 0 ? (
-                    <Table bordered className="mt-3">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Variation Type</th>
-                          <th>Option Label</th>
-                          <th>Price ⬆️</th>
-                          <th>Stock</th>
-                          <th>SKU</th>
-                          <th>Barcode</th>
-                          <th>Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {selectedItem.variants.map((variant, vIndex) => (
-                          <tr key={vIndex}>
-                            <td>{vIndex + 1}</td>
-                            <td>{variant.variationType}</td>
-                            <td>{variant.optionLabel}</td>
-                            <td>${variant.price}</td>
-                            <td>{variant.stock}</td>
-                            <td>{variant.sku}</td>
-                            <td>{variant.barcode}</td>
-                            <td>
-                              <Button color="danger" onClick={() => deleteVariant(variant._id)}>Delete</Button>
-                              <Button color="warning" onClick={() => { 
-                                setVariant(variant);
-                                setVariantIndex(vIndex);
-                                setVariantModalOpen(true);
-                              }}>Edit</Button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  ) : (
-                    <p>No Variants</p>
-                  )}
-                </div>
+      </Row>
+      <Row>
+        <Col md={6}>
+          <label><strong>Brand:</strong></label>
+          <input 
+            type="text" 
+            value={selectedItem.brand} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, brand: e.target.value })} 
+            className="form-control" 
+          />
+        </Col>
+        <Col md={6}>
+          <label><strong>Cost Price:</strong></label>
+          <input 
+            type="number" 
+            value={selectedItem.costPrice} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, costPrice: parseFloat(e.target.value) })} 
+            className="form-control" 
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={6}>
+          <label><strong>Selling Price:</strong></label>
+          <input 
+            type="number" 
+            value={selectedItem.sellingPrice} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, sellingPrice: parseFloat(e.target.value) })} 
+            className="form-control" 
+          />
+        </Col>
+        <Col md={6}>
+          <label><strong>Supplier:</strong></label>
+          <input 
+            type="text" 
+            value={selectedItem.supplier} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, supplier: e.target.value })} 
+            className="form-control" 
+          />
+        </Col>
+      </Row>
+      <Row>
+        <Col md={6}>
+          <label><strong>Manufacturer:</strong></label>
+          <input 
+            type="text" 
+            value={selectedItem.manufacturer} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, manufacturer: e.target.value })} 
+            className="form-control" 
+          />
+        </Col>
+        <Col md={6}>
+          <label><strong>HSN Code:</strong></label>
+          <input 
+            type="text" 
+            value={selectedItem.ProductHsn} 
+            onChange={(e) => setSelectedItem({ ...selectedItem, ProductHsn: e.target.value })} 
+            className="form-control" 
+          />
+        </Col>
+      </Row>
 
-                <Button color="primary" onClick={() => { 
-                  setVariantModalOpen(true); 
-                  setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
-                  setVariantIndex(null);
-                }}>Add Variant</Button>
-              </div>
-            )}
-          </ModalBody>
+      <Button color="primary" onClick={() => updateItem({
+        name: selectedItem.name,
+        description: selectedItem.description,
+        qtyType: selectedItem.qtyType,
+        supplier: selectedItem.supplier,
+        manufacturer: selectedItem.manufacturer,
+        brand: selectedItem.brand,
+        costPrice: selectedItem.costPrice,
+        sellingPrice: selectedItem.sellingPrice,
+      })}>
+        Update Item
+      </Button>
+
+      <div>
+        <strong>Variants:</strong>
+        {selectedItem.variants.length > 0 ? (
+          <Table bordered className="mt-3">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Variation Type</th>
+                <th>Option Label</th>
+                <th>Price ⬆️</th>
+                <th>Stock</th>
+                <th>SKU</th>
+                <th>Barcode</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {selectedItem.variants.map((variant, vIndex) => (
+                <tr key={vIndex}>
+                  <td>{vIndex + 1}</td>
+                  <td>{variant.variationType}</td>
+                  <td>{variant.optionLabel}</td>
+                  <td>${variant.price}</td>
+                  <td>{variant.stock}</td>
+                  <td>{variant.sku}</td>
+                  <td>{variant.barcode}</td>
+                  <td>
+                    <Button color="danger" onClick={() => deleteVariant(variant._id)}>Delete</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <p>No Variants</p>
+        )}
+      </div>
+
+      <Button color="primary" onClick={() => { 
+        setVariantModalOpen(true); 
+        setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "" });
+        setVariantIndex(null);
+      }}>Add Variant</Button>
+    </div>
+  )}
+</ModalBody>
+
         </Modal>
 
         <VariantModal 
