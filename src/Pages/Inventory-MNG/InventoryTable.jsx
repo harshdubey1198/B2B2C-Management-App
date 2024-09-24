@@ -25,7 +25,7 @@ function InventoryTable() {
   useEffect(() => {
     const fetchInventoryData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/api/inventory/get-items/${userId}`, config);
+        const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${userId}`, config);
         setInventoryData(response.data); 
         
       } catch (error) {
@@ -33,9 +33,7 @@ function InventoryTable() {
       }
     };
 
-    const timeoutId = setTimeout(fetchInventoryData, 1000); 
-
-    return () => clearTimeout(timeoutId); 
+   fetchInventoryData();
   }, [userId, trigger]); 
 
   const handleViewDetails = (item) => {
@@ -50,7 +48,7 @@ function InventoryTable() {
 
   const handleDeleteInventory = async (item) => {
     try {
-      await axios.delete(`http://localhost:8000/api/inventory/delete-item/${item._id}`, config);
+      await axios.delete(`${process.env.REACT_APP_URL}/inventory/delete-item/${item._id}`, config);
       setTrigger(prev => prev + 1);
       // setModalOpen(!modalOpen);
     } catch (error) {
@@ -61,7 +59,7 @@ function InventoryTable() {
   const addOrUpdateVariant = async () => {
     if (variant.variationType && variant.optionLabel && variant.price && variant.stock && variant.sku && variant.barcode) {
       try {
-        await axios.put(`http://localhost:8000/api/inventory/add-variant/${selectedItem._id}`, variant, config);
+        await axios.put(`${process.env.REACT_APP_URL}/inventory/add-variant/${selectedItem._id}`, variant, config);
         setSelectedItem({ ...selectedItem, variants: [...selectedItem.variants, variant] });
         setTrigger(prev => prev + 1);
         setModalOpen(!modalOpen);
@@ -80,7 +78,7 @@ function InventoryTable() {
   const deleteVariant = async (variantId) => {
     if (selectedItem) {
       try {
-        await axios.delete(`http://localhost:8000/api/inventory/${selectedItem._id}/delete-variant/${variantId}`, config);
+        await axios.delete(`${process.env.REACT_APP_URL}/inventory/${selectedItem._id}/delete-variant/${variantId}`, config);
         setSelectedItem((prevState) => ({
           ...prevState,
           variants: prevState.variants.filter(v => v._id !== variantId),
@@ -96,7 +94,7 @@ function InventoryTable() {
 
   const updateItem = async (updatedFields) => {
     try {
-      await axios.put(`http://localhost:8000/api/inventory/update-item/${selectedItem._id}`, updatedFields, config);
+      await axios.put(`${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`, updatedFields, config);
       setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
       toast.success("Item updated successfully!");
       setModalOpen(!modalOpen);
@@ -134,12 +132,12 @@ function InventoryTable() {
                     <td>{item.brand}</td>
                     <td>${item.costPrice?.toFixed(2)}</td>
                     <td>${item.sellingPrice?.toFixed(2)}</td>
-                    <td>
+                    <td className='d-flex gap-2'>
                       <Button color="info" onClick={() => handleViewDetails(item)}>
                         View Details
                       </Button>
                       <Button color="danger" onClick={() => handleDeleteInventory(item)}>
-                        Delete Inventory
+                        Delete 
                       </Button>
                     </td>
                   </tr>
