@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormGroup, Label, Input, Row, Col } from "reactstrap";
+import { FormGroup, Label, Input, Row, Col, Form } from "reactstrap";
 // import InvoiceItems from "./InvoiceItems";
 
 const countries = {
@@ -64,6 +64,18 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 id="customerNearby"
                 placeholder='Nearby Landmark'
                 value={invoiceData.customerNearby}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="customerEmail">Customer Email</Label>
+              <Input
+                type="email"
+                name="customerEmail"
+                id="customerEmail"
+                placeholder='Customer Email'
+                value={invoiceData.customerEmail}
                 onChange={handleInputChange}
                 required
               />
@@ -135,7 +147,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
             <FormGroup>
               <Label for="customerPhone">Customer Phone</Label>
               <Input
-                type="text"
+                type="number"
                 name="customerPhone"
                 id="customerPhone"
                 placeholder='Customer Phone'
