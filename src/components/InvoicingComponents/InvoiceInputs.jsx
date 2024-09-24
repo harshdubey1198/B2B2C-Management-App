@@ -45,13 +45,13 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="customerHouse">Customer House No.</Label>
+              <Label for="customerAddress.h_no">Customer House No.</Label>
               <Input
                 type="text"
-                name="customerHouse"
-                id="customerHouse"
+                name="customerAddress.h_no"
+                id="customerAddress.h_no"
                 placeholder='House No.'
-                value={invoiceData.customerHouse}
+                value={invoiceData.customerAddress.h_no}
                 onChange={handleInputChange}
                 required
               />
@@ -95,25 +95,25 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="customerCity">City</Label>
+              <Label for="customerAddress.city">City</Label>
               <Input
                 type="text"
-                name="customerCity"
-                id="customerCity"
+                name="customerAddress.city"
+                id="customerAddress.city"
                 placeholder='City'
-                value={invoiceData.customerCity}
+                value={invoiceData.customerAddress.city}
                 onChange={handleInputChange}
                 required
               />
             </FormGroup>
             <FormGroup>
-              <Label for="customerZip">Zip Code</Label>
+              <Label for="customerAddress.zip_code">Zip Code</Label>
               <Input
                 type="text"
-                name="customerZip"
-                id="customerZip"
+                name="customerAddress.zip_code"
+                id="customerAddress.zip_code"
                 placeholder='Zip Code'
-                value={invoiceData.customerZip}
+                value={invoiceData.customerAddress.zip_code}
                 onChange={handleInputChange}
                 required
               />
@@ -121,25 +121,25 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
           </Col>
           <Col md={3}>
             <FormGroup>
-              <Label for="customerState">State</Label>
+              <Label for="customerAddress.state">State</Label>
               <Input
                 type="text"
-                name="customerState"
-                id="customerState"
+                name="customerAddress.state"
+                id="customerAddress.state"
                 placeholder='State'
-                value={invoiceData.customerState}
+                value={invoiceData.customerAddress.state}
                 onChange={handleInputChange}
                 required
               />
             </FormGroup>
             <FormGroup>
-              <Label for="customerCountry">Country</Label>
+              <Label for="customerAddress.country">Country</Label>
               <Input
                 type="text"
-                name="customerCountry"
-                id="customerCountry"
+                name="customerAddress.country"
+                id="customerAddress.country"
                 placeholder='Country'
-                value={invoiceData.customerCountry}
+                value={invoiceData.customerAddress.country}
                 onChange={handleInputChange}
                 required
               />

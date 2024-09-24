@@ -13,6 +13,8 @@ const invoiceSchema = new Schema({
         zip_code: { type: String },
         country: { type: String }
     },
+    invoiceType: { type: String },
+    invoiceSubType : {invoiceSubType},
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
