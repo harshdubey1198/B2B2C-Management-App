@@ -19,6 +19,7 @@ const paymentRoute = require("./routers/payment.router");
 const categoryRoute = require("./routers/category.router")
 const inventoryRoute = require("./routers/inventory.router")
 const customerRoute = require("./routers/customer.router")
+const invoiceRoute = require("./routers/invoice.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -26,6 +27,7 @@ app.use("/api/payment", paymentRoute);
 app.use("/api/category", categoryRoute);
 app.use("/api/inventory", inventoryRoute);
 app.use("/api/customer", customerRoute);
+app.use("/api/invoice", invoiceRoute);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
