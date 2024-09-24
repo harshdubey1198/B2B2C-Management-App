@@ -3,7 +3,18 @@ const Schema = mongoose.Schema;
 
 const invoiceSchema = new Schema({
     invoiceNumber: { type: String, required: true },
-    customerId: { type: Schema.Types.ObjectId, ref: 'User',}, 
+    customerName: { type: String, required: true },     
+    customerEmail: { type: String, required: true },    
+    customerPhone: { type: String },                     
+    customerAddress: {                                  
+        h_no: { type: String },
+        city: { type: String },
+        state: { type: String },
+        zip_code: { type: String },
+        country: { type: String }
+    },
+    invoiceType: { type: String },
+    invoiceSubType : {invoiceSubType},
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
