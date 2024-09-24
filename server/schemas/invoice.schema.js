@@ -14,7 +14,7 @@ const invoiceSchema = new Schema({
         country: { type: String }
     },
     invoiceType: { type: String },
-    invoiceSubType : {invoiceSubType},
+    // invoiceSubType : {invoiceSubType},
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
