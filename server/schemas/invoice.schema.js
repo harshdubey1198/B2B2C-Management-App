@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const invoiceSchema = new Schema({
     invoiceNumber: { type: String, required: true },
-    customerId: { type: Schema.Types.ObjectId, ref: 'User',}, 
+    customerId: { type: Schema.Types.ObjectId, ref: 'Customer',}, 
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
