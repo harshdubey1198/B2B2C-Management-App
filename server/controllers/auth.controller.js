@@ -107,6 +107,15 @@ authController.getCompany = async (req, res) => {
     res.status(400).json({ error: error.toString() });
   }
 };
+authController.getfirm = async (req, res) => {
+  try {
+    const response = await authService.getfirm(req.params.id);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log("Error Getting Account", error);
+    res.status(400).json({ error: error.toString() });
+  }
+};
 
 // UPDATE ACCOUNT
 // authController.updateAccount = async (req, res) => {

@@ -338,6 +338,15 @@ authService.getCompany  = async (id) => {
         return Promise.reject('Error occured during fetching the company data.');
     }
 }
+authService.getfirm  = async (id) => {
+    try {
+        const data = User.find({_id: id});
+        return data
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Error occured during fetching the company data.');
+    }
+}
 
 // update account 
 // authService.updateAccount = async (id, req) => {
