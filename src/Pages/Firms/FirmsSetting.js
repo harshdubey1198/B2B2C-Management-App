@@ -16,7 +16,12 @@ function FirmSettings() {
   // const [success, setSuccess] = useState("");
   const [authUser, setAuthUser] = useState(null);
   const [trigger, setTrigger] = useState(0)
-
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
   useEffect(() => {
     const fetchAuthUser = () => {
       const user = JSON.parse(localStorage.getItem("authUser"));
@@ -30,7 +35,7 @@ function FirmSettings() {
     if (authUser?.response?.role === "client_admin") {
       const fetchFirms = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`);
+          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`,config);
           const firms = response || [];
           setFirmsData(firms);
           if (firms.length > 0 && !selectedFirmId) {
@@ -49,13 +54,13 @@ function FirmSettings() {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`);
-          const firmData = response || {};
+          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authUser.response.adminId}`,config);
+          const firmData = response[0] || {};
+          // console.log(firmData);
           setFirmDetails({ ...firmData, address: firmData.address || [] });
 
         } catch (error) {
           console.error("Error fetching firm data:", error.response?.data || error.message);
-          // setError("Failed to fetch firm data");
           toast.error("Failed to fetch firm data");
         }
       };
@@ -106,19 +111,39 @@ function FirmSettings() {
     });
   };
 // console.log(firmDetails._id);
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails);
-      toast.success("Firm details updated successfully!");
-      setTrigger(prev => prev + 1)
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails , config);
+    toast.success("Firm details updated successfully!");
+
+    // Increment trigger to refetch data
+    setTrigger(prev => prev + 1);
+    
+    // Refetch firm details for firm_admin after successful update
+    if (authUser?.response?.role === "firm_admin") {
+      const fetchFirmAdminData = async () => {
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authUser.response.adminId}`, config);
+          const firmData = response[0] || {};
+          setFirmDetails({ ...firmData, address: firmData.address || [] });
+        } catch (error) {
+          console.error("Error fetching updated firm data:", error.response?.data || error.message);
+          toast.error("Failed to fetch updated firm data");
+        }
+      };
+      fetchFirmAdminData();
+    } else {
+      // Fetch updated data for client_admin
       handleFirmChange(selectedFirmId); 
-    } catch (error) {
-      console.error("Error updating firm details:", error.response?.data || error.message);
-      // setError("Failed to update firm details");
-      toast.error("Failed to update firm details");
     }
-  };
+    
+  } catch (error) {
+    console.error("Error updating firm details:", error.response?.data || error.message);
+    toast.error("Failed to update firm details");
+  }
+};
+
   
   return (
     <React.Fragment>
