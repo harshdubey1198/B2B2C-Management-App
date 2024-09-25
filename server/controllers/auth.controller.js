@@ -78,7 +78,7 @@ authController.resetPassword = async (req, res) => {
 // CREATE USER
 authController.registration = async (req, res) => {
   try {
-    const response = await authService.registration(req.params.id, req);
+    const response = await authService.registration(req.params.id, req.body);
     res.status(200).json(response);
   } catch (error) {
     console.log("Error Creating User", error);

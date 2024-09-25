@@ -313,9 +313,11 @@ authService.registration = async (id, data) => {
                 return Promise.reject("There is already a firm admin for this firm!");
             }
         }
+        
     
         const encryptedPassword = await PasswordService.passwordHash(data.password);
         data.password = encryptedPassword;
+        console.log('Registration Data:', data.password); // Log the data
         data.isActive = true;
         data.adminId = id;
   
