@@ -26,15 +26,16 @@ const Index = () => {
     accountNumber: "",
     gstin: "",
     customerName: '',
-    customerAddress: '',
+    customerAddress: { h_no: "", nearby: "", district: "", city: "", state: "", country: "", zip: "" }, // Initialize with empty strings
     customerPhone: '',
-    customerEmail:'',
+    customerEmail: '',
     date: '',
     country: 'India',
     items: [],
     paymentLink: '',
     id: ''
-  });
+});
+
   const [isCompanyModalOpen, setCompanyModalOpen] = useState(false);
   const toggleCompanyModal = () => setCompanyModalOpen(!isCompanyModalOpen);
   const [fakeItems, setFakeItems] = useState([]);
@@ -70,9 +71,25 @@ const Index = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setInvoiceData(prevState => ({ ...prevState, [name]: value }));
+  
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setInvoiceData(prevData => ({
+        ...prevData,
+        [parent]: {
+          ...prevData[parent],
+          [child]: value,
+        },
+      }));
+    } else {
+      setInvoiceData(prevData => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
   };
-
+  
+  
   const handleAddressChange = (index, e) => {
     const { name, value } = e.target;
     const updatedAddresses = [...invoiceData.companyAddresses];
@@ -149,7 +166,7 @@ const Index = () => {
       accountNumber: "",
       branchName: "",
       customerName: '',
-      customerAddress: '',
+      customerAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
       customerEmail: '',
       customerPhone: '',
       date: '',

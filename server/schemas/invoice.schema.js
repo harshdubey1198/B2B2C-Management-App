@@ -9,9 +9,11 @@ const invoiceSchema = new Schema({
     customerAddress: {                                  
         h_no: { type: String },
         city: { type: String },
+        district : {type:String},
         state: { type: String },
         zip_code: { type: String },
-        country: { type: String }
+        country: { type: String },
+        nearby : {type:String}
     },
     invoiceType: { type: String },
     invoiceSubType : {invoiceSubType},
