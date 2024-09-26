@@ -11,7 +11,7 @@ const CompanyModal = ({ isOpen, toggle, invoiceData, handleInputChange, handleAd
         <Modal isOpen={isOpen} toggle={toggle} style={modalStyle}>
             <ModalHeader style={{ textAlign: "center" }} toggle={toggle}>Company Details</ModalHeader>
             <ModalBody>
-                {invoiceData.companyAddresses.map((address, index) => (
+                {invoiceData.companyAddress.map((address, index) => (
                     <div key={index}>
                         <Row>
                             <Col md={6}>
