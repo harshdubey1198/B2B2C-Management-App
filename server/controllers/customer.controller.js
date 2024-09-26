@@ -36,4 +36,15 @@ customerController.getCustomer = async (req, res) => {
     }
 };
 
+// DELETE CUSTOMER
+customerController.deleteCustomer = async (req, res) => {
+    try {
+        const customer = await CustomerServices.deleteCustomer(req.params.id);
+        return res.status(200).json(createResult("Customer deleted successfully", customer));
+    } catch (error) {
+        console.log(error, "error deleting customer")
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 module.exports = customerController;

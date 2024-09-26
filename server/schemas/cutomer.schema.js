@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const CustomerSchema = new Schema({
     firstName: { type: String, required: true },
@@ -18,7 +19,9 @@ const CustomerSchema = new Schema({
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, // Reference to the firm (if needed for tracking)
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Reference to who added the customer
     isActive: { type: Boolean, default: true }, // To manage the status of the customer
-}, { timestamps: true });
+}, { timestamps: true, paranoid: true });
+
+CustomerSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
 
 const Customer = mongoose.model('Customer', CustomerSchema);
 module.exports = Customer;
