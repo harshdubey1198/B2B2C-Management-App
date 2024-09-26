@@ -57,13 +57,13 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               />
             </FormGroup>
             <FormGroup>
-              <Label for="customerNearby">Nearby Landmark</Label>
+              <Label for="customerAddress.nearby">Nearby Landmark</Label>
               <Input
                 type="text"
-                name="customerNearby"
-                id="customerNearby"
+                name="customerAddress.nearby"
+                id="customerAddress.nearby"
                 placeholder='Nearby Landmark'
-                value={invoiceData.customerNearby}
+                value={invoiceData.customerAddress.nearby}
                 onChange={handleInputChange}
                 required
               />
@@ -83,13 +83,13 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
           </Col>
           <Col md={3}>
             <FormGroup>
-              <Label for="customerDistrict">District</Label>
+              <Label for="customerAddress.district">District</Label>
               <Input
                 type="text"
-                name="customerDistrict"
-                id="customerDistrict"
+                name="customerAddress.district"
+                id="customerAddress.district"
                 placeholder='District'
-                value={invoiceData.customerDistrict}
+                value={invoiceData.customerAddress.district}
                 onChange={handleInputChange}
                 required
               />
