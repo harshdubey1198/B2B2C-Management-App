@@ -7,5 +7,6 @@ const customerController = require('../controllers/customer.controller')
 router.get('/search', tokenVerification, customerController.searchCustomer);
 router.get('/get-customers/:id', tokenVerification, customerController.getAllCustomers);
 router.get('/get-customer/:id', tokenVerification, customerController.getCustomer);
+router.delete('/delete-customer/:id', tokenVerification, customerController.deleteCustomer);
 
 module.exports = router;

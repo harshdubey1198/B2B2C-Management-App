@@ -62,4 +62,20 @@ customerServices.getCustomer = async (customerId) => {
   return customer
 }
 
+// CUSTOMER DELETED 
+customerServices.deleteCustomer = async (customerId) => {
+    const existingCustomer = await Customer.findOne({_id: customerId})
+    if (!existingCustomer) {
+        throw new Error('Customer not found');
+    }
+
+    const deletedCustomer = await Customer.findByIdAndUpdate(
+        {_id: customerId},
+        {deleted_at: Date.now()},
+        {new: true}
+    )
+    return deletedCustomer
+}
+
+
 module.exports = customerServices;
