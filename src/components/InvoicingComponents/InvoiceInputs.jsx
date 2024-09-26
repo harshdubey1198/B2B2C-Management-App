@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { FormGroup, Label, Input, Row, Col, Form } from "reactstrap";
+import { FormGroup, Label, Input, Row, Col } from "reactstrap";
+import useDebounce from "../../Hooks/UseDebounceHook";
+import axios from "axios";
 // import InvoiceItems from "./InvoiceItems";
 
 const countries = {
@@ -10,6 +12,32 @@ const countries = {
 };
 
 const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
+
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+
+  const searchCustomer = useDebounce(async (searchKey) => {
+    if (searchKey) {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_URL}/customer/search?q=${searchKey}&firmId=${firmId}`,
+          config
+        );
+        console.log("Search result: ", response.data);
+      } catch (error) {
+        console.error("Error searching customer:", error);
+      }
+    }
+  }, 500); 
+
   const getCurrentDate = () => {
     const today = new Date();
     const day = String(today.getDate()).padStart(2, '0');
@@ -19,6 +47,8 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
   };
 
   const [issueDate, setIssueDate] = useState(getCurrentDate());
+  const [searchKey, setSearchKey] = useState("")
+  const debouncedSearchTerm = useDebounce(searchKey, 500)
 
   useEffect(() => {
     if (!invoiceData.issueDate) {
@@ -26,10 +56,32 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
     }
   }, [issueDate, invoiceData.issueDate, handleInputChange]);
 
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchKey(value);
+    searchCustomer(value); 
+  };
+
   return (
     <>
       <div className="invoice-form">
-        <h3>Invoice Details</h3>
+        {/* Heading Row */}
+        <Row className="align-items-center mb-3">
+          <Col>
+            <h3>Invoice Details</h3>
+          </Col>
+          <Col className="text-right">
+            <FormGroup className="mb-0">
+              <Input
+                type="text"
+                placeholder="Search Customer Here..."
+                onChange={handleSearch}
+                className="search-input"
+              />
+            </FormGroup>
+          </Col>
+        </Row>
+
         <Row>
           <Col>
             <FormGroup>
@@ -37,7 +89,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               <Input
                 type="text"
                 name="customerName"
-                placeholder='Customer Name'
+                placeholder="Customer Name"
                 id="customerName"
                 value={invoiceData.customerName}
                 onChange={handleInputChange}
@@ -50,7 +102,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.h_no"
                 id="customerAddress.h_no"
-                placeholder='House No.'
+                placeholder="House No."
                 value={invoiceData.customerAddress.h_no}
                 onChange={handleInputChange}
                 required
@@ -62,7 +114,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.nearby"
                 id="customerAddress.nearby"
-                placeholder='Nearby Landmark'
+                placeholder="Nearby Landmark"
                 value={invoiceData.customerAddress.nearby}
                 onChange={handleInputChange}
                 required
@@ -74,7 +126,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="email"
                 name="customerEmail"
                 id="customerEmail"
-                placeholder='Customer Email'
+                placeholder="Customer Email"
                 value={invoiceData.customerEmail}
                 onChange={handleInputChange}
                 required
@@ -88,7 +140,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.district"
                 id="customerAddress.district"
-                placeholder='District'
+                placeholder="District"
                 value={invoiceData.customerAddress.district}
                 onChange={handleInputChange}
                 required
@@ -100,7 +152,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.city"
                 id="customerAddress.city"
-                placeholder='City'
+                placeholder="City"
                 value={invoiceData.customerAddress.city}
                 onChange={handleInputChange}
                 required
@@ -112,7 +164,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.zip_code"
                 id="customerAddress.zip_code"
-                placeholder='Zip Code'
+                placeholder="Zip Code"
                 value={invoiceData.customerAddress.zip_code}
                 onChange={handleInputChange}
                 required
@@ -126,7 +178,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.state"
                 id="customerAddress.state"
-                placeholder='State'
+                placeholder="State"
                 value={invoiceData.customerAddress.state}
                 onChange={handleInputChange}
                 required
@@ -138,7 +190,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="text"
                 name="customerAddress.country"
                 id="customerAddress.country"
-                placeholder='Country'
+                placeholder="Country"
                 value={invoiceData.customerAddress.country}
                 onChange={handleInputChange}
                 required
@@ -150,7 +202,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 type="number"
                 name="customerPhone"
                 id="customerPhone"
-                placeholder='Customer Phone'
+                placeholder="Customer Phone"
                 value={invoiceData.customerPhone}
                 onChange={handleInputChange}
                 required
@@ -214,8 +266,6 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
             </FormGroup>
           </Col>
         </Row>
-      
-       
       </div>
     </>
   );
