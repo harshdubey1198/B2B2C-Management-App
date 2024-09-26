@@ -9,11 +9,31 @@ customerController.searchCustomer = async (req, res) => {
         const searchQuery = req.query.q
         const firmId = req.query.firmId
         const customer = await CustomerServices.searchCustomer(searchQuery, firmId);
-        return res.status(200).json(createResult("Category created successfully", customer));
+        return res.status(200).json(createResult("Customer Searched Successfully", customer));
     } catch (error) {
         return res.status(400).json(createResult(null, null, error.message));
     }
 };
 
+// GET ALL CUSTOMER UNDER SPECIFIC FIRM
+customerController.getAllCustomers = async (req, res) => {
+    try {
+        const customers = await CustomerServices.getAllCustomers(req.params.id);
+        return res.status(200).json(createResult("Customers under firm fetched successfully", customers));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
+
+// GET SINGLE CUSTOMER DATA
+customerController.getCustomer = async (req, res) => {
+    try {
+        const customer = await CustomerServices.getCustomer(req.params.id);
+        return res.status(200).json(createResult("Fetched Customer data successfully", customer));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
 
 module.exports = customerController;
