@@ -44,10 +44,12 @@ const sliceDescription = (description = '', maxWords = 20) => {
 };
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
-    const { country, companyAddresses = [], customerState } = invoiceData;
+
+    console.log(invoiceData, "invoiceData")
+    const { country, companyAddress = [], customerState } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
 
-    const companyState = companyAddresses[0]?.state?.toLowerCase();
+    const companyState = companyAddress[0]?.state?.toLowerCase();
     const isSameState = companyState === customerState?.toLowerCase();
     
     const cgstSgstRate = isSameState ? taxRate / 2 : 0;
@@ -73,7 +75,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
-                    {companyAddresses.map((address, index) => (
+                    {companyAddress.map((address, index) => (
                         <div key={index}>
                             <p className="my-1">{address.h_no}, {address.nearby}, {address.district}</p>
                             <p className="my-1">{address.city}, {address.state}, {address.country}, {address.zip_code}</p>
@@ -95,7 +97,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                     <h4>Customer Details:</h4>
                     <p className="my-1">{invoiceData.customerName}</p>
                     <p className="my-1">{invoiceData.customerAddress.h_no}, {invoiceData.customerAddress.nearby}, {invoiceData.customerAddress.district}</p>
-                    <p className="my-1">{invoiceData.customerAddress.city}, {invoiceData.customerAddress.state}, {invoiceData.customerAddress.country}, {invoiceData.customerZip}</p>
+                    <p className="my-1">{invoiceData.customerAddress.city}, {invoiceData.customerAddress.state}, {invoiceData.customerAddress.country}, {invoiceData.customerAddress.zip_code}</p>
                     <p className="my-1">Phone : {invoiceData.customerPhone} | Email : {invoiceData.customerEmail}</p>
                 </div>
             </div>

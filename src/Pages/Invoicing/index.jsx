@@ -14,7 +14,7 @@ const Index = () => {
   const [companyData, setCompanyData] = useState({});
   const [invoiceData, setInvoiceData] = useState({
     companyName: "",
-    companyAddresses: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
+    companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
     companyLogo: "",
     companyPhone: "",
     companyEmail: "",
@@ -41,33 +41,44 @@ const Index = () => {
   const [fakeItems, setFakeItems] = useState([]);
   const printRef = useRef();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}/firmadmin/firmdata/${authuser?.response?._id}`)
+    axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authuser?.response?.adminId}`, config)
       .then((response) => {
-        const addresses = response.companyAddress || [];
-        setCompanyData(response);
+        const companyDetails = response[0];
+        const companyAddress = companyDetails.address ? companyDetails.address : [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }];
+        
+        setCompanyData(companyDetails);
+        
         setInvoiceData(prevData => ({
           ...prevData,
-          companyName: response.firmName,
-          companyAddresses: addresses.length > 0 ? addresses : [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
-          companyLogo: response.avatar,
-          companyPhone: response.firmPhone,
-          companyEmail: response.firmEmail,
-          gstin: response.gstin,
-          bankName: response.bankName,
-          IFSCCode: response.ifscCode,
-          accountNumber: response.accountNumber,
-          branchName: response.branchName
+          companyName: companyDetails.companyTitle,
+          companyAddress: companyAddress,
+          companyLogo: companyDetails.avatar,
+          companyPhone: companyDetails.companyMobile,
+          companyEmail: companyDetails.email,
+          gstin: companyDetails.gstin,
+          bankName: companyDetails.bankName,
+          IFSCCode: companyDetails.ifscCode,
+          accountNumber: companyDetails.accountNumber,
+          branchName: companyDetails.branchName,
         }));
       }).catch((error) => {
         console.log(error);
       });
-
+  
     const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"));
     setFakeItems(storedItemData || []);
-    // console.log(fakeItems);
   }, []);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -92,15 +103,15 @@ const Index = () => {
   
   const handleAddressChange = (index, e) => {
     const { name, value } = e.target;
-    const updatedAddresses = [...invoiceData.companyAddresses];
-    updatedAddresses[index][name] = value;
-    setInvoiceData(prevState => ({ ...prevState, companyAddresses: updatedAddresses }));
+    const updatedAddress = [...invoiceData.companyAddress];
+    updatedAddress[index][name] = value;
+    setInvoiceData(prevState => ({ ...prevState, companyAddress: updatedAddress }));
   };
 
   const removeAddress = (index) => {
-    const updatedAddresses = [...invoiceData.companyAddresses];
-    updatedAddresses.splice(index, 1);
-    setInvoiceData(prevState => ({ ...prevState, companyAddresses: updatedAddresses }));
+    const updatedAddress = [...invoiceData.companyAddress];
+    updatedAddress.splice(index, 1);
+    setInvoiceData(prevState => ({ ...prevState, companyAddress: updatedAddress }));
   };
 
   const handleFileChange = (e) => {
@@ -156,7 +167,7 @@ const Index = () => {
 
     setInvoiceData({
       companyName: "",
-      companyAddresses: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
+      companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
       companyLogo: "",
       companyPhone: "",
       companyEmail: "",
