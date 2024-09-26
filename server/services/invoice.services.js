@@ -65,5 +65,55 @@ invoiceServices.createInvoice = async (invoiceData) => {
   return savedInvoice;
 };
 
+// GET INVOICES IN A SINGLE FIRM
+invoiceServices.getInvoices = async (adminId) => {
+  const invoices = await Invoice.find({firmId:adminId})
+  .populate({
+    path: 'firmId',
+    select: "-password"
+  })
+  .populate({
+    path: 'createdBy',
+    select: "firstName lastName email"
+  });
+  if(!invoices){
+    throw new Error('No items found')
+  }
+  return invoices
+}
+
+
+//  GET SINGLE INVOICE DATA 
+invoiceServices.getInvoice = async (invoiceId) => {
+  const invoice = await Invoice.findOne({_id: invoiceId})
+  .populate({
+    path: 'firmId',
+    select: "-password"
+  })
+  .populate({
+    path: 'createdBy',
+    select: "firstName lastName email"
+  });
+  if(!invoice){
+    throw new Error('No items found')
+  }
+  return invoice
+}
+
+
+// DELETE INVOICE SUCCESSFULLY
+invoiceServices.deleteInvoice = async (invoiceId) => {
+  const existingInvoice = await Invoice.findOne({_id: invoiceId})
+  if(!existingInvoice){
+    throw new Error('No Invoices found')
+  }
+
+  const deletedInvoice = await Invoice.findOneAndUpdate(
+    {_id: invoiceId},
+    {deleted_at: Date.now()},
+    {new: true}
+  )
+  return deletedInvoice
+}
 
 module.exports = invoiceServices;

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const invoiceSchema = new Schema({
     invoiceNumber: { type: String, required: true },
@@ -33,7 +34,9 @@ const invoiceSchema = new Schema({
     status: { type: String, enum: ['paid', 'unpaid', 'partially paid'], default: 'unpaid' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     notes: { type: String }
-}, { timestamps: true });
+}, { timestamps: true, paranoid: true });
+
+invoiceSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
 
 const Invoice = mongoose.model('Invoice', invoiceSchema);
 module.exports = Invoice;
