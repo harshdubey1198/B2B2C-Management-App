@@ -1,3 +1,4 @@
+const { customerFilter } = require("../filter");
 const Customer = require("../schemas/cutomer.schema");
 
 const customerServices = {};
@@ -6,12 +7,11 @@ customerServices.searchCustomer = async (searchQuery, firmId) => {
   if (!searchQuery || !firmId) {
     throw new Error("Search query and firmId are required");
   }
+
+  const filter = customerFilter(searchQuery)
   const customer = await Customer.find({
     firmId,
-    $or: [
-      { firstName: { $regex: searchQuery, $options: "i" } },
-      { email: { $regex: searchQuery, $options: "i" } },
-    ],
+    ...filter
   }).limit(10);
 
   if (customer.length === 0) {
