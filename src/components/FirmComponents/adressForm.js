@@ -3,7 +3,6 @@ import { FormGroup, Label, Input, Col, Row } from "reactstrap";
 import Select from "react-select";
 import Autosuggest from "react-autosuggest";
 
-// Dummy data for suggestions (you should replace these with actual API data)
 const countryOptions = [
   { value: "India", label: "India" },
   { value: "Malaysia", label: "Malaysia" },
@@ -26,7 +25,6 @@ const citySuggestions = [
   { city: "Mumbai" },
 ];
 
-// Function to get city suggestions
 const getCitySuggestions = (value) => {
   const inputValue = value.trim().toLowerCase();
   return inputValue.length === 0
@@ -36,7 +34,7 @@ const getCitySuggestions = (value) => {
       );
 };
 
-const AddressForm = ({ address = {}, handleAddressChange }) => {
+const AddressForm = ({ address = {}, handleAddressChange , index }) => {
   const [city, setCity] = React.useState(address.city || "");
   const [citySuggestionsList, setCitySuggestionsList] = React.useState([]);
 
@@ -49,13 +47,25 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
     handleAddressChange({
       target: { name: "city", value: newValue },
     });
+};
+
+
+const handleCountryChange = (selectedOption) => {
+  if (!selectedOption) return;
+
+  const event = {
+    target: {
+      name: "country",
+      value: selectedOption.value,
+    },
   };
 
-  const handleCountryChange = (selectedOption) => {
-    handleAddressChange({
-      target: { name: "country", value: selectedOption.value },
-    });
-  };
+  handleAddressChange(index, event); // Ensure that index is being used correctly
+};
+
+
+
+
 
   return (
     <div className="mb-3">
@@ -70,7 +80,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
               id="h_no"
               value={address.h_no || ""}
               placeholder="House Number"
-              onChange={handleAddressChange}
+              onChange={(e) => handleAddressChange(index, e)} 
             />
           </FormGroup>
         </Col>
@@ -84,7 +94,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
             placeholder="Nearby Landmark"
             id="nearby"
             value={address.nearby || ""}
-            onChange={handleAddressChange}
+            onChange={(e) => handleAddressChange(index, e)} 
           />
         </FormGroup>
        </Col>
@@ -100,7 +110,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
           placeholder="Zip Code"
           id="zip_code"
           value={address.zip_code || ""}
-          onChange={handleAddressChange}
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       <Col md={6}>
@@ -112,7 +122,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
           placeholder="District"
           id="district"
           value={address.district || ""}
-          onChange={handleAddressChange}
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       </Row>
@@ -125,7 +135,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
           name="city"
           id="city"
           value={address.city || ""}
-          onChange={handleAddressChange}
+          onChange={(e) => handleAddressChange(index, e)} 
           //required
         />
       </FormGroup>
@@ -139,7 +149,7 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
           placeholder="State"
           id="state"
           value={address.state || ""}
-          onChange={handleAddressChange}
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       </Row>
@@ -147,10 +157,8 @@ const AddressForm = ({ address = {}, handleAddressChange }) => {
         <Label for="country">Country</Label>
         <Select
           options={countryOptions}
-          defaultValue={countryOptions.find(
-            (option) => option.value === address.country
-          )}
-          onChange={handleCountryChange}
+          defaultValue={countryOptions.find((option) => option.value === address.country)}
+          onChange={handleCountryChange} 
           placeholder="Country"
         />
       </FormGroup>
