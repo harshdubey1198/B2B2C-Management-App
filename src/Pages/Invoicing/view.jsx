@@ -2,29 +2,49 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, Alert } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
+import axios from 'axios';
+import { formatDate } from '../Utility/formatDate';
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const printRef = useRef();
+    const token = JSON.parse(localStorage.getItem("authUser")).token;
+    const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
 
-    useEffect(() => {
+    const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+    };
+
+    useEffect(async () => {
         try {
-            // Fetch invoices data from local storage
-            const storedData = localStorage.getItem("Invoice Form");
-            if (storedData) {
-                const parsedData = JSON.parse(storedData);
-                console.log("Fetched invoices data from localStorage:", parsedData); // Debugging line
-                setInvoices(parsedData);
-            } else {
-                console.log("No data found in localStorage for 'Invoice Form'"); // Debugging line
-                setInvoices([]);
-            }
+            const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config)
+            setInvoices(response.data)
         } catch (error) {
             console.error("Error parsing local storage data:", error);
             setInvoices([]);
         }
+        // try {
+        //     // Fetch invoices data from local storage
+        //     const storedData = localStorage.getItem("Invoice Form");
+        //     if (storedData) {
+        //         const parsedData = JSON.parse(storedData);
+        //         console.log("Fetched invoices data from localStorage:", parsedData); // Debugging line
+        //         setInvoices(parsedData);
+        //     } else {
+        //         console.log("No data found in localStorage for 'Invoice Form'"); // Debugging line
+        //         setInvoices([]);
+        //     }
+        // } catch (error) {
+        //     console.error("Error parsing local storage data:", error);
+        //     setInvoices([]);
+        // }
     }, []);
+
+    console.log(invoices,"data")
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
@@ -55,10 +75,10 @@ const ViewInvoices = () => {
                         <tbody>
                             {invoices.map((invoice) => (
                                 <tr key={invoice.id}>
-                                    <td>{invoice.id}</td>
+                                    <td>{invoice.invoiceNumber}</td>
                                     <td>{invoice.customerName}</td>
-                                    <td>{invoice.date}</td>
-                                    <td>{invoice.country}</td>
+                                    <td>{formatDate(invoice.invoiceDate)}</td>
+                                    <td>{invoice.customerAddress.country}</td>
                                     <td>
                                         <Button
                                             color="info"
