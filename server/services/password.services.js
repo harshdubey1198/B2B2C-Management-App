@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const saltRounds = 10;
+const saltRounds = 10; // Define salt rounds
 
 let service = {};
 service.passwordHash = passwordHash;
@@ -8,7 +8,9 @@ service.comparePassword = comparePassword;
 // Hash the password
 async function passwordHash(password) {
     try {
-        // Hash the password with salt rounds
+        if (!password) {
+            throw new Error('Password is required for hashing');
+        }
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         return hashedPassword;
     } catch (error) {
@@ -17,11 +19,9 @@ async function passwordHash(password) {
     }
 }
 
-
 // Compare the password with the hash
 async function comparePassword(password, hashedPassword) {
     try {
-        // Compare the password with the hashed password
         const match = await bcrypt.compare(password, hashedPassword);
         return match;
     } catch (error) {

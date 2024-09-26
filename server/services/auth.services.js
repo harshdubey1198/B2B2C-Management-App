@@ -313,9 +313,11 @@ authService.registration = async (id, data) => {
                 return Promise.reject("There is already a firm admin for this firm!");
             }
         }
+        
     
         const encryptedPassword = await PasswordService.passwordHash(data.password);
         data.password = encryptedPassword;
+        console.log('Registration Data:', data.password); // Log the data
         data.isActive = true;
         data.adminId = id;
   
@@ -332,6 +334,15 @@ authService.registration = async (id, data) => {
 authService.getCompany  = async (id) => {
     try {
         const data = User.find({adminId: id}).select("-password").populate('adminId')
+        return data
+    } catch (error) {
+        console.error(error);
+        return Promise.reject('Error occured during fetching the company data.');
+    }
+}
+authService.getfirm  = async (id) => {
+    try {
+        const data = User.find({_id: id});
         return data
     } catch (error) {
         console.error(error);

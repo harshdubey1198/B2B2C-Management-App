@@ -78,7 +78,7 @@ authController.resetPassword = async (req, res) => {
 // CREATE USER
 authController.registration = async (req, res) => {
   try {
-    const response = await authService.registration(req.params.id, req);
+    const response = await authService.registration(req.params.id, req.body);
     res.status(200).json(response);
   } catch (error) {
     console.log("Error Creating User", error);
@@ -101,6 +101,15 @@ authController.getAccount = async (req, res) => {
 authController.getCompany = async (req, res) => {
   try {
     const response = await authService.getCompany(req.params.id);
+    res.status(200).json(response);
+  } catch (error) {
+    console.log("Error Getting Account", error);
+    res.status(400).json({ error: error.toString() });
+  }
+};
+authController.getfirm = async (req, res) => {
+  try {
+    const response = await authService.getfirm(req.params.id);
     res.status(200).json(response);
   } catch (error) {
     console.log("Error Getting Account", error);
