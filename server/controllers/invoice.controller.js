@@ -13,5 +13,15 @@ invoiceController.createInvoice = async (req, res) => {
     }
 };
 
+// GET INVOICES
+invoiceController.getInvoices = async (req, res) => {
+    try {
+        const customer = await InvoiceServices.getInvoices(req.params.id);
+        return res.status(200).json(createResult("Category created successfully", customer));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 
 module.exports = invoiceController;

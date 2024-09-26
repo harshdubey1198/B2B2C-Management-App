@@ -5,7 +5,7 @@ const invoiceController = require('../controllers/invoice.controller')
 
 // Create a new Inventory Item
 router.post('/create-invoice', tokenVerification, invoiceController.createInvoice);
-// router.get('/subcategories/:id', tokenVerification,categoryController.getSubcategories);
+router.get('/get-invoices/:id', tokenVerification, invoiceController.getInvoices);
 // router.get('/get-categories/:id', tokenVerification, categoryController.getCategory);
 // router.put('/update-category/:id', tokenVerification, categoryController.updateCategory);
 // router.delete('/delete-category/:id', tokenVerification, categoryController.deleteCategory);

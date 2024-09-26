@@ -39,4 +39,31 @@ invoiceServices.createInvoice = async (invoiceData) => {
   return customerData
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// GET INVOICES IN A SINGLE FIRM
+invoiceServices.getInvoices = async (adminId) => {
+  const invoices = await Invoice.find({firmId:adminId})
+  .populate('firmId')
+  .populate({
+    path: 'createdBy',
+    select: "firstName lastName email"
+  });
+  if(!invoices){
+    throw new Error('No items found')
+  }
+  return invoices
+}
+
 module.exports = invoiceServices;
