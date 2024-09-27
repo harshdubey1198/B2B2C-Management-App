@@ -362,6 +362,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
+        { sublabel: "View Customers", link: "/view-customers" },
         // { sublabel: "Payments", link: "/payments" },
         // { sublabel: "Reports", link: "/reports-invoice" },
       ],
