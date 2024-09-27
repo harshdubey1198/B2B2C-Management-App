@@ -290,17 +290,18 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
-    // {
-    //   label: "Invoicing",
-    //   icon: "mdi mdi-cash-multiple",
-    //   subItem: [
-    //     // { sublabel: "Create Invoice", link: "/create-invoice" },
-    //     { sublabel: "View Invoices", link: "/view-invoices" },
-    //     // { sublabel: "Payments", link: "/payments" },
-    //     // { sublabel: "Expenses", link: "/expenses" },
-    //     // { sublabel: "Reports", link: "/reports" },
-    //   ],
-    // },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        // { sublabel: "Create Invoice", link: "/create-invoice" },
+        { sublabel: "View Invoices", link: "/view-invoices" },
+        { sublabel: "View Customers", link: "/view-customers" }
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Expenses", link: "/expenses" },
+        // { sublabel: "Reports", link: "/reports" },
+      ],
+    },
     // {
     //   label: "Authentication",
     //   icon: "mdi mdi-account-circle-outline",
