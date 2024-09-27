@@ -16,8 +16,8 @@ const ViewInvoices = () => {
 
     const config = {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
     };
 
@@ -26,6 +26,7 @@ const ViewInvoices = () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config);
                 setInvoices(response.data);
+                console.log("Fetched invoices: ", response.data);
             } catch (error) {
                 console.error("Error fetching invoices:", error);
                 setInvoices([]);
@@ -114,7 +115,7 @@ const ViewInvoices = () => {
                     </Table>
                 )}
                 {selectedInvoice && (
-                    <PrintFormat ref={printRef} invoiceData={selectedInvoice} />
+                    <PrintFormat ref={printRef} invoiceData={selectedInvoice} selectedInvoice={selectedInvoice}/>
                 )}
             </div>
         </React.Fragment>
