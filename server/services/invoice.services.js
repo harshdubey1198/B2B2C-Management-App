@@ -1,6 +1,6 @@
 const Customer = require("../schemas/cutomer.schema"); 
 const Invoice = require("../schemas/invoice.schema"); 
-
+const User = require('../schemas/user.schema')
 
 const invoiceServices = {};
 
@@ -114,6 +114,30 @@ invoiceServices.deleteInvoice = async (invoiceId) => {
     {new: true}
   )
   return deletedInvoice
+}
+
+// UPDATE INVOICE APPROVAL
+invoiceServices.updateInvoiceApproval = async (body) => {
+  const { id, userId, approvalStatus} = body
+  const user = await User.findOne({_id: userId})
+  if(!user){
+    throw new Error('User not found')
+  }
+  const invoice = await Invoice.findOne({_id: id})
+  if(!invoice){
+    throw new Error('Invoice not found')
+  }
+  if(invoice.firmId !== user.adminId && user.role !== "firm_admin"){
+    throw new Error("Only Firm Admin is authorized to update the Approval of Invoices")
+  }
+  if(user.role === "firm_admin"){
+    const updatedInvoice = await Invoice.findOneAndUpdate(
+      { _id: id, firmId: user.adminId }, 
+      { $set: { approvalStatus: approvalStatus } },
+      { new: true }
+    );
+    return updatedInvoice
+  }
 }
 
 module.exports = invoiceServices;

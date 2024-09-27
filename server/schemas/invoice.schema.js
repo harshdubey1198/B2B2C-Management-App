@@ -32,6 +32,11 @@ const invoiceSchema = new Schema({
     dueDate: { type: Date },
     totalAmount: { type: Number },
     status: { type: String, enum: ['paid', 'unpaid', 'partially paid'], default: 'unpaid' },
+    approvalStatus: { 
+        type: String, 
+        enum: ['pending', 'approved', 'rejected'], 
+        default: 'pending' 
+    },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     notes: { type: String }
 }, { timestamps: true, paranoid: true });
