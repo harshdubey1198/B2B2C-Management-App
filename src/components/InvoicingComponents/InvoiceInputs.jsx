@@ -79,6 +79,18 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
     setShowSuggestions(false); 
   };
 
+  const highlightSearchTerm = (text) => {
+    const parts = text.split(new RegExp(`(${searchKey})`, "gi"));
+    return parts.map((part, index) => (
+      <span
+        key={index}
+        style={part.toLowerCase() === searchKey.toLowerCase() ? { backgroundColor: "yellow" } : {}}
+      >
+        {part}
+      </span>
+    ));
+  };
+
   return (
     <div className="invoice-form">
       <Row className="align-items-center mb-3">
@@ -92,17 +104,66 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               placeholder="Search Customer Here..."
               value={searchKey}
               onChange={handleSearch}
-              className="search-input"
+              className="form-control"
+              style={{
+                border: "2px solid #007bff",
+                borderRadius: "8px",
+                padding: "10px",
+                fontSize: "16px",
+              }}
             />
             {/* Dropdown for customer suggestions */}
             {showSuggestions && searchResults.length > 0 && (
-              <ul className="suggestions-dropdown">
+              <ul
+                className="list-group position-absolute"
+                style={{
+                  width: "100%",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  zIndex: 1000,
+                  marginTop: "5px",
+                }}
+              >
                 {searchResults.map((customer, index) => (
                   <li
                     key={index}
+                    className="list-group-item d-flex align-items-center"
+                    style={{
+                      cursor: "pointer",
+                      padding: "10px",
+                    }}
                     onClick={() => handleSuggestionClick(customer)}
                   >
-                    {customer.firstName + " " + customer.lastName} - {customer.email}
+                    <div
+                      className="d-flex align-items-center"
+                      style={{ width: "100%" }}
+                    >
+                      <div
+                        className="mr-3"
+                        style={{
+                          fontSize: "24px",
+                          color: "#007bff",
+                        }}
+                      >
+                        <i className="fa fa-user-circle"></i>
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <p style={{ margin: 0, fontWeight: "bold" }}>
+                          {highlightSearchTerm(
+                            customer.firstName + " " + customer.lastName
+                          )}
+                        </p>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: "12px",
+                            color: "#666",
+                          }}
+                        >
+                          {customer.email}
+                        </p>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -112,7 +173,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
       </Row>
 
       <Row>
-          <Col>
+      <Col>
             <FormGroup>
               <Label for="firstName">First Name</Label>
               <Input
@@ -306,8 +367,8 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               </Input>
             </FormGroup>
           </Col>
-        </Row>
-      </div>
+      </Row>
+    </div>
   );
 };
 
