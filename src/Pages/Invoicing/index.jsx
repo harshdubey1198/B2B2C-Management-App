@@ -143,9 +143,9 @@ const Index = () => {
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...invoiceData.items];
-    console.log(newItems,"newitems")
+    // console.log(newItems,"newitems")
     newItems[index] = { ...newItems[index], [field]: value };
-    console.log(newItems, "newitems")
+    // console.log(newItems, "newitems")
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
 };  
   const handleSubmit = (e) => {

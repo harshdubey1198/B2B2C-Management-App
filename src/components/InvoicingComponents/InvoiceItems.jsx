@@ -1,28 +1,53 @@
 import React, { useState, useEffect } from 'react';
-import { FormGroup, Label, Input, Button } from 'reactstrap';
+import { FormGroup, Label, Input, Button, Spinner, Alert } from 'reactstrap';
+import axios from 'axios';
 
-const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoiceData }) => {
+const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const token = authuser?.token;
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  const firmId = authuser?.response?.adminId;
 
   useEffect(() => {
-    setInventoryItems(fakeItems);
-    console.log("Updated inventoryItems: ", fakeItems);
-  }, [fakeItems]);
+    const fetchInventoryItems = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config);
+        console.log("Fetched inventory items: ", response.data);
+        setInventoryItems(response.data); 
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventoryItems();
+  }, [firmId]);
 
   const getMaxQuantity = (itemId, variantName) => {
-    const selectedItem = inventoryItems.find((invItem) => invItem.id === itemId);
+    const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
     if (selectedItem) {
-      const selectedVariant = selectedItem.variants.find((variant) => variant.name === variantName);
-      return selectedVariant ? selectedVariant.quantity : 1;
+      const selectedVariant = selectedItem.variants.find((variant) => variant.optionLabel === variantName);
+      return selectedVariant ? selectedVariant.stock : selectedItem.quantity;
     }
     return 1;
   };
 
   const getVariantPrice = (itemId, variantName) => {
-    const selectedItem = inventoryItems.find((invItem) => invItem.id === itemId);
+    const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
     if (selectedItem) {
-      const selectedVariant = selectedItem.variants.find((variant) => variant.name === variantName);
-      return selectedVariant ? selectedVariant.price : 0;
+      const selectedVariant = selectedItem.variants.find((variant) => variant.optionLabel === variantName);
+      // Calculate price as sellingPrice + variant price
+      const variantPrice = selectedVariant ? selectedVariant.price : 0;
+      return selectedVariant ? selectedItem.sellingPrice + variantPrice : selectedItem.sellingPrice;
     }
     return 0;
   };
@@ -35,19 +60,22 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
   };
 
   const handleItemSelection = (index, selectedItemId) => {
-    const selectedItem = inventoryItems.find((invItem) => invItem.id === selectedItemId);
+    const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
-      console.log(selectedItem, "selectedItem");
       const updatedItems = [...items];
+      const variantName = selectedItem.variants.length > 0 ? selectedItem.variants[0]?.optionLabel : '';
+      const price = getVariantPrice(selectedItem._id, variantName) || 0;
+
       updatedItems[index] = {
         ...updatedItems[index],
-        itemId: selectedItem.id,
+        itemId: selectedItem._id,
         description: selectedItem.description || '',
-        price: 0,
+        price: price,
         quantity: 1,
         tax: 0,
         discount: 0,
         total: 0,
+        variant: variantName,
       };
 
       setInvoiceData(prevData => ({
@@ -59,11 +87,11 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
 
   const handleVariantChange = (itemId, variantName, index) => {
     const selectedItem = items[index];
-    const selectedVariant = selectedItem.variants.find((variant) => variant.name === variantName);
+    const selectedVariant = inventoryItems.find((invItem) => invItem._id === itemId)?.variants.find((variant) => variant.optionLabel === variantName);
 
     if (selectedVariant) {
       const updatedItems = [...items];
-      const price = selectedVariant.price;
+      const price = getVariantPrice(itemId, variantName);
       const quantity = 1;
       const tax = updatedItems[index].tax || 0;
       const discount = updatedItems[index].discount || 0;
@@ -84,6 +112,9 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
     }
   };
 
+  if (loading) return <Spinner color="primary" />;
+  // if (error) return <Alert color="danger">{error}</Alert>;
+
   return (
     <div>
       {items.map((item, index) => (
@@ -95,12 +126,12 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
               name={`name-${index}`}
               id={`name-${index}`}
               value={item.itemId || ""}
-              onChange={(e) => handleItemSelection(index, e.target.value)} 
+              onChange={(e) => handleItemSelection(index, e.target.value)}
               required
             >
               <option value="">Select Item</option>
               {inventoryItems.map((inventoryItem) => (
-                <option key={inventoryItem.id} value={inventoryItem.id}>
+                <option key={inventoryItem._id} value={inventoryItem._id}>
                   {inventoryItem.name}
                 </option>
               ))}
@@ -118,9 +149,9 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
               required
             >
               <option value="">Select Variant</option>
-              {inventoryItems.find((invItem) => invItem.id === item.itemId)?.variants.map((variant) => (
-                <option key={variant.id} value={variant.name}>
-                  {variant.name}
+              {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants.map((variant) => (
+                <option key={variant._id} value={variant.optionLabel}>
+                  {variant.optionLabel}
                 </option>
               ))}
             </Input>
@@ -139,7 +170,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, fakeItems, setInvoi
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(1, Math.min(e.target.value, getMaxQuantity(item.itemId || "", item.variant || "")))
+                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "", item.variant || "")))
                 )
               }
               required

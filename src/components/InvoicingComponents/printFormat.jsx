@@ -45,7 +45,7 @@ const sliceDescription = (description = '', maxWords = 20) => {
 
 const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
 
-    console.log(invoiceData, "invoiceData")
+    // console.log(invoiceData, "invoiceData")
     const { country, companyAddress = [], customerState } = invoiceData;
     const taxRate = countries[country]?.gst || 0;
 
