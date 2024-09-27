@@ -148,22 +148,51 @@ const Index = () => {
     // console.log(newItems, "newitems")
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
 };  
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = (e) => {
+  e.preventDefault();
 
-    if (!validatePhone(invoiceData.customerPhone)) {
-      toast.error("Invalid Phone Number");
-      return;
-    }
+  if (!validatePhone(invoiceData.customerPhone)) {
+    toast.error("Invalid Phone Number");
+    return;
+  }
 
-    const newInvoice = {
-      ...invoiceData,
-      id: Math.floor(Math.random() * 1000000)
-    };
+  const invoicePayload = {
+    customer: {
+      firstName: invoiceData.customerName.split(' ')[0], 
+      lastName: invoiceData.customerName.split(' ')[1] || "", 
+      email: invoiceData.customerEmail,
+      mobile: invoiceData.customerPhone,
+      address: {
+        h_no: invoiceData.customerAddress.h_no,
+        city: invoiceData.customerAddress.city,
+        state: invoiceData.customerAddress.state,
+        zip_code: invoiceData.customerAddress.zip,
+        country: invoiceData.customerAddress.country,
+      },
+    },
+    items: invoiceData.items.map(item => ({
+      itemId: item.id,
+      quantity: item.quantity,
+      price: item.price,
+      discount: item.discount || 0,
+      tax: item.tax || 0, 
+    })),
+    invoiceDate: invoiceData.date, 
+    dueDate: '', 
+    firmId: authuser?.response?.adminId, 
+    createdBy: authuser?.response?.id,
+    invoiceType: invoiceData.invoiceType,
+    invoiceSubType: invoiceData.invoiceSubType,
+    notes: 'Please pay by due date.'
 
-    const storedInvoices = JSON.parse(localStorage.getItem("Invoice Form")) || [];
-    storedInvoices.push(newInvoice);
-    localStorage.setItem("Invoice Form", JSON.stringify(storedInvoices));
+  };
+  axios.post(
+    `${process.env.REACT_APP_URL}/invoice/create-invoice`,
+    invoicePayload,
+    config
+  )
+  .then(response => {
+    toast.success("Invoice created successfully");
 
     setInvoiceData({
       companyName: "",
@@ -187,9 +216,12 @@ const Index = () => {
       invoiceType: '',
       invoiceSubType: '',
     });
-
-    toast.success("Invoice Form Submitted Successfully");
-  };
+  })
+  .catch(error => {
+    console.log(error);
+    toast.error("Failed to create invoice");
+  });
+};
 
   const printInvoice = useReactToPrint({
     content: () => printRef.current
