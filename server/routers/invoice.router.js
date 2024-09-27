@@ -8,5 +8,6 @@ router.post('/create-invoice', tokenVerification, invoiceController.createInvoic
 router.get('/get-invoices/:id', tokenVerification, invoiceController.getInvoices);
 router.get('/get-invoice/:id', tokenVerification, invoiceController.getInvoice);
 router.delete('/delete-invoice/:id', tokenVerification, invoiceController.deleteInvoice);
+router.put('/update-invoice-approval', tokenVerification, invoiceController.updateInvoiceApproval);
 
 module.exports = router;

@@ -43,4 +43,14 @@ invoiceController.deleteInvoice = async (req, res) => {
     }
 };
 
+// update invoice approval
+invoiceController.updateInvoiceApproval = async (req, res) => {
+    try {
+        const invoice = await InvoiceServices.updateInvoiceApproval(req.body);
+        return res.status(200).json(createResult("Invoice approval updated successfully", invoice));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 module.exports = invoiceController;
