@@ -307,6 +307,7 @@ const publicRoutes = [
   { path: "/logout", component: <Logout /> },
   { path: "/login", component: <Login1 /> },
   { path: "/forgot-password", component: <RecoverPassword /> },
+  { path: "/recover-password", component: <RecoverPassword /> },
   { path: "/register", component: <Register /> },
   {path:"/reset-password/:token", component: <ResetPassword />},
   {path:"/reset-password", component: <Navigate to ="/login" />},
