@@ -120,6 +120,7 @@ import ManagePlan from "../Pages/Plans/ManagePlan.js";
 import UserManage from "../Pages/Firms/UserManage.jsx";
 import VerifyOtp from "../Pages/AuthenticationPages/VerifyOtp.jsx";
 import ClientsPayments from "../Pages/ClientsManagement/clientPayments.js";
+import ViewCustomer from "../Pages/Invoicing/viewCustomer.jsx";
 
 
 const authProtectedRoutes = [
@@ -137,6 +138,7 @@ const authProtectedRoutes = [
   { path: "/view-invoices", component: <ViewInvoice /> },
   { path: "/payments-invoice", component: < PaymentsInvoice /> },
   { path: "/reports-invoice", component: < ReportsInvoice /> },
+  { path: "/view-customers", component: <ViewCustomer />},
 
   // Inventory MNG
   {path:"/inventory-table", component: <InventoryTable />},
