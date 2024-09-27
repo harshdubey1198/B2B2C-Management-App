@@ -2,20 +2,11 @@ import React, { useEffect, useState } from "react";
 import { FormGroup, Label, Input, Row, Col } from "reactstrap";
 import useDebounce from "../../Hooks/UseDebounceHook";
 import axios from "axios";
-// import InvoiceItems from "./InvoiceItems";
-
-const countries = {
-  India: { currency: "INR", gst: 18 },
-  Malaysia: { currency: "MYR", gst: 6 },
-  Dubai: { currency: "AED", gst: 5 },
-  Indonesia: { currency: "IDR", gst: 10 },
-};
 
 const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
-
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
-  const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+  const token = authuser?.token;
+  const firmId = authuser?.response?.adminId;
 
   const config = {
     headers: {
@@ -24,6 +15,11 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
     },
   };
 
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchKey, setSearchKey] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const debouncedSearchTerm = useDebounce(searchKey, 500);
+
   const searchCustomer = useDebounce(async (searchKey) => {
     if (searchKey) {
       try {
@@ -31,67 +27,100 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
           `${process.env.REACT_APP_URL}/customer/search?q=${searchKey}&firmId=${firmId}`,
           config
         );
-        console.log("Search result: ", response.data);
+        setSearchResults(response.data || []); 
+        setShowSuggestions(true);
       } catch (error) {
         console.error("Error searching customer:", error);
       }
     }
-  }, 500); 
+  }, 500);
 
   const getCurrentDate = () => {
     const today = new Date();
-    const day = String(today.getDate()).padStart(2, '0');
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const day = String(today.getDate()).padStart(2, "0");
+    const month = String(today.getMonth() + 1).padStart(2, "0");
     const year = today.getFullYear();
     return `${year}-${month}-${day}`;
   };
 
   const [issueDate, setIssueDate] = useState(getCurrentDate());
-  const [searchKey, setSearchKey] = useState("")
-  const debouncedSearchTerm = useDebounce(searchKey, 500)
 
   useEffect(() => {
     if (!invoiceData.issueDate) {
-      handleInputChange({ target: { name: 'issueDate', value: issueDate } });
+      handleInputChange({ target: { name: "issueDate", value: issueDate } });
     }
   }, [issueDate, invoiceData.issueDate, handleInputChange]);
 
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchKey(value);
-    searchCustomer(value); 
+    searchCustomer(value);
+  };
+
+  const handleSuggestionClick = (customer) => {
+    handleInputChange({ target: { name: "firstName", value: customer.firstName } });
+    handleInputChange({ target: { name: "lastName", value: customer.lastName } });
+    handleInputChange({ target: { name: "customerEmail", value: customer.email } });
+    handleInputChange({ target: { name: "customerPhone", value: customer.mobile } });
+    handleInputChange({
+      target: {
+        name: "customerAddress",
+        value: {
+          h_no: customer.address.h_no,
+          nearby: customer.address.nearby,
+          city: customer.address.city,
+          state: customer.address.state,
+          country: customer.address.country,
+          zip_code: customer.address.zip_code,
+          district: customer.address.district,
+        },
+      },
+    });
+    setShowSuggestions(false); 
   };
 
   return (
-    <>
-      <div className="invoice-form">
-        {/* Heading Row */}
-        <Row className="align-items-center mb-3">
-          <Col>
-            <h3>Invoice Details</h3>
-          </Col>
-          <Col className="text-right">
-            <FormGroup className="mb-0">
-              <Input
-                type="text"
-                placeholder="Search Customer Here..."
-                onChange={handleSearch}
-                className="search-input"
-              />
-            </FormGroup>
-          </Col>
-        </Row>
+    <div className="invoice-form">
+      <Row className="align-items-center mb-3">
+        <Col>
+          <h3>Invoice Details</h3>
+        </Col>
+        <Col className="text-right">
+          <FormGroup className="mb-0">
+            <Input
+              type="text"
+              placeholder="Search Customer Here..."
+              value={searchKey}
+              onChange={handleSearch}
+              className="search-input"
+            />
+            {/* Dropdown for customer suggestions */}
+            {showSuggestions && searchResults.length > 0 && (
+              <ul className="suggestions-dropdown">
+                {searchResults.map((customer, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSuggestionClick(customer)}
+                  >
+                    {customer.firstName + " " + customer.lastName} - {customer.email}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </FormGroup>
+        </Col>
+      </Row>
 
-        <Row>
+      <Row>
           <Col>
             <FormGroup>
-              <Label for="customerName">Customer Name</Label>
+              <Label for="firstName">First Name</Label>
               <Input
                 type="text"
-                name="customerName"
-                placeholder="Customer Name"
-                id="customerName"
-                value={invoiceData.customerName}
+                name="firstName"
+                placeholder="First Name"
+                id="firstName"
+                value={invoiceData.firstName}
                 onChange={handleInputChange}
                 required
               />
@@ -134,6 +163,18 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
             </FormGroup>
           </Col>
           <Col md={3}>
+          <FormGroup>
+              <Label for="lastName">Last Name</Label>
+              <Input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                id="lastName"
+                value={invoiceData.lastName}
+                onChange={handleInputChange}
+                required
+              />
+            </FormGroup>
             <FormGroup>
               <Label for="customerAddress.district">District</Label>
               <Input
@@ -267,7 +308,6 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
           </Col>
         </Row>
       </div>
-    </>
   );
 };
 
