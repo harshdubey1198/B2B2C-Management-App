@@ -19,32 +19,19 @@ const ViewInvoices = () => {
         },
     };
 
-    useEffect(async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config)
-            setInvoices(response.data)
-        } catch (error) {
-            console.error("Error parsing local storage data:", error);
-            setInvoices([]);
-        }
-        // try {
-        //     // Fetch invoices data from local storage
-        //     const storedData = localStorage.getItem("Invoice Form");
-        //     if (storedData) {
-        //         const parsedData = JSON.parse(storedData);
-        //         console.log("Fetched invoices data from localStorage:", parsedData); // Debugging line
-        //         setInvoices(parsedData);
-        //     } else {
-        //         console.log("No data found in localStorage for 'Invoice Form'"); // Debugging line
-        //         setInvoices([]);
-        //     }
-        // } catch (error) {
-        //     console.error("Error parsing local storage data:", error);
-        //     setInvoices([]);
-        // }
-    }, []);
+    useEffect(() => {
+        const fetchInvoices = async () => {
+            try {
+                const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config);
+                setInvoices(response.data);
+            } catch (error) {
+                console.error("Error fetching invoices:", error);
+                setInvoices([]);
+            }
+        };
 
-    console.log(invoices,"data")
+        fetchInvoices();
+    }, []);
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
