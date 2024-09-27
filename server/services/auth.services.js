@@ -442,8 +442,11 @@ authService.countUsers = async (body) => {
         }
 
         if (role === 'firm_admin') {
-            const users = await User.countDocuments({ adminId: userId });
-            return { message: "Users under Firm Admin", data: users };
+            const user = await User.findOne({_id: userId})
+            if(user){
+                const users = await User.countDocuments({ adminId: user.adminId });
+                return { message: "Users under Firm Admin", data: users };
+            }
         }
 
         return Promise.reject("Invalid role provided. Use 'super_admin', 'client_admin', 'firm' or 'firm_admin'");
