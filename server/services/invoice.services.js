@@ -45,8 +45,24 @@ invoiceServices.createInvoice = async (invoiceData) => {
     totalAmount += itemTotal;
   });
 
+  const currentDate = new Date();
+  const day = String(currentDate.getDate()).padStart(2, '0');  
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0'); 
+  const year = String(currentDate.getFullYear()).slice(-2); 
+
+  const lastInvoice = await Invoice.findOne({ firmId }).sort({ createdAt: -1 });
+
+  let invoiceNumber;
+  if (lastInvoice) {
+    const lastInvoiceParts = lastInvoice.invoiceNumber.split('-');
+    const lastInvoiceIncrement = parseInt(lastInvoiceParts[4], 10); 
+    invoiceNumber = `INV-${day}-${month}-${year}-${lastInvoiceIncrement + 1}`;
+  } else {
+    invoiceNumber = `INV-${day}-${month}-${year}-1`;
+  }
+
   const newInvoice = new Invoice({
-    invoiceNumber: `INV-${Date.now()}`, 
+    invoiceNumber, 
     customerName: customerData.customerName,
     customerEmail: customerData.customerEmail,
     customerPhone: customerData.customerPhone,
