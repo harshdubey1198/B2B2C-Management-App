@@ -8,14 +8,15 @@ import { formatDate } from '../Utility/formatDate';
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
+
     const printRef = useRef();
     const token = JSON.parse(localStorage.getItem("authUser")).token;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
 
     const config = {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
     };
 
@@ -24,6 +25,7 @@ const ViewInvoices = () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config);
                 setInvoices(response.data);
+                console.log("Fetched invoices: ", response.data);
             } catch (error) {
                 console.error("Error fetching invoices:", error);
                 setInvoices([]);
@@ -36,11 +38,6 @@ const ViewInvoices = () => {
     const printInvoice = useReactToPrint({
         content: () => printRef.current
     });
-
-    // const handlePrint = (invoice) => {
-    //     setSelectedInvoice(invoice);
-    //     printInvoice();
-    // };
 
     return (
         <React.Fragment>
@@ -71,6 +68,7 @@ const ViewInvoices = () => {
                                             color="info"
                                             onClick={() => {
                                                 setSelectedInvoice(invoice);
+                                                console.log("Selected invoice: ", invoice);
                                                 printInvoice();
                                             }}
                                         >
@@ -83,7 +81,7 @@ const ViewInvoices = () => {
                     </Table>
                 )}
                 {selectedInvoice && (
-                    <PrintFormat ref={printRef} invoiceData={selectedInvoice} />
+                    <PrintFormat ref={printRef} invoiceData={selectedInvoice} selectedInvoice={selectedInvoice}/>
                 )}
             </div>
         </React.Fragment>

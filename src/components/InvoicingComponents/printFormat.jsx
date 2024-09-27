@@ -8,69 +8,72 @@ const countries = {
 };
 
 const convertNumberToWords = (num) => {
-    const a = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
-        'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-    const b = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+    const g = ['Hundred', 'Thousand', 'Million', 'Billion', 'Trillion'];
 
-    const inWords = (n) => {
-        if (n === 0) return 'zero';
-        if (n < 20) return a[n];
-        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 ? '-' + a[n % 10] : '');
-        if (n < 1000) return a[Math.floor(n / 100)] + ' hundred' + (n % 100 ? ' and ' + inWords(n % 100) : '');
-        if (n < 100000) return inWords(Math.floor(n / 1000)) + ' thousand' + (n % 1000 ? ' ' + inWords(n % 1000) : '');
-        if (n < 10000000) return inWords(Math.floor(n / 100000)) + ' lakh' + (n % 100000 ? ' ' + inWords(n % 100000) : '');
-        if (n < 1000000000) return inWords(Math.floor(n / 10000000)) + ' crore' + (n % 10000000 ? ' ' + inWords(n % 10000000) : '');
-        return 'Number too large';
+    let words = '';
+    const convert = (num) => {
+        if (num < 20) {
+            words += a[num] + ' ';
+        } else if (num < 100) {
+            words += b[Math.floor(num / 10)] + ' ' + a[num % 10] + ' ';
+        } else if (num < 1000) {
+            words += a[Math.floor(num / 100)] + ' ' + g[0] + ' ' + convert(num % 100);
+        } else {
+            for (let i = 0; i < g.length; i++) {
+                const divisor = Math.pow(1000, i);
+                if (num < divisor * 1000) {
+                    words += convert(Math.floor(num / divisor)) + g[i] + ' ';
+                    words += convert(num % divisor);
+                    break;
+                }
+            }
+        }
     };
 
-    const [whole, fraction] = num.toString().split('.').map(Number);
-
-    let words = `${inWords(whole)} rupees`;
-
-    if (fraction) {
-        words += ` and ${inWords(fraction)} paise`;
-    }
-
-    return words.toUpperCase();
+    convert(num);
+    return words.trim();
 };
 
-const sliceDescription = (description = '', maxWords = 20) => {
-    if (typeof description !== 'string') return '';
-    const words = description.split(' ');
-    if (words.length > maxWords) {
-        return words.slice(0, maxWords).join(' ') + '...';
+const sliceDescription = (description) => {
+    if (description && description.length > 50) {
+        return description.slice(0, 50) + '...';
     }
-    return description;
+    return description || ''; 
 };
 
-const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
-
-    // console.log(invoiceData, "invoiceData")
-    const { country, companyAddress = [], customerState } = invoiceData;
+const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) => {
+    const selectInvoice = invoiceData?.firmId || {};   
+    const items = invoiceData?.items || []; 
+    console.log("items", items);   
+    const companyAddress = selectInvoice.address || [];
+    const country = companyAddress.length ? companyAddress[0].country : 'India'; 
+    const customerState = invoiceData?.customerState || '';
+    
     const taxRate = countries[country]?.gst || 0;
-
-    const companyState = companyAddress[0]?.state?.toLowerCase();
+    const companyState = companyAddress.length ? companyAddress[0]?.state?.toLowerCase() : '';
     const isSameState = companyState === customerState?.toLowerCase();
     
-    const cgstSgstRate = isSameState ? taxRate / 2 : 0;
-    const igstRate = !isSameState ? taxRate : 0;
-
-    const totalAmount = invoiceData.items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+    const totalAmount = invoiceData?.items?.reduce((acc, item) => acc + (item.quantity * item.price), 0) || 0;
     const taxAmount = (totalAmount * taxRate) / 100;
     const amountDue = totalAmount + taxAmount;
     const netReceived = amountDue;
+    const customerName = invoiceData?.firstName && invoiceData?.lastName
+        ? `${invoiceData.firstName} ${invoiceData.lastName}`
+        : invoiceData?.customerName || 'Please select a customer';
 
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
             <div className="row mb-2 text-center">
-                <h2>{invoiceData.invoiceType}</h2>
+                <h2>{invoiceData?.invoiceType}</h2>
             </div>
 
             <div className="row mt-2">
                 <div className="col-md-6 text-left">
-                    {invoiceData.companyLogo && (
+                    {(invoiceData?.companyLogo || selectInvoice.avatar) && (
                         <img 
-                            src={invoiceData.companyLogo}  
+                            src={selectInvoice.avatar || invoiceData?.companyLogo}  
                             alt="Company Logo" 
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
@@ -81,24 +84,24 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                             <p className="my-1">{address.city}, {address.state}, {address.country}, {address.zip_code}</p>
                         </div>
                     ))}
-                    <p className="my-1">{invoiceData.companyEmail}</p>
-                    <p className="my-1"><b>GSTIN:</b> {invoiceData.gstin}</p>
+                    <p className="my-1">{invoiceData?.companyEmail}</p>
+                    <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
                 <div className="col-md-3 offset-md-3 right-t-col3">
-                    <p><strong>Invoice Number:</strong>INV-24-MAG</p>
+                    <p><strong>Invoice Number:</strong> INV-24-MAG</p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p><strong>Issue Date:</strong> {invoiceData.issueDate}</p>
-                    <p><strong>Due Date:</strong> {invoiceData.dueDate}</p>
+                    <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
+                    <p><strong>Due Date:</strong> {invoiceData?.dueDate || selectInvoice.dueDate}</p>
                 </div>
             </div>
 
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
-                    <p className="my-1">{invoiceData.firstName +" "+ invoiceData.lastName} </p>
-                    <p className="my-1">{invoiceData.customerAddress.h_no}, {invoiceData.customerAddress.nearby}, {invoiceData.customerAddress.district}</p>
-                    <p className="my-1">{invoiceData.customerAddress.city}, {invoiceData.customerAddress.state}, {invoiceData.customerAddress.country}, {invoiceData.customerAddress.zip_code}</p>
-                    <p className="my-1">Phone : {invoiceData.customerPhone} | Email : {invoiceData.customerEmail}</p>
+                    <p className="my-1">{customerName}</p>
+                    <p className="my-1">{invoiceData?.customerAddress.h_no}, {invoiceData?.customerAddress.nearby}, {invoiceData?.customerAddress.district}</p>
+                    <p className="my-1">{invoiceData?.customerAddress.city}, {invoiceData?.customerAddress.state}, {invoiceData?.customerAddress.country}, {invoiceData?.customerAddress.zip_code}</p>
+                    <p className="my-1">Phone : {invoiceData?.customerPhone} | Email : {invoiceData?.customerEmail}</p>
                 </div>
             </div>
 
@@ -115,21 +118,21 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
                         <th>Total Value</th>
                         {isSameState ? (
                             <>
-                                <th>CGST ({cgstSgstRate}%)</th>
-                                <th>SGST ({cgstSgstRate}%)</th>
+                                <th>CGST ({taxRate / 2}%)</th>
+                                <th>SGST ({taxRate / 2}%)</th>
                             </>
                         ) : (
-                            <th>IGST ({igstRate}%)</th>
+                            <th>IGST ({taxRate}%)</th>
                         )}
                         <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {invoiceData.items.map((item, index) => {
+                    {invoiceData?.items?.map((item, index) => {
                         const itemTotalValue = item.quantity * item.price;
-                        const itemCgstAmount = (itemTotalValue * cgstSgstRate) / 100;
-                        const itemSgstAmount = (itemTotalValue * cgstSgstRate) / 100;
-                        const itemIgstAmount = (itemTotalValue * igstRate) / 100;
+                        const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                        const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                        const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
                         const itemTotalAmount = isSameState 
                             ? itemTotalValue + itemCgstAmount + itemSgstAmount
                             : itemTotalValue + itemIgstAmount;
@@ -162,27 +165,32 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h5>Bank Details</h5>
-                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData.bankName || 'Your Bank Name'}</p>
-                    <p className="my-1"><strong>Account Number:</strong> {invoiceData.accountNumber || 'XXXXXXXXXXXX'}</p>
-                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData.IFSCCode || ''}</p>
-                    <p className="my-1"><strong>Branch:</strong> {invoiceData.branchName || 'Your Branch'}</p>
-                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData.invoiceSubType}</p>
+                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice.bankName || 'Your Bank Name'}</p>
+                    <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice.accountNumber || 'Your Account Number'}</p>
+                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice.ifscCode || 'Your IFSC Code'}</p>
+                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
+                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
-                <div className="col-md-6 right-t-col3">
-                    <p className="my-1"><strong>Subtotal:</strong> ₹ {totalAmount.toFixed(2)}</p>
+                <div className="col-md-6 text-right">
+                    <h5>Payment Summary</h5>
+                    <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (
                         <>
-                            <p><strong>CGST ({cgstSgstRate}%):</strong> ₹ {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
-                            <p><strong>SGST ({cgstSgstRate}%):</strong> ₹ {(totalAmount * cgstSgstRate / 100).toFixed(2)}</p>
+                            <p><strong>CGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
+                            <p><strong>SGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
                         </>
                     ) : (
-                        <p><strong>IGST ({igstRate}%):</strong> ₹ {(totalAmount * igstRate / 100).toFixed(2)}</p>
+                        <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
                     )}
                     <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
+                    <p className="my-1"><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                 </div>
             </div>
+
+           
+           
         </div>
     );
 });

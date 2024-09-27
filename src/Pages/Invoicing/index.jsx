@@ -25,8 +25,8 @@ const Index = () => {
     branchName: "",
     accountNumber: "",
     gstin: "",
-    customerName: '',
-    customerAddress: { h_no: "", nearby: "", district: "", city: "", state: "", country: "", zip: "" }, // Initialize with empty strings
+    customerName: "",
+    customerAddress: { h_no: "", nearby: "", district: "", city: "", state: "", country: "", zip: "" }, 
     customerPhone: '',
     customerEmail: '',
     date: '',
@@ -168,6 +168,8 @@ const handleSubmit = (e) => {
         state: invoiceData.customerAddress.state,
         zip_code: invoiceData.customerAddress.zip,
         country: invoiceData.customerAddress.country,
+        nearby: invoiceData.customerAddress.nearby,
+        district: invoiceData.customerAddress.district,
       },
     },
     items: invoiceData.items.map(item => ({
