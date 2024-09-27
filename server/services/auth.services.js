@@ -441,7 +441,12 @@ authService.countUsers = async (body) => {
             return { message: "Users under Firm Admin", data: users };
         }
 
-        return Promise.reject("Invalid role provided. Use 'super_admin', 'client_admin', or 'firm'");
+        if (role === 'firm_admin') {
+            const users = await User.countDocuments({ adminId: userId });
+            return { message: "Users under Firm Admin", data: users };
+        }
+
+        return Promise.reject("Invalid role provided. Use 'super_admin', 'client_admin', 'firm' or 'firm_admin'");
     } catch (error) {
         console.log("Error in fetching child entities", error);
         return Promise.reject("Unable to fetch child entities. Try again later!");
