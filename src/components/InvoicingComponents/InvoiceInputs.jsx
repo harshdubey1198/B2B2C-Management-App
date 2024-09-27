@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FormGroup, Label, Input, Row, Col } from "reactstrap";
 import useDebounce from "../../Hooks/UseDebounceHook";
 import axios from "axios";
@@ -14,11 +14,26 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
       Authorization: `Bearer ${token}`,
     },
   };
-
+  const suggestionsRef = useRef(null); 
   const [searchResults, setSearchResults] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const debouncedSearchTerm = useDebounce(searchKey, 500);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const handleKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex === searchResults.length - 1 ? 0 : prevIndex + 1
+      );
+    } else if (e.key === "ArrowUp") {
+      setSelectedIndex((prevIndex) =>
+        prevIndex <= 0 ? searchResults.length - 1 : prevIndex - 1
+      );
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      handleSuggestionClick(searchResults[selectedIndex]);
+    }
+  };
 
   const searchCustomer = useDebounce(async (searchKey) => {
     if (searchKey) {
@@ -34,6 +49,17 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
       }
     }
   }, 500);
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const getCurrentDate = () => {
     const today = new Date();
@@ -104,6 +130,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
               placeholder="Search Customer Here..."
               value={searchKey}
               onChange={handleSearch}
+              onKeyDown={handleKeyDown}
               className="form-control"
               style={{
                 border: "2px solid #007bff",
@@ -112,61 +139,64 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 fontSize: "16px",
               }}
             />
-            {/* Dropdown for customer suggestions */}
             {showSuggestions && searchResults.length > 0 && (
-              <ul
-                className="list-group position-absolute"
-                style={{
-                  width: "100%",
-                  maxHeight: "200px",
-                  overflowY: "auto",
-                  zIndex: 1000,
-                  marginTop: "5px",
-                }}
-              >
-                {searchResults.map((customer, index) => (
-                  <li
-                    key={index}
-                    className="list-group-item d-flex align-items-center"
-                    style={{
-                      cursor: "pointer",
-                      padding: "10px",
-                    }}
-                    onClick={() => handleSuggestionClick(customer)}
-                  >
-                    <div
-                      className="d-flex align-items-center"
-                      style={{ width: "100%" }}
-                    >
-                      <div
-                        className="mr-3"
-                        style={{
-                          fontSize: "24px",
-                          color: "#007bff",
-                        }}
-                      >
-                        <i className="fa fa-user-circle"></i>
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, fontWeight: "bold" }}>
-                          {highlightSearchTerm(
-                            customer.firstName + " " + customer.lastName
-                          )}
-                        </p>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: "12px",
-                            color: "#666",
-                          }}
-                        >
-                          {customer.email}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+             <ul
+             ref={suggestionsRef}
+             className="list-group position-absolute"
+             style={{
+               width: "100%",
+               maxHeight: "200px",
+               overflowY: "auto",
+               zIndex: 1000,
+               marginTop: "5px",
+             }}
+           >
+             {searchResults.map((customer, index) => (
+               <li
+                 key={index}
+                 className={`list-group-item d-flex align-items-center ${
+                   selectedIndex === index ? "bg-light text-dark " : ""
+                 }`} 
+                 style={{
+                   cursor: "pointer",
+                   padding: "10px",
+                 }}
+                 onClick={() => handleSuggestionClick(customer)}
+                 onMouseEnter={() => setSelectedIndex(index)} 
+               >
+                 <div
+                   className="d-flex align-items-center gap-3"
+                   style={{ width: "100%" }}
+                 >
+                   <div
+                     className="mr-3"
+                     style={{
+                       fontSize: "24px",
+                       color: "#007bff",
+                     }}
+                   >
+                     <i className="fa fa-user-circle"></i>
+                   </div>
+                   <div style={{ flex: 1 }}>
+                     <p style={{ margin: 0, fontWeight: "bold" }}>
+                       {highlightSearchTerm(
+                         customer.firstName + " " + customer.lastName
+                       )}
+                     </p>
+                     <p
+                       style={{
+                         margin: 0,
+                         fontSize: "12px",
+                         color: "#666",
+                       }}
+                     >
+                       {customer.email}
+                     </p>
+                   </div>
+                 </div>
+               </li>
+             ))}
+           </ul>
             )}
           </FormGroup>
         </Col>
@@ -366,7 +396,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 <option value="Quadruplicate">Quadruplicate</option>
               </Input>
             </FormGroup>
-          </Col>
+          </Col>  
       </Row>
     </div>
   );

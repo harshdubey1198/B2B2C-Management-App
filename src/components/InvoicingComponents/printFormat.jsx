@@ -95,7 +95,7 @@ const PrintFormat = forwardRef(({ invoiceData, userRole }, ref) => {
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h4>Customer Details:</h4>
-                    <p className="my-1">{invoiceData.customerName}</p>
+                    <p className="my-1">{invoiceData.firstName +" "+ invoiceData.lastName} </p>
                     <p className="my-1">{invoiceData.customerAddress.h_no}, {invoiceData.customerAddress.nearby}, {invoiceData.customerAddress.district}</p>
                     <p className="my-1">{invoiceData.customerAddress.city}, {invoiceData.customerAddress.state}, {invoiceData.customerAddress.country}, {invoiceData.customerAddress.zip_code}</p>
                     <p className="my-1">Phone : {invoiceData.customerPhone} | Email : {invoiceData.customerEmail}</p>
