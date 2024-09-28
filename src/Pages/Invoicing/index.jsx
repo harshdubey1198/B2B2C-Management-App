@@ -176,6 +176,14 @@ const handleSubmit = (e) => {
     },
     items: invoiceData.items.map(item => ({
       itemId: item.itemId,
+      selectedVariant: item.selectedVariant.map(variant => ({
+        variationType: variant.variationType,
+        optionLabel: variant.optionLabel,
+        price: variant.price,
+        stock: variant.stock,
+        sku: variant.sku,
+        barcode: variant.barcode,
+      })), 
       quantity: item.quantity,
       price: item.price,
       discount: item.discount || 0,
