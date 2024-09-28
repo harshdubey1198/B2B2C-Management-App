@@ -13,6 +13,7 @@ const Pricing = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
 
   const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const role = authuser?.response?.role;
   const token = authuser?.token;
 
   useEffect(() => {
@@ -114,12 +115,14 @@ const Pricing = () => {
 
           <Row className="justify-content-center my-2">
             <Col lg={5} className="text-center">
+            { role !== "super_admin" && (
               <Button
                 color="secondary"
                 onClick={() => setShowAllPlans(!showAllPlans)}
               >
                 {showAllPlans ? "Hide All Plans" : "Show All Plans"}
               </Button>
+              )}
             </Col>
           </Row>
         )
@@ -163,13 +166,16 @@ const Pricing = () => {
                             </p>
                           ))}
                         </div>
-                        <Button
-                          color="primary"
-                          className="mt-4"
-                          onClick={() => handlePaymentPlan(plan)}
-                        >
-                          Choose Plan
-                        </Button>
+                        { role !== "super_admin" && (
+                            <Button
+                              color="primary"
+                              className="mt-4"
+                              onClick={() => handlePaymentPlan(plan)}
+                            >
+                              Choose Plan
+                            </Button>
+                          )}
+
                       </div>
                     </CardBody>
                   </Card>

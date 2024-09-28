@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { validateEmail, validatePhone } from "../Utility/FormValidation";
+import { validateEmail, validatePhone ,validatePassword} from "../Utility/FormValidation";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -62,6 +62,11 @@ function CreateFirm() {
     }
     if (!validatePhone(formValues.companyMobile)) {
       toast.error("Invalid Phone Number");
+      setLoading(false);
+      return;
+    }
+    if (!validatePassword(formValues.password)) {
+      toast.error("Invalid Password");
       setLoading(false);
       return;
     }
