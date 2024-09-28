@@ -4,7 +4,8 @@ import FirmSwitcher from './FirmSwitcher';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddressForm from '../../components/FirmComponents/adressForm';
+// import firmAddressForm from '../../components/FirmComponents/firmAddressForm';
+import FirmAddressForm from '../../components/FirmComponents/firmAddressForm';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -334,7 +335,7 @@ const handleSubmit = async (e) => {
                     </Row>
                   {firmDetails.address.length > 0 ? (
                         firmDetails.address.map((address, index) => (
-                          <AddressForm
+                          <FirmAddressForm 
                             key={index}
                             address={address}
                             index={index}
@@ -342,7 +343,7 @@ const handleSubmit = async (e) => {
                           />
                         ))
                       ) : (
-                        <AddressForm
+                        <FirmAddressForm
                           index={0}
                           handleAddressChange={handleAddressChange}
                         />

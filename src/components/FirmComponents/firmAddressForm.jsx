@@ -34,7 +34,7 @@ const getCitySuggestions = (value) => {
       );
 };
 
-const AddressForm = ({ address = {}, handleAddressChange }) => {
+const FirmAddressForm = ({ address = {}, handleAddressChange , index }) => {
   const [city, setCity] = React.useState(address.city || "");
   const [citySuggestionsList, setCitySuggestionsList] = React.useState([]);
 
@@ -60,7 +60,7 @@ const handleCountryChange = (selectedOption) => {
     },
   };
 
-  handleAddressChange( event); 
+  handleAddressChange(index, event); // Ensure that index is being used correctly
 };
 
 
@@ -80,7 +80,7 @@ const handleCountryChange = (selectedOption) => {
               id="h_no"
               value={address.h_no || ""}
               placeholder="House Number"
-              onChange={(e) => handleAddressChange( e)} 
+              onChange={(e) => handleAddressChange(index, e)} 
             />
           </FormGroup>
         </Col>
@@ -94,7 +94,7 @@ const handleCountryChange = (selectedOption) => {
             placeholder="Nearby Landmark"
             id="nearby"
             value={address.nearby || ""}
-            onChange={(e) => handleAddressChange( e)} 
+            onChange={(e) => handleAddressChange(index, e)} 
           />
         </FormGroup>
        </Col>
@@ -110,7 +110,7 @@ const handleCountryChange = (selectedOption) => {
           placeholder="Zip Code"
           id="zip_code"
           value={address.zip_code || ""}
-          onChange={(e) => handleAddressChange(e)} 
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       <Col md={6}>
@@ -122,7 +122,7 @@ const handleCountryChange = (selectedOption) => {
           placeholder="District"
           id="district"
           value={address.district || ""}
-          onChange={(e) => handleAddressChange( e)} 
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       </Row>
@@ -135,7 +135,7 @@ const handleCountryChange = (selectedOption) => {
           name="city"
           id="city"
           value={address.city || ""}
-          onChange={(e) => handleAddressChange( e)} 
+          onChange={(e) => handleAddressChange(index, e)} 
           //required
         />
       </FormGroup>
@@ -149,7 +149,7 @@ const handleCountryChange = (selectedOption) => {
           placeholder="State"
           id="state"
           value={address.state || ""}
-          onChange={(e) => handleAddressChange( e)} 
+          onChange={(e) => handleAddressChange(index, e)} 
         />
       </FormGroup></Col>
       </Row>
@@ -166,4 +166,4 @@ const handleCountryChange = (selectedOption) => {
   );
 };
 
-export default AddressForm;
+export default FirmAddressForm;
