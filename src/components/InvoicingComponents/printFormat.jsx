@@ -29,7 +29,7 @@ const convertNumberToWords = (num) => {
     let words = convert(whole);
     
     if (decimal) {
-        words += ` and ${convert(decimal)} Paise`;
+        words += ` Rupees and ${convert(decimal)} Paise`;
     }
 
     return words.trim();

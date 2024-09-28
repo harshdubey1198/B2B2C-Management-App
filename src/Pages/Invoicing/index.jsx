@@ -25,6 +25,8 @@ const Index = () => {
     branchName: "",
     accountNumber: "",
     gstin: "",
+    firstName: "",
+    lastName: "",
     customerName: "",
     customerAddress: { h_no: "", nearby: "", district: "", city: "", state: "", country: "", zip: "" }, 
     customerPhone: '',
@@ -158,8 +160,8 @@ const handleSubmit = (e) => {
 
   const invoicePayload = {
     customer: {
-      firstName: invoiceData.customerName.split(' ')[0], 
-      lastName: invoiceData.customerName.split(' ')[1] || "", 
+      firstName: invoiceData.firstName, 
+      lastName: invoiceData.lastName , 
       email: invoiceData.customerEmail,
       mobile: invoiceData.customerPhone,
       address: {
@@ -207,6 +209,8 @@ const handleSubmit = (e) => {
       IFSCCode: "",
       accountNumber: "",
       branchName: "",
+      firstName: "",
+      lastName: "",
       customerName: '',
       customerAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
       customerEmail: '',
