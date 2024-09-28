@@ -85,6 +85,9 @@ invoiceServices.createInvoice = async (invoiceData) => {
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({firmId:adminId})
   .populate({
+    path: 'items.itemId',
+  })
+  .populate({
     path: 'firmId',
     select: "-password"
   })
@@ -102,6 +105,9 @@ invoiceServices.getInvoices = async (adminId) => {
 //  GET SINGLE INVOICE DATA 
 invoiceServices.getInvoice = async (invoiceId) => {
   const invoice = await Invoice.findOne({_id: invoiceId})
+  .populate({
+    path: 'items.itemId',
+  })
   .populate({
     path: 'firmId',
     select: "-password"
