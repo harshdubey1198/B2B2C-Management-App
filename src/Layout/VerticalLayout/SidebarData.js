@@ -16,17 +16,6 @@ export const masterAdminSidebarData = () => [
     ],
   },
   {
-    label: "Vendors/Suppliers",
-    icon: "mdi mdi-truck-delivery-outline",
-    subItem: [
-      { sublabel: "Manage Vendors", link: "/vendors/manage" },
-      { sublabel: "Track Payments", link: "/vendors/payments" },
-      { sublabel: "Vendor Invoices", link: "/vendors/invoices" },
-      { sublabel: "Supplier Information", link: "/vendors/info" },
-      { sublabel: "Supplier Statements", link: "/vendors/statements" },
-    ],
-  },
-  {
     label:"Pricing & Plans",
     icon:"mdi mdi-cash-multiple",
     subItem:[
@@ -50,8 +39,8 @@ export const masterAdminSidebarData = () => [
     icon: "mdi mdi-archive-outline",
     subItem: [
       { sublabel: "Inventory Management", link: "/inventory-table" },
-      { sublabel: "Table Form", link: "/add-inventory" },
-      {sublabel : "Categories" ,link :"/manage-category"},
+      // { sublabel: "Table Form", link: "/add-inventory" },
+      // {sublabel : "Categories" ,link :"/manage-category"},
       { sublabel: "Table Taxation", link: "/table-taxation" },
       // { sublabel: "Item Config", link: "/item-configuration" },
     ],
@@ -60,7 +49,7 @@ export const masterAdminSidebarData = () => [
     label: "Invoices",
     icon: "mdi mdi-file-document-outline",
     subItem: [
-      { sublabel: "Create Invoice", link: "/create-invoice" },
+      // { sublabel: "Create Invoice", link: "/create-invoice" },
       { sublabel: "View Invoices", link: "/view-invoices" },
       { sublabel: "Recurring Invoices", link: "/invoices/recurring" },
       { sublabel: "Payment Tracking", link: "/invoices/payment-tracking" },
@@ -71,7 +60,17 @@ export const masterAdminSidebarData = () => [
       { sublabel: "Convert to Invoice", link: "/quotes/convert" },
     ],
   },
-  
+  {
+    label: "Vendors/Suppliers",
+    icon: "mdi mdi-truck-delivery-outline",
+    subItem: [
+      { sublabel: "Manage Vendors", link: "/vendors/manage" },
+      { sublabel: "Track Payments", link: "/vendors/payments" },
+      { sublabel: "Vendor Invoices", link: "/vendors/invoices" },
+      { sublabel: "Supplier Information", link: "/vendors/info" },
+      { sublabel: "Supplier Statements", link: "/vendors/statements" },
+    ],
+  },
   {
     label: "Delivery Challans",
     icon: "mdi mdi-truck-outline",
@@ -211,7 +210,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-cash-multiple",
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/add-inventory" },
+        // { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],

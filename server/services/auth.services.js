@@ -3,6 +3,7 @@ const generateTemporaryPassword = require("../utils/tempPassword");
 const PasswordService = require('./password.services');
 const User = require("../schemas/user.schema");
 const multer = require("multer");
+const uploadToCloudinary = require("../utils/cloudinary")
 
 const authService = {};
 
