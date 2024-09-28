@@ -17,13 +17,23 @@ const invoiceSchema = new Schema({
         nearby : {type:String}
     },
     invoiceType: { type: String },
-    // invoiceSubType : {invoiceSubType},
+    invoiceSubType : {invoiceSubType},
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
+        selectedVariant:[
+            {
+                variationType: { type: String },
+                optionLabel: { type: String },
+                price: { type: Number, default: 0 },
+                stock: { type: Number, default: 0 },
+                sku: { type: String },
+                barcode: { type: String }
+            }
+        ],
         description: { type: String },
         quantity: { type: Number, required: true },
-        price: { type: Number, required: true },
+        sellingPrice: { type: Number, required: true },
         tax: { type: Number, default: 0 },
         discount: { type: Number, default: 0 },
         total: { type: Number, required: true }
