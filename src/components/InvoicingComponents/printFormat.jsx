@@ -108,59 +108,60 @@ const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref)
             <table className="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Sr. no</th>
-                        <th>Item Name</th>
-                        <th>Variant</th>
-                        <th>Description</th>
-                        <th>HSN/SAC</th>
-                        <th>Quantity</th>
-                        <th>Price</th>
-                        <th>Total Value</th>
-                        {isSameState ? (
-                            <>
-                                <th>CGST ({taxRate / 2}%)</th>
-                                <th>SGST ({taxRate / 2}%)</th>
-                            </>
-                        ) : (
-                            <th>IGST ({taxRate}%)</th>
-                        )}
-                        <th>Amount</th>
+                    <th>Sr. no</th>
+                    <th>Item Name</th>
+                    <th>Variant</th>
+                    <th>Description</th>
+                    <th>HSN/SAC</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Value</th>
+                    {isSameState ? (
+                        <>
+                        <th>CGST ({taxRate / 2}%)</th>
+                        <th>SGST ({taxRate / 2}%)</th>
+                        </>
+                    ) : (
+                        <th>IGST ({taxRate}%)</th>
+                    )}
+                    <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
                     {invoiceData?.items?.map((item, index) => {
-                        const itemTotalValue = item.quantity * item.price;
-                        const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                        const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                        const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
-                        const itemTotalAmount = isSameState 
-                            ? itemTotalValue + itemCgstAmount + itemSgstAmount
-                            : itemTotalValue + itemIgstAmount;
+                    const itemTotalValue = item.quantity * item.price;
+                    const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                    const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                    const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
+                    const itemTotalAmount = isSameState
+                        ? itemTotalValue + itemCgstAmount + itemSgstAmount
+                        : itemTotalValue + itemIgstAmount;
 
-                        return (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.name}</td>
-                                <td>{item.variant}</td>
-                                <td>{sliceDescription(item.description)}</td>
-                                <td>{item.hsn}</td>
-                                <td>{item.quantity}</td>
-                                <td>{item.price}</td>
-                                <td>{itemTotalValue.toFixed(2)}</td>
-                                {isSameState ? (
-                                    <>
-                                        <td>{itemCgstAmount.toFixed(2)}</td>
-                                        <td>{itemSgstAmount.toFixed(2)}</td>
-                                    </>
-                                ) : (
-                                    <td>{itemIgstAmount.toFixed(2)}</td>
-                                )}
-                                <td>{itemTotalAmount.toFixed(2)}</td>
-                            </tr>
-                        );
+                    return (
+                        <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item?.name || 'N/A'}</td> 
+                        <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
+                        <td>{sliceDescription(item.description)}</td>
+                        <td>{item.hsn}</td>
+                        <td>{item.quantity}</td>
+                        <td>{item.price}</td>
+                        <td>{itemTotalValue.toFixed(2)}</td>
+                        {isSameState ? (
+                            <>
+                            <td>{itemCgstAmount.toFixed(2)}</td>
+                            <td>{itemSgstAmount.toFixed(2)}</td>
+                            </>
+                        ) : (
+                            <td>{itemIgstAmount.toFixed(2)}</td>
+                        )}
+                        <td>{itemTotalAmount.toFixed(2)}</td>
+                        </tr>
+                    );
                     })}
                 </tbody>
-            </table>
+                </table>
+
 
             <div className="row">
                 <div className="col-md-6 text-left">

@@ -21,6 +21,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
       try {
         const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config);
         setInventoryItems(response.data);
+        console.log(response.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -66,6 +67,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
       updatedItems[index] = {
         ...updatedItems[index],
         itemId: selectedItem._id,
+        name: selectedItem.name,
         selectedVariant: [{ optionLabel: variantName, price }],
         description: selectedItem.description || '',
         quantity: 1,
@@ -114,24 +116,25 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     <div>
       {items.map((item, index) => (
         <div className="d-flex flex-wrap flex-lg-row justify-content-between align-items-center w-100 mb-3" key={index}>
-          <FormGroup>
-            <Label for={`name-${index}`}>Item Name</Label>
-            <Input
-              type="select"
-              name={`name-${index}`}
-              id={`name-${index}`}
-              value={item.itemId || ""}
-              onChange={(e) => handleItemSelection(index, e.target.value)}
-              required
-            >
-              <option value="">Select Item</option>
-              {inventoryItems.map((inventoryItem) => (
-                <option key={inventoryItem._id} value={inventoryItem._id}>
-                  {inventoryItem.name}
-                </option>
-              ))}
-            </Input>
-          </FormGroup>
+       <FormGroup>
+          <Label for={`name-${index}`}>Item Name</Label>
+          <Input
+            type="select"
+            name={`name-${index}`}
+            id={`name-${index}`}
+            value={item.itemId || ""}  
+            onChange={(e) => handleItemSelection(index, e.target.value)}
+            required
+          >
+            <option value="">Select Item</option>
+            {inventoryItems.map((inventoryItem) => (
+              <option key={inventoryItem._id} value={inventoryItem._id}>
+                {inventoryItem.name}
+              </option>
+            ))}
+          </Input>
+        </FormGroup>
+
 
           <FormGroup>
             <Label for={`variant-${index}`}>Variant</Label>
