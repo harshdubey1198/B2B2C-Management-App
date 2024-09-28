@@ -44,11 +44,11 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
     setError("");
     setSuccess("");
 
-    if (checkEmptyFields(formValues)) {
-      setError("Fill All the Fields");
-      toast.error("Fill All the Fields");
-      return;
-    }
+    // if (checkEmptyFields(formValues)) {
+    //   setError("Fill All the Fields");
+    //   toast.error("Fill All the Fields");
+    //   return;
+    // }
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
       toast.error("Invalid Email");
