@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormGroup, Label, Input, Button, Spinner, Alert } from 'reactstrap';
+import { FormGroup, Label, Input, Button, Spinner } from 'reactstrap';
 import axios from 'axios';
 
 const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) => {
@@ -20,8 +20,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     const fetchInventoryItems = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config);
-        console.log("Fetched inventory items: ", response.data);
-        setInventoryItems(response.data); 
+        setInventoryItems(response.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -45,9 +44,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
     if (selectedItem) {
       const selectedVariant = selectedItem.variants.find((variant) => variant.optionLabel === variantName);
-      // Calculate price as sellingPrice + variant price
-      const variantPrice = selectedVariant ? selectedVariant.price : 0;
-      return selectedVariant ? selectedItem.sellingPrice + variantPrice : selectedItem.sellingPrice;
+      return selectedVariant ? selectedVariant.price : selectedItem.sellingPrice;
     }
     return 0;
   };
@@ -69,19 +66,17 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
       updatedItems[index] = {
         ...updatedItems[index],
         itemId: selectedItem._id,
-        name: selectedItem.name,
+        selectedVariant: [{ optionLabel: variantName, price }],
         description: selectedItem.description || '',
-        price: price,
         quantity: 1,
         tax: 0,
         discount: 0,
-        total: 0,
-        variant: variantName,
+        total: price,
       };
 
       setInvoiceData(prevData => ({
         ...prevData,
-        items: updatedItems
+        items: updatedItems,
       }));
     }
   };
@@ -100,7 +95,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
 
       updatedItems[index] = {
         ...selectedItem,
-        variant: variantName,
+        selectedVariant: [{ optionLabel: variantName, price }],
         price,
         quantity,
         total,
@@ -114,7 +109,6 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
   };
 
   if (loading) return <Spinner color="primary" />;
-  // if (error) return <Alert color="danger">{error}</Alert>;
 
   return (
     <div>
@@ -145,7 +139,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
               type="select"
               name={`variant-${index}`}
               id={`variant-${index}`}
-              value={item.variant || ""}
+              value={item.selectedVariant?.[0]?.optionLabel || ""}
               onChange={(e) => handleVariantChange(item.itemId, e.target.value, index)}
               required
             >
@@ -165,13 +159,13 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
               name={`quantity-${index}`}
               id={`quantity-${index}`}
               min={1}
-              max={getMaxQuantity(item.itemId || "", item.variant || "")}
+              max={getMaxQuantity(item.itemId || "", item.selectedVariant?.[0]?.optionLabel || "")}
               value={item.quantity || 1}
               onChange={(e) =>
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "", item.variant || "")))
+                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "", item.selectedVariant?.[0]?.optionLabel || "")))
                 )
               }
               required
@@ -185,7 +179,6 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
               name={`price-${index}`}
               id={`price-${index}`}
               value={item.price || 0}
-              onChange={(e) => handleItemChange(index, 'price', e.target.value)}
               required
               readOnly
             />
