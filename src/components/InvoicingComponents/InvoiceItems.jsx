@@ -69,6 +69,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
       updatedItems[index] = {
         ...updatedItems[index],
         itemId: selectedItem._id,
+        name: selectedItem.name,
         description: selectedItem.description || '',
         price: price,
         quantity: 1,

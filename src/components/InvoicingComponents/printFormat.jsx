@@ -12,27 +12,26 @@ const convertNumberToWords = (num) => {
     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
     const g = ['Hundred', 'Thousand', 'Million', 'Billion', 'Trillion'];
 
-    let words = '';
-    const convert = (num) => {
-        if (num < 20) {
-            words += a[num] + ' ';
-        } else if (num < 100) {
-            words += b[Math.floor(num / 10)] + ' ' + a[num % 10] + ' ';
-        } else if (num < 1000) {
-            words += a[Math.floor(num / 100)] + ' ' + g[0] + ' ' + convert(num % 100);
-        } else {
-            for (let i = 0; i < g.length; i++) {
-                const divisor = Math.pow(1000, i);
-                if (num < divisor * 1000) {
-                    words += convert(Math.floor(num / divisor)) + g[i] + ' ';
-                    words += convert(num % divisor);
-                    break;
-                }
+    const convert = (n) => {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
+        if (n < 1000) return a[Math.floor(n / 100)] + ' ' + g[0] + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
+        
+        for (let i = 0; i < g.length; i++) {
+            const divisor = Math.pow(1000, i + 1);
+            if (n < divisor) {
+                return convert(Math.floor(n / Math.pow(1000, i))) + ' ' + g[i] + (n % Math.pow(1000, i) !== 0 ? ' ' + convert(n % Math.pow(1000, i)) : '');
             }
         }
     };
 
-    convert(num);
+    const [whole, decimal] = num.toString().split('.').map(Number);
+    let words = convert(whole);
+    
+    if (decimal) {
+        words += ` and ${convert(decimal)} Paise`;
+    }
+
     return words.trim();
 };
 
@@ -44,7 +43,8 @@ const sliceDescription = (description) => {
 };
 
 const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) => {
-    const selectInvoice = invoiceData?.firmId || {};   
+    const selectInvoice = invoiceData?.firmId || {};  
+    console.log("selectInvoice", selectInvoice); 
     const items = invoiceData?.items || []; 
     console.log("items", items);   
     const companyAddress = selectInvoice.address || [];
