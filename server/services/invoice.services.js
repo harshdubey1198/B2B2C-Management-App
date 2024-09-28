@@ -38,11 +38,14 @@ invoiceServices.createInvoice = async (invoiceData) => {
     };
   }
 
-  let totalAmount = 0;
+  let totalAmount = 0
   items.forEach(item => {
-    const itemTotal = (item.price * item.quantity) ;
-    item.total = itemTotal; // add this total back to item if needed
-    totalAmount += itemTotal;
+    const priceToUse = item.selectedVariant && item.selectedVariant.length > 0 && item.selectedVariant[0].price
+      ? item.selectedVariant[0].price
+      : item.sellingPrice;
+    const itemTotal = priceToUse * item.quantity;
+    item.total = itemTotal;
+    totalAmount += itemTotal; 
   });
 
   const currentDate = new Date();
