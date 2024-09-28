@@ -175,7 +175,7 @@ const handleSubmit = (e) => {
       },
     },
     items: invoiceData.items.map(item => ({
-      itemId: item.id,
+      itemId: item.itemId,
       quantity: item.quantity,
       price: item.price,
       discount: item.discount || 0,
@@ -232,6 +232,8 @@ const handleSubmit = (e) => {
   const printInvoice = useReactToPrint({
     content: () => printRef.current
   });
+
+  console.log(invoiceData, "invoicedata")
 
   return (
     <Container>
