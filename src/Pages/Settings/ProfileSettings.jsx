@@ -8,46 +8,42 @@ const ProfileSettings = () => {
     firstName: '', 
     lastName: '', 
     email: '', 
-    phone: '', 
-    profilePicture: null, 
-    newEmail: '',
-    confirmEmail: '',
-    newPassword: '',
-    confirmPassword: '',
-    otp: '',
-    emailOtp: '',  
+    mobile: '', 
+    avatar: null, 
   });
 
   const [editMode, setEditMode] = useState({
     firstName: false,
     lastName: false,
     email: false,
-    phone: false,
+    mobile: false,
   });
 
-  const [logoPreview, setLogoPreview] = useState(null);
   const [preview, setPreview] = useState(null);
 
   const authUser = JSON.parse(localStorage.getItem('authUser'));
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const token = authUser.token;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,);
+          `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,
+          config
+        );
         const userData = response;
         setFormData({
           ...formData,
           firstName: userData.firstName,
           lastName: userData.lastName,
           email: userData.email,
-          phone: userData.mobile,
-          profilePicture: userData.avatar,
+          mobile: userData.mobile,
+          avatar: userData.avatar,
         });
         setPreview(userData.avatar);
       } catch (error) {
@@ -70,7 +66,7 @@ const ProfileSettings = () => {
     if (file) {
       setFormData({
         ...formData,
-        profilePicture: file,
+        avatar: file,
       });
       setPreview(URL.createObjectURL(file));
     }
@@ -78,30 +74,25 @@ const ProfileSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const updatedData = new FormData();
     updatedData.append('firstName', formData.firstName);
     updatedData.append('lastName', formData.lastName);
     updatedData.append('email', formData.email);
-    updatedData.append('phone', formData.phone);
-    if (formData.profilePicture instanceof File) {
-      updatedData.append('profilePicture', formData.profilePicture);
+    updatedData.append('mobile', formData.mobile);
+
+    if (formData.avatar instanceof File) {
+      updatedData.append('avatar', formData.avatar);
     }
+
     try {
-     
       const response = await axios.put(
         `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
         updatedData,
         config
       );
       toast.success('Profile updated successfully!');
-      setFormData({
-        ...formData,
-        profilePicture: response.avatar,
-      });
-      setPreview(response.avatar);
+      setPreview(response.avatar); 
     } catch (error) {
-      console.error('Failed to update profile', error);
       toast.error('Failed to update profile');
     }
   };
@@ -207,28 +198,28 @@ const ProfileSettings = () => {
                       )}
                     </FormGroup>
 
-                    {/* Phone */}
+                    {/* Mobile */}
                     <FormGroup>
-                      <Label for="phone">Phone</Label>
-                      {editMode.phone ? (
+                      <Label for="mobile">Mobile</Label>
+                      {editMode.mobile ? (
                         <div className='d-flex align-items-center'>
                           <Input
                             type="text"
-                            name="phone"
-                            id="phone"
-                            value={formData.phone}
+                            name="mobile"
+                            id="mobile"
+                            value={formData.mobile}
                             onChange={handleChange}
-                            placeholder="Enter your phone number"
+                            placeholder="Enter your mobile number"
                             className='flex-grow-1'
                           />
-                          <Button color="info" onClick={() => toggleEditMode('phone')} className='ml-2'>
+                          <Button color="info" onClick={() => toggleEditMode('mobile')} className='ml-2'>
                             Save
                           </Button>
                         </div>
                       ) : (
                         <div className='d-flex align-items-center'>
-                          <div className='flex-grow-1'>{formData.phone || 'No phone number set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('phone')}>
+                          <div className='flex-grow-1'>{formData.mobile || 'No mobile number set'}</div>
+                          <Button color="info" onClick={() => toggleEditMode('mobile')}>
                             Edit
                           </Button>
                         </div>
@@ -245,13 +236,13 @@ const ProfileSettings = () => {
               <Card>
                 <CardBody>
                   <h2>Profile Picture</h2>
-                  <Form>
+                  <Form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label for="profilePicture">Upload Profile Picture</Label>
+                      <Label for="avatar">Upload Profile Picture</Label>
                       <Input
                         type="file"
-                        name="profilePicture"
-                        id="profilePicture"
+                        name="avatar"
+                        id="avatar"
                         onChange={handleFileChange}
                       />
                       {preview && (
