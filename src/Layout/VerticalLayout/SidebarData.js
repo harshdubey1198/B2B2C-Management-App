@@ -194,17 +194,6 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-cash-multiple",
       url:"/pricing",
     },
-    // {
-    //   label: "Invoicing",
-    //   icon: "mdi mdi-cash-multiple",
-    //   subItem: [
-    //     // { sublabel: "Create Invoice", link: "/create-invoice" },
-    //     { sublabel: "View Invoices", link: "/view-invoices" },
-    //     // { sublabel: "Payments", link: "/payments" },
-    //     // { sublabel: "Expenses", link: "/expenses" },
-    //     // { sublabel: "Reports", link: "/reports" },
-    //   ],
-    // },
     {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
@@ -213,6 +202,17 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Table Form", link: "/add-inventory" },
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
+      ],
+    },
+    {
+      label: "Invoicing",
+      icon: "mdi mdi-cash-multiple",
+      subItem: [
+        // { sublabel: "Create Invoice", link: "/create-invoice" },
+        { sublabel: "View Invoices", link: "/view-invoices" },
+        // { sublabel: "Payments", link: "/payments" },
+        // { sublabel: "Expenses", link: "/expenses" },
+        // { sublabel: "Reports", link: "/reports" },
       ],
     },
     // {

@@ -4,10 +4,12 @@ import { useReactToPrint } from 'react-to-print';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
 import { formatDate } from '../Utility/formatDate';
+import FirmSwitcher from '../Firms/FirmSwitcher';
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [selectedFirmId, setSelectedFirmId] = useState(null)
     const [trigger, setTrigger] = useState(0)
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser")).response;
@@ -22,19 +24,36 @@ const ViewInvoices = () => {
     };
 
     useEffect(() => {
-        const fetchInvoices = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config);
-                setInvoices(response.data);
-                console.log("Fetched invoices: ", response.data);
-            } catch (error) {
-                console.error("Error fetching invoices:", error);
-                setInvoices([]);
-            }
-        };
-
-        fetchInvoices();
+        if(authuser.role === "firm_admin"){
+            const fetchInvoices = async () => {
+                try {
+                    const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`, config);
+                    setInvoices(response.data);
+                    console.log("Fetched invoices: ", response.data);
+                } catch (error) {
+                    console.error("Error fetching invoices:", error);
+                    setInvoices([]);
+                }
+            };
+            fetchInvoices();
+        }
     }, [trigger]);
+
+    useEffect(() => {
+        if(authuser.role === "client_admin"){
+            const fetchInvoices = async () => {
+                try {
+                    const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoices/${selectedFirmId}`, config);
+                    setInvoices(response.data);
+                    console.log("Fetched invoices: ", response.data);
+                } catch (error) {
+                    console.error("Error fetching invoices:", error);
+                    setInvoices([]);
+                }
+            };
+            fetchInvoices();
+        }
+    }, [selectedFirmId]);
 
     const printInvoice = useReactToPrint({
         content: () => printRef.current
@@ -67,6 +86,14 @@ const ViewInvoices = () => {
         <React.Fragment>
             <div className='page-content'>
                 <h1>View Invoices</h1>
+                <div className="d-flex justify-content-between mb-4">
+                {authuser.role === "client_admin" && (
+                    <FirmSwitcher 
+                        selectedFirmId={selectedFirmId}
+                        onSelectFirm={setSelectedFirmId}
+                    />
+                )}
+                </div>
                 {invoices.length === 0 ? (
                     <Alert color="info">No invoices found.</Alert>
                 ) : (
