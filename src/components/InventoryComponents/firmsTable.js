@@ -23,12 +23,10 @@ function FirmsTable({handleViewDetails}) {
           config
         );
         setInventoryData(response.data)
-        console.log(response.data, "resposne dat")
       } catch (error) {
         console.error("Error fetching inventory data:", error);
       }
     };
-
     fetchInventoryData();
   }, [selectedFirmId])
 
