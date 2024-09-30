@@ -86,6 +86,8 @@ const InventoryItemForm = () => {
     }
   };
 
+  console.log(variant, "variant")
+
   const handleCategory = async (e) => {
     const { value } = e.target;
     setFormValues((prevState) => ({

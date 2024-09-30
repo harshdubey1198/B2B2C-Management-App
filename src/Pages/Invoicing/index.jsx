@@ -241,7 +241,7 @@ const handleSubmit = (e) => {
     content: () => printRef.current
   });
 
-  console.log(invoiceData, "invoicedata")
+  // console.log(invoiceData, "invoicedata")
 
   return (
     <Container>

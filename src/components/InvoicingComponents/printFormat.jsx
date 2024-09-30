@@ -44,9 +44,9 @@ const sliceDescription = (description) => {
 
 const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};  
-    console.log("selectInvoice", selectInvoice); 
+    // console.log("selectInvoice", selectInvoice); 
     const items = invoiceData?.items || []; 
-    console.log("items", items);   
+    // console.log("items", items);   
     const companyAddress = selectInvoice.address || [];
     const country = companyAddress.length ? companyAddress[0].country : 'India'; 
     const customerState = invoiceData?.customerState || '';
