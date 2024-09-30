@@ -110,6 +110,8 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     }
   };
 
+  console.log(items, "items")
+
   if (loading) return <Spinner color="primary" />;
 
   return (
