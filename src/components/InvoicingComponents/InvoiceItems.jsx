@@ -52,9 +52,10 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
 
   const calculateTotal = (quantity, price, tax, discount) => {
     const totalBeforeTax = quantity * price;
-    const totalTax = totalBeforeTax * (tax / 100);
-    const totalDiscount = totalBeforeTax * (discount / 100);
-    return totalBeforeTax + totalTax - totalDiscount;
+    // const totalTax = totalBeforeTax * (tax / 100);
+    // const totalDiscount = totalBeforeTax * (discount / 100);
+    // return totalBeforeTax + totalTax - totalDiscount;
+    return
   };
 
   const handleItemSelection = (index, selectedItemId) => {
@@ -90,6 +91,7 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     if (selectedVariant) {
       const updatedItems = [...items];
       const price = getVariantPrice(itemId, variantName);
+      console.log(price, "price")
       const quantity = 1;
       const tax = updatedItems[index].tax || 0;
       const discount = updatedItems[index].discount || 0;
