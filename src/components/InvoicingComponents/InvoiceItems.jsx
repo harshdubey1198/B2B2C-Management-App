@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FormGroup, Label, Input, Button, Spinner } from 'reactstrap';
 import axios from 'axios';
 
-const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) => {
+const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -102,6 +102,20 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
         items: updatedItems,
       }));
     }
+  };
+
+  const handleItemChange = (index, field, value) => {
+    const newItems = [...items];
+    newItems[index] = { ...newItems[index], [field]: value };
+    
+    const selectedItem = newItems[index];
+    const quantity = selectedItem.quantity || 1;
+    const price = selectedItem.price || 0;
+    const tax = selectedItem.tax || 0;
+    const discount = selectedItem.discount || 0;
+
+    newItems[index].total = calculateTotal(quantity, price, tax, discount);
+    setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
   
   console.log(items, "items")

@@ -142,14 +142,7 @@ const Index = () => {
     newItems.splice(index, 1);
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
-
-  const handleItemChange = (index, field, value) => {
-    const newItems = [...invoiceData.items];
-    // console.log(newItems,"newitems")
-    newItems[index] = { ...newItems[index], [field]: value };
-    // console.log(newItems, "newitems")
-    setInvoiceData(prevData => ({ ...prevData, items: newItems }));
-};  
+  
 const handleSubmit = (e) => {
   e.preventDefault();
 
@@ -264,7 +257,6 @@ const handleSubmit = (e) => {
               <InvoiceItems
                 items={invoiceData.items}
                 fakeItems={fakeItems}
-                handleItemChange={handleItemChange}
                 removeItem={removeItem}
                 setInvoiceData={setInvoiceData}
               />
