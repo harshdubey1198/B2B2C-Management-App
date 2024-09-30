@@ -12,6 +12,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 import { toast } from "react-toastify";
 import VariantModal from "./VariantModal";
+import FirmsTable from "../../components/InventoryComponents/firmsTable";
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
@@ -30,6 +31,7 @@ function InventoryTable() {
   const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+  const authuser = JSON.parse(localStorage.getItem("authUser")).response;
 
   const config = {
     headers: {
@@ -38,19 +40,21 @@ function InventoryTable() {
   };
 
   useEffect(() => {
-    const fetchInventoryData = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`,
-          config
-        );
-        setInventoryData(response.data);
-      } catch (error) {
-        console.error("Error fetching inventory data:", error);
-      }
-    };
-
-    fetchInventoryData();
+    if(authuser.role === "firm_admin"){
+      const fetchInventoryData = async () => {
+        try {
+          const response = await axios.get(
+            `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`,
+            config
+          );
+          setInventoryData(response.data);
+        } catch (error) {
+          console.error("Error fetching inventory data:", error);
+        }
+      };
+  
+      fetchInventoryData();
+    }
   }, [userId, trigger]);
 
   const handleViewDetails = (item) => {
@@ -160,7 +164,62 @@ function InventoryTable() {
           breadcrumbItem="Inventory Table"
         />
 
-        <div className="table-responsive">
+{authuser.role === 'client_admin' ? (
+  <FirmsTable handleViewDetails={handleViewDetails}/>
+) : (
+  <div className="table-responsive">
+    <Table bordered className="mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Quantity</th>
+          <th>Brand</th>
+          <th>Cost Price</th>
+          <th>Selling Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {inventoryData.length > 0 ? (
+          inventoryData.map((item, index) => (
+            <tr key={index}>
+              <td>{item.name}</td>
+              <td>{item.description}</td>
+              <td>
+                {item.quantity} {item.qtyType}
+              </td>
+              <td>{item.brand}</td>
+              <td>${item.costPrice?.toFixed(2)}</td>
+              <td>${item.sellingPrice?.toFixed(2)}</td>
+              <td className="d-flex gap-2">
+                <Button
+                  color="info"
+                  onClick={() => handleViewDetails(item)}
+                >
+                  View Details
+                </Button>
+                <Button
+                  color="danger"
+                  onClick={() => handleDeleteInventory(item)}
+                >
+                  Delete
+                </Button>
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan="7">No inventory items found</td>
+          </tr>
+        )}
+      </tbody>
+    </Table>
+  </div>
+)}
+
+
+        {/* <div className="table-responsive">
           <Table bordered className="mb-0">
             <thead>
               <tr>
@@ -208,7 +267,7 @@ function InventoryTable() {
               )}
             </tbody>
           </Table>
-        </div>
+        </div> */}
 
         <Modal
           modalClassName="custom-modal-width"
