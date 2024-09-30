@@ -32,49 +32,39 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     fetchInventoryItems();
   }, [firmId]);
 
-  const getMaxQuantity = (itemId, variantName) => {
+  const getSellingPrice = (itemId) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
-    if (selectedItem) {
-      const selectedVariant = selectedItem.variants.find((variant) => variant.optionLabel === variantName);
-      return selectedVariant ? selectedVariant.stock : selectedItem.quantity;
-    }
-    return 1;
+    return selectedItem ? selectedItem.sellingPrice : 0;
   };
 
-  const getVariantPrice = (itemId, variantName) => {
+  const getMaxQuantity = (itemId) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
-    if (selectedItem) {
-      const selectedVariant = selectedItem.variants.find((variant) => variant.optionLabel === variantName);
-      return selectedVariant ? selectedVariant.price : selectedItem.sellingPrice;
-    }
-    return 0;
+    return selectedItem ? selectedItem.quantity : 1;
   };
 
   const calculateTotal = (quantity, price, tax, discount) => {
     const totalBeforeTax = quantity * price;
-    // const totalTax = totalBeforeTax * (tax / 100);
-    // const totalDiscount = totalBeforeTax * (discount / 100);
-    // return totalBeforeTax + totalTax - totalDiscount;
-    return
+    const totalTax = totalBeforeTax * (tax / 100);
+    const totalDiscount = totalBeforeTax * (discount / 100);
+    return totalBeforeTax + totalTax - totalDiscount;
   };
 
   const handleItemSelection = (index, selectedItemId) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
       const updatedItems = [...items];
-      const variantName = selectedItem.variants.length > 0 ? selectedItem.variants[0]?.optionLabel : '';
-      const price = getVariantPrice(selectedItem._id, variantName) || 0;
+      const price = getSellingPrice(selectedItem._id); 
 
       updatedItems[index] = {
         ...updatedItems[index],
         itemId: selectedItem._id,
         name: selectedItem.name,
-        selectedVariant: [{ optionLabel: variantName, price }],
         description: selectedItem.description || '',
         quantity: 1,
+        price,
         tax: 0,
         discount: 0,
-        total: price,
+        total: calculateTotal(1, price, 0, 0),
       };
 
       setInvoiceData(prevData => ({
@@ -83,35 +73,37 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
       }));
     }
   };
+
 
   const handleVariantChange = (itemId, variantName, index) => {
     const selectedItem = items[index];
     const selectedVariant = inventoryItems.find((invItem) => invItem._id === itemId)?.variants.find((variant) => variant.optionLabel === variantName);
-
+  
     if (selectedVariant) {
       const updatedItems = [...items];
-      const price = getVariantPrice(itemId, variantName);
-      console.log(price, "price")
-      const quantity = 1;
-      const tax = updatedItems[index].tax || 0;
-      const discount = updatedItems[index].discount || 0;
+      const basePrice = getSellingPrice(itemId); 
+      const variantPrice = selectedVariant.price || 0; 
+      const quantity = selectedItem.quantity || 1;
+      const tax = selectedItem.tax || 0;
+      const discount = selectedItem.discount || 0;
+  
+      const price = basePrice + variantPrice;
       const total = calculateTotal(quantity, price, tax, discount);
-
+  
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, price }],
-        price,
-        quantity,
+        selectedVariant: [{ optionLabel: variantName, price: variantPrice }],
+        price, 
         total,
       };
-
+  
       setInvoiceData(prevData => ({
         ...prevData,
         items: updatedItems,
       }));
     }
   };
-
+  
   console.log(items, "items")
 
   if (loading) return <Spinner color="primary" />;
@@ -120,25 +112,24 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
     <div>
       {items.map((item, index) => (
         <div className="d-flex flex-wrap flex-lg-row justify-content-between align-items-center w-100 mb-3" key={index}>
-       <FormGroup>
-          <Label for={`name-${index}`}>Item Name</Label>
-          <Input
-            type="select"
-            name={`name-${index}`}
-            id={`name-${index}`}
-            value={item.itemId || ""}  
-            onChange={(e) => handleItemSelection(index, e.target.value)}
-            required
-          >
-            <option value="">Select Item</option>
-            {inventoryItems.map((inventoryItem) => (
-              <option key={inventoryItem._id} value={inventoryItem._id}>
-                {inventoryItem.name}
-              </option>
-            ))}
-          </Input>
-        </FormGroup>
-
+          <FormGroup>
+            <Label for={`name-${index}`}>Item Name</Label>
+            <Input
+              type="select"
+              name={`name-${index}`}
+              id={`name-${index}`}
+              value={item.itemId || ""}  
+              onChange={(e) => handleItemSelection(index, e.target.value)}
+              required
+            >
+              <option value="">Select Item</option>
+              {inventoryItems.map((inventoryItem) => (
+                <option key={inventoryItem._id} value={inventoryItem._id}>
+                  {inventoryItem.name}
+                </option>
+              ))}
+            </Input>
+          </FormGroup>
 
           <FormGroup>
             <Label for={`variant-${index}`}>Variant</Label>
@@ -166,13 +157,13 @@ const InvoiceItems = ({ items, handleItemChange, removeItem, setInvoiceData }) =
               name={`quantity-${index}`}
               id={`quantity-${index}`}
               min={1}
-              max={getMaxQuantity(item.itemId || "", item.selectedVariant?.[0]?.optionLabel || "")}
+              max={getMaxQuantity(item.itemId || "")}
               value={item.quantity || 1}
               onChange={(e) =>
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "", item.selectedVariant?.[0]?.optionLabel || "")))
+                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "")))
                 )
               }
               required
