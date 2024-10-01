@@ -23,6 +23,7 @@ const Index = () => {
     invoiceSubType: "",
     IFSCCode: "",
     branchName: "",
+    amountPaid: "",
     accountNumber: "",
     gstin: "",
     firstName: "",
@@ -184,6 +185,7 @@ const handleSubmit = (e) => {
     })),
     invoiceDate: invoiceData.issueDate, 
     dueDate: invoiceData.dueDate, 
+    amountPaid: invoiceData.amountPaid,
     firmId: authuser?.response?.adminId, 
     createdBy: authuser?.response?.id,
     invoiceType: invoiceData.invoiceType,
@@ -222,6 +224,7 @@ const handleSubmit = (e) => {
       paymentLink: '',
       invoiceType: '',
       invoiceSubType: '',
+      amountPaid: '',
     });
   })
   .catch(error => {

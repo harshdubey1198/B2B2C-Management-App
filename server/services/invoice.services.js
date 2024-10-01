@@ -5,7 +5,7 @@ const User = require('../schemas/user.schema')
 const invoiceServices = {};
 
 invoiceServices.createInvoice = async (invoiceData) => {
-  const { customer, items, invoiceDate, dueDate, createdBy, firmId, invoiceType, invoiceSubType } = invoiceData;
+  const { customer, items, invoiceDate, dueDate,amountPaid, createdBy, firmId, invoiceType, invoiceSubType } = invoiceData;
 
   let customerData;
   const existingCustomer = await Customer.findOne({ email: customer.email, firmId });
