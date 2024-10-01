@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";  
 import { useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
+import hsnData from "../../data/hsn.json"
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -54,6 +55,28 @@ const InventoryItemForm = () => {
     }));
   };
 
+  const handleItemChange = (e) => {
+    const { name, value} = e.target
+    setFormValues((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    const hsnNumber = hsnData.find(item => 
+      item.description.toLowerCase().includes(value.toLowerCase())
+    )
+    if(hsnNumber){
+      setFormValues((prevState) => ({
+        ...prevState,
+        ProductsHsn: hsnNumber.hsn,
+      }));
+    }else{
+      setFormValues((prevState) => ({
+        ...prevState,
+        ProductsHsn: "",
+      }))  
+    }
+  }
+
   const handleVariantChange = (e) => {
     const { name, value } = e.target;
     setVariant((prevState) => ({
@@ -85,8 +108,6 @@ const InventoryItemForm = () => {
       toast.error("Please fill in all variant details");
     }
   };
-
-  console.log(variant, "variant")
 
   const handleCategory = async (e) => {
     const { value } = e.target;
@@ -162,7 +183,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
-                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
+                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleItemChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
@@ -242,7 +263,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductsHsn">HSN Code</Label>
-                          <Input type="text" id="ProductsHsn" name="ProductsHsn" placeholder="Enter HSN code" value={formValues.ProductsHsn} onChange={handleChange} />
+                          <Input type="text" id="ProductsHsn" name="ProductsHsn" placeholder="Enter HSN code" value={formValues.ProductsHsn} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
