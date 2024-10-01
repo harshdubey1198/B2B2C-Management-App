@@ -42,8 +42,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     return selectedItem ? selectedItem.quantity : 1;
   };
 
-  const calculateTotal = (quantity, price, tax, discount) => {
-    const totalBeforeTax = quantity * price;
+  const calculateTotal = (quantity,sellingPrice, price, tax, discount) => {
+    const totalBeforeTax = quantity * sellingPrice;
     const totalTax = totalBeforeTax * (tax / 100);
     const totalDiscount = totalBeforeTax * (discount / 100);
     return totalBeforeTax + totalTax - totalDiscount;

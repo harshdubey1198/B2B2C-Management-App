@@ -134,11 +134,9 @@ const InventoryItemForm = () => {
     };
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
-      if (response.status === 200) {
         toast.success("Item added successfully.");
-        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", });
+        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", brand:"", manufacturer:"", supplier:""});
         setVariants([]);
-      }
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
       console.error(error.message);
