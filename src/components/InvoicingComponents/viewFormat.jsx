@@ -44,9 +44,9 @@ const sliceDescription = (description) => {
 
 const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};  
-    console.log("selectInvoice", selectInvoice); 
+    // console.log("selectInvoice", selectInvoice.firmId.companyTitle); 
     const items = invoiceData?.items || []; 
-    console.log("items", items);   
+    // console.log("items", items);   
     const companyAddress = selectInvoice.address || [];
     const country = companyAddress.length ? companyAddress[0].country : 'India'; 
     const customerState = invoiceData?.customerState || '';
@@ -78,6 +78,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
+                    
                     {companyAddress.map((address, index) => (
                         <div key={index}>
                             <p className="my-1">{address.h_no}, {address.nearby}, {address.district}</p>
@@ -139,12 +140,12 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     return (
                         <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{item?.name || 'N/A'}</td> 
+                        <td>{item?.itemId?.name || 'N/A'}</td>
                         <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
-                        <td>{sliceDescription(item.description)}</td>
+                        <td>{sliceDescription(item?.itemId?.description)}</td>
                         <td>{item.hsn}</td>
                         <td>{item.quantity}</td>
-                        <td>{item.sellingPrice}</td>
+                        <td>{item.sellingPrice + item?.selectedVariant?.[0]?.price}</td>
                         {isSameState ? (
                             <>
                             <td>{itemCgstAmount.toFixed(2)}</td>
@@ -153,7 +154,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                         ) : (
                             <td>{itemIgstAmount.toFixed(2)}</td>
                         )}
-                        <td>{item.total}</td>
+                        <td>{invoiceData?.items?.total}</td>
                         </tr>
                     );
                     })}

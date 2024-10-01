@@ -41,7 +41,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
   let totalAmount = 0
   items.forEach(item => {
     const priceToUse = item.selectedVariant && item.selectedVariant.length > 0 && item.selectedVariant[0].price
-      ? item.selectedVariant[0].price
+      ? item.selectedVariant[0].price + item.sellingPrice
       : item.sellingPrice;
     const itemTotal = priceToUse * item.quantity;
     item.total = itemTotal;

@@ -40,7 +40,7 @@ function InventoryTable() {
   };
 
   useEffect(() => {
-    if(authuser.role === "firm_admin"){
+    if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
       const fetchInventoryData = async () => {
         try {
           const response = await axios.get(
@@ -299,42 +299,46 @@ function InventoryTable() {
                     />
                   </Col>
                   <Col md={6}>
-                    <label>
-                      <strong>Quantity Type:</strong>
-                    </label>
-                    <input
-                      type="number"
-                      value={selectedItem.quantity}
-                      onChange={(e) =>
-                        setSelectedItem({
-                          ...selectedItem,
-                          quantity: e.target.value,
-                        })
-                      }
-                      className="form-control"
-                      readOnly
-                    />
-                    <select
-                      id="qtyType"
-                      name="qtyType"
-                      value={selectedItem.qtyType}
-                      onChange={(e) =>
-                        setSelectedItem({
-                          ...selectedItem,
-                          qtyType: e.target.value,
-                        })
-                      }
-                      className="form-control"
-                    >
-                      <option value="">Select Unit Type</option>
-                      <option value="litres">Litres</option>
-                      <option value="kg">Kilograms</option>
-                      <option value="packets">Packets</option>
-                      <option value="pieces">Pieces</option>
-                      <option value="single unit">Single Unit</option>
-                      <option value="gm">Grams</option>
-                    </select>
-                  </Col>
+  <label>
+    <strong>Quantity Type:</strong>
+  </label>
+  
+  <div className="d-flex">
+    <input 
+      type="number"
+      value={selectedItem.quantity}
+      onChange={(e) =>
+        setSelectedItem({
+          ...selectedItem,
+          quantity: e.target.value,
+        })
+      }
+      className="form-control w-75 mr-2" 
+      readOnly
+    />
+    
+    <select
+      id="qtyType"
+      name="qtyType"
+      value={selectedItem.qtyType}
+      onChange={(e) =>
+        setSelectedItem({
+          ...selectedItem,
+          qtyType: e.target.value,
+        })
+      }
+      className="form-control w-25"
+    >
+      <option value="">Select Unit Type</option>
+      <option value="litres">Litres</option>
+      <option value="kg">Kilograms</option>
+      <option value="packets">Packets</option>
+      <option value="pieces">Pieces</option>
+      <option value="single unit">Single Unit</option>
+      <option value="gm">Grams</option>
+    </select>
+  </div>
+</Col>
                 </Row>
                 <Row>
                   <Col md={6}>

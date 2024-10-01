@@ -392,7 +392,7 @@ export const masterAdminSidebarData = () => [
     // },
     {
       label: "Inventory",
-      icon: "mdi mdi-room-service-outline",
+      icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Management", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
