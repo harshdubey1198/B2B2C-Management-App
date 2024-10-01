@@ -165,4 +165,11 @@ invoiceServices.updateInvoiceApproval = async (body) => {
   }
 }
 
+// GET INVOICE COUNT UNDER FIRMS
+invoiceServices.countInvoices = async (firmId) => {
+  const count = await Invoice.countDocuments({ firmId: firmId });
+  return count;
+};
+
+
 module.exports = invoiceServices;

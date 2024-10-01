@@ -53,4 +53,14 @@ invoiceController.updateInvoiceApproval = async (req, res) => {
     }
 };
 
+// count invoices
+invoiceController.countInvoices = async (req, res) => {
+    try {
+        const invoicecount = await InvoiceServices.countInvoices(req.params.firmId);
+        return res.status(200).json(createResult("Get Invoice Count successfully", invoicecount));
+    } catch (error) {
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};
+
 module.exports = invoiceController;
