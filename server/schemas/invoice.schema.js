@@ -40,6 +40,8 @@ const invoiceSchema = new Schema({
     }],
     invoiceDate: { type: Date, default: Date.now },
     dueDate: { type: Date },
+    amountPaid: { type: Number, default: 0 },
+    amountDue: Number, 
     totalAmount: { type: Number },
     status: { type: String, enum: ['paid', 'unpaid', 'partially paid'], default: 'unpaid' },
     approvalStatus: { 

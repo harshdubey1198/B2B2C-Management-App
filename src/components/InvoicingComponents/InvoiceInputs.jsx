@@ -340,6 +340,18 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 required
               />
             </FormGroup>
+            <FormGroup>
+            <Label for="amountPaid">Amount Paid</Label>
+            <Input
+              type="number"
+              name="amountPaid"
+              id="amountPaid"
+              placeholder="Amount Paid"
+              value={invoiceData.amountPaid}
+              onChange={handleInputChange}
+              required
+            />
+          </FormGroup>
           </Col>
           <Col md={3}>
             <FormGroup>

@@ -63,6 +63,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
   } else {
     invoiceNumber = `INV-${day}-${month}-${year}-1`;
   }
+  const amountDue = totalAmount - (amountPaid || 0);  
 
   const newInvoice = new Invoice({
     invoiceNumber, 
@@ -71,7 +72,9 @@ invoiceServices.createInvoice = async (invoiceData) => {
     customerPhone: customerData.customerPhone,
     customerAddress: customerData.customerAddress,
     invoiceType,
-    // invoiceSubType,
+    invoiceSubType,
+    amountPaid,  
+    amountDue,
     firmId,
     items,
     invoiceDate,

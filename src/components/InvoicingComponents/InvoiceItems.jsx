@@ -46,7 +46,10 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     const totalBeforeTax = quantity * price;
     const totalTax = totalBeforeTax * (tax / 100);
     const totalDiscount = totalBeforeTax * (discount / 100);
-    return totalBeforeTax + totalTax - totalDiscount;
+    // return totalBeforeTax + totalTax - totalDiscount;
+    const total = totalBeforeTax + totalTax - totalDiscount;
+    return parseFloat(total.toFixed(2)); 
+
   };
 
   const handleItemSelection = (index, selectedItemId) => {
