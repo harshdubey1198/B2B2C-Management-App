@@ -18,13 +18,13 @@ const InventoryItemForm = () => {
   const toggleModal = () => setModal(!modal);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
+  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
     });
   };
   
@@ -54,28 +54,6 @@ const InventoryItemForm = () => {
       [name]: value,
     }));
   };
-
-  const handleItemChange = (e) => {
-    const { name, value} = e.target
-    setFormValues((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    const hsnNumber = hsnData.find(item => 
-      item.description.toLowerCase().includes(value.toLowerCase())
-    )
-    if(hsnNumber){
-      setFormValues((prevState) => ({
-        ...prevState,
-        ProductsHsn: hsnNumber.hsn,
-      }));
-    }else{
-      setFormValues((prevState) => ({
-        ...prevState,
-        ProductsHsn: "",
-      }))  
-    }
-  }
 
   const handleVariantChange = (e) => {
     const { name, value } = e.target;
@@ -115,6 +93,29 @@ const InventoryItemForm = () => {
       ...prevState,
       categoryId: value,
     }));
+
+    const selectedCategory = categories.find((category) => category._id === value);
+    if (selectedCategory) {
+      const hsnNumber = hsnData.find((hsn) =>
+        hsn.description.toLowerCase().includes(selectedCategory.categoryName.toLowerCase())
+      );
+      if (hsnNumber) {
+        setFormValues((prevState) => ({
+          ...prevState,
+          ProductHsn: hsnNumber.hsn,
+        }));
+      } else {
+        setFormValues((prevState) => ({
+          ...prevState,
+          ProductHsn: "",
+        }));
+      }
+    } else {
+      setFormValues((prevState) => ({
+        ...prevState,
+        ProductHsn: "",
+      }));
+    }
 
     if (value) {
       try {
@@ -156,7 +157,7 @@ const InventoryItemForm = () => {
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
         toast.success("Item added successfully.");
-        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductsHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", brand:"", manufacturer:"", supplier:""});
+        setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", brand:"", manufacturer:"", supplier:""});
         setVariants([]);
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
@@ -165,6 +166,8 @@ const InventoryItemForm = () => {
       setLoading(false);
     }
   };
+
+  console.log(formValues, "formvalues")
 
   return (
     <React.Fragment>
@@ -183,7 +186,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
-                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleItemChange} />
+                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
@@ -262,8 +265,8 @@ const InventoryItemForm = () => {
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="ProductsHsn">HSN Code</Label>
-                          <Input type="text" id="ProductsHsn" name="ProductsHsn" placeholder="Enter HSN code" value={formValues.ProductsHsn} />
+                          <Label htmlFor="ProductHsn">HSN Code</Label>
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN code" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>

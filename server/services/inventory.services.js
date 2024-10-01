@@ -15,7 +15,7 @@ const calculateStock = (variants) => {
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
-    const { name, description, quantity, qtyType, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
+    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({ name: name, createdBy: userId });
     if (existingItem) {
@@ -51,6 +51,7 @@ inventoryServices.createItem = async (userId, body) => {
         costPrice,
         sellingPrice,
         categoryId,
+        ProductHsn,
         createdBy: user._id,
         firmId: user.adminId,
         subcategoryId: subcategoryId || null,
