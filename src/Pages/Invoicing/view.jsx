@@ -24,7 +24,6 @@ const ViewInvoices = () => {
         },
     };
 
-    // Fetch invoices for firm_admin or accountant role
     useEffect(() => {
         const fetchInvoices = async () => {
             try {
@@ -49,7 +48,8 @@ const ViewInvoices = () => {
             const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`, config);
             setSelectedInvoice(response.data);
             console.log(response.data);
-            console.log(response.data.totalAmount);
+            // console.log(response.data.items[0].total);
+            // console.log(response.data.totalAmount);
             handlePrint(); 
         } catch (error) {
             console.error("Error fetching invoice for printing:", error);

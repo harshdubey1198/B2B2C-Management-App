@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-
+import { formatDate } from '../../Pages/Utility/formatDate'; 
 const countries = {
     India: { currency: 'INR', gst: 18 },
     Malaysia: { currency: 'MYR', gst: 6 },
@@ -55,10 +55,11 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
     const companyState = companyAddress.length ? companyAddress[0]?.state?.toLowerCase() : '';
     const isSameState = companyState === customerState?.toLowerCase();
     
-    const totalAmount = invoiceData?.items?.reduce((acc, item) => acc + (item.quantity * item.price), 0) || 0;
-    const taxAmount = (totalAmount * taxRate) / 100;
-    const amountDue = totalAmount + taxAmount;
-    const netReceived = amountDue;
+    const totalAmount = invoiceData?.totalAmount ;
+    // const taxAmount = (totalAmount * taxRate) / 100;
+    // const amountDue = totalAmount + taxAmount;
+    // const netReceived = amountDue;
+    console.log("totalAmount", totalAmount);
     const customerName = invoiceData?.firstName && invoiceData?.lastName
         ? `${invoiceData.firstName} ${invoiceData.lastName}`
         : invoiceData?.customerName || 'Please select a customer';
@@ -78,21 +79,22 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                             style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
                         />
                     )}
-                    
+                    <p className="my-1" style={{fontWeight:"700" , fontSize:"24px"}}>{selectInvoice.companyTitle}</p>
+                    <p className="my-1">Email : {selectInvoice?.email}</p>
+                    <p className="my-1">Phone : {selectInvoice?.companyMobile}</p>
                     {companyAddress.map((address, index) => (
                         <div key={index}>
                             <p className="my-1">{address.h_no}, {address.nearby}, {address.district}</p>
                             <p className="my-1">{address.city}, {address.state}, {address.country}, {address.zip_code}</p>
                         </div>
                     ))}
-                    <p className="my-1">{invoiceData?.companyEmail}</p>
                     <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
                 <div className="col-md-3 offset-md-3 right-t-col3">
-                    <p><strong>Invoice Number:</strong> INV-24-MAG</p>
-                    <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
-                    <p><strong>Due Date:</strong> {invoiceData?.dueDate || selectInvoice.dueDate}</p>
+                    <p><strong>Invoice Number:</strong> {invoiceData?.invoiceNumber}</p>
+                    <p><strong>Amount Due:</strong> ₹ {invoiceData?.totalAmount}</p>
+                    <p><strong>Issue Date:</strong> {formatDate(invoiceData?.createdAt || selectInvoice.issueDate)}</p>
+                    <p><strong>Due Date:</strong> {formatDate(invoiceData?.dueDate || selectInvoice.dueDate)}</p>
                 </div>
             </div>
 
@@ -113,17 +115,17 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     <th>Item Name</th>
                     <th>Variant</th>
                     <th>Description</th>
-                    <th>HSN/SAC</th>
+                    {/* <th>HSN/SAC</th> */}
                     <th>Quantity</th>
                     <th>Price</th>
-                    {isSameState ? (
+                    {/* {isSameState ? (
                         <>
                         <th>CGST ({taxRate / 2}%)</th>
                         <th>SGST ({taxRate / 2}%)</th>
                         </>
                     ) : (
                         <th>IGST ({taxRate}%)</th>
-                    )}
+                    )} */}
                     <th>Total Amount</th>
                     </tr>
                 </thead>
@@ -143,18 +145,18 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                         <td>{item?.itemId?.name || 'N/A'}</td>
                         <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
                         <td>{sliceDescription(item?.itemId?.description)}</td>
-                        <td>{item.hsn}</td>
+                        {/* <td>{item.hsn}</td> */}
                         <td>{item.quantity}</td>
                         <td>{item.sellingPrice + item?.selectedVariant?.[0]?.price}</td>
-                        {isSameState ? (
+                        {/* {isSameState ? (
                             <>
                             <td>{itemCgstAmount.toFixed(2)}</td>
                             <td>{itemSgstAmount.toFixed(2)}</td>
                             </>
                         ) : (
                             <td>{itemIgstAmount.toFixed(2)}</td>
-                        )}
-                        <td>{invoiceData?.items?.total}</td>
+                        )} */}
+                        <td>{item?.total}</td>
                         </tr>
                     );
                     })}
@@ -173,16 +175,18 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
 
                 <div className="col-md-6 text-right">
                 <h5>Payment Summary</h5>
-                    <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p>
-                    {isSameState ? (
+                    {/* <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p> */}
+                    {/* {isSameState ? (
                         <>
                             <p><strong>CGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
                             <p><strong>SGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
                         </>
                     ) : (
                         <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
-                    )}
-                    <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
+                    )} */}
+                    <p className="my-1"><strong>Total:</strong> ₹ {totalAmount.toFixed(2)}</p>
+                    <p className="my-1 value-in-words"><strong>Total in Words:</strong> {convertNumberToWords(Number(totalAmount.toFixed(2)))} Rupees Only</p>
+
                     {/* <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                     <p className="my-1"><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
