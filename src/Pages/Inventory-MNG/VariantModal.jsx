@@ -15,8 +15,8 @@ const VariantModal = ({ modal, toggleModal, variant, handleVariantChange, addVar
           <Input type="text" id="optionLabel" name="optionLabel" value={variant.optionLabel} onChange={handleVariantChange} />
         </FormGroup>
         <FormGroup>
-          <Label for="priceAdjustment">Price Adjustment</Label>
-          <Input type="number" id="priceAdjustment" name="priceAdjustment" value={variant.priceAdjustment} onChange={handleVariantChange} />
+          <Label for="price">Price Adjustment</Label>
+          <Input type="number" id="price" name="price" value={variant.price} onChange={handleVariantChange} />
         </FormGroup>
         <FormGroup>
           <Label for="stock">Stock</Label>

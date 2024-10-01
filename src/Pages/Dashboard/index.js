@@ -9,7 +9,8 @@ import RolewiseDashboard from "./RolewiseDashboard";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-const navigate = useNavigate();
+  const authuser = JSON.parse(localStorage.getItem('authUser'))?.response
+  const navigate = useNavigate();
   document.title = "Dashboard | aaMOBee";
   return (
     <React.Fragment>
@@ -20,23 +21,38 @@ const navigate = useNavigate();
           <RolewiseDashboard/>
           <UsePanel />
 
-          <Row>
-            {/* Overview Chart */}
-            <OverView />
-            {/* Social Source Chart */}
-            <SocialSource />
-          </Row>
-
-          <Row>
+          
+          <Row className="mb-4">
             {/* Order Stats */}
             {/* <OrderStatus /> */}
             {/* Notifications */}
             {/* <Notifications /> */}
             {/* Revenue by Location Vector Map */}
             {/* <RevenueByLocation /> */}
-            <Button color="primary" onClick={() => navigate('/create-firm')}>
-              Create Firms
-            </Button>
+            {authuser.role === "client_admin" ? (
+                  <Button color="primary" onClick={() => navigate('/create-firm')}>
+                      Create Firm
+                  </Button>
+              ) : authuser.role === "firm_admin" ? (
+                  <Button color="primary" onClick={() => navigate('/firmusers')}>
+                      Create User
+                  </Button>
+              ) : authuser.role === "accountant" ? (
+                  <Button color="primary" onClick={() => navigate('/add-inventory')}>
+                      Create Inventory
+                  </Button>
+              ) : authuser.role === "g_emp" ? (
+                  <Button color="primary" onClick={() => navigate('/create-invoice')}>
+                      Create Invoice
+                  </Button>
+              ) : null}        
+          </Row>
+
+          <Row>
+            {/* Overview Chart */}
+            <OverView />
+            {/* Social Source Chart */}
+            <SocialSource />
           </Row>
 
           {/* Latest Transaction Table */}

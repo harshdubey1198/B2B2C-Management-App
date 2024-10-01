@@ -11,7 +11,7 @@ const InventoryItemForm = () => {
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
-  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", priceAdjustment: "", stock: "", sku: "", barcode: "", });
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
   
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
@@ -66,7 +66,7 @@ const InventoryItemForm = () => {
     if (
       variant.variationType &&
       variant.optionLabel &&
-      variant.priceAdjustment &&
+      variant.price &&
       variant.stock &&
       variant.sku &&
       variant.barcode
@@ -75,7 +75,7 @@ const InventoryItemForm = () => {
       setVariant({
         variationType: "",
         optionLabel: "",
-        priceAdjustment: "",
+        price: "",
         stock: "",
         sku: "",
         barcode: "",
@@ -292,7 +292,7 @@ const InventoryItemForm = () => {
                           <tr key={index}>
                             <td>{variant.variationType}</td>
                             <td>{variant.optionLabel}</td>
-                            <td>{variant.priceAdjustment}</td>
+                            <td>{variant.price}</td>
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>

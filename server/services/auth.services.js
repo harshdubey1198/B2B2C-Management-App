@@ -442,7 +442,7 @@ authService.countUsers = async (body) => {
             return { message: "Users under Firm Admin", data: users };
         }
 
-        if (role === 'firm_admin') {
+        if (role === 'firm_admin' || role === "accountant" || role === "g_emp") {
             const user = await User.findOne({_id: userId})
             if(user){
                 const users = await User.countDocuments({ adminId: user.adminId });
