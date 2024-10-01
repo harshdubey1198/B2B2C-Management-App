@@ -183,19 +183,19 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                         <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
                     )}
                     <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
+                    {/* <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
                     <p className="my-1"><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <h5>Total in Words: {convertNumberToWords(amountDue)}</h5>
+                    <h5>Total in Words: {convertNumberToWords(amountDue)}</h5> */}
                 </div>
             </div>
 
-            <div className="row mt-5 text-center">
+            {/* <div className="row mt-5 text-center">
                 <div className="col-md-12">
                     <p>For any inquiries concerning this invoice, contact us at <strong>{invoiceData?.companyEmail || selectInvoice.companyEmail}</strong></p>
                     <h5>Thank you for your business!</h5>
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 });

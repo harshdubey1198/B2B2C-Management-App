@@ -374,7 +374,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
                 onChange={handleInputChange}
                 required
               >
-                <option value="Tax Invoice">Select Invoice Type</option>
+                <option value="">Select Invoice Type</option>
                 <option value="Tax Invoice">Tax Invoice</option>
                 <option value="Bill of Supply">Bill of Supply</option>
               </Input>
