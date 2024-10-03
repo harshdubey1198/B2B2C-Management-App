@@ -1,4 +1,5 @@
 const PlansServices = require('../services/plans.services');
+const { createResult } = require('../utils/utills');
 
 const planController = {}
 // CREATE PLAN
@@ -33,6 +34,18 @@ planController.getPLan = async  (req, res) => {
         return res.status(500).json({ message: error });
     }
 }
+
+// get firm plan
+planController.getFirmPLan = async  (req, res) => {
+    try {
+        const response = await PlansServices.getFirmPLan(req.params.id);
+        return res.status(200).json(createResult("Get Firm Plan successfully", response));
+    } catch (error) {
+        console.log('Get Plan By ID Error:', error);
+        return res.status(500).json(createResult(null, null, error.message));
+    }
+}
+
 
 // // UPDATE PLAN
 planController.updatePlan = async  (req, res) => {

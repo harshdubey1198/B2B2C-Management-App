@@ -50,6 +50,26 @@ PlansServices.getPlanById = async (planId) => {
     }
 }
 
+// GET FIRM PLAN
+PlansServices.getFirmPLan = async (firmId) => {
+    const firm = await User.findOne({_id: firmId}).select('email companyTitle avatar adminId')
+
+    if(!firm){
+        throw new Error("Firm is not Available")
+    }
+
+    const data = await firm.populate({
+        path: "adminId",
+        select: "email avatar",
+        populate: {
+            path: "planId", 
+        },
+    });
+
+    return data
+}
+
+
 PlansServices.updatePlan = async (planId, updateData)  => {
     try {
         const updatedPlan = await Plan.findOneAndUpdate( { _id: planId }, updateData, { new: true } );
