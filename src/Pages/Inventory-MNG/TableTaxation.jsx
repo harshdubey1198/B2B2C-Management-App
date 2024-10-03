@@ -57,6 +57,9 @@ function TaxationTable() {
           This is the Taxation Table page. 
           Here you can view and manage taxation items.
         </p>
+        <p style={{}} >
+          We are working on it 
+        </p>
         <Col lg={12}>
           <Card>
             <CardBody>
