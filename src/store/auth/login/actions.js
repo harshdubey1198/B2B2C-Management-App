@@ -21,6 +21,13 @@ export const loginSuccess = user => {
   }
 }
 
+export const loginFailure = error => {
+  return {
+    type: API_ERROR,
+    payload: error,
+  }
+}
+
 export const logoutUser = history => {
   return {
     type: LOGOUT_USER,

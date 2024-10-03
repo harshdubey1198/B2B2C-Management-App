@@ -1,11 +1,7 @@
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { LOGIN_USER, LOGOUT_USER, SOCIAL_LOGIN } from "./actionTypes";
 import { apiError, loginSuccess, logoutUserSuccess } from "./actions";
-
-import {
-  postFakeLogin,
-  postSocialLogin,
-} from "../../../helpers/fakebackend_helper";
+import { postFakeLogin, postSocialLogin,} from "../../../helpers/fakebackend_helper";
 
 function* loginUser({ payload: { user, history } }) {
   try {
@@ -25,7 +21,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
-    yield put(apiError("Please check your email and password"));
+    yield put(apiError(LOGIN_USER, error));
   }
 }
 
