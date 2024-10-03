@@ -31,7 +31,7 @@ authService.Registration = async (body) => {
 
         return user;
     } catch (error) {
-        console.error("Error during registration:", error);
+        console.error("Error during Registration:", error);
         return Promise.reject("Unable to create user");
     }
 };
