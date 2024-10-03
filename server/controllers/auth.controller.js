@@ -4,6 +4,7 @@ const createSecretToken = require("../utils/secretToken");
 const uploadToCloudinary = require("../utils/cloudinary");
 const { upload } = require("../utils/multer");
 const multer = require("multer");
+const { createResult } = require("../utils/utills");
 
 
 const authController = {};
@@ -46,10 +47,10 @@ authController.login = async (req, res) => {
   try {
     const response = await authService.userLogin(req.body);
     const token = createSecretToken(response);
-    res.status(200).json({ response, token });
+    return res.status(200).json(createResult("Get Invoice Count successfully", {response ,token}));
   } catch (error) {
     console.log("error login users", error);
-    res.status(400).json({ error: error.toString() });
+    return res.status(400).json(createResult(null, null, error.message));
   }
 };
 
