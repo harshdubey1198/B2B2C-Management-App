@@ -1,0 +1,3 @@
+    "google-maps-react": "^2.0.6",
+    "@vtaits/react-color-picker": "^1.0.2",
+    
