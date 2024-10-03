@@ -12,7 +12,8 @@ function* loginUser({ payload: { user, history } }) {
     if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       const response = yield call(fetchLogin, user);
       history("/dashboard");
-      localStorage.setItem("authUser", JSON.stringify(response));
+      localStorage.setItem("authUser", JSON.stringify(response.data));
+      // console.log(response?.data);
       yield put(loginSuccess(response));
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       const response = yield call(postFakeLogin, {
