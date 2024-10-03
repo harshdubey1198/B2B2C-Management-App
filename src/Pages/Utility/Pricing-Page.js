@@ -3,6 +3,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Container, Row, Col, Card, CardBody, Button } from "reactstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
@@ -11,10 +12,11 @@ const Pricing = () => {
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null); 
   const [showAllPlans, setShowAllPlans] = useState(false); 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-
+  const navigate = useNavigate();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const role = authuser?.response?.role;
   const token = authuser?.token;
+  
 
   useEffect(() => {
     const config = {
@@ -102,7 +104,7 @@ const Pricing = () => {
                         </p>
                       ))}
                     </div>
-                    <Button color="primary" onClick={() => window.location.reload()}>
+                    <Button color="primary" onClick={() => navigate('/dashboard')}>
                       Back to Dashboard
                     </Button>
                   </CardBody>
