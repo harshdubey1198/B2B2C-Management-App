@@ -117,10 +117,10 @@ if ( role !== "firm_admin") {
                     <h5 className="font-size-16">{selectedPlanDetails.title}</h5>
                     <p className="text-muted">{selectedPlanDetails.caption}</p>
                     <p className="text-muted">Price: ${selectedPlanDetails.price}/month</p>
-                    <div className="plan-features mt-4">
+                    <div className="plan-features mt-4 d-flex flex-column">
                       <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
                       {selectedPlanDetails.features.map((feature, index) => (
-                        <p key={index}>
+                        <p key={index} className="text-start" style={{ position: "relative", left: "50%", transform: "translateX(-8%)", }} >
                           <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
                           {feature}
                         </p>
