@@ -52,18 +52,6 @@ import Pricing from "../Pages/Utility/Pricing-Page";
 import Error404 from "../Pages/Utility/Error404-Page";
 import Error500 from "../Pages/Utility/Error500-Page";
 
-// Import Tables
-import BasicTable from "../Pages/Tables/BasicTable.js";
-import ListJs from "../Pages/Tables/ListTables/ListTables";
-import DataTable from "../Pages/Tables/DataTables/DataTables";
-
-
-// Import Charts
-// import ApexCharts from "../Pages/Charts/ApexCharts";
-// import Sparklinechart from "../Pages/Charts/SparklineCharts";
-import FloatChart from "../Pages/Charts/FloatCharts";
-import JknobCharts from "../Pages/Charts/JqueryKnobCharts";
-
 // Import Icon Pages
 import IconMaterialdesign from "../Pages/Icons/IconMaterialdesign";
 import IconFontawesome from "../Pages/Icons/IconFontAwesome";
@@ -192,14 +180,6 @@ const authProtectedRoutes = [
   { path: "/pages-faqs", component: <FAQs /> },
   { path: "/pricing", component: <Pricing /> },
 
-  // Tables pages
-  { path: "/tables-basic", component: <BasicTable /> },
-  { path: "/tables-listjs", component: <ListJs /> },
-  { path: "/table-datatables", component: <DataTable /> },
-
-  // Charts Pages
-  { path: "/chart-floatcharts", component: <FloatChart /> },
-  { path: "/chart-jknobcharts", component: <JknobCharts /> },
 
   // Icons Pages
   { path: "/icon-boxicon", component: <IconBoxicons /> },

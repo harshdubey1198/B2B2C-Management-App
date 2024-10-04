@@ -5,7 +5,7 @@ import { Card, CardBody, Col, Row } from "reactstrap";
 
 import { SocialSourceData } from "../../CommonData/Data/index";
 
-const SocialSource = () => {
+const   SocialSource = () => {
   return (
     <React.Fragment>
       <Col xl={4}>
