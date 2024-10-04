@@ -3,6 +3,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Container, Row, Col, Card, CardBody, Button } from "reactstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
@@ -11,10 +12,14 @@ const Pricing = () => {
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null); 
   const [showAllPlans, setShowAllPlans] = useState(false); 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
-
+  const [clientAdmin, setClientAdmin] = useState(null);
+  const [adminId , setAdminId] = useState(null);
+  const [adminPlan , setAdminPlan] = useState(null);
+  const navigate = useNavigate();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const role = authuser?.response?.role;
   const token = authuser?.token;
+  
 
   useEffect(() => {
     const config = {
@@ -23,6 +28,23 @@ const Pricing = () => {
       },
     };
 
+     if (role === "firm_admin") {
+      
+      axios
+      .get(`${process.env.REACT_APP_URL}/plan/firmplan/${authuser.response.adminId}`, config)
+      .then((response) => {
+        setSelectedPlanDetails(response?.data?.adminId?.planId);  
+        // console.log("Client admin's plan details:", response?.data?.adminId?.planId);
+      })
+      .catch((error) => {
+        console.log("Error fetching selected plan details:", error);
+      });
+  } else {
+    setShowAllPlans(true);
+    }
+
+
+if ( role !== "firm_admin") {
     axios
       .get(`${process.env.REACT_APP_URL}/plan/all`, config)
       .then((response) => {
@@ -44,6 +66,8 @@ const Pricing = () => {
     } else {
       setShowAllPlans(true);
     }
+  }
+   
   }, [token]);
 
   const handlePaymentPlan = (plan) => {
@@ -102,7 +126,7 @@ const Pricing = () => {
                         </p>
                       ))}
                     </div>
-                    <Button color="primary" onClick={() => window.location.reload()}>
+                    <Button color="primary" onClick={() => navigate('/dashboard')}>
                       Back to Dashboard
                     </Button>
                   </CardBody>
@@ -115,7 +139,7 @@ const Pricing = () => {
 
           <Row className="justify-content-center my-2">
             <Col lg={5} className="text-center">
-            { role !== "super_admin" && (
+            { role !== "super_admin" && role!=="firm_admin" && (
               <Button
                 color="secondary"
                 onClick={() => setShowAllPlans(!showAllPlans)}
@@ -126,9 +150,33 @@ const Pricing = () => {
             </Col>
           </Row>
         )
-}
+} 
 
-          {showAllPlans && (
+          {/* {role === "firm_admin" && (
+            <Row className="justify-content-center">
+              <Col lg={8} className="text-center">
+                <Card>
+                  <CardBody>
+                    <h4 className="text-success">Your Client Admin's Plan</h4>
+                    <h5 className="font-size-16">{clientAdmin?.title}</h5>
+                    <p className="text-muted">{clientAdmin?.caption}</p>
+                    <p className="text-muted">Price: ${clientAdmin?.price}/month</p>
+                    <div className="plan-features mt-4">
+                      <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
+                      {clientAdmin?.features.map((feature, index) => (
+                        <p key={index}>
+                          <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
+                          {feature}
+                        </p>
+                      ))}
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+          )} */}
+
+          {role!=="firm_admin" && showAllPlans && (
             <Row className="justify-content-center">
               <div className="text-center mb-2">
                 <h4>Choose your Pricing plan</h4>
@@ -166,7 +214,7 @@ const Pricing = () => {
                             </p>
                           ))}
                         </div>
-                        { role !== "super_admin" && (
+                        { role !== "super_admin" && role!=="firm_admin" && (
                             <Button
                               color="primary"
                               className="mt-4"

@@ -5,7 +5,7 @@ const User = require('../schemas/user.schema')
 const invoiceServices = {};
 
 invoiceServices.createInvoice = async (invoiceData) => {
-  const { customer, items, invoiceDate, dueDate, createdBy, firmId, invoiceType, invoiceSubType } = invoiceData;
+  const { customer, items, invoiceDate, dueDate,amountPaid, createdBy, firmId, invoiceType, invoiceSubType } = invoiceData;
 
   let customerData;
   const existingCustomer = await Customer.findOne({ email: customer.email, firmId });
@@ -63,6 +63,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
   } else {
     invoiceNumber = `INV-${day}-${month}-${year}-1`;
   }
+  const amountDue = totalAmount - (amountPaid || 0);  
 
   const newInvoice = new Invoice({
     invoiceNumber, 
@@ -71,7 +72,9 @@ invoiceServices.createInvoice = async (invoiceData) => {
     customerPhone: customerData.customerPhone,
     customerAddress: customerData.customerAddress,
     invoiceType,
-    // invoiceSubType,
+    invoiceSubType,
+    amountPaid,  
+    amountDue,
     firmId,
     items,
     invoiceDate,

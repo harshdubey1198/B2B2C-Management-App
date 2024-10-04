@@ -1,5 +1,5 @@
 import React, { forwardRef } from 'react';
-
+import '../../assets/scss/bootstrap.scss';
 const countries = {
     India: { currency: 'INR', gst: 18 },
     Malaysia: { currency: 'MYR', gst: 6 },
@@ -69,7 +69,7 @@ const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref)
                 <h2>{invoiceData?.invoiceType}</h2>
             </div>
 
-            <div className="row mt-2">
+            <div className="row mt-4">
                 <div className="col-md-6 text-left">
                     {(invoiceData?.companyLogo || selectInvoice.avatar) && (
                         <img 

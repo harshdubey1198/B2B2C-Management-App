@@ -92,7 +92,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                 </div>
                 <div className="col-md-3 offset-md-3 right-t-col3">
                     <p><strong>Invoice Number:</strong> {invoiceData?.invoiceNumber}</p>
-                    <p><strong>Amount Due:</strong> ₹ {invoiceData?.totalAmount}</p>
+                    <p><strong>Amount Due:</strong> ₹ {invoiceData?.amountDue}</p>
                     <p><strong>Issue Date:</strong> {formatDate(invoiceData?.createdAt || selectInvoice.issueDate)}</p>
                     <p><strong>Due Date:</strong> {formatDate(invoiceData?.dueDate || selectInvoice.dueDate)}</p>
                 </div>
@@ -184,12 +184,12 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     ) : (
                         <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
                     )} */}
+                    <p className="my-1"><strong>Amount Paid:</strong> ₹ {invoiceData?.amountPaid.toFixed(2)}</p>
                     <p className="my-1"><strong>Total:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     <p className="my-1 value-in-words"><strong>Total in Words:</strong> {convertNumberToWords(Number(totalAmount.toFixed(2)))} Rupees Only</p>
 
                     {/* <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
-                    <p className="my-1"><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <h5>Total in Words: {convertNumberToWords(amountDue)}</h5> */}
                 </div>
             </div>

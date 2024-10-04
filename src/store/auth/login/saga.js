@@ -1,18 +1,15 @@
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 import { LOGIN_USER, LOGOUT_USER, SOCIAL_LOGIN } from "./actionTypes";
 import { apiError, loginSuccess, logoutUserSuccess } from "./actions";
-
-import {
-  postFakeLogin,
-  postSocialLogin,
-} from "../../../helpers/fakebackend_helper";
+import { postFakeLogin, postSocialLogin,} from "../../../helpers/fakebackend_helper";
 
 function* loginUser({ payload: { user, history } }) {
   try {
     if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       const response = yield call(fetchLogin, user);
       history("/dashboard");
-      localStorage.setItem("authUser", JSON.stringify(response));
+      localStorage.setItem("authUser", JSON.stringify(response.data));
+      // console.log(response?.data);
       yield put(loginSuccess(response));
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       const response = yield call(postFakeLogin, {
@@ -24,7 +21,7 @@ function* loginUser({ payload: { user, history } }) {
     }
     history("/dashboard");
   } catch (error) {
-    yield put(apiError("Please check your email and password"));
+    yield put(apiError(LOGIN_USER, error));
   }
 }
 
