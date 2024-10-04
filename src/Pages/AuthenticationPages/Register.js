@@ -66,7 +66,7 @@ const Register = (props) => {
     } else if (formInput.password !== formInput.confirmPassword) {
       toast.error("Confirm Password should be the same as Password!");
     } else {
-      PostRequest(`${process.env.REACT_APP_API_URL}/auth/register`, formInput)
+      PostRequest(`${process.env.REACT_APP_URL}/auth/register`, formInput)
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
