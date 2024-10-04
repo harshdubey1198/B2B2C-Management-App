@@ -1,8 +1,0 @@
-MONGO_URI=mongodb+srv://harshhd1198:harshhd1198@aamobee.9vo2kgb.mongodb.net/aaMOBee?retryWrites=true&w=majority&appName=Aamobee
-PORT=8001
-TOKEN_KEY=secret
-GOOGLE_MAIL=harshhd1198@gmail.com
-GOOGLE_PASS=qpetmyljigygnias
-CLOUDINARY_CLOUD_NAME=harshdubey1198
-CLOUDINARY_API_KEY=872741546995277
-CLOUDINARY_API_SECRET=uVOHNauGkNh0XzLvSJkrtZZshEY
