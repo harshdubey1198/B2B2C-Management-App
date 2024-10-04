@@ -29,7 +29,7 @@ PlansServices.createPlan = async (id,data) => {
 
 PlansServices.getAllPlans = async () => {
     try {
-        const plans = await Plan.find();
+        const plans = await Plan.find({ deleted_at: null });  
         return plans;
     } catch (error) {
         console.error("Error fetching plans:", error);
@@ -37,9 +37,10 @@ PlansServices.getAllPlans = async () => {
     }
 }
 
+
 PlansServices.getPlanById = async (planId) => {
     try {
-        const plan = await Plan.findById(planId);
+        const plan = await Plan.findOne({ _id: planId, deleted_at: null }); 
         if (!plan) {
             return Promise.reject("Plan not found");
         }
@@ -63,6 +64,7 @@ PlansServices.getFirmPLan = async (firmId) => {
         select: "email avatar",
         populate: {
             path: "planId", 
+            match: {deleted_at: null}
         },
     });
 
@@ -86,7 +88,7 @@ PlansServices.updatePlan = async (planId, updateData)  => {
 
 PlansServices.deletePlan = async (planId) => {
     try {
-        // Use findByIdAndUpdate to set the deleted_at field (soft delete)
+        // Soft delete by setting the deleted_at field
         const plan = await Plan.findByIdAndUpdate(
             planId,
             { deleted_at: new Date() }, 
@@ -97,7 +99,7 @@ PlansServices.deletePlan = async (planId) => {
             return Promise.reject("Unable to Find Plan");
         }
 
-        return 'Plan soft deleted successfully';  // Success response
+        return 'Plan soft deleted successfully';
     } catch (error) {
         console.error("Error soft deleting plan:", error);
         return Promise.reject("Unable to Delete Plan");
