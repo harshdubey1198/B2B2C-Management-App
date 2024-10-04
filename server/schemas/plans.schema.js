@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const planSchema = new mongoose.Schema({
     title: {
@@ -19,11 +18,12 @@ const planSchema = new mongoose.Schema({
         required: true,
     },
     maxFirms: { type: Number },
-    features: [{type: String}]
-}, { timestamps: true, paranoid: true });
-
-// Apply the paranoid plugin at the schema level
-planSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
+    features: [{ type: String }],
+    deleted_at: { 
+        type: Date, 
+        default: null 
+    }
+}, { timestamps: true });
 
 const Plan = mongoose.model('Plan', planSchema);
 module.exports = Plan;

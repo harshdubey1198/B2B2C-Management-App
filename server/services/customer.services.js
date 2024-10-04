@@ -12,6 +12,7 @@ customerServices.searchCustomer = async (searchQuery, firmId) => {
   const filter = customerFilter(searchQuery)
   const customer = await Customer.find({
     firmId,
+    deleted_at: null,
     ...filter
   }).limit(10);
 
@@ -26,7 +27,7 @@ customerServices.getAllCustomers = async (firmId) => {
   if (!firmId) {
     throw new Error("firmId is required");
   }
-  const customers = await Customer.find({firmId: firmId})
+  const customers = await Customer.find({firmId: firmId, deleted_at:null})
   .populate({
     path: "firmId",
     select: "companyTitle email avatar",
@@ -47,7 +48,7 @@ customerServices.getCustomer = async (customerId) => {
   if (!customerId) {
     throw new Error("customerId is required");
   }
-  const customer = await Customer.find({_id: customerId})
+  const customer = await Customer.find({_id: customerId, deleted_at:null})
   .populate({
     path: "firmId",
     select: "companyTitle email avatar",
@@ -64,7 +65,7 @@ customerServices.getCustomer = async (customerId) => {
 
 // CUSTOMER DELETED 
 customerServices.deleteCustomer = async (customerId) => {
-    const existingCustomer = await Customer.findOne({_id: customerId})
+    const existingCustomer = await Customer.findOne({_id: customerId, deleted_at:null})
     if (!existingCustomer) {
         throw new Error('Customer not found');
     }
