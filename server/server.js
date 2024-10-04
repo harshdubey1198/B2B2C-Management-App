@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db.config")
+const path = require("path");
 
 dotenv.config();
 const app = express();
@@ -38,6 +39,11 @@ app.use("/api/invoice", invoiceRoute);
 app.get("/", (req, res) => {
   res.send("Welcome to HRMS Servers!");
 });
+
+// console.log(path.join(__dirname, "../build"));
+
+// Serve static files from the build folder
+// const buildpath = path.join(__dirname, "../build");
 
 app.all("*", function (req, res) {
   res.status(404).send("aaMOBee Servers!");
