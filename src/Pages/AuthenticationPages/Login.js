@@ -64,7 +64,7 @@ const Login = (props) => {
         await dispatch(loginUser(formValues, props.router.navigate));
       } catch (error) {
         console.error('Login failed:', error);
-        toast.error(error.message || 'An error occurred during login');      }
+        toast.error(error || 'An error occurred during login');      }
     }
   };
   

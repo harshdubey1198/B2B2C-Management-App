@@ -262,6 +262,11 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
+    // {
+    //   label: "google maps",
+    //   icon: "mdi mdi-home-variant-outline",
+    //   url: "/maps-google",
+    // },
     {
       label:"Company",
       icon:"mdi mdi-account-multiple-outline",
