@@ -48,6 +48,9 @@ const Register = (props) => {
 
   const [countdown, setCountdown] = useState(2);
 
+  const BASE_URL = process.env.REACT_APP_API_URL || "http://13.127.103.135/";
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     dispatch(registerUserFailed(""));
@@ -63,7 +66,7 @@ const Register = (props) => {
     } else if (formInput.password !== formInput.confirmPassword) {
       toast.error("Confirm Password should be the same as Password!");
     } else {
-      PostRequest(`${process.env.REACT_APP_URL}/auth/register`, formInput)
+      PostRequest(`${BASE_URL}/auth/register`, formInput)
         .then((response) => {
           if (response) {
             dispatch(registerUserSuccessful(formInput));
