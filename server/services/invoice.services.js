@@ -89,7 +89,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
 
 // GET INVOICES IN A SINGLE FIRM
 invoiceServices.getInvoices = async (adminId) => {
-  const invoices = await Invoice.find({firmId:adminId})
+  const invoices = await Invoice.find({firmId:adminId, deleted_at: null})
   .populate({
     path: 'items.itemId',
   })
@@ -101,8 +101,8 @@ invoiceServices.getInvoices = async (adminId) => {
     path: 'createdBy',
     select: "firstName lastName email"
   });
-  if(!invoices){
-    throw new Error('No items found')
+  if (invoices.length === 0) {
+    throw new Error('No Invoices found')
   }
   return invoices
 }
@@ -110,7 +110,7 @@ invoiceServices.getInvoices = async (adminId) => {
 
 //  GET SINGLE INVOICE DATA 
 invoiceServices.getInvoice = async (invoiceId) => {
-  const invoice = await Invoice.findOne({_id: invoiceId})
+  const invoice = await Invoice.findOne({_id: invoiceId, deleted_at: null})
   .populate({
     path: 'items.itemId',
   })
@@ -123,7 +123,7 @@ invoiceServices.getInvoice = async (invoiceId) => {
     select: "firstName lastName email"
   });
   if(!invoice){
-    throw new Error('No items found')
+    throw new Error('No invoice found')
   }
   return invoice
 }
@@ -170,9 +170,8 @@ invoiceServices.updateInvoiceApproval = async (body) => {
 
 // GET INVOICE COUNT UNDER FIRMS
 invoiceServices.countInvoices = async (firmId) => {
-  const count = await Invoice.countDocuments({ firmId: firmId });
+  const count = await Invoice.countDocuments({ firmId: firmId , deleted_at: null});
   return count;
 };
-
 
 module.exports = invoiceServices;

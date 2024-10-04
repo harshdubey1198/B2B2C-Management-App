@@ -1,12 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const CustomerSchema = new Schema({
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    email: { type: String, required: true }, // Email for invoicing and notifications
-    mobile: { type: String, required: true }, // Mobile number for contact
+    email: { type: String, required: true },
+    mobile: { type: String, required: true },
     address: {
         h_no: { type: String },
         nearby: { type: String },
@@ -16,12 +15,11 @@ const CustomerSchema = new Schema({
         zip_code: { type: String },
         country: { type: String }
     },
-    firmId: { type: Schema.Types.ObjectId, ref: 'User' }, // Reference to the firm (if needed for tracking)
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Reference to who added the customer
-    isActive: { type: Boolean, default: true }, // To manage the status of the customer
-}, { timestamps: true, paranoid: true });
-
-CustomerSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
+    firmId: { type: Schema.Types.ObjectId, ref: 'User' },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    isActive: { type: Boolean, default: true },
+    deleted_at: { type: Date, default: null } 
+}, { timestamps: true });
 
 const Customer = mongoose.model('Customer', CustomerSchema);
 module.exports = Customer;

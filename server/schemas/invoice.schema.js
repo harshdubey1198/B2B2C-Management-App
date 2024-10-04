@@ -1,27 +1,26 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const mongooseParanoidPlugin = require('mongoose-paranoid-plugin');
 
 const invoiceSchema = new Schema({
     invoiceNumber: { type: String, required: true },
     customerName: { type: String, required: true },     
     customerEmail: { type: String, required: true },    
-    customerPhone: { type: String },                     
+    customerPhone: { type: String },
     customerAddress: {                                  
         h_no: { type: String },
         city: { type: String },
-        district : {type:String},
+        district: { type: String },
         state: { type: String },
         zip_code: { type: String },
         country: { type: String },
-        nearby : {type:String}
+        nearby: { type: String }
     },
     invoiceType: { type: String },
-    invoiceSubType : {type:String}, 
+    invoiceSubType: { type: String }, 
     firmId: { type: Schema.Types.ObjectId, ref: 'User' }, 
     items: [{
         itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem' },
-        selectedVariant:[
+        selectedVariant: [
             {
                 variationType: { type: String },
                 optionLabel: { type: String },
@@ -40,7 +39,6 @@ const invoiceSchema = new Schema({
     }],
     invoiceDate: { type: Date, default: Date.now },
     dueDate: { type: Date },
-   
     totalAmount: { type: Number },
     status: { type: String, enum: ['paid', 'unpaid', 'partially paid'], default: 'unpaid' },
     approvalStatus: { 
@@ -49,12 +47,11 @@ const invoiceSchema = new Schema({
         default: 'pending' 
     },
     amountPaid: { type: Number, default: 0 },
-    amountDue: Number, 
+    amountDue: { type: Number },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    notes: { type: String }
-}, { timestamps: true, paranoid: true });
-
-invoiceSchema.plugin(mongooseParanoidPlugin, { field: 'deleted_at' });
+    notes: { type: String },
+    deleted_at: { type: Date, default: null }
+}, { timestamps: true });
 
 const Invoice = mongoose.model('Invoice', invoiceSchema);
 module.exports = Invoice;

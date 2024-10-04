@@ -28,7 +28,7 @@ planController.getAllPLans = async  (req, res) => {
 planController.getPLan = async  (req, res) => {
     try {
         const response = await PlansServices.getPlanById(req.params.id);
-        return res.status(200).json({ message: "Get Plans", response });
+        return res.status(200).json({ message: "Get Single Plan", response });
     } catch (error) {
         console.log('Get Plan By ID Error:', error);
         return res.status(500).json({ message: error });

@@ -36,7 +36,7 @@ categoryServices.createCategory = async (userId, body) => {
 
 // GET CATEGORY
 categoryServices.getCategory = async (adminId) => {
-    const data = await Category.find({firmId: adminId}).populate("parentId")
+    const data = await Category.find({firmId: adminId, deleted_at: null}).populate("parentId")
     if(!data){
         throw new Error('There is no category')
     }
@@ -47,7 +47,7 @@ categoryServices.getCategory = async (adminId) => {
 categoryServices.getSubcategories = async (id) => {
     try {
         // Find subcategories that have the provided parentId
-        const subcategories = await Category.find({ parentId: id });
+        const subcategories = await Category.find({ parentId: id , deleted_at: null});
         if (subcategories.length === 0) {
             throw new Error('No subcategories found');
         }

@@ -63,7 +63,7 @@ inventoryServices.createItem = async (userId, body) => {
 
 // GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getAllItems = async (adminId) => {
-    const items = await InventoryItem.find({firmId:adminId})
+    const items = await InventoryItem.find({firmId:adminId, deleted_at: null})
     .populate('categoryId')
     .populate('subcategoryId')
     .populate({
@@ -78,7 +78,7 @@ inventoryServices.getAllItems = async (adminId) => {
 
 // GET SINGLE ITEM 
 inventoryServices.getItem = async (id) => {
-    const items = await InventoryItem.findOne({_id: id})
+    const items = await InventoryItem.findOne({_id: id, deleted_at:null})
     .populate('categoryId')
     .populate('subcategoryId');
     if(!items){
@@ -150,7 +150,7 @@ inventoryServices.updateItem = async (id, body) => {
 
 // DELETE INVENTORY ITEM
 inventoryServices.deleteItem = async (id) => {
-    const existingItem = await InventoryItem.findOne({_id: id})
+    const existingItem = await InventoryItem.findOne({ _id: id, deleted_at: null }); 
     if (!existingItem) {
         throw new Error('Inventory item not found');
     }
@@ -166,7 +166,6 @@ inventoryServices.deleteItem = async (id) => {
 // DELETE VARIANTS FROM EXISTING ITEM
 inventoryServices.deleteVariant = async (itemId, variantId) => {
     const item = await InventoryItem.findById(itemId);
-
     if (!item){
         throw new Error('Item not found');
     } 
