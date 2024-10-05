@@ -21,19 +21,8 @@ const Login = (props) => {
   const [show, setShow] = useState(false)
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-  const loginpage = createSelector(
-    (state) => state.login,
-    (state) => ({
-      error: state.error,
-    })
-  );
-  const { error: reduxError } = useSelector(loginpage);
-  useEffect(() => {
-    if (reduxError) {
-      console.log(reduxError,"in useeffect")
-      toast.error(reduxError ,  "An error occurred during login");
-    }
-  }, [reduxError]);
+  const authError = useSelector((state) => state.auth?.authError || null);
+ 
   useEffect(() => {
     const savedCredentials = JSON.parse(localStorage.getItem("userCredentials"));
     if (savedCredentials) {
@@ -64,7 +53,7 @@ const Login = (props) => {
         await dispatch(loginUser(formValues, props.router.navigate));
       } catch (error) {
         console.error('Login failed:', error);
-        toast.error(error || 'An error occurred during login');      }
+        toast.error(authError || 'An error occurred during login');   }
     }
   };
   

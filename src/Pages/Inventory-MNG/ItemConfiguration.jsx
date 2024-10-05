@@ -174,13 +174,17 @@ function ItemConfiguration() {
                               onClick={() => handleEdit(item)}
                               className="mr-2"
                             >
-                              <Icon path={mdiPencil} size={1} />
+                            <i
+                                className="bx bx-edit"
+                              ></i>
                             </Button>
                             <Button
                               color="danger"
                               onClick={() => handleDelete(item.id)}
                             >
-                              <Icon path={mdiDelete} size={1} />
+                              <i
+                                className="bx bx-trash"
+                              ></i>
                             </Button>
                           </div>
                         </td>
@@ -263,8 +267,10 @@ function ItemConfiguration() {
                 <Button
                   color="danger"
                   onClick={() => handleRemoveVariant(index)}
-                >
-                  <Icon path={mdiClose} size={1} />
+                  >
+                    <i
+                      className="bx bx-trash"
+                    ></i>
                 </Button>
               </div>
             ))}

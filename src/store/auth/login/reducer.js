@@ -4,11 +4,13 @@ import {
   LOGOUT_USER,
   LOGOUT_USER_SUCCESS,
   API_ERROR,
+  AUTH_ERROR,
 } from "./actionTypes";
 
 const initialState = {
   error: "",
   loading: false,
+  authError: null
 };
 
 const login = (state = initialState, action) => {
@@ -17,6 +19,7 @@ const login = (state = initialState, action) => {
       state = {
         ...state,
         loading: true,
+        authError: null
       };
       break;
     case LOGIN_SUCCESS:
@@ -25,6 +28,12 @@ const login = (state = initialState, action) => {
         loading: false,
       };
       break;
+    case AUTH_ERROR:
+        return {
+          ...state,
+          authError: action.payload, // Set the universal error
+        };
+
     case LOGOUT_USER:
       state = { ...state, isUserLogout: false };
       break;

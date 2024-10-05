@@ -28,6 +28,13 @@ export const loginFailure = error => {
   }
 }
 
+export const AUTH_ERROR = "AUTH_ERROR";
+
+export const setAuthError = (error) => ({
+  type: AUTH_ERROR,
+  payload: error,
+});
+
 export const logoutUser = history => {
   return {
     type: LOGOUT_USER,
