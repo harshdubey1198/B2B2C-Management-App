@@ -12,6 +12,7 @@ function* loginUser({ payload: { user, history } }) {
       history("/dashboard");
       localStorage.setItem("authUser", JSON.stringify(response.data));
       yield put(loginSuccess(response));
+      toast.success(response.message);
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       response = yield call(postFakeLogin, {
         email: user.email,

@@ -47,7 +47,7 @@ authController.login = async (req, res) => {
   try {
     const response = await authService.userLogin(req.body);
     const token = createSecretToken(response);
-    return res.status(200).json(createResult("Login Succefully successfully", {response ,token}));
+    return res.status(200).json(createResult("Login Successfully", {response ,token}));
   } catch (error) {
     console.log("error login users", error);
     return res.status(400).json(createResult(null, null, error.message));
