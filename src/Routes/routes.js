@@ -167,7 +167,7 @@ const authProtectedRoutes = [
   // {path:"" , component: <ComingSoon />},
 
   // Profile
-  // { path: "/userprofile", component: <UserProfile /> },
+  { path: "/userprofile", component: <ProfileSettings /> },
 
   //Settings
   {path:"/profile-settings", component: <ProfileSettings />}, 

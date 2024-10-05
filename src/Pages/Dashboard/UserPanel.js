@@ -55,7 +55,7 @@ const UserPanel = () => {
     <React.Fragment>
       <Row>
         <Col xl={6} sm={6}>
-          <Card>
+          <Card style={{marginBottom:"0px"}}>
             <CardBody>
               <div className="d-flex text-muted">
                 <div className="flex-shrink-0 me-3 align-self-center">
