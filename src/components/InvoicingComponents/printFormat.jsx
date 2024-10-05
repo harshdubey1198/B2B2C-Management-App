@@ -42,12 +42,10 @@ const sliceDescription = (description) => {
     return description || ''; 
 };
 
-const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) => {
+const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};  
-    // console.log("selectInvoice", selectInvoice); 
     const items = invoiceData?.items || []; 
-    // console.log("items", items);   
-    const companyAddress = selectInvoice.address || [];
+    const companyAddress = companyData.address || [];
     const country = companyAddress.length ? companyAddress[0].country : 'India'; 
     const customerState = invoiceData?.customerState || '';
     
@@ -87,7 +85,7 @@ const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref)
                     <p className="my-1">{invoiceData?.companyEmail}</p>
                     <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
-                <div className="col-md-3 offset-md-3 right-t-col3">
+                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-25">
                     <p><strong>Invoice Number:</strong> INV-24-MAG</p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
@@ -172,7 +170,7 @@ const PrintFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref)
                     <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
                     <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
-                <div className="col-md-6 text-right">
+                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-15">
                     <h5>Payment Summary</h5>
                     <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (

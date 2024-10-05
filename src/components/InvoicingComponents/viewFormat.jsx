@@ -90,7 +90,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     ))}
                     <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
-                <div className="col-md-3 offset-md-3 right-t-col3">
+                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-25">
                     <p><strong>Invoice Number:</strong> {invoiceData?.invoiceNumber}</p>
                     <p><strong>Amount Due:</strong> ₹ {invoiceData?.amountDue}</p>
                     <p><strong>Issue Date:</strong> {formatDate(invoiceData?.createdAt || selectInvoice.issueDate)}</p>
@@ -166,14 +166,14 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
             <div className="row">
                 <div className="col-md-6 text-left">
                     <h5>Bank Details</h5>
-                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
-                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                     <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice.bankName || 'Your Bank Name'}</p>
                     <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice.accountNumber || 'Your Account Number'}</p>
                     <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice.ifscCode || 'Your IFSC Code'}</p>
+                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
+                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
 
-                <div className="col-md-6 text-right">
+                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-5">
                 <h5>Payment Summary</h5>
                     {/* <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p> */}
                     {/* {isSameState ? (
