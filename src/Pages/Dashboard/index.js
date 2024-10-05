@@ -30,9 +30,17 @@ const Dashboard = () => {
             {/* Revenue by Location Vector Map */}
             {/* <RevenueByLocation /> */}
             {authuser.role === "client_admin" ? (
-                  <Button color="primary" onClick={() => navigate('/create-firm')}>
-                      Create Firm
-                  </Button>
+                  <div className="d-flex justify-content-evenly">
+                    <Button color="primary" onClick={() => navigate('/create-firm')}>
+                        Create Firm
+                    </Button>
+                    <Button color="primary" onClick={() => navigate('/pricing')}>
+                        Pricing & plans 
+                    </Button>
+                    <Button color="primary" onClick={() => navigate('/view-invoices')}>
+                        Invoices
+                    </Button>    
+                  </div>
               ) : authuser.role === "firm_admin" ? (
                   <Button color="primary" onClick={() => navigate('/firmusers')}>
                       Create User

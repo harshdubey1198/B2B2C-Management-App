@@ -116,9 +116,9 @@ const RolewiseDashboard = () => {
   return (
     <div className='d-flex flex-row w-100'>
       {user ? (
-        <div className='d-flex flex-row w-100 justify-content-evenly'>
-          <h1>Welcome {user.firstName}</h1>
-          <h2>Role: {user.role}</h2>
+        <div className='d-flex flex-row w-100 justify-content-evenly align-items-center'>
+          <h4 className="m-0 mb-1">Welcome {user.firstName}</h4>
+          <h5 className="m-0 mb-1">Role: {user.role}</h5>
         </div>
       ) : (
         <div>Loading user data...</div>

@@ -65,7 +65,7 @@ const ProfileMenu = props => {
           <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
-          <DropdownItem tag="a" href="/userprofile">
+          <DropdownItem tag="a" href="/profile-settings">
             {" "}
             <i className="ri-user-line align-middle me-2" />
             {props.t("Profile")}{" "}
