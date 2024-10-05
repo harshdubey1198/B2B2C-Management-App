@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import { Alert, Button, Col, Modal, ModalBody, ModalHeader, Row, Table } from 'reactstrap';
+import { Alert, Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table } from 'reactstrap';
 
 const ViewCustomer = () => {
     const [customersData, setCustomersData] = useState([])
@@ -8,7 +8,9 @@ const ViewCustomer = () => {
     const [selectedCustomer, setSelectedCustomer] = useState(null)
     const token = JSON.parse(localStorage.getItem("authUser")).token;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
-    const [trigger, setTrigger] = useState(0)
+    const [trigger, setTrigger] = useState(0);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false); 
+    const [customerToDelete, setCustomerToDelete] = useState(null);
 
     const config = {
         headers: {
@@ -16,7 +18,10 @@ const ViewCustomer = () => {
           Authorization: `Bearer ${token}`,
         },
     };
-
+    const handleDeleteClick = (customer) => {
+        setCustomerToDelete(customer); 
+        setDeleteModalOpen(true); 
+    };
     useEffect(() => {
         axios.get(`${process.env.REACT_APP_URL}/customer/get-customers/${firmId}`, config).then((response) => {
             setCustomersData(response.data)
@@ -28,6 +33,8 @@ const ViewCustomer = () => {
     const handleCustomerDelete = (customer) => {
         axios.delete(`${process.env.REACT_APP_URL}/customer/delete-customer/${customer._id}`, config).then((response) => {
             setTrigger(prev => prev + 1)
+            setDeleteModalOpen(false); 
+            setCustomerToDelete(null); 
         }).catch((error) => {
             console.error(error)
         })
@@ -44,8 +51,8 @@ const ViewCustomer = () => {
                 <h1>View Customers</h1>
                 {customersData.length === 0 ? (
                     <Alert color="info">No Customers found for Your Firm.</Alert>
-                ) : (
-                    <Table bordered>
+                ) : (<div style={{ overflowX: "auto" }}>
+                    <Table bordered >
                         <thead>
                             <tr>
                                 <th>Sr no</th>
@@ -65,28 +72,15 @@ const ViewCustomer = () => {
                                     <td>{customer.firmId.companyTitle}</td>
                                     <td>{customer.address.country}</td>
                                     <td>
-                                        <Button
-                                            color="danger"
-                                            onClick={() => {
-                                                handleCustomerDelete(customer)
-                                            }}
-                                        >
-                                            Delete
-                                        </Button>
-                                        <Button
-                                            color="info"
-                                            onClick={() => {
-                                                handleViewDetails(customer)
-                                            }}
-                                        >
-                                            View Details
-                                        </Button>
+                                            <i className="bx bx-trash"  style={{fontSize:"18px"}} onClick={() => handleDeleteClick(customer)}></i>
+
+                                            <i className="bx bx-show" style={{fontSize:"18px" , marginLeft:"5px"}} onClick={() => {handleViewDetails(customer)}}></i>
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
-                )}
+               </div> )}
 
 <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)}>
     <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
@@ -198,6 +192,23 @@ const ViewCustomer = () => {
         )}
     </ModalBody>
 </Modal>
+<Modal isOpen={deleteModalOpen} toggle={() => setDeleteModalOpen(!deleteModalOpen)}>
+    <ModalHeader toggle={() => setDeleteModalOpen(!deleteModalOpen)}>
+        Confirm Delete
+    </ModalHeader>
+    <ModalBody>
+        Are you sure you want to delete this customer: {customerToDelete?.firstName + " " + customerToDelete?.lastName}?
+    </ModalBody>
+    <ModalFooter>
+        <Button color="danger" onClick={handleCustomerDelete}>
+            Yes, Delete
+        </Button>{' '}
+        <Button color="secondary" onClick={() => setDeleteModalOpen(false)}>
+            Cancel
+        </Button>
+    </ModalFooter>
+</Modal>
+
 
             </div>
         </React.Fragment>

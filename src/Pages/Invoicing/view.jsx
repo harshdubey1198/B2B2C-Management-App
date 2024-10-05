@@ -93,6 +93,7 @@ const ViewInvoices = () => {
                             <tr>
                                 <th>Invoice ID</th>
                                 <th>Customer Name</th>
+                                <th>Amount Due</th>
                                 <th>Date</th>
                                 <th>Country</th>
                                 <th>Status</th>
@@ -105,6 +106,7 @@ const ViewInvoices = () => {
                                 <tr key={invoice._id}>
                                     <td>{invoice.invoiceNumber}</td>
                                     <td>{invoice.customerName}</td>
+                                    <td>{invoice.amountDue} ₹</td>
                                     <td>{formatDate(invoice.invoiceDate)}</td>
                                     <td>{invoice.customerAddress.country}</td>
                                     <td>{invoice.approvalStatus}</td>
