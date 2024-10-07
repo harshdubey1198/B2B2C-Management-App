@@ -176,6 +176,9 @@ function ItemConfiguration() {
                             >
                             <i
                                 className="bx bx-edit"
+                                style={{
+                                  fontSize: "22px", fontWeight:"bold", cursor: "pointer"
+                                }}
                               ></i>
                             </Button>
                             <Button
@@ -184,6 +187,7 @@ function ItemConfiguration() {
                             >
                               <i
                                 className="bx bx-trash"
+                                style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer"}}
                               ></i>
                             </Button>
                           </div>
@@ -270,6 +274,9 @@ function ItemConfiguration() {
                   >
                     <i
                       className="bx bx-trash"
+                      style={{
+                        fontSize: "22px", fontWeight:"bold", cursor: "pointer"
+                      }}
                     ></i>
                 </Button>
               </div>

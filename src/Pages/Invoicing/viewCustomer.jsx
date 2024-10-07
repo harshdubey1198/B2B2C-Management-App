@@ -72,9 +72,8 @@ const ViewCustomer = () => {
                                     <td>{customer.firmId.companyTitle}</td>
                                     <td>{customer.address.country}</td>
                                     <td>
-                                            <i className="bx bx-trash"  style={{fontSize:"18px"}} onClick={() => handleDeleteClick(customer)}></i>
-
-                                            <i className="bx bx-show" style={{fontSize:"18px" , marginLeft:"5px"}} onClick={() => {handleViewDetails(customer)}}></i>
+                                        <i className="bx bx-trash"  style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer"}} onClick={() => handleDeleteClick(customer)}></i>
+                                        <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer" , marginLeft:"5px"}} onClick={() => {handleViewDetails(customer)}}></i>
                                     </td>
                                 </tr>
                             ))}

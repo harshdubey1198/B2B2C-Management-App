@@ -98,7 +98,7 @@ const ViewInvoices = () => {
                                 <th>Country</th>
                                 <th>Status</th>
                                 <th>Actions</th>
-                                {authuser.role === "firm_admin" && <th>Approvals</th>}
+                                {authuser.role === "firm_admin" && <th className='d-flex justify-content-center'>Approvals</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -110,23 +110,26 @@ const ViewInvoices = () => {
                                     <td>{formatDate(invoice.invoiceDate)}</td>
                                     <td>{invoice.customerAddress.country}</td>
                                     <td>{invoice.approvalStatus}</td>
-                                    <td>
-                                        <Button color="info" onClick={() => fetchAndPrintInvoice(invoice._id)}>Print</Button>
+                                    <td >
+                                        <i className="bx bx-printer" style={{ fontSize: "22px",fontWeight:"bold", cursor: "pointer"}} onClick={() => fetchAndPrintInvoice(invoice._id)}></i>
+                                    </td>
                                         {authuser.role === "firm_admin" && (
+                                         <td>
                                             <>
                                                 {invoice.approvalStatus === "pending" ? (
                                                     <>
-                                                        <Button color="success" onClick={() => handleApproveStatus(invoice, "approved")}>Approve</Button>{' '}
-                                                        <Button color="danger" onClick={() => handleApproveStatus(invoice, "rejected")}>Reject</Button>
+                                                        <i className="bx bx-x" style={{ fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
+                                                        <i className="bx bx-check" style={{ fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "approved")}></i>
                                                     </>
                                                 ) : invoice.approvalStatus === "approved" ? (
-                                                    <Button color="danger" onClick={() => handleApproveStatus(invoice, "rejected")}>Reject</Button>
+                                                    <i className="bx bx-x" style={{ fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
                                                 ) : (
-                                                    <Button color="success" onClick={() => handleApproveStatus(invoice, "approved")}>Approve</Button>
+                                                    <i className="bx bx-check" style={{ fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "approved")}></i>
                                                 )}
+
                                             </>
+                                          </td>
                                         )}
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>

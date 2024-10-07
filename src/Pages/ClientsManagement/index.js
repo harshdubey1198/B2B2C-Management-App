@@ -70,7 +70,7 @@ function ClientManagement() {
                       <th>Name</th>
                       <th>Email</th>
                       <th>Mobile</th>
-                      <th>Details</th>
+                      <th className="d-flex justify-content-center">Details</th>
                       {/* <th>Actions</th> */}
                     </tr>
                   </thead>
@@ -81,14 +81,8 @@ function ClientManagement() {
                           <td>{client.firstName + " " + client.lastName}</td>
                           <td>{client.email}</td>
                           <td>{client.mobile}</td>
-                          <td>
-                            <Button
-                              color="info"
-                              size="sm"
-                              onClick={() => handleViewDetails(client._id)} // Fetch firm details
-                            >
-                              View Details
-                            </Button>
+                          <td className="d-flex justify-content-center">
+                            <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" , marginLeft:"5px"}} onClick={() => handleViewDetails(client._id)}></i>
                           </td>
                           {/* <td>
                             <Dropdown

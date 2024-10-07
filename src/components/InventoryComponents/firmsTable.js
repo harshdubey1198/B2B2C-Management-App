@@ -69,12 +69,9 @@ function FirmsTable({handleViewDetails}) {
               <td>${item.costPrice?.toFixed(2)}</td>
               <td>${item.sellingPrice?.toFixed(2)}</td>
               <td className="d-flex gap-2">
-                <Button
-                  color="info"
-                  onClick={() => handleViewDetails(item)}
-                >
-                  View Details
-                </Button>
+               
+                <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer" , marginLeft:"5px"}}  onClick={() => handleViewDetails(item)}></i>
+
                 {/* <Button
                   color="danger"
                   // onClick={() => handleDeleteInventory(item)}

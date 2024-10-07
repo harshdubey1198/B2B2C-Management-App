@@ -111,7 +111,7 @@ if ( role !== "firm_admin") {
           {selectedPlanDetails && (
             <Row className="justify-content-center">
               <Col lg={8}>
-                <Card className="text-center">
+                <Card className="text-center mb-0">
                   <CardBody>
                     <h4 className="text-success">Your Current Plan</h4>
                     <h5 className="font-size-16">{selectedPlanDetails.title}</h5>
@@ -120,7 +120,7 @@ if ( role !== "firm_admin") {
                     <div className="plan-features mt-4 d-flex flex-column">
                       <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
                       {selectedPlanDetails.features.map((feature, index) => (
-                        <p key={index} className="text-start" style={{ position: "relative", left: "50%", transform: "translateX(-8%)", }} >
+                        <p key={index} className="text-start" style={{ position: "relative", left: "50%", transform: "translateX(-10%)", }} >
                           <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
                           {feature}
                         </p>

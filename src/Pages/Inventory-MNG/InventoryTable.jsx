@@ -192,19 +192,12 @@ function InventoryTable() {
               <td>{item.brand}</td>
               <td>${item.costPrice?.toFixed(2)}</td>
               <td>${item.sellingPrice?.toFixed(2)}</td>
-              <td className="d-flex gap-2">
-                <Button
-                  color="info"
-                  onClick={() => handleViewDetails(item)}
-                >
-                  View Details
-                </Button>
-                <Button
-                  color="danger"
-                  onClick={() => handleDeleteInventory(item)}
-                >
-                  Delete
-                </Button>
+              <td>
+               
+                <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} color="info"
+                  onClick={() => handleViewDetails(item)}></i>
+                <i className="bx bx-trash"  style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer" , marginLeft:"5px"}} onClick={() => handleDeleteInventory(item)}></i>
+
               </td>
             </tr>
           ))
@@ -314,7 +307,7 @@ function InventoryTable() {
         })
       }
       className="form-control w-75 mr-2" 
-      readOnly
+      // readOnly
     />
     
     <select
@@ -474,7 +467,7 @@ function InventoryTable() {
                           <th>Stock</th>
                           <th>SKU</th>
                           <th>Barcode</th>
-                          <th>Actions</th>
+                          <th className="d-flex justify-content-center">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -487,13 +480,14 @@ function InventoryTable() {
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
-                            <td>
-                              <Button
+                            <td className="d-flex justify-content-center">
+                              {/* <Button
                                 color="danger"
                                 onClick={() => deleteVariant(variant._id)}
                               >
                                 Delete
-                              </Button>
+                              </Button> */}
+                              <i className="bx bx-trash"  style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer"}} onClick={() => deleteVariant(variant._id)}></i>
                             </td>
                           </tr>
                         ))}

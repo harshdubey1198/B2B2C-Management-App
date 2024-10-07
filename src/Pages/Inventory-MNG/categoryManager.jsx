@@ -163,13 +163,15 @@ const CategoryManager = () => {
                             </td>
                             <td>{category.status}</td>
                             <td className='d-flex gap-2'>
-                              <Button color="warning" className="mr-2" onClick={() => handleEdit(category)}>
+                              {/* <Button color="warning" className="mr-2" onClick={() => handleEdit(category)}>
                                 Edit
-                              </Button>
-                              <Button color="danger" onClick={() => handleDelete(category._id)}>
+                              </Button> */}
+                              <i className="bx bx-edit mr-2" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleEdit(category)}></i>
+                              {/* <Button color="danger" onClick={() => handleDelete(category._id)}>
                                 Delete
-                              </Button>
-                            </td>
+                              </Button> */}
+                              <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleDelete(category._id)}></i>
+                              </td>
                           </tr>
                         ))
                       ) : (

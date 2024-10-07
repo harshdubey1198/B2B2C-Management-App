@@ -70,3 +70,34 @@ File: Custom Bootstrap Css File
         margin-left: 15% !important;
     }
 }
+.bx-show{
+    color: #0a8a76;
+}
+.bx-show:hover{
+    color: $primary;
+}
+// .bx:hover{
+//     color: lightblue;
+// }
+.bx-trash{
+    color: rgb(190, 0, 0);
+}
+.bx-trash:hover{
+    color: red;
+}
+
+.bx-x:hover{
+    color: red;
+}
+.bx-check:hover{
+    color: green;
+}
+.bx-printer:hover{
+    color: blue;
+}
+.bx-edit{
+    color: #0e5996;
+}
+.bx-edit:hover{
+    color: #157bce;
+}
