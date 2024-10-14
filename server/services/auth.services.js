@@ -172,37 +172,32 @@ authService.verifyOtp = async (body) => {
     user.otpExpiry = null;
     await user.save();
 
-    return { message: "OTP verified successfully" };
+    return "OTP verified successfully";
 };
 
 // RESEND OTP
 authService.resendOtp = async (body) => {
-    try {
-        const user = await User.findOne({email : body.email})
-        if(!user){
-            return Promise.reject("User Not Exist")
-        }
-
-        const currentTime = new Date()
-        if(currentTime < user.otpExpiry){
-            return Promise.reject("Existing OTP is still valid. Please wait.");
-        }
-
-        const newOtp = Math.floor(100000 + Math.random() * 900000);
-        user.otp = newOtp;
-        user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
-        await user.save();
-
-        // Send new OTP
-        await authService.generateOtp({ email: user.email, otp: newOtp });
-
-        return { message: "New OTP sent successfully" };
-    } catch (error) {
-        console.error("Error Re-sending OTP:", error);
-        return Promise.reject("Unable to Re-sending OTP");
+    const user = await User.findOne({ email: body.email });
+    
+    if (!user) {
+        throw new Error("User Not Exist");
     }
-}
 
+    const currentTime = new Date();
+    if (currentTime < user.otpExpiry) {
+        throw new Error("Existing OTP is still valid. Please wait.");
+    }
+
+    const newOtp = Math.floor(100000 + Math.random() * 900000);
+    user.otp = newOtp;
+    user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // OTP expiry set to 5 minutes from now
+    await user.save();
+
+    // Send new OTP
+    await authService.generateOtp({ email: user.email, otp: newOtp });
+
+    return { message: "New OTP sent successfully" };
+};
 
 // LOGIN USER
 authService.userLogin = async (body) => {

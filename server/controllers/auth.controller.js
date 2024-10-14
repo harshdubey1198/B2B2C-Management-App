@@ -24,7 +24,7 @@ authController.register = async (req, res) => {
 authController.verifyOtp = async (req, res) => {
   try {
     const response = await authService.verifyOtp(req.body);
-    return res.status(200).json(createResult("OTP Verified Successfully", { response }));
+    return res.status(200).json(createResult("OTP Verified Successfully", response));
   } catch (error) {
     console.log("error verify otp", error);
     return res.status(400).json(createResult(null, null, error.message));
@@ -35,10 +35,10 @@ authController.verifyOtp = async (req, res) => {
 authController.resendOtp = async (req, res) => {
   try {
     const response = await authService.resendOtp(req.body);
-    return res.status(200).json(response);
+    return res.status(200).json(createResult("OTP Resent Successfully", response));
   } catch (error) {
     console.log("error sending otp again", error);
-    return res.status(500).json({ message: error });
+    return res.status(400).json(createResult(null, null, error.message));
   }
 };
 
