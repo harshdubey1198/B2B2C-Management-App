@@ -150,34 +150,30 @@ authService.generateOtp= async (body) => {
 
 // VERFIY LOGIN
 authService.verifyOtp = async (body) => {
-    try {
-        const {email, otp} = body
-        const user = await User.findOne({email})
-        if(!user){
-            throw new Error("User Not Exist")
-        }
-
-        if(user.otp !== Number(otp)){
-            throw new Error("Invalid OTP")
-        }
-
-        const currentTime = new Date()
-        if(currentTime > user.otpExpiry){
-            throw new Error("OTP has expired");
-        }
-
-        // OTP is valid, mark the user as verified
-        user.isVerified = true;
-        user.otp = null; 
-        user.otpExpiry = null; 
-        await user.save();
-
-        return { message: "OTP verified successfully" };
-    } catch (error) {
-        console.error("Error verifying OTP:", error);
-        throw new Error("Unable to verify OTP");
+    const { email, otp } = body;
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+        throw new Error("User Not Exist");
     }
-}
+
+    if (user.otp !== Number(otp)) {
+        throw new Error("Invalid OTP");
+    }
+
+    const currentTime = new Date();
+    if (currentTime > user.otpExpiry) {
+        throw new Error("OTP has expired");
+    }
+
+    // OTP is valid, mark the user as verified
+    user.isVerified = true;
+    user.otp = null;
+    user.otpExpiry = null;
+    await user.save();
+
+    return { message: "OTP verified successfully" };
+};
 
 // RESEND OTP
 authService.resendOtp = async (body) => {
