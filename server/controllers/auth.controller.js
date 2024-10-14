@@ -121,7 +121,6 @@ authController.registration = async (req, res) => {
 
       // Extract the form data from req.body
       const registrationData = { ...req.body };
-
       // If a file is uploaded, handle Cloudinary upload
       if (req.files && req.files.avatar) {
         const imageUrl = await uploadToCloudinary(req.files.avatar[0].buffer); // Handle Cloudinary upload
