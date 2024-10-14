@@ -24,10 +24,10 @@ authController.register = async (req, res) => {
 authController.verifyOtp = async (req, res) => {
   try {
     const response = await authService.verifyOtp(req.body);
-    return res.status(200).json(response);
+    return res.status(200).json(createResult("OTP Verified Successfully", { response }));
   } catch (error) {
     console.log("error verify otp", error);
-    return res.status(500).json({ message: error });
+    return res.status(400).json(createResult(null, null, error.message));
   }
 };
 
@@ -77,6 +77,30 @@ authController.resetPassword = async (req, res) => {
 };
 
 // CREATE USER
+// authController.registration = async (req, res) => {
+//   upload(req, res, async function (err) {
+//     try {
+//       if (err instanceof multer.MulterError) {
+//         return res.status(400).json({ error: `Multer error: ${err.message}` });
+//     } else if (err) {
+//         return res.status(400).json({ error: `File upload error: ${err.message}` });
+//     }
+
+//       const updatedData = { ...req.body }
+//       console.log(updatedData,"jdd")
+//       if (req.files && req.files.avatar) {
+//         const imageUrl = await uploadToCloudinary(req.files.avatar[0].buffer); // Handle Cloudinary upload
+//         updatedData.avatar = imageUrl; // Attach the Cloudinary URL to the update data
+//       }
+//       console.log(updatedData.avatar,"updatd ")
+//       const response = await authService.registration(req.params.id, updatedData);
+//       res.status(200).json(response);
+//     } catch (error) {
+//       console.log("Error Creating User", error);
+//     res.status(400).json({ error: error.toString() });
+//     }
+//   })
+// };
 authController.registration = async (req, res) => {
   try {
     const response = await authService.registration(req.params.id, req.body);
