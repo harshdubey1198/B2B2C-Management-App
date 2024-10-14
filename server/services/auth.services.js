@@ -366,34 +366,29 @@ authService.getAccount  = async (id) => {
 // }
 
 authService.registration = async (id, data) => {
-    try {
-        const existingUser = await User.findOne({ email: data.email });
-        if (existingUser) {
-            return Promise.reject("Account already exists!");
-        }
-
-        if (data.role === 'firm_admin') {
-            const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
-            if (existingFirmAdmin) {
-                return Promise.reject("There is already a firm admin for this firm!");
-            }
-        }
-        
-    
-        const encryptedPassword = await PasswordService.passwordHash(data.password);
-        data.password = encryptedPassword;
-        console.log('Registration Data:', data.password); // Log the data
-        data.isActive = true;
-        data.adminId = id;
-  
-       const newUser = new User(data);
-       const user = await newUser.save();
-       return user;
-    } catch (error) {
-      console.error("Error in user registration:", error);
-      return Promise.reject("Unable to create User");
+    const existingUser = await User.findOne({ email: data.email });
+    if (existingUser) {
+        throw new Error("Account already exists!");
     }
-}
+
+    if (data.role === 'firm_admin') {
+        const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+        if (existingFirmAdmin) {
+            throw new Error("There is already a firm admin for this firm!");
+        }
+    }
+
+    const encryptedPassword = await PasswordService.passwordHash(data.password);
+    data.password = encryptedPassword;
+    console.log('Registration Data:', data.password); // Log the data
+    data.isActive = true;
+    data.adminId = id;
+
+    const newUser = new User(data);
+    const user = await newUser.save();
+    return user;
+};
+
 // GET FIRMS  
 authService.getCompany  = async (id) => {
     try {
