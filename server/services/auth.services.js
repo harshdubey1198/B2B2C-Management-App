@@ -365,29 +365,77 @@ authService.getAccount  = async (id) => {
 //     }
 // }
 
+// authService.registration = async (id, data) => {
+//     const existingUser = await User.findOne({ email: data.email });
+//     if (existingUser) {
+//         throw new Error("Account already exists!");
+//     }
+
+//     if (data.role === 'firm_admin') {
+//         const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+//         if (existingFirmAdmin) {
+//             throw new Error("There is already a firm admin for this firm!");
+//         }
+//     }
+
+//     const encryptedPassword = await PasswordService.passwordHash(data.password);
+//     data.password = encryptedPassword;
+//     console.log('Registration Data:', data.password); // Log the data
+//     data.isActive = true;
+//     data.adminId = id;
+
+//     const newUser = new User(data);
+//     const user = await newUser.save();
+//     return user;
+// };
 authService.registration = async (id, data) => {
+    // Check if the user already exists
     const existingUser = await User.findOne({ email: data.email });
     if (existingUser) {
-        throw new Error("Account already exists!");
+      throw new Error("Account already exists!");
     }
-
+  
+    // Check if a firm admin already exists for this firm
     if (data.role === 'firm_admin') {
-        const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
-        if (existingFirmAdmin) {
-            throw new Error("There is already a firm admin for this firm!");
-        }
+      const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+      if (existingFirmAdmin) {
+        throw new Error("There is already a firm admin for this firm!");
+      }
     }
-
+  
+    // Handle avatar if it's included in the registration data
+    if (data.avatar) {
+      let imageUrl;
+      if (typeof data.avatar === 'string' && data.avatar.startsWith('http')) {
+        imageUrl = data.avatar;
+      } else if (typeof data.avatar === 'string' && data.avatar.startsWith('data:image')) {
+        const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, 'base64');
+        const uploadResponse = await uploadToCloudinary(buffer);
+        imageUrl = uploadResponse.secure_url;
+      } else if (Buffer.isBuffer(data.avatar)) {
+        const uploadResponse = await uploadToCloudinary(data.avatar);
+        imageUrl = uploadResponse.secure_url;
+      } else {
+        throw new Error("Invalid avatar format");
+      }
+  
+      data.avatar = imageUrl;
+    }
+  
+    // Encrypt the password
     const encryptedPassword = await PasswordService.passwordHash(data.password);
     data.password = encryptedPassword;
-    console.log('Registration Data:', data.password); // Log the data
+    
     data.isActive = true;
     data.adminId = id;
-
+  
+    // Save the new user in the database
     const newUser = new User(data);
     const user = await newUser.save();
     return user;
-};
+  };
+  
 
 // GET FIRMS  
 authService.getCompany  = async (id) => {
