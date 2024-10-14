@@ -13,6 +13,7 @@ import {
   checkEmptyFields,
   validateEmail,
   validatePassword,
+  validatePhone
 } from "../Utility/FormValidation";
 import { PostRequest } from "../Utility/Request";
 import { toast } from "react-toastify";
@@ -59,6 +60,8 @@ const Register = (props) => {
       toast.error("Fields must not be empty!");
     } else if (!validateEmail(formInput.email)) {
       toast.error("Email is invalid!");
+    } else if (!validatePhone(formInput.mobile)) {
+      toast.error("Mobile number is invalid!");
     } else if (!validatePassword(formInput.password)) {
       toast.error(
         "Password should contain at least 8 characters and must contain one uppercase, one lowercase, one digit, and one special character!"

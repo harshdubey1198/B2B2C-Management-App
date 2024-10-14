@@ -53,17 +53,15 @@ const VerifyOtp = () => {
         otp: otpNumber,
       });
 
-      if (response.message === "OTP verified successfully") {
-        toast.success("OTP Verified Successfully");
+      if (response.message) {
+        toast.success(response.message);
         localStorage.removeItem("email"); 
         navigate("/login");
-      } else if (response.message === "Existing OTP is still valid. Please wait.") {
-        setError(response.message);
-        toast.error("Failed to verify OTP");
       }
-    } catch (err) {
-      setError(err);
-      toast.error(err);
+    } catch (error) {
+      // setError(error.response?.message);
+      console.log(error?.response);
+      toast.error(error.response?.message );
     } finally {
       setIsSubmitting(false);
     }
@@ -91,7 +89,7 @@ const VerifyOtp = () => {
       if (response.message) {
         toast.success(response.message);
       } else {
-        toast.error(response.message);
+        toast.error(response?.error);
       }
     } catch (err) {
       toast.error(err.response?.message || "Error resending OTP");
@@ -133,7 +131,7 @@ const VerifyOtp = () => {
                         {isSubmitting ? "Verifying..." : "Verify OTP"}
                       </Button>
                     </form>
-                    {error && <p className="text-danger text-center mt-2">{error}</p>}
+                    {/* {error && <p className="text-danger text-center mt-2">{error}</p>} */}
                     <div className="mt-2 text-center">
                       <p className="text-muted">
                         <Button 
