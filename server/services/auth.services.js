@@ -3,7 +3,8 @@ const generateTemporaryPassword = require("../utils/tempPassword");
 const PasswordService = require('./password.services');
 const User = require("../schemas/user.schema");
 const multer = require("multer");
-const uploadToCloudinary = require("../utils/cloudinary")
+const uploadToCloudinary = require("../utils/cloudinary");
+const Plan = require("../schemas/plans.schema");
 
 const authService = {};
 
@@ -153,16 +154,16 @@ authService.verifyOtp = async (body) => {
         const {email, otp} = body
         const user = await User.findOne({email})
         if(!user){
-            return Promise.reject("User Not Exist")
+            throw new Error("User Not Exist")
         }
 
         if(user.otp !== Number(otp)){
-            return Promise.reject("Invalid OTP")
+            throw new Error("Invalid OTP")
         }
 
         const currentTime = new Date()
         if(currentTime > user.otpExpiry){
-            return Promise.reject("OTP has expired");
+            throw new Error("OTP has expired");
         }
 
         // OTP is valid, mark the user as verified
@@ -174,7 +175,7 @@ authService.verifyOtp = async (body) => {
         return { message: "OTP verified successfully" };
     } catch (error) {
         console.error("Error verifying OTP:", error);
-        return Promise.reject("Unable to verify OTP");
+        throw new Error("Unable to verify OTP");
     }
 }
 
@@ -301,6 +302,78 @@ authService.getAccount  = async (id) => {
 }
 
 // CREATE FIRM OR CREATE USER
+// authService.registration = async (id, data) => {
+//     try {
+//         const firm = await User.findOne({_id:id}).populate({
+//             path: 'adminId',
+//             populate: {
+//                 path: 'planId'
+//             }
+//         })
+//         console.log(firm,"firmsss")
+//         const clientAdmin = firm.adminId;
+//         if (!clientAdmin) {
+//             console.log("Client Admin not found for this firm.");
+//             return Promise.reject("Client Admin not found for this firm.");
+//         }
+
+//         const clientPlan = clientAdmin.planId;
+//         if (!clientPlan) {
+//             console.log("Client admin does not have a valid plan.");
+//             return Promise.reject("Client admin does not have a valid plan.");
+//         }
+//         const countUser = await User.countDocuments({ adminId: id})
+//         if(countUser > clientPlan.maxUsers){
+//             return Promise.reject("User creation limit reached for this plan. Please upgrade.");
+//         }
+//         console.log(countUser, "countuser")
+//         const existingUser = await User.findOne({ email: data.email });
+//         if (existingUser) {
+//             return Promise.reject("Account already exists!");
+//         }
+
+//         if (data.role === 'firm_admin') {
+//             const existingFirmAdmin = await User.findOne({ role: 'firm_admin', adminId: id });
+//             if (existingFirmAdmin) {
+//                 return Promise.reject("There is already a firm admin for this firm!");
+//             }
+//         }
+        
+//         console.log(data, "dataa")
+//         if (data.avatar) {
+//             let imageUrl;
+//             if (typeof data.avatar === 'string' && data.avatar.startsWith('http')) {
+//                 imageUrl = data.avatar;
+//             } else if (typeof data.avatar === 'string' && data.avatar.startsWith('data:image')) {
+//                 const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
+//                 const buffer = Buffer.from(base64Data, 'base64');
+//                 const uploadResponse = await uploadToCloudinary(buffer);
+//                 imageUrl = uploadResponse.secure_url;
+//             } else if (Buffer.isBuffer(data.avatar)) {
+//                 const uploadResponse = await uploadToCloudinary(data.avatar);
+//                 imageUrl = uploadResponse.secure_url;
+//             } else {
+//                 throw new Error("Invalid avatar format");
+//             }
+
+//             data.avatar = imageUrl;
+//         } else {
+//             console.log("No file uploaded.");
+//         }
+//         const encryptedPassword = await PasswordService.passwordHash(data.password);
+//         data.password = encryptedPassword;
+//         data.isActive = true;
+//         data.adminId = id;
+  
+//        const newUser = new User(data);
+//        const user = await newUser.save();
+//        return user;
+//     } catch (error) {
+//       console.error("Error in user registration:", error);
+//       return Promise.reject("Unable to create User");
+//     }
+// }
+
 authService.registration = async (id, data) => {
     try {
         const existingUser = await User.findOne({ email: data.email });
@@ -330,7 +403,6 @@ authService.registration = async (id, data) => {
       return Promise.reject("Unable to create User");
     }
 }
-
 // GET FIRMS  
 authService.getCompany  = async (id) => {
     try {
