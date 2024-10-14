@@ -14,7 +14,14 @@ const predefinedIcons = ["fas fa-cube", "fas fa-trophy", "fas fa-shield-alt"];
 function CreatePlan() {
   document.title = "Plan Form";
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  console.log(authuser?.response._id, "authuser");
+  // console.log(authuser?.response._id, "authuser");
+  const token = authuser?.token;
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  };
   const [formValues, setFormValues] = useState({
     title: "",
     caption: "",
@@ -87,7 +94,7 @@ function CreatePlan() {
 
     // Simulate API call
     axios
-      .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues)
+      .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues,config)
       .then((response) => {
         // setSuccess("Plan added successfully.");
         toast.success("Plan added successfully.");
