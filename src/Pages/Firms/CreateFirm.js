@@ -108,7 +108,7 @@ function CreateFirm() {
       });
       navigate('/firms');
     } catch (error) {
-      toast.error("Error creating firm: " + error.message);
+      toast.error("Error creating firm: " + error);
     } finally {
       setLoading(false);
     }
