@@ -403,26 +403,19 @@ authService.registration = async (id, data) => {
       }
     }
   
-    // Handle avatar if it's included in the registration data
-    if (data.avatar) {
-      let imageUrl;
-      if (typeof data.avatar === 'string' && data.avatar.startsWith('http')) {
-        imageUrl = data.avatar;
-      } else if (typeof data.avatar === 'string' && data.avatar.startsWith('data:image')) {
-        const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
-        const buffer = Buffer.from(base64Data, 'base64');
-        const uploadResponse = await uploadToCloudinary(buffer);
-        imageUrl = uploadResponse.secure_url;
-      } else if (Buffer.isBuffer(data.avatar)) {
+    if (data.avatar && typeof data.avatar === 'string' && data.avatar.startsWith('http')) {
+        data.avatar = data.avatar;
+    } else if (data.avatar && Buffer.isBuffer(data.avatar)) {
         const uploadResponse = await uploadToCloudinary(data.avatar);
-        imageUrl = uploadResponse.secure_url;
-      } else {
+        data.avatar = uploadResponse.secure_url;
+    } else if (data.avatar && data.avatar instanceof File) {
+        const fileBuffer = Buffer.from(await data.avatar.arrayBuffer());
+        const uploadResponse = await uploadToCloudinary(fileBuffer);
+        data.avatar = uploadResponse.secure_url;
+    } else if (data.avatar) {
         throw new Error("Invalid avatar format");
-      }
-  
-      data.avatar = imageUrl;
     }
-  
+    
     // Encrypt the password
     const encryptedPassword = await PasswordService.passwordHash(data.password);
     data.password = encryptedPassword;

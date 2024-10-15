@@ -2,12 +2,9 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { validateEmail, validatePhone ,validatePassword} from "../Utility/FormValidation";
+import { validateEmail, validatePhone, validatePassword } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
-
-
 
 function CreateFirm() {
   const [show, setShow] = useState({
@@ -17,12 +14,13 @@ function CreateFirm() {
   document.title = "Firm Form";
 
   const [formValues, setFormValues] = useState({
-    role:"firm",
+    role: "firm",
     companyTitle: "",
     companyMobile: "",
     email: "",
-    avatar: "",
+    avatar: null, 
     password: "",
+    confirmPassword: "",
     startDate: "",
   });
 
@@ -40,14 +38,10 @@ function CreateFirm() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormValues((prevState) => ({
-          ...prevState,
-          avatar: reader.result,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setFormValues((prevState) => ({
+        ...prevState,
+        avatar: file,
+      }));
     }
   };
 
@@ -85,33 +79,45 @@ function CreateFirm() {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("role", formValues.role);
+    formData.append("companyTitle", formValues.companyTitle);
+    formData.append("companyMobile", formValues.companyMobile);
+    formData.append("email", formValues.email);
+    formData.append("password", formValues.password);
+    formData.append("startDate", formValues.startDate);
+
+    if (formValues.avatar) {
+      formData.append("avatar", formValues.avatar);
+    }
+
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_URL}/auth/createUser/${clientId}`,
-        formValues,
-
+        formData, 
         {
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type": "multipart/form-data", 
           },
         }
       );
 
       toast.success("Firm added successfully.");
       setFormValues({
+        role: "firm",
         companyTitle: "",
         companyMobile: "",
         email: "",
         password: "",
-        avatar: "",
+        confirmPassword: "",
+        avatar: null,
         startDate: "",
       });
       navigate('/firms');
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
-      console.log(errorMessage, "errormessage")
-      toast.error(errorMessage); 
-      // toast.error("Error creating firm: " + error);
+      console.log(errorMessage, "errormessage");
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -153,7 +159,7 @@ function CreateFirm() {
                       />
                     </FormGroup>
                     <FormGroup>
-                      <Label htmlFor="companyEmail">Firm Email</Label>
+                      <Label htmlFor="email">Firm Email</Label>
                       <Input
                         type="email"
                         id="email"
@@ -221,7 +227,6 @@ function CreateFirm() {
                         onChange={handleFileChange}
                       />
                     </FormGroup>
-
                     <FormGroup>
                       <Label htmlFor="startDate">Start Date</Label>
                       <Input
@@ -233,7 +238,6 @@ function CreateFirm() {
                         onChange={handleChange}
                       />
                     </FormGroup>
-
                     <Button color="primary" type="submit" disabled={loading}>
                       {loading ? "Adding..." : "Add Firm"}
                     </Button>
