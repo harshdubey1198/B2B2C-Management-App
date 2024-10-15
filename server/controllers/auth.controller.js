@@ -24,10 +24,10 @@ authController.register = async (req, res) => {
 authController.verifyOtp = async (req, res) => {
   try {
     const response = await authService.verifyOtp(req.body);
-    return res.status(200).json(createResult("OTP Verified Successfully", response));
+    return res.status(200).json(createResult("OTP Verified Successfully", response, false));
   } catch (error) {
     console.log("error verify otp", error);
-    return res.status(400).json(createResult(null, null, error.message));
+    return res.status(400).json(createResult(error.message, null, true));
   }
 };
 
