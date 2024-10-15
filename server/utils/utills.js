@@ -1,9 +1,9 @@
 // Function to create a standardized response structure
 function createResult(message, data, error) {
   return {
-    message: message,
+    message: message || null,
     data: data || null,
-    error: error || null
+    error: error ? true : false 
   };
 }
 
@@ -11,4 +11,3 @@ function createResult(message, data, error) {
 module.exports = {
   createResult
 };
-
