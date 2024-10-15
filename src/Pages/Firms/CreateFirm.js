@@ -108,7 +108,10 @@ function CreateFirm() {
       });
       navigate('/firms');
     } catch (error) {
-      toast.error("Error creating firm: " + error);
+      const errorMessage = error.response?.data?.error || 'An unexpected error occurred';
+      console.log(errorMessage, "errormessage")
+      toast.error(errorMessage); 
+      // toast.error("Error creating firm: " + error);
     } finally {
       setLoading(false);
     }
