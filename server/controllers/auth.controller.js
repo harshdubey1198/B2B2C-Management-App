@@ -122,17 +122,19 @@ authController.registration = async (req, res) => {
       // Extract the form data from req.body
       const registrationData = { ...req.body };
       // If a file is uploaded, handle Cloudinary upload
+      console.log(req.files.avatar,"dhhs")
       if (req.files && req.files.avatar) {
         const imageUrl = await uploadToCloudinary(req.files.avatar[0].buffer); // Handle Cloudinary upload
         registrationData.avatar = imageUrl; // Attach the Cloudinary URL to the registration data
       }
+      console.log(req.files.avatar,"badme")
 
       // Call the service to handle registration
       const response = await authService.registration(req.params.id, registrationData);
       return res.status(200).json(createResult("Registration Successfully", response));
     } catch (error) {
       console.log("Error Creating User", error);
-      return res.status(400).json(createResult(null, null, error.message));
+      return res.status(400).json(createResult(error.message, null, null ));
     }
   });
 };
