@@ -14,7 +14,7 @@ function UserTable({ selectedFirmId, trigger }) {
   };
 
   const firmId = selectedFirmId || defaultFirm?._id;
-
+  const companyTitle = defaultFirm?.companyTitle;
   const fetchUsers = async () => {
     try {
       let response;
@@ -36,7 +36,8 @@ function UserTable({ selectedFirmId, trigger }) {
   }, [selectedFirmId, trigger]);
 
   return (
-    <div className="table-responsive mt-4">
+    <div className="table-responsive ">
+      <h5 className="text-center">Users of <span className="primary">{companyTitle}</span></h5>
       <table className="table table-bordered mb-0">
         <thead>
           <tr>

@@ -31,6 +31,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
       if (selectedFirm) {
         localStorage.setItem("defaultFirm", JSON.stringify({
           fuid: selectedFirm.fuid,
+          companyTitle: selectedFirm.companyTitle,
           name: selectedFirm.firmName,
           firmId: selectedFirm._id
         }));
@@ -39,10 +40,10 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
   }, [selectedFirmId, firms]);
 
   return (
-    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'150px'}}>
-      <DropdownToggle  style={{ backgroundColor: '#0bb197' ,width:'140px'}}>
+    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown} style={{width:'200px'}}>
+      <DropdownToggle  style={{ backgroundColor: '#0bb197' ,minWidth:'165px'}}>
         <span style={{ marginRight: '10px' }}>
-          {firms.find(firm => firm._id === selectedFirmId)?.firmName || 'Select Firm'}
+          {firms.find(firm => firm._id === selectedFirmId)?.companyTitle }
         </span>
 
         {dropdownOpen 
