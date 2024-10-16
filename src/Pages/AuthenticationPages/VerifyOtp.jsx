@@ -37,47 +37,36 @@ const VerifyOtp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+  
     if (!otp) {
       toast.error("Please enter OTP");
       setError("OTP is required.");
       return;
     }
-
+  
     setIsSubmitting(true);
     setError("");
-
+  
     const otpNumber = Number(otp);
-    axios
+    const response = axios
       .post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
         email,
         otp: otpNumber,
       })
       .then((response) => {
-        const { data } = response;
-        if (data && data.error) {
-          const errorMessage = data.message || "Failed to verify OTP.";
-          setError(errorMessage);
-          toast.error(errorMessage);
-        } else if (data && data.message) {
-          toast.success(data.message);
-          localStorage.removeItem("email");
-          navigate("/login");
-        } else {
-          setError("Unexpected response format.");
-          toast.error("Unexpected response format.");
-        }
+        toast.success(response.message);
+        navigate("/dashboard");
       })
       .catch((err) => {
-        const errorMessage =
-          err.response?.data?.message || "An error occurred while verifying the OTP.";
-        setError(errorMessage);
+        const errorMessage = err.response?.message || "Invalid OTP";
         toast.error(errorMessage);
+        setError(errorMessage);
       })
       .finally(() => {
         setIsSubmitting(false);
       });
   };
+  
 
   const handleResendOtp = () => {
     if (!email) {
@@ -93,30 +82,18 @@ const VerifyOtp = () => {
     setIsResending(true);
     setCanResend(false);
 
-    axios
+    const response = axios
       .post(`${process.env.REACT_APP_URL}/auth/resend-otp`, {
         email,
       })
       .then((response) => {
-        const { data } = response;
-        if (data && data.error) {
-          const errorMessage = data.message || "Failed to resend OTP.";
-          setError(errorMessage);
-          toast.error(errorMessage);
-        } else if (data && data.message) {
-          toast.success(data.message);
-        } else {
-          setError("Unexpected response format.");
-          toast.error("Unexpected response format.");
-        }
+        toast.success(response.message);
       })
-      .catch((err) => {
-        const errorMessage =
-          err.response?.data?.message || "An error occurred while resending the OTP.";
-        setError(errorMessage);
-        toast.error(errorMessage);
+      .catch((response) => {
+        toast.error(response.message);
       })
-      .finally(() => {
+
+        .finally(() => {
         setIsResending(false);
       });
   };
@@ -154,7 +131,7 @@ const VerifyOtp = () => {
                         {isSubmitting ? "Verifying..." : "Verify OTP"}
                       </Button>
                     </form>
-                    {error && <p className="text-danger text-center mt-2">{error}</p>}
+                    {/* {error && <p className="text-danger text-center mt-2">{error}</p>} */}
                     <div className="mt-2 text-center">
                       <p className="text-muted">
                         <Button

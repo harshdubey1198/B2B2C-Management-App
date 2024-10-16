@@ -190,7 +190,7 @@ authService.resendOtp = async (body) => {
 
     const newOtp = Math.floor(100000 + Math.random() * 900000);
     user.otp = newOtp;
-    user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // OTP expiry set to 5 minutes from now
+    user.otpExpiry = new Date(Date.now() + 5 * 60 * 1000); 
     await user.save();
 
     // Send new OTP
