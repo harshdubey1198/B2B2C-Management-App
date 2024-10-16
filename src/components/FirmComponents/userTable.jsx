@@ -37,7 +37,7 @@ function UserTable({ selectedFirmId, trigger }) {
 
   return (
     <div className="table-responsive ">
-      <h5 className="text-center">Users of <span className="primary">{companyTitle}</span></h5>
+      <h5 className="text-center">Users of <span className="mm-active">{companyTitle}</span></h5>
       <table className="table table-bordered mb-0">
         <thead>
           <tr>

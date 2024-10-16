@@ -46,7 +46,7 @@ function ManagePlan() {
       axios.delete(`${process.env.REACT_APP_URL}/plan/delete/${id}` , config)
         .then((response) => {
           setTrigger(prev => prev + 1);
-          toast.success('Plan deleted successfully');
+          toast.success(response.message);
         })
         .catch((error) => {
           toast.error('Error deleting plan');
@@ -63,6 +63,8 @@ function ManagePlan() {
       .then((response) => {
         setTrigger(prev => prev + 1);
         toggleModal();
+        // console.log(response.message);
+        toast.success(response.message);
       })
       .catch((error) => {
         toast.error('Error updating data');

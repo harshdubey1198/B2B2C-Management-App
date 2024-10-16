@@ -97,8 +97,7 @@ function CreatePlan() {
       .post(`${process.env.REACT_APP_URL}/plan/create/${authuser?.response._id}`, formValues,config)
       .then((response) => {
         // setSuccess("Plan added successfully.");
-        toast.success("Plan added successfully.");
-        console.log(response.data);
+        toast.success(response.message);
         setFormValues({
           title: "",
           caption: "",
