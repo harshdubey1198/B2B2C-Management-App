@@ -7,7 +7,7 @@ const invoiceController = {};
 invoiceController.createInvoice = async (req, res) => {
     try {
         const invoice = await InvoiceServices.createInvoice(req.body);
-        return res.status(200).json(createResult("Invoices created successfully", invoice));
+        return res.status(200).json(createResult("Invoice created successfully", invoice));
     } catch (error) {
         return res.status(400).json(createResult(null, null, error.message));
     }

@@ -199,7 +199,7 @@ const handleSubmit = (e) => {
     config
   )
   .then(response => {
-    toast.success("Invoice created successfully");
+    toast.success(response.message);
 
     setInvoiceData({
       companyName: "",

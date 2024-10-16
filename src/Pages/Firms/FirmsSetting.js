@@ -115,8 +115,8 @@ function FirmSettings() {
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails , config);
-    toast.success("Firm details updated successfully!");
+    const response = await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails , config);
+    toast.success(response.message);
 
     // Increment trigger to refetch data
     setTrigger(prev => prev + 1);

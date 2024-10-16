@@ -102,7 +102,7 @@ function CreateFirm() {
         }
       );
 
-      toast.success("Firm added successfully.");
+      toast.success(response.message);
       setFormValues({
         role: "firm",
         companyTitle: "",

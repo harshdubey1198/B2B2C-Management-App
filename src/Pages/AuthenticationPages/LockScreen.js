@@ -50,6 +50,7 @@ const LockScreen = () => {
         }).then((response) =>  {
             localStorage.setItem("isLocked", 'false')
             navigate("/dashboard")
+            toast.success("Welcome back!")
         }).catch((error) => {
             // setError(error)
             toast.error("Invalid Password")

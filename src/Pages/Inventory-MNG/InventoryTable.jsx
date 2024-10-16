@@ -90,7 +90,7 @@ function InventoryTable() {
       variant.barcode
     ) {
       try {
-        await axios.put(
+        const response = await axios.put(
           `${process.env.REACT_APP_URL}/inventory/add-variant/${selectedItem._id}`,
           variant,
           config
@@ -101,7 +101,7 @@ function InventoryTable() {
         });
         setTrigger((prev) => prev + 1);
         setModalOpen(!modalOpen);
-        toast.success("Variant added successfully!");
+        toast.success(response.message);
       } catch (error) {
         console.error("Error adding variant:", error);
       }
@@ -142,13 +142,13 @@ function InventoryTable() {
 
   const updateItem = async (updatedFields) => {
     try {
-      await axios.put(
+      const response = await axios.put(
         `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
         updatedFields,
         config
       );
       setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
-      toast.success("Item updated successfully!");
+      toast.success(response.message);
       setModalOpen(!modalOpen);
       setTrigger((prev) => prev + 1);
     } catch (error) {

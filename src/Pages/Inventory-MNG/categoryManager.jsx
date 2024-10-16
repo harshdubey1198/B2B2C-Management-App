@@ -62,19 +62,21 @@ const CategoryManager = () => {
   
     try {
       if (editMode) {
-        await axios.put(
+        const response = await axios.put(
           `${process.env.REACT_APP_URL}/category/update-category/${selectedCategoryId}`,
           updatedFormValues,
           config
         );
-        toast.success('Category updated successfully.');
+        toast.success(response.message);
       } else {
-        await axios.post(
+        const response = await axios.post(
           `${process.env.REACT_APP_URL}/category/create-category/${createdBy}`,
           updatedFormValues,
           config
+       
         );
-        toast.success('Category added successfully.');
+        
+        toast.success(response.message);
       }
       setModal(false);
       setFormValues({
@@ -107,9 +109,9 @@ const CategoryManager = () => {
   const handleDelete = async (categoryId) => {
     if (window.confirm("Are you sure you want to delete this category?")) {
       try {
-        await axios.delete(`${process.env.REACT_APP_URL}/category/delete-category/${categoryId}`, config);
-        toast.success('Category deleted successfully.');
+        const response = await axios.delete(`${process.env.REACT_APP_URL}/category/delete-category/${categoryId}`, config);
         fetchCategories(); 
+        toast.warn(response.message);
       } catch (error) {
         toast.error('Failed to delete category.');
       }
