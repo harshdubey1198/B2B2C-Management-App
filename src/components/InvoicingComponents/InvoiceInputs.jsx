@@ -391,6 +391,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
       >
         <option value="">Select Invoice Type</option>
         <option value="Tax Invoice">Tax Invoice</option>
+        <option value="Proforma">Proforma Invoice</option>
         <option value="Bill of Supply">Bill of Supply</option>
       </Input>
     </FormGroup>
