@@ -21,9 +21,10 @@ const InventoryItemSchema = new Schema({
         optionLabel: { type: String }, 
         price: { type: Number, default: 0 }, 
         stock: { type: Number, default: 0 }, 
+        reservedQuantity: { type: Number, default: 0 }, 
         sku: { type: String },
-        barcode: { type: String }
-    }],
+        barcode: { type: String }
+     }],
     deleted_at: { type: Date, default: null } 
 }, { timestamps: true });
 
