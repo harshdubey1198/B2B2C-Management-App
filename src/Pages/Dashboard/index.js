@@ -49,7 +49,7 @@ const Dashboard = () => {
                   <Button color="primary" onClick={() => navigate('/add-inventory')}>
                       Create Inventory
                   </Button>
-              ) : authuser.role === "g_emp" ? (
+              ) : authuser.role === "employee" ? (
                   <Button color="primary" onClick={() => navigate('/create-invoice')}>
                       Create Invoice
                   </Button>

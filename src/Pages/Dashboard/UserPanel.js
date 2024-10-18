@@ -46,7 +46,7 @@ const UserPanel = () => {
         console.error("Error fetching user count:", error);
       }
     };
-    if(role === "firm_admin" || role === "accountant" || role === "g_emp") {
+    if(role === "firm_admin" || role === "accountant" || role === "employee") {
       fetchUserCount()
     }
   },[])
@@ -94,7 +94,7 @@ const UserPanel = () => {
 
                 <div className="flex-grow-1 overflow-hidden">
                   {
-                    role === "firm_admin" || role === "accountant" || role === "g_emp" ? (
+                    role === "firm_admin" || role === "accountant" || role === "employee" ? (
                       <>
                       <p className="mb-1">Total Invoices</p>
                       <h5 className="mb-3">{invoiceCount}</h5><p className="text-truncate mb-0">

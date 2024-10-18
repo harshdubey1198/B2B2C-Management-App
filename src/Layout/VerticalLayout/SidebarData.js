@@ -200,6 +200,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         // { sublabel: "Table Form", link: "/add-inventory" },
+        {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],
@@ -234,7 +235,7 @@ export const masterAdminSidebarData = () => [
         icon: "mdi mdi-cog-outline",
         subItem: [
           { sublabel: "Profile Settings", link: "/profile-settings" },
-          { sublabel: "Accounts Settings", link: "/accounts-setting" },
+          // { sublabel: "Accounts Settings", link: "/accounts-setting" },
           // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
@@ -286,6 +287,7 @@ export const masterAdminSidebarData = () => [
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
+        {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],
@@ -317,7 +319,7 @@ export const masterAdminSidebarData = () => [
         icon: "mdi mdi-cog-outline",
         subItem: [
           { sublabel: "Profile Settings", link: "/profile-settings" },
-          { sublabel: "Accounts Settings", link: "/accounts-setting" },
+          // { sublabel: "Accounts Settings", link: "/accounts-setting" },
           // { sublabel: "Recover Password", link: "/recover-password" },
           // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
