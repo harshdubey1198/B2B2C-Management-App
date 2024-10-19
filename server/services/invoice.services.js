@@ -93,8 +93,9 @@ invoiceServices.createInvoice = async (invoiceData) => {
 
   const savedInvoice = await newInvoice.save();
   return savedInvoice;
-};
+}
 
+// update stock function
 const updateInventoryStock = async (items, isProforma) => {
   for (let item of items) {
     const inventoryItem = await InventoryItem.findById(item.itemId);
@@ -102,37 +103,49 @@ const updateInventoryStock = async (items, isProforma) => {
       throw new Error(`Item with ID ${item.itemId} not found in inventory`);
     }
 
+    // If the item has variants, manage stock per variant
     if (inventoryItem.variants && inventoryItem.variants.length > 0) {
       item.selectedVariant.forEach((variant) => {
         const inventoryVariant = inventoryItem.variants.find(v => v.sku === variant.sku);
         if (inventoryVariant) {
+          // Calculate available stock (total stock minus reserved stock)
+          const availableStock = inventoryVariant.stock - inventoryVariant.reservedQuantity;
+
           if (isProforma) {
-            if (inventoryVariant.stock < inventoryVariant.reservedQuantity + item.quantity) {
-              throw new Error(`Insufficient stock to reserve for variant: ${variant.optionLabel}`);
+            // Reserve stock for Proforma
+            if (availableStock < item.quantity) {
+              throw new Error(`Insufficient stock to reserve for variant: ${variant.optionLabel}. Available: ${availableStock}, Requested: ${item.quantity}`);
             }
-            inventoryVariant.reservedQuantity += item.quantity;
+            inventoryVariant.reservedQuantity += item.quantity; // Reserve the quantity
           } else {
-            if (inventoryVariant.stock < item.quantity) {
-              throw new Error(`Insufficient stock for variant: ${variant.optionLabel}`);
+            // For Tax Invoice, deduct from actual stock and reserved quantity
+            if (inventoryVariant.reservedQuantity < item.quantity) {
+              throw new Error(`Insufficient reserved stock for variant: ${variant.optionLabel}. Reserved: ${inventoryVariant.reservedQuantity}, Requested: ${item.quantity}`);
             }
             inventoryVariant.stock -= item.quantity;
-            inventoryVariant.reservedQuantity -= item.quantity;
+            inventoryVariant.reservedQuantity -= item.quantity; // Deduct reserved quantity
           }
         } else {
           throw new Error(`Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`);
         }
       });
 
+      // Update the total stock of the item based on the variants' stock
       inventoryItem.quantity = inventoryItem.variants.reduce((sum, v) => sum + v.stock, 0);
     } else {
+      // If no variants, adjust the quantity directly at the item level
+      const availableStock = inventoryItem.quantity;
+
       if (isProforma) {
-        if (inventoryItem.quantity < item.quantity) {
-          throw new Error(`Insufficient stock to reserve for item: ${inventoryItem.name}`);
+        // Reserve stock for Proforma at the item level
+        if (availableStock < item.quantity) {
+          throw new Error(`Insufficient stock to reserve for item: ${inventoryItem.name}. Available: ${availableStock}, Requested: ${item.quantity}`);
         }
-        inventoryItem.quantity -= item.quantity;
+        inventoryItem.quantity -= item.quantity; // Reduce available quantity to reserve it
       } else {
+        // Deduct stock for Tax Invoice directly
         if (inventoryItem.quantity < item.quantity) {
-          throw new Error(`Insufficient stock for item: ${inventoryItem.name}`);
+          throw new Error(`Insufficient stock for item: ${inventoryItem.name}. Available: ${inventoryItem.quantity}, Requested: ${item.quantity}`);
         }
         inventoryItem.quantity -= item.quantity;
       }
@@ -141,6 +154,7 @@ const updateInventoryStock = async (items, isProforma) => {
     await inventoryItem.save();
   }
 };
+
 
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })

@@ -9,6 +9,7 @@ inventoryController.createItem = async (req, res) => {
         const newItem = await inventoryServices.createItem(req.params.id, req.body);
         return res.status(200).json(createResult("Inventory item created successfully", newItem));
     } catch (error) {
+        console.log(error, "error")
         return res.status(400).json(createResult(null, null, error.message));
     }
 };
