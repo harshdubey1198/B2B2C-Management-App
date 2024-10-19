@@ -95,7 +95,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, price: variantPrice }],
+        selectedVariant: [{ optionLabel: variantName, price: variantPrice , stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
         price, 
         total,
       };

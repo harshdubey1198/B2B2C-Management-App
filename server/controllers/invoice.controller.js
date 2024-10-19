@@ -3,7 +3,7 @@ const { createResult } = require('../utils/utills');
 
 const invoiceController = {};
 
-// SEARCH CUSTOMER
+// CREATE INVOICES
 invoiceController.createInvoice = async (req, res) => {
     try {
         const invoice = await InvoiceServices.createInvoice(req.body);
