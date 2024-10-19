@@ -108,7 +108,6 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   
   const handleVariantChange = (itemId, variantName, index) => {
     if (!variantName) {
-      // If variant is deselected, reset the variant-related fields
       const updatedItems = [...items];
       updatedItems[index] = {
         ...updatedItems[index],
