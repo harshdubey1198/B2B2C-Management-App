@@ -132,10 +132,10 @@ function CreateFirm() {
             <Col lg={8} md={10}>
               <Card className="mt-1">
                 <CardBody>
-                  <h4 className="font-size-18 text-muted mt-2 text-center">
+                  <h4 className="font-size-22 text-center card-title-heading">
                     Create Firm
                   </h4>
-                  <form onSubmit={handleSubmit}>
+                  <form onSubmit={handleSubmit} className="p-4">
                     <FormGroup>
                       <Label htmlFor="companyTitle">Firm Name</Label>
                       <Input

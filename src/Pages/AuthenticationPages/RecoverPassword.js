@@ -91,21 +91,21 @@ const RecoverPassword = () => {
                           <img
                             src={logodark}
                             alt=""
-                            height="24"
+                            height="40"
                             className="auth-logo logo-dark mx-auto"
                           />
                           <img
                             src={logolight}
                             alt=""
-                            height="24"
+                            height="40"
                             className="auth-logo logo-light mx-auto"
                           />
                         </Link>
                       </div>
-                      <h4 className="font-size-18 text-muted mt-2 text-center">
+                      <h4 className="font-size-22 fw-bold text-dark text-center my-4">
                         Reset Password
                       </h4>
-                      <p className="text-muted text-center mb-4">
+                      <p className="text-muted text-center my-4">
                         Enter your email below and we'll send you instructions to reset your password.
                       </p>
                       <form className="form-horizontal" onSubmit={handleSubmit}>
@@ -142,18 +142,19 @@ const RecoverPassword = () => {
                       </form>
                     </div>
                   </CardBody>
-                </Card>
-                <div className="mt-2 text-center">
-                  <p className="text-white-50">
+                  <div className="text-center">
+                  <p className="text-black py-3 m-0">
                     Don't have an account?{" "}
                     <Link to="/register" className="fw-medium text-primary">
                       Register
                     </Link>
                   </p>
-                  <p className="text-white-50">
+                  <p className="text-black border-top py-3">
                     © {new Date().getFullYear()} aaMOBee. All rights reserved.
                   </p>
                 </div>
+                </Card>
+                
               </Col>
             </Row>
           </Container>

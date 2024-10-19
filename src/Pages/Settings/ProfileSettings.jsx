@@ -108,11 +108,11 @@ const ProfileSettings = () => {
     <React.Fragment>
       <div className='page-content'>
         <Container>
-          <Row>
-            <Col md={6}>
+          <Row >
+          <Col xs={12} sm={6} md={6} lg={6}>
               <Card>
+              <h2 className="card-title-heading">Profile Settings</h2>
                 <CardBody>
-                  <h2>Profile Settings</h2>
                   <Form onSubmit={handleSubmit}>
                     {/* First Name */}
                     <FormGroup>
@@ -225,20 +225,20 @@ const ProfileSettings = () => {
                         </div>
                       )}
                     </FormGroup>
-                    <Button color="primary" type="submit">Update Profile</Button>
+                    <Button color="primary" type="submit" className='mb-1'>Update Profile</Button>
                   </Form>
                 </CardBody>
               </Card>
             </Col>
 
             {/* Profile Picture Section */}
-            <Col md={6}>
+            <Col xs={12} sm={6} md={6} lg={6}>
               <Card>
-                <CardBody>
-                  <h2>Profile Picture</h2>
+              <h2 class="card-title-heading">Profile Picture</h2>
+                <CardBody>                  
                   <Form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label for="avatar">Upload Profile Picture</Label>
+                      <Label for="avatar" class="mb-4">Upload Profile Picture</Label>
                       <Input
                         type="file"
                         name="avatar"
@@ -246,7 +246,7 @@ const ProfileSettings = () => {
                         onChange={handleFileChange}
                       />
                       {preview && (
-                        <div className="mt-2 d-flex justify-content-center">
+                        <div className="d-flex justify-content-center text-bg-light border-dashed p-4 my-4">
                           <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '98px', height: '98.81px' }} />
                         </div>
                       )}
@@ -254,7 +254,7 @@ const ProfileSettings = () => {
                         Choose a profile picture to upload.
                       </FormText>
                     </FormGroup>
-                    <Button color="primary" type="submit">Update Profile Picture</Button>
+                    <Button color="primary" type="submit" className='my-3'>Update Profile Picture</Button>
                   </Form>
                 </CardBody>
               </Card>
