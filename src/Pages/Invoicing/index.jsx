@@ -12,6 +12,13 @@ import InvoiceItems from '../../components/InvoicingComponents/InvoiceItems';
 
 const Index = () => {
   const [companyData, setCompanyData] = useState({});
+  const [isCompanyModalOpen, setCompanyModalOpen] = useState(false);
+  const toggleCompanyModal = () => setCompanyModalOpen(!isCompanyModalOpen);
+  const [fakeItems, setFakeItems] = useState([]);
+  const printRef = useRef();
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const firmId = authuser?.response?.adminId;
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [invoiceData, setInvoiceData] = useState({
     companyName: "",
     companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
@@ -38,21 +45,23 @@ const Index = () => {
     paymentLink: '',
     id: ''
 });
-
-  const [isCompanyModalOpen, setCompanyModalOpen] = useState(false);
-  const toggleCompanyModal = () => setCompanyModalOpen(!isCompanyModalOpen);
-  const [fakeItems, setFakeItems] = useState([]);
-  const printRef = useRef();
-  const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
+const config = {
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  },
+};
+const fetchInventoryItems = () => {
+  axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config)
+    .then(response => {
+      setFakeItems(response.data || []);
+    })
+    .catch(error => {
+      console.log(error);
+      toast.error("Failed to fetch inventory items");
+    });
+};
+  
   useEffect(() => {
     axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authuser?.response?.adminId}`, config)
       .then((response) => {
@@ -77,7 +86,7 @@ const Index = () => {
       }).catch((error) => {
         console.log(error);
       });
-  
+      fetchInventoryItems();
     const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"));
     setFakeItems(storedItemData || []);
   }, []);
@@ -198,9 +207,10 @@ const handleSubmit = (e) => {
     invoicePayload,
     config
   )
+  
   .then(response => {
     toast.success(response.message);
-
+    fetchInventoryItems();
     setInvoiceData({
       companyName: "",
       companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],

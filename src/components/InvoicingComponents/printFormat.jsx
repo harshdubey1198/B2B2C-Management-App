@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import '../../assets/scss/bootstrap.scss';
 const countries = {
-    India: { currency: 'INR', gst: 18 },
+    India: { currency: 'INR', gst: 0 },
     Malaysia: { currency: 'MYR', gst: 6 },
     Dubai: { currency: 'AED', gst: 5 },
     Indonesia: { currency: 'IDR', gst: 10 }

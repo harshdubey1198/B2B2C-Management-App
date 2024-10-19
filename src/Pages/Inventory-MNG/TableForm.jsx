@@ -186,7 +186,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
-                          <Input type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
+                          <Input className="xyz" type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
