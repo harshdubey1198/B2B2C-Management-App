@@ -155,6 +155,68 @@ const updateInventoryStock = async (items, isProforma) => {
   }
 };
 
+// PERFORMA INVOICE GETS REJECTED 
+invoiceServices.rejectInvoice = async (invoiceId) => {
+  // Find the invoice by ID
+  const invoice = await Invoice.findById(invoiceId);
+  if (!invoice) {
+      throw new Error(`Invoice with ID ${invoiceId} not found`);
+  }
+  // Ensure it’s a Proforma invoice before proceeding
+  if (invoice.invoiceType !== 'Proforma') {
+      throw new Error('Only Proforma invoices can be rejected');
+  }
+  // Check if the invoice is already rejected or canceled
+  if (invoice.status === 'rejected' || invoice.status === 'Canceled') {
+      throw new Error('This invoice has already been rejected or canceled');
+  }
+  // Mark the invoice as rejected
+  invoice.status = 'rejected';
+  // Release reserved stock back to available stock
+  await releaseReservedStock(invoice.items);
+  // Save the invoice with updated status
+  await invoice.save();
+  return invoice;
+};
+
+// Function to release reserved stock when a Proforma invoice is rejected
+const releaseReservedStock = async (items) => {
+  for (let item of items) {
+      const inventoryItem = await InventoryItem.findById(item.itemId);
+      if (!inventoryItem) {
+          throw new Error(`Item with ID ${item.itemId} not found in inventory`);
+      }
+
+      // If the item has variants, handle reserved stock
+      if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+          item.selectedVariant.forEach((variant) => {
+              const inventoryVariant = inventoryItem.variants.find(v => v.sku === variant.sku);
+              if (inventoryVariant) {
+                  if (inventoryVariant.reservedQuantity < item.quantity) {
+                      throw new Error(`Cannot release more than reserved quantity for variant: ${variant.optionLabel}`);
+                  }
+                  // Reduce reserved quantity, but do NOT modify stock as it was only reserved
+                  inventoryVariant.reservedQuantity -= item.quantity;
+                  
+                  // Note: Do NOT increase the actual stock since it's only reserved
+                  // inventoryVariant.stock should remain unchanged as it already reflects the available stock
+              } else {
+                  throw new Error(`Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`);
+              }
+          });
+
+          // Recalculate the total stock, but without adding the reserved stock back into total stock
+          inventoryItem.quantity = inventoryItem.variants.reduce((sum, v) => sum + v.stock, 0);
+      } else {
+          // If no variants, adjust stock directly at item level
+          // Here we would just return the reserved quantity back if needed, but no change in stock
+          inventoryItem.quantity += 0; // No change in the stock level here
+      }
+
+      await inventoryItem.save();
+  }
+};
+
 
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })

@@ -14,6 +14,19 @@ invoiceController.createInvoice = async (req, res) => {
     }
 };
 
+
+// REJECT PERFORMA INVOICE 
+invoiceController.rejectInvoice = async (req, res) => {
+    try {
+        const invoiceId = req.params.id;
+        const rejectedInvoice = await InvoiceServices.rejectInvoice(invoiceId);
+        return res.status(200).json(createResult("Invoice rejected successfully", rejectedInvoice));
+    } catch (error) {
+        console.error(error);
+        return res.status(400).json(createResult(null, null, error.message));
+    }
+};  
+
 // GET INVOICES
 invoiceController.getInvoices = async (req, res) => {
     try {
