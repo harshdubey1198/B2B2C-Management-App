@@ -61,6 +61,28 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   };
 
   const handleItemSelection = (index, selectedItemId) => {
+    if (!selectedItemId) {
+      // If item is deselected, reset the item fields
+      const updatedItems = [...items];
+      updatedItems[index] = {
+        itemId: "",
+        name: "",
+        description: "",
+        quantity: 0,
+        price: 0,
+        tax: 0,
+        discount: 0,
+        total: 0,
+        selectedVariant: [],
+      };
+  
+      setInvoiceData((prevData) => ({
+        ...prevData,
+        items: updatedItems,
+      }));
+      return;
+    }
+  
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
       const updatedItems = [...items];
@@ -69,25 +91,42 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
         ...updatedItems[index],
         itemId: selectedItem._id,
         name: selectedItem.name,
-        description: selectedItem.description || '',
+        description: selectedItem.description || "",
         quantity: 1,
         price,
         tax: 0,
         discount: 0,
         total: calculateTotal(1, price, 0, 0),
       };
-
-      setInvoiceData(prevData => ({
+  
+      setInvoiceData((prevData) => ({
         ...prevData,
         items: updatedItems,
       }));
     }
   };
-
+  
   const handleVariantChange = (itemId, variantName, index) => {
+    if (!variantName) {
+      // If variant is deselected, reset the variant-related fields
+      const updatedItems = [...items];
+      updatedItems[index] = {
+        ...updatedItems[index],
+        selectedVariant: [],
+        price: getSellingPrice(itemId),
+        total: calculateTotal(updatedItems[index].quantity || 1, getSellingPrice(itemId), updatedItems[index].tax || 0, updatedItems[index].discount || 0),
+      };
+  
+      setInvoiceData((prevData) => ({
+        ...prevData,
+        items: updatedItems,
+      }));
+      return;
+    }
+  
     const selectedItem = items[index];
     const selectedVariant = inventoryItems.find((invItem) => invItem._id === itemId)?.variants.find((variant) => variant.optionLabel === variantName);
-
+  
     if (selectedVariant) {
       const maxQuantity = selectedVariant.stock - selectedVariant.reservedQuantity;
       const updatedItems = [...items];
@@ -96,23 +135,24 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const quantity = selectedItem.quantity || 1;
       const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
-
+  
       const price = basePrice + variantPrice;
       const total = calculateTotal(quantity, price, tax, discount);
-
+  
       updatedItems[index] = {
         ...selectedItem,
         selectedVariant: [{ optionLabel: variantName, price: variantPrice, stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
         price,
         total,
       };
-
-      setInvoiceData(prevData => ({
+  
+      setInvoiceData((prevData) => ({
         ...prevData,
         items: updatedItems,
       }));
     }
   };
+  
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...items];
@@ -161,7 +201,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               id={`variant-${index}`}
               value={item.selectedVariant?.[0]?.optionLabel || ""}
               onChange={(e) => handleVariantChange(item.itemId, e.target.value, index)}
-              required
+              // required
             >
               <option value="">Select Variant</option>
               {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants.map((variant) => (
@@ -204,7 +244,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
             />
           </FormGroup>
 
-          <FormGroup>
+          {/* <FormGroup>
             <Label for={`tax-${index}`}>Tax (%)</Label>
             <Input
               type="number"
@@ -226,7 +266,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               onChange={(e) => handleItemChange(index, 'discount', e.target.value)}
               required
             />
-          </FormGroup>
+          </FormGroup> */}
 
           <FormGroup>
             <Label for={`total-${index}`}>Total</Label>

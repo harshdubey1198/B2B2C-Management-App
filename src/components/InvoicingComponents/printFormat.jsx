@@ -114,14 +114,14 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <th>Quantity</th>
                     <th>Price</th>
                     <th>Total Value</th>
-                    {isSameState ? (
+                    {/* {isSameState ? (
                         <>
                         <th>CGST ({taxRate / 2}%)</th>
                         <th>SGST ({taxRate / 2}%)</th>
                         </>
                     ) : (
                         <th>IGST ({taxRate}%)</th>
-                    )}
+                    )} */}
                     <th>Amount</th>
                     </tr>
                 </thead>
@@ -145,14 +145,14 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                         <td>{item.quantity}</td>
                         <td>{item.price}</td>
                         <td>{itemTotalValue.toFixed(2)}</td>
-                        {isSameState ? (
+                        {/* {isSameState ? (
                             <>
                             <td>{itemCgstAmount.toFixed(2)}</td>
                             <td>{itemSgstAmount.toFixed(2)}</td>
                             </>
                         ) : (
                             <td>{itemIgstAmount.toFixed(2)}</td>
-                        )}
+                        )} */}
                         <td>{itemTotalAmount.toFixed(2)}</td>
                         </tr>
                     );
