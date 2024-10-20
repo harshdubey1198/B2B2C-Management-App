@@ -308,8 +308,8 @@ export const masterAdminSidebarData = () => [
     //   label: "Authentication",
     //   icon: "mdi mdi-account-circle-outline",
     //   subItem: [
-    //     { sublabel: "Login", link: "/auth-login" },
-    //     { sublabel: "Register", link: "/auth-register" },
+    //     { sublabel: "Login", link: "/login" },
+    //     { sublabel: "Register", link: "/register" },
     //     { sublabel: "Recover Password", link: "/recover-password" },
     //     { sublabel: "Lock Screen", link: "/auth-lock-screen" },
     //   ],
