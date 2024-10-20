@@ -21,7 +21,6 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config);
         setInventoryItems(response.data);
-        console.log(response.data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -37,27 +36,35 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     return selectedItem ? selectedItem.sellingPrice : 0;
   };
 
-  const getMaxQuantity = (itemId) => {
+  const getMaxQuantity = (itemId, selectedVariantName) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
-    return selectedItem ? selectedItem.quantity : 1;
+    if (!selectedItem) return 1;
+
+    if (selectedItem.variants && selectedItem.variants.length > 0) {
+      const selectedVariant = selectedItem.variants.find(
+        (variant) => variant.optionLabel === selectedVariantName
+      );
+      if (selectedVariant) {
+        const availableQuantity = selectedVariant.stock - selectedVariant.reservedQuantity;
+        return availableQuantity > 0 ? availableQuantity : 1;
+      }
+    }
+    return selectedItem.quantity || 1;
   };
 
   const calculateTotal = (quantity, price, tax, discount) => {
     const totalBeforeTax = quantity * price;
     const totalTax = totalBeforeTax * (tax / 100);
     const totalDiscount = totalBeforeTax * (discount / 100);
-    // return totalBeforeTax + totalTax - totalDiscount;
     const total = totalBeforeTax + totalTax - totalDiscount;
-    return parseFloat(total.toFixed(2)); 
-
+    return parseFloat(total.toFixed(2));
   };
 
   const handleItemSelection = (index, selectedItemId) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
       const updatedItems = [...items];
-      const price = getSellingPrice(selectedItem._id); 
-
+      const price = getSellingPrice(selectedItem._id);
       updatedItems[index] = {
         ...updatedItems[index],
         itemId: selectedItem._id,
@@ -77,29 +84,29 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     }
   };
 
-
   const handleVariantChange = (itemId, variantName, index) => {
     const selectedItem = items[index];
     const selectedVariant = inventoryItems.find((invItem) => invItem._id === itemId)?.variants.find((variant) => variant.optionLabel === variantName);
-  
+
     if (selectedVariant) {
+      const maxQuantity = selectedVariant.stock - selectedVariant.reservedQuantity;
       const updatedItems = [...items];
-      const basePrice = getSellingPrice(itemId); 
-      const variantPrice = selectedVariant.price || 0; 
+      const basePrice = getSellingPrice(itemId);
+      const variantPrice = selectedVariant.price || 0;
       const quantity = selectedItem.quantity || 1;
       const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
-  
+
       const price = basePrice + variantPrice;
       const total = calculateTotal(quantity, price, tax, discount);
-  
+
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, price: variantPrice , stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
-        price, 
+        selectedVariant: [{ optionLabel: variantName, price: variantPrice, stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
+        price,
         total,
       };
-  
+
       setInvoiceData(prevData => ({
         ...prevData,
         items: updatedItems,
@@ -110,7 +117,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const handleItemChange = (index, field, value) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
-    
+
     const selectedItem = newItems[index];
     const quantity = selectedItem.quantity || 1;
     const price = selectedItem.price || 0;
@@ -120,8 +127,6 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     newItems[index].total = calculateTotal(quantity, price, tax, discount);
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
-  
-  console.log(items, "items")
 
   if (loading) return <Spinner color="primary" />;
 
@@ -135,7 +140,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               type="select"
               name={`name-${index}`}
               id={`name-${index}`}
-              value={item.itemId || ""}  
+              value={item.itemId || ""}
               onChange={(e) => handleItemSelection(index, e.target.value)}
               required
             >
@@ -173,14 +178,14 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               type="number"
               name={`quantity-${index}`}
               id={`quantity-${index}`}
-              min={1}
-              max={getMaxQuantity(item.itemId || "")}
-              value={item.quantity || 1}
+              min={0}
+              max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
+              value={item.quantity || 0}
               onChange={(e) =>
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId || "")))
+                  Math.max(0, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
                 )
               }
               required

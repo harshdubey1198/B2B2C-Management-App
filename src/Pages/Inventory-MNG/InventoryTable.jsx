@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Table,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Button,
-  Row,
-  Col,
-} from "reactstrap";
+import {Table,Modal,ModalHeader,ModalBody,Button,Row,Col,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -210,58 +202,6 @@ function InventoryTable() {
     </Table>
   </div>
 )}
-
-
-        {/* <div className="table-responsive">
-          <Table bordered className="mb-0">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Brand</th>
-                <th>Cost Price</th>
-                <th>Selling Price</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {inventoryData.length > 0 ? (
-                inventoryData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.name}</td>
-                    <td>{item.description}</td>
-                    <td>
-                      {item.quantity} {item.qtyType}
-                    </td>
-                    <td>{item.brand}</td>
-                    <td>${item.costPrice?.toFixed(2)}</td>
-                    <td>${item.sellingPrice?.toFixed(2)}</td>
-                    <td className="d-flex gap-2">
-                      <Button
-                        color="info"
-                        onClick={() => handleViewDetails(item)}
-                      >
-                        View Details
-                      </Button>
-                      <Button
-                        color="danger"
-                        onClick={() => handleDeleteInventory(item)}
-                      >
-                        Delete
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7">No inventory items found</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-        </div> */}
-
         <Modal
           modalClassName="custom-modal-width"
           isOpen={modalOpen}

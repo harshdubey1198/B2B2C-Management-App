@@ -10,5 +10,6 @@ router.get('/get-invoice/:id', tokenVerification, invoiceController.getInvoice);
 router.delete('/delete-invoice/:id', tokenVerification, invoiceController.deleteInvoice);
 router.put('/update-invoice-approval', tokenVerification, invoiceController.updateInvoiceApproval);
 router.get('/count-invoices/:firmId', tokenVerification, invoiceController.countInvoices);
+router.put('/reject-invoice/:id', tokenVerification, invoiceController.rejectInvoice);
 
 module.exports = router;

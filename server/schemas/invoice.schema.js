@@ -40,7 +40,7 @@ const invoiceSchema = new Schema({
     invoiceDate: { type: Date, default: Date.now },
     dueDate: { type: Date },
     totalAmount: { type: Number },
-    status: { type: String, enum: ['paid', 'unpaid', 'partially paid'], default: 'unpaid' },
+    status: { type: String, enum: ['paid', 'unpaid', 'partially paid', 'rejected'], default: 'unpaid' },
     approvalStatus: { 
         type: String, 
         enum: ['pending', 'approved', 'rejected'], 
