@@ -16,6 +16,7 @@ const InventoryItemSchema = new Schema({
     subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     firmId: { type: Schema.Types.ObjectId, ref: 'User' },
+    vendor: { type: Schema.Types.ObjectId, ref: 'Vendor' },
     variants: [{
         variationType: { type: String }, 
         optionLabel: { type: String }, 
