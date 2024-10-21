@@ -79,7 +79,8 @@ inventoryServices.getAllItems = async (adminId) => {
     .populate({
         path: 'createdBy',
         select: "firstName lastName email"
-    });
+    })
+    .populate('vendor')
     if(!items){
         throw new Error('No items found')
     }
