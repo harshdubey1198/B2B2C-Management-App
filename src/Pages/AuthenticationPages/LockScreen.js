@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logolight from '../../assets/images/logo-light.png';
 import logodark from '../../assets/images/logo-dark.png';
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
-import { Container, Row, Col, Card, CardBody } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Label, Input } from 'reactstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { validatePassword } from '../Utility/FormValidation';
 import axios from 'axios';
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 
 const LockScreen = () => {
     document.title = "Lock Screen | aaMOBee";
+    const [show, setShow] = useState(false)
     const [pass, setPass] = useState("");
     const [error, setError] = useState("");
     const [userData, setUserData] = useState({});
@@ -82,9 +83,23 @@ const LockScreen = () => {
                                                         <div className="user-thumb text-center m-b-30">
                                                             <img src={userData?.avatar || avatar1} className="rounded-circle avatar-lg img-thumbnail mx-auto d-block" alt="thumbnail" />
                                                         </div>
-                                                        <div className="mt-4">
-                                                            <label className="form-label" htmlFor="userpassword">Password</label>
-                                                            <input type="password" className="form-control" id="userpassword" placeholder="Enter password" onChange={handleChange} value={pass} />
+                                                        <div className="mb-4 position-relative">
+                                                            <Label className="form-label">Password</Label>
+                                                            <Input
+                                                            name="password"
+                                                            type={show ? "text" : "password"}
+                                                            placeholder="Enter Password"
+                                                            onChange={handleChange}
+                                                            value={pass}
+                                                            />
+                                                            <button
+                                                            onClick={() => setShow(!show)}
+                                                            className="btn btn-link position-absolute end-0"
+                                                            style={{ top: "74%", transform: "translateY(-50%)" }}
+                                                            type="button"
+                                                            >
+                                                            <i className={`mdi mdi-eye${show ? "-off" : ""}`}></i>
+                                                            </button>
                                                         </div>
                                                         {/* {error && <div className="text-danger mt-2">{error}</div>} */}
                                                         <div className="d-grid mt-4">
@@ -102,7 +117,7 @@ const LockScreen = () => {
                                     </CardBody>
                                 </Card>
                                 <div className="mt-5 text-center">
-                                    <p className="text-white-50">Not you? Return <Link to="/auth-login" className="fw-medium text-primary"> Sign In </Link></p>
+                                    <p className="text-white-50">Not you? Return <Link to="/login" className="fw-medium text-primary"> Sign In </Link></p>
                                     <p className="text-white-50">© {new Date().getFullYear()} aaMOBee.</p>
                                 </div>
                             </Col>

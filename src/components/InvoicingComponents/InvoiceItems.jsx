@@ -39,18 +39,19 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const getMaxQuantity = (itemId, selectedVariantName) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === itemId);
     if (!selectedItem) return 1;
-
+  
     if (selectedItem.variants && selectedItem.variants.length > 0) {
       const selectedVariant = selectedItem.variants.find(
         (variant) => variant.optionLabel === selectedVariantName
       );
       if (selectedVariant) {
         const availableQuantity = selectedVariant.stock - selectedVariant.reservedQuantity;
-        return availableQuantity > 0 ? availableQuantity : 1;
+        return availableQuantity > 0 ? availableQuantity : 0; 
       }
     }
-    return selectedItem.quantity || 1;
+    return selectedItem.quantity || 0;
   };
+  
 
   const calculateTotal = (quantity, price, tax, discount) => {
     const totalBeforeTax = quantity * price;
@@ -91,8 +92,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
         ...updatedItems[index],
         itemId: selectedItem._id,
         name: selectedItem.name,
-        description: selectedItem.description || "",
-        quantity: 1,
+        description: selectedItem.description || '',
+        quantity: 0,
         price,
         tax: 0,
         discount: 0,
@@ -131,7 +132,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const updatedItems = [...items];
       const basePrice = getSellingPrice(itemId);
       const variantPrice = selectedVariant.price || 0;
-      const quantity = selectedItem.quantity || 1;
+      const quantity = selectedItem.quantity || 0;
       const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
   
@@ -158,7 +159,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     newItems[index] = { ...newItems[index], [field]: value };
 
     const selectedItem = newItems[index];
-    const quantity = selectedItem.quantity || 1;
+    const quantity = selectedItem.quantity || 0;
     const price = selectedItem.price || 0;
     const tax = selectedItem.tax || 0;
     const discount = selectedItem.discount || 0;
@@ -205,11 +206,20 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               <option value="">Select Variant</option>
               {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants.map((variant) => (
                 <option key={variant._id} value={variant.optionLabel}>
-                  {variant.optionLabel}
+                  {variant.optionLabel} 
+                  {/* - {getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")} */}
                 </option>
               ))}
             </Input>
+         
           </FormGroup>
+
+          {/* <small className="text-muted">
+            Available Stock: {getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
+          </small> */}
+            
+
+
 
           <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
@@ -230,7 +240,6 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               required
             />
           </FormGroup>
-
           <FormGroup>
             <Label for={`price-${index}`}>Price</Label>
             <Input
@@ -242,8 +251,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               readOnly
             />
           </FormGroup>
-
-          {/* <FormGroup>
+{/* 
+          <FormGroup>
             <Label for={`tax-${index}`}>Tax (%)</Label>
             <Input
               type="number"

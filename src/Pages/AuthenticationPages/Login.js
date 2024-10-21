@@ -93,25 +93,25 @@ const Login = (props) => {
           <Row className="d-flex justify-content-center mt-5  width-90">
             <Col lg={6} md={8} xl={6}>
               <Card>
-                <CardBody className="p-3">
+                <CardBody className="p-4">
                   <div>
                     <div className="text-center">
                       <Link to="/">
                         <img
                           src={logodark}
                           alt=""
-                          height="24"
+                          height="40"
                           className="auth-logo logo-dark mx-auto"
                         />
                         <img
                           src={logolight}
                           alt=""
-                          height="24"
+                          height="40"
                           className="auth-logo logo-light mx-auto"
                         />
                       </Link>
                     </div>
-                    <h4 className="font-size-18 text-muted mt-2 text-center">
+                    <h4 className="font-size-22 fw-bold text-dark text-center my-4">
                       Login 
                     </h4>
                     <Form className="form-horizontal" onSubmit={handleSubmit}>
@@ -151,7 +151,7 @@ const Login = (props) => {
                           </div>
                           
                           <Row>
-                            <Col>
+                            <Col className="col-12 col-sm-6 col-md-6 col-lg-6 mb-3">
                               <div className="form-check">
                                 <Input
                                   type="checkbox"
@@ -168,8 +168,8 @@ const Login = (props) => {
                                 </Label>
                               </div>
                             </Col>
-                            <Col className="col-7 d-flex flex-row justify-content-flex-end">
-                              <div className="text-md-end  mt-md-0">
+                            <Col className="col-12 col-sm-6 col-md-6 col-lg-6 d-flex flex-row justify-content-flex-end">
+                              <div>
                                 <Link
                                   to="/recover-password"
                                   className="text-muted"
@@ -194,19 +194,20 @@ const Login = (props) => {
                     </Form>
                   </div>
                 </CardBody>
-              </Card>
-              <div className="mt-2 text-center">
-                <p className="text-white-50">
+                <div className="text-center">
+                <p className="text-black py-3 m-0">
                   Don't have an account ?{" "}
                   <Link to="/register" className="fw-medium text-primary">
                     {" "}
                     Register{" "}
                   </Link>{" "}
                 </p>
-                <p className="text-white-50">
+                <p className="text-black border-top py-3">
                   © {new Date().getFullYear()} aaMOBee.
                 </p>
               </div>
+              </Card>
+             
             </Col>
           </Row>
         </Container>

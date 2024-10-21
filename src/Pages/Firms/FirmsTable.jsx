@@ -38,7 +38,7 @@ function FirmsTable() {
             <CardBody>
               <div className="table-responsive mt-4">
                 <table className="table table-bordered mb-0">
-                  <thead>
+                  <thead className="table-light">
                     <tr>
                       <th>Name</th>
                       <th>Email</th>

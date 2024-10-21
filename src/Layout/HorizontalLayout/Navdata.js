@@ -261,8 +261,8 @@ const Navdata = () => {
           },
           subState: auth,
           subItem: [
-            { link: "/auth-login", title: "Login" },
-            { link: "/auth-register", title: "Register" },
+            { link: "/login", title: "Login" },
+            { link: "/register", title: "Register" },
             { link: "/recover-password", title: "Recover Password" },
             { link: "/auth-lock-screen", title: "Lock Screen" },
           ],

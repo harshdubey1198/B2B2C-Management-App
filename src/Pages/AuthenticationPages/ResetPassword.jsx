@@ -113,18 +113,18 @@ const ResetPassword = () => {
                           <img
                             src={logodark}
                             alt=""
-                            height="24"
+                            height="40"
                             className="auth-logo logo-dark mx-auto"
                           />
                           <img
                             src={logolight}
                             alt=""
-                            height="24"
+                            height="40"
                             className="auth-logo logo-light mx-auto"
                           />
                         </Link>
                       </div>
-                      <h4 className="font-size-18 text-muted mt-2 text-center">
+                      <h4 className="font-size-22 fw-bold text-dark text-center my-4 text-center">
                         Reset Password
                       </h4>
                       {/* <p className="mb-5 text-center">
@@ -230,18 +230,18 @@ const ResetPassword = () => {
                       </form>
                     </div>
                   </CardBody>
-                </Card>
-                <div className="mt-5 text-center">
-                  <p className="text-white-50">
+                  <div className="text-center">
+                  <p className="text-black py-3 m-0">
                     Remembered your password?{" "}
                     <Link to="/login" className="fw-medium text-primary">
                       Login
                     </Link>
                   </p>
-                  <p className="text-white-50">
+                  <p className="text-black border-top py-3">
                     © {new Date().getFullYear()} aaMOBee.
                   </p>
                 </div>
+                </Card>
               </Col>
             </Row>
           </Container>

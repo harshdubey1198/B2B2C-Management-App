@@ -174,19 +174,19 @@ const Register = (props) => {
                       <img
                         src={logodark}
                         alt=""
-                        height="24"
+                        height="40"
                         className="auth-logo logo-dark mx-auto"
                       />
                       <img
                         src={logolight}
                         alt=""
-                        height="24"
+                        height="40"
                         className="auth-logo logo-light mx-auto"
                       />
                     </Link>
                   </div>
 
-                  <p className="text-muted text-center mb-4">
+                  <p className="font-size-22 fw-bold text-dark text-center my-4">
                     Register Your Account
                   </p>
                   <Form className="form-horizontal" onSubmit={handleSubmit}>
@@ -301,24 +301,22 @@ const Register = (props) => {
                         Register
                       </button>
                     </div>
-                    <div className="d-flex flex-row justify-content-center m-0 mt-2">
-                    <p className="text-black m-0">
-                          Already have an account ?
-                          <Link to="/login" className="fw-medium text-primary">
-                            {" "}
-                            Login{" "}
-                          </Link>{" "}
-                        </p>
-                   </div>
                   </Form>
                 </CardBody>
-              </Card>
-              <div className="mt-2 text-center">
-              
-                <p className="text-white-50">
+                <div className="text-center">
+                <p className="text-black py-3 m-0">
+                  Already have an account ?
+                  <Link to="/login" className="fw-medium text-primary">
+                    {" "}
+                    Login{" "}
+                  </Link>{" "}
+                </p>
+                <p className="text-black border-top py-3">
                   © {new Date().getFullYear()} aaMOBee.
                 </p>
               </div>
+              </Card>
+              
             </Col>
           </Row>
         </Container>
