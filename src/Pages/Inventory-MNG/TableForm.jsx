@@ -5,26 +5,62 @@ import { toast } from "react-toastify";
 import axios from "axios";  
 import { useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
-import hsnData from "../../data/hsn.json"
+import hsnData from "../../data/hsn.json";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
-  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
+  const [variant, setVariant] = useState({
+    variationType: "",
+    optionLabel: "",
+    price: "",
+    stock: "",
+    sku: "",
+    barcode: "",
+  });
   
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
+  const [vendors, setVendors] = useState([]);
+  const [formValues, setFormValues] = useState({
+    name: "",
+    description: "",
+    costPrice: "",
+    sellingPrice: "",
+    supplier: "",
+    manufacturer: "",
+    brand: "",
+    ProductHsn: "",
+    qtyType: "",
+    categoryId: "",
+    subcategoryId: "",
+    vendorId: "",
+    quantity: ""
+  });
+  
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
+    setFormValues({
+      name: "",
+      description: "",
+      costPrice: "",
+      sellingPrice: "",
+      supplier: "",
+      manufacturer: "",
+      brand: "",
+      ProductHsn: "",
+      qtyType: "",
+      categoryId: "",
+      subcategoryId: "",
+      vendorId: "",
+      quantity: "",
     });
   };
   
@@ -44,7 +80,22 @@ const InventoryItemForm = () => {
         console.error(error.message);
       }
     };
+    const fetchVendors = async () => { 
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`, config);
+        setVendors(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch vendors.");
+        console.error(error.message);
+      }
+    };
     fetchCategories();
+    fetchVendors(); 
   }, [token]);
 
   const handleChange = (e) => {
@@ -156,7 +207,21 @@ const InventoryItemForm = () => {
     };
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
-      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", brand:"", manufacturer:"", supplier:""});
+      setFormValues({
+        name: "",
+        description: "",
+        costPrice: "",
+        sellingPrice: "",
+        ProductHsn: "",
+        qtyType: "",
+        categoryId: "",
+        subcategoryId: "",
+        vendorId: "", 
+        quantity: "",
+        brand: "",
+        manufacturer: "",
+        supplier: ""
+      });
       setVariants([]);
       toast.success(response.message);
     } catch (error) {
@@ -166,8 +231,6 @@ const InventoryItemForm = () => {
       setLoading(false);
     }
   };
-
-  console.log(formValues, "formvalues")
 
   return (
     <React.Fragment>
@@ -182,7 +245,7 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                  <Row>
+                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
@@ -195,10 +258,9 @@ const InventoryItemForm = () => {
                           <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                    
                     </Row>
                     <Row>
-                    <Col md={6}>
+                      <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
                           <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleCategory} >
@@ -224,112 +286,69 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
-                      
                     </Row>
                     <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="vendorId">Vendor</Label>
+                          <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
+                            <option value="">Select Vendor</option>
+                            {vendors.map(vendor => (
+                              <option key={vendor._id} value={vendor._id}>
+                                {vendor.name}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="costPrice">Cost Price</Label>
                           <Input type="number" id="costPrice" name="costPrice" placeholder="Enter cost price" value={formValues.costPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="sellingPrice">Selling Price</Label>
                           <Input type="number" id="sellingPrice" name="sellingPrice" placeholder="Enter selling price" value={formValues.sellingPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="qtyType">Unit Type</Label>
-                          <Input type="select" id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} >
-                            <option value="">Select Unit Type</option>
-                            <option value="litres">Litres</option>
-                            <option value="kg">Kilograms</option>
-                            <option value="packets">Packets</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="single unit">Single Unit</option>
-                            <option value="gm">Grams</option>
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="quantity">Quantity In Stock</Label>
-                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity in stock" value={formValues.quantity} onChange={handleChange} />
+                          <Label htmlFor="quantity">Quantity</Label>
+                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity" value={formValues.quantity} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={6}>
+                      <Col md={12}>
                         <FormGroup>
-                          <Label htmlFor="ProductHsn">HSN Code</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN code" value={formValues.ProductHsn} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="brand">Brand</Label>
-                          <Input type="text" id="brand" name="brand" placeholder="Enter brand" value={formValues.brand} onChange={handleChange} />
+                          <Label htmlFor="ProductHsn">HSN</Label>
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} readOnly />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="manufacturer">Manufacturer</Label>
-                          <Input type="text" id="manufacturer" name="manufacturer" placeholder="Enter manufacturer" value={formValues.manufacturer} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="supplier">Supplier</Label>
-                          <Input type="text" id="supplier" name="supplier" placeholder="Enter supplier" value={formValues.supplier} onChange={handleChange}/>
-                        </FormGroup>
+                      <Col md={12}>
+                        <Button color="primary" onClick={toggleModal}>Add Variant</Button>
                       </Col>
                     </Row>
-                  <div className=" d-flex gap-2 justify-content-center mt-4">
-                    <Button color="info" onClick={toggleModal}>Add Variant</Button>
-                    <Button color="primary" type="submit" disabled={loading}> {loading ? "Saving..." : "Save Item"} </Button>
-                  </div>
+                    <VariantModal isOpen={modal} toggle={toggleModal} variant={variant} handleChange={handleVariantChange} addVariant={addVariant} />
+                    <Row className="mt-3">
+                      <Col md={12}>
+                        <Button type="submit" color="success" disabled={loading}>
+                          {loading ? "Adding..." : "Add Item"}
+                        </Button>
+                        <Button type="button" color="secondary" className="mx-2" onClick={handleReset}>Reset</Button>
+                      </Col>
+                    </Row>
                   </form>
-                  {variants.length > 0 && (
-                  <div className="mt-4">
-                    <h5 className="font-size-16 text-muted">Added Variants</h5>
-                    <table className="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th>Variation Type</th>
-                          <th>Option Label</th>
-                          <th>Price Adjustment</th>
-                          <th>Stock</th>
-                          <th>SKU</th>
-                          <th>Barcode</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {variants.map((variant, index) => (
-                          <tr key={index}>
-                            <td>{variant.variationType}</td>
-                            <td>{variant.optionLabel}</td>
-                            <td>{variant.price}</td>
-                            <td>{variant.stock}</td>
-                            <td>{variant.sku}</td>
-                            <td>{variant.barcode}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
                 </CardBody>
               </Card>
             </Col>
           </Row>
-
-          <VariantModal modal={modal} toggleModal={toggleModal} variant={variant} handleVariantChange={handleVariantChange} addVariant={addVariant}/>
         </Container>
       </div>
     </React.Fragment>

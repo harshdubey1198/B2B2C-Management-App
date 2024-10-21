@@ -21,6 +21,8 @@ function Vendor() {
     });
     const [vendors, setVendors] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [editMode, setEditMode] = useState(false);
+    const [selectedVendorId, setSelectedVendorId] = useState(null);
 
     const authuser = JSON.parse(localStorage.getItem("authUser"));
     const token = authuser.token;
@@ -56,8 +58,13 @@ function Vendor() {
 
     const handleVendorSubmit = async () => {
         try {
-            const response = await fetch(`${process.env.REACT_APP_URL}/vendor/create-vendor/${userId}`, {
-                method: 'POST',
+            const url = editMode
+                ? `${process.env.REACT_APP_URL}/vendor/update-vendor/${selectedVendorId}`
+                : `${process.env.REACT_APP_URL}/vendor/create-vendor/${userId}`;
+            const method = editMode ? 'PUT' : 'POST';
+
+            const response = await fetch(url, {
+                method,
                 headers: config.headers,
                 body: JSON.stringify(vendorData)
             });
@@ -81,9 +88,11 @@ function Vendor() {
                         nearby: ''
                     }
                 });
-                fetchVendors(); 
+                setEditMode(false);
+                setSelectedVendorId(null);
+                fetchVendors();
             } else {
-                throw new Error(result.error || "Failed to create vendor");
+                throw new Error(result.error || "Failed to save vendor");
             }
         } catch (error) {
             toast.error(error.message);
@@ -112,6 +121,35 @@ function Vendor() {
         }
     };
 
+    const handleEditClick = (vendor) => {
+        setVendorData(vendor);
+        setSelectedVendorId(vendor._id);
+        setEditMode(true);
+        setModalOpen(true);
+    };
+
+    const handleDeleteClick = async (vendorId) => {
+        if (window.confirm("Are you sure you want to delete this vendor?")) {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_URL}/vendor/delete-vendor/${vendorId}`, {
+                    method: 'DELETE',
+                    headers: config.headers
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    toast.success(result.message);
+                    fetchVendors();
+                } else {
+                    throw new Error(result.error || "Failed to delete vendor");
+                }
+            } catch (error) {
+                toast.error(error.message);
+            }
+        }
+    };
+
     useEffect(() => {
         fetchVendors();
     }, []);
@@ -124,12 +162,25 @@ function Vendor() {
                     breadcrumbItem="Vendors"
                 />
 
-                <Button color="primary" onClick={toggleModal} className="mb-4">
+                <Button color="primary" onClick={() => { toggleModal(); setEditMode(false); setVendorData({
+                    name: '',
+                    contactPerson: '',
+                    phone: '',
+                    email: '',
+                    address: {
+                        h_no: '',
+                        city: '',
+                        state: '',
+                        zip_code: '',
+                        country: '',
+                        nearby: ''
+                    }
+                }); }} className="mb-4">
                     Add Vendor
                 </Button>
 
                 <Modal isOpen={modalOpen} toggle={toggleModal}>
-                    <ModalHeader toggle={toggleModal}>Create Vendor</ModalHeader>
+                    <ModalHeader toggle={toggleModal}>{editMode ? "Edit Vendor" : "Create Vendor"}</ModalHeader>
                     <ModalBody>
                         <Form>
                             <Row>
@@ -198,7 +249,7 @@ function Vendor() {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button color="primary" onClick={handleVendorSubmit}>Create Vendor</Button>
+                        <Button color="primary" onClick={handleVendorSubmit}>{editMode ? "Update Vendor" : "Create Vendor"}</Button>
                         <Button color="secondary" onClick={toggleModal}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
@@ -211,7 +262,7 @@ function Vendor() {
                             <th>Contact Person</th>
                             <th>Phone</th>
                             <th>Email</th>
-                            <th>Address</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -232,7 +283,11 @@ function Vendor() {
                                     <td>{vendor.phone}</td>
                                     <td>{vendor.email}</td>
                                     <td>
-                                        {`${vendor.address.h_no}, ${vendor.address.nearby}, ${vendor.address.city}, ${vendor.address.state}, ${vendor.address.zip_code}, ${vendor.address.country}`}
+                                        {/* <Button color="info" size="sm" className="mr-2" onClick={() => handleEditClick(vendor)}>Edit</Button>
+                                        <Button color="danger" size="sm" onClick={() => handleDeleteClick(vendor._id)}>Delete</Button> */}
+
+                                        <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleEditClick(vendor)}></i>
+                                        <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteClick(vendor._id)}></i>
                                     </td>
                                 </tr>
                             ))
