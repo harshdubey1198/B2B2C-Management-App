@@ -3,7 +3,7 @@ const Vendor = require("../schemas/vendor.schema");
 
 const VendorServices = {};
 
-// CREATE CATEGORY
+// CREATE VENDOR
 VendorServices.createVendor = async (userId, body) => {
     const user = await User.findOne({_id: userId})
     if (!user) {
@@ -30,5 +30,14 @@ VendorServices.createVendor = async (userId, body) => {
     await newVendor.save();
     return newVendor;
 };
+
+// GET VENDOR
+VendorServices.getVendors = async (adminId) => {
+    const data = await Vendor.find({firmId: adminId, deleted_at: null})
+    if(!data){
+        throw new Error('There is no Vendors for this Firms.')
+    }
+    return data
+}
 
 module.exports = VendorServices;
