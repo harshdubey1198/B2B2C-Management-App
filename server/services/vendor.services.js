@@ -40,4 +40,21 @@ VendorServices.getVendors = async (adminId) => {
     return data
 }
 
+// DELETE VENDOR
+VendorServices.deleteVendor = async (id) => {
+    const existingVendor = await Vendor.findById(id);
+    if (!existingVendor) {
+        throw new Error('Vendor does not exist');
+    }
+    const deletedVendor = await Vendor.findByIdAndUpdate(
+        id,
+        { deleted_at: new Date() },  
+        { new: true }
+    );
+    if (!deletedVendor) {
+        throw new Error("Unable to find vendor");
+    }
+    return deletedVendor;
+};
+
 module.exports = VendorServices;
