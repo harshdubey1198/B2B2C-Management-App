@@ -106,8 +106,9 @@ const ViewInvoices = () => {
                 {invoices.length === 0 ? (
                     <Alert color="info">No invoices found.</Alert>
                 ) : (
+                    <div class="table-responsive">
                     <Table bordered>
-                        <thead>
+                        <thead class="table-light text-center">
                             <tr>
                                 <th>Invoice ID</th>
                                 <th>Customer Name</th>
@@ -168,6 +169,7 @@ const ViewInvoices = () => {
                             ))}
                         </tbody>
                     </Table>
+                    </div>
                 )}
                 {selectedInvoice && (
                     <ViewFormat ref={printRef} invoiceData={selectedInvoice} />

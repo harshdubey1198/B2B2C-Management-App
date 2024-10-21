@@ -62,18 +62,18 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
         : invoiceData?.customerName || 'Please select a customer';
 
     return (
-        <div ref={ref} className="card p-4 border rounded position-relative">
-            <div className="row mb-2 text-center">
-                <h2>{invoiceData?.invoiceType}</h2>
+        <div ref={ref} className="card p-0 border rounded position-relative">
+            <div className="row text-center card-title-heading m-0 mb-4">
+                <h2 className="text-white">{invoiceData?.invoiceType}</h2>
             </div>
 
-            <div className="row mt-4">
-                <div className="col-md-6 text-left">
+            <div className="row m-text-center p-4 m-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
                     {(invoiceData?.companyLogo || selectInvoice.avatar) && (
                         <img 
                             src={selectInvoice.avatar || invoiceData?.companyLogo}  
                             alt="Company Logo" 
-                            style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
+                            style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-36px" }} 
                         />
                     )}
                     {companyAddress.map((address, index) => (
@@ -85,7 +85,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1">{invoiceData?.companyEmail}</p>
                     <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
-                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-25">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <p><strong>Invoice Number:</strong> INV-24-MAG</p>
                     <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
@@ -93,8 +93,8 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 </div>
             </div>
 
-            <div className="row">
-                <div className="col-md-6 text-left">
+            <div className="row p-4 m-0 border-bottom">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center">
                     <h4>Customer Details:</h4>
                     <p className="my-1">{customerName}</p>
                     <p className="my-1">{invoiceData?.customerAddress.h_no}, {invoiceData?.customerAddress.nearby}, {invoiceData?.customerAddress.district}</p>
@@ -102,67 +102,67 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1">Phone : {invoiceData?.customerPhone} | Email : {invoiceData?.customerEmail}</p>
                 </div>
             </div>
+            <div className="table-responsive">
+                    <table className="table table-bordered">
+                        <thead className='table-light text-center'>
+                            <tr>
+                            <th>Sr. no</th>
+                            <th>Item Name</th>
+                            <th>Variant</th>
+                            <th>Description</th>
+                            <th>HSN/SAC</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total Value</th>
+                            {isSameState ? (
+                                <>
+                                <th>CGST ({taxRate / 2}%)</th>
+                                <th>SGST ({taxRate / 2}%)</th>
+                                </>
+                            ) : (
+                                <th>IGST ({taxRate}%)</th>
+                            )}
+                            <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {invoiceData?.items?.map((item, index) => {
+                            const itemTotalValue = item.quantity * item.price;
+                            const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                            const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
+                            const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
+                            const itemTotalAmount = isSameState
+                                ? itemTotalValue + itemCgstAmount + itemSgstAmount
+                                : itemTotalValue + itemIgstAmount;
 
-            <table className="table table-bordered">
-                <thead>
-                    <tr>
-                    <th>Sr. no</th>
-                    <th>Item Name</th>
-                    <th>Variant</th>
-                    <th>Description</th>
-                    <th>HSN/SAC</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Total Value</th>
-                    {isSameState ? (
-                        <>
-                        <th>CGST ({taxRate / 2}%)</th>
-                        <th>SGST ({taxRate / 2}%)</th>
-                        </>
-                    ) : (
-                        <th>IGST ({taxRate}%)</th>
-                    )}
-                    <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {invoiceData?.items?.map((item, index) => {
-                    const itemTotalValue = item.quantity * item.price;
-                    const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                    const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                    const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
-                    const itemTotalAmount = isSameState
-                        ? itemTotalValue + itemCgstAmount + itemSgstAmount
-                        : itemTotalValue + itemIgstAmount;
+                            return (
+                                <tr key={index}>
+                                <td>{index + 1}</td>
+                                <td>{item?.name || 'N/A'}</td> 
+                                <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
+                                <td>{sliceDescription(item.description)}</td>
+                                <td>{item.hsn}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.price}</td>
+                                <td>{itemTotalValue.toFixed(2)}</td>
+                                {isSameState ? (
+                                    <>
+                                    <td>{itemCgstAmount.toFixed(2)}</td>
+                                    <td>{itemSgstAmount.toFixed(2)}</td>
+                                    </>
+                                ) : (
+                                    <td>{itemIgstAmount.toFixed(2)}</td>
+                                )}
+                                <td>{itemTotalAmount.toFixed(2)}</td>
+                                </tr>
+                            );
+                            })}
+                        </tbody>
+                        </table>
+                </div>
 
-                    return (
-                        <tr key={index}>
-                        <td>{index + 1}</td>
-                        <td>{item?.name || 'N/A'}</td> 
-                        <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
-                        <td>{sliceDescription(item.description)}</td>
-                        <td>{item.hsn}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.price}</td>
-                        <td>{itemTotalValue.toFixed(2)}</td>
-                        {isSameState ? (
-                            <>
-                            <td>{itemCgstAmount.toFixed(2)}</td>
-                            <td>{itemSgstAmount.toFixed(2)}</td>
-                            </>
-                        ) : (
-                            <td>{itemIgstAmount.toFixed(2)}</td>
-                        )}
-                        <td>{itemTotalAmount.toFixed(2)}</td>
-                        </tr>
-                    );
-                    })}
-                </tbody>
-                </table>
-
-
-            <div className="row">
-                <div className="col-md-6 text-left">
+            <div className="row bg-light p-4 m-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center mb-4">
                     <h5>Bank Details</h5>
                     <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice.bankName || 'Your Bank Name'}</p>
                     <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice.accountNumber || 'Your Account Number'}</p>
@@ -170,7 +170,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
                     <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
-                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-15">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <h5>Payment Summary</h5>
                     <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p>
                     {isSameState ? (

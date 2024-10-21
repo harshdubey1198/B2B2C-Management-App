@@ -266,7 +266,7 @@ const handleSubmit = (e) => {
                 addItem={addItem}
                 removeItem={removeItem}
               />
-              <h3>Invoice Items</h3>
+              <h3 className='my-4'>Invoice Items</h3>
               <InvoiceItems
                 items={invoiceData.items}
                 fakeItems={fakeItems}
@@ -274,11 +274,19 @@ const handleSubmit = (e) => {
                 setInvoiceData={setInvoiceData}
               />
               <FormGroup>
-                <div className="d-flex justify-content-evenly mt-5">
-                  <Button color="info" onClick={addItem}>Add Item</Button>
-                  <Button type="submit" color="primary">Submit</Button>
-                  <Button type="button" color="secondary" onClick={printInvoice}>Print Invoice</Button>
-                  <Button type="button" color="info" onClick={toggleCompanyModal}>View Company Details</Button>
+                <div className="row d-flex justify-content-evenly">
+                  <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                  <Button className="w-100" color="info" onClick={addItem}>Add Item</Button>
+                  </div>
+                  <div className="col-lg-3 col-md-2 col-sm-12 mb-3">
+                  <Button className="w-100" type="submit" color="primary">Submit</Button>
+                  </div>
+                  <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                  <Button className="w-100" type="button" color="secondary" onClick={printInvoice}>Print Invoice</Button>
+                  </div>
+                  <div className="col-lg-3 col-md-4 col-sm-12 mb-3">
+                  <Button className="w-100" type="button" color="info" onClick={toggleCompanyModal}>View Company Details</Button>
+                  </div>
                 </div>
               </FormGroup>
             </Form>

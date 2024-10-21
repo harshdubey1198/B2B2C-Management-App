@@ -91,9 +91,9 @@ const ViewCustomer = () => {
                 {filteredData.length === 0 ? (
                     <Alert color="info">No Customers found for Your Firm.</Alert>
                 ) : (
-                    <div style={{ overflowX: "auto" }}>
+                    <div className="table-responsive" style={{ overflowX: "auto" }}>
                         <Table bordered>
-                            <thead>
+                            <thead className="table-light text-center">
                                 <tr>
                                     <th>Sr no</th>
                                     <th>Customer Name</th>
@@ -106,12 +106,12 @@ const ViewCustomer = () => {
                             <tbody>
                                 {currentItems.map((customer, i) => (
                                     <tr key={customer.id}>
-                                        <td>{indexOfFirstItem + i + 1}</td>
+                                        <td className="text-center">{indexOfFirstItem + i + 1}</td>
                                         <td>{customer.firstName + " " + customer.lastName}</td>
                                         <td>{customer.email}</td>
                                         <td>{customer.firmId.companyTitle}</td>
                                         <td>{customer.address.country}</td>
-                                        <td>
+                                        <td className="text-center">
                                             <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleDeleteClick(customer)}></i>
                                             <i className="bx bx-show" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(customer)}></i>
                                         </td>
@@ -119,9 +119,10 @@ const ViewCustomer = () => {
                                 ))}
                             </tbody>
                         </Table>
-                        <div className="pagination">
+                        <div className="pagination p-3">
                             {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map(number => (
-                                <Button key={number} onClick={() => paginate(number + 1)} className={currentPage === number + 1 ? 'active' : ''}>
+                                <Button key={number} onClick={() => paginate(number + 1)} 
+                                className={currentPage === number + 1 ? 'active' : 'mr-2'}>
                                     {number + 1}
                                 </Button>
                             ))}

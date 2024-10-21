@@ -66,17 +66,17 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
 
     return (
         <div ref={ref} className="card p-4 border rounded position-relative">
-            <div className="row mb-2 text-center">
-                <h2>{invoiceData?.invoiceType}</h2>
+            <div className="row text-center card-title-heading m-0 mb-4">
+                <h2 className="text-white">{invoiceData?.invoiceType}</h2>
             </div>
 
-            <div className="row mt-2">
-                <div className="col-md-6 text-left">
+            <div className="row m-text-center p-4 m-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
                     {(invoiceData?.companyLogo || selectInvoice.avatar) && (
                         <img 
                             src={selectInvoice.avatar || invoiceData?.companyLogo}  
                             alt="Company Logo" 
-                            style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-50px" }} 
+                            style={{ height: "100px", maxWidth: "200px", marginBottom: "10px", marginTop: "-36px" }} 
                         />
                     )}
                     <p className="my-1" style={{fontWeight:"700" , fontSize:"24px"}}>{selectInvoice.companyTitle}</p>
@@ -90,7 +90,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     ))}
                     <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
-                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-25">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <p><strong>Invoice Number:</strong> {invoiceData?.invoiceNumber}</p>
                     <p><strong>Amount Due:</strong> ₹ {invoiceData?.amountDue}</p>
                     <p><strong>Issue Date:</strong> {formatDate(invoiceData?.createdAt || selectInvoice.issueDate)}</p>
@@ -98,8 +98,8 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                 </div>
             </div>
 
-            <div className="row">
-                <div className="col-md-6 text-left">
+            <div className="row p-4 m-0 border-bottom">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center">
                     <h4>Customer Details:</h4>
                     <p className="my-1">{customerName}</p>
                     <p className="my-1">{invoiceData?.customerAddress.h_no}, {invoiceData?.customerAddress.nearby}, {invoiceData?.customerAddress.district}</p>
@@ -107,9 +107,9 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     <p className="my-1">Phone : {invoiceData?.customerPhone} | Email : {invoiceData?.customerEmail}</p>
                 </div>
             </div>
-
-            <table className="table table-bordered">
-                <thead>
+            <div class="table-responsive">
+                <table className="table table-bordered">
+                <thead className="table-light text-center">
                     <tr>
                     <th>Sr. no</th>
                     <th>Item Name</th>
@@ -162,9 +162,9 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     })}
                 </tbody>
                 </table>
-
-            <div className="row">
-                <div className="col-md-6 text-left">
+            </div>
+            <div className="row bg-light p-4 m-0">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center mb-4">
                     <h5>Bank Details</h5>
                     <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice.bankName || 'Your Bank Name'}</p>
                     <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice.accountNumber || 'Your Account Number'}</p>
@@ -173,7 +173,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
                     <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
 
-                <div className="col-md-3 offset-md-3 right-t-col3 marginleft-5">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                 <h5>Payment Summary</h5>
                     {/* <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p> */}
                     {/* {isSameState ? (

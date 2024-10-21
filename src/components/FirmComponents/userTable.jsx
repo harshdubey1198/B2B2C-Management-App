@@ -36,10 +36,11 @@ function UserTable({ selectedFirmId, trigger }) {
   }, [selectedFirmId, trigger]);
 
   return (
+    <div>
+      <h5 className="text-center card-title-heading m-0">Users of <span>{companyTitle}</span></h5>
     <div className="table-responsive ">
-      <h5 className="text-center">Users of <span className="mm-active">{companyTitle}</span></h5>
       <table className="table table-bordered mb-0">
-        <thead>
+        <thead className="table-light">
           <tr>
             <th>Name</th>
             <th>Mobile</th>
@@ -66,6 +67,7 @@ function UserTable({ selectedFirmId, trigger }) {
           )}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }
