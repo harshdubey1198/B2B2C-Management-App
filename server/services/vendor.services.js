@@ -40,6 +40,16 @@ VendorServices.getVendors = async (adminId) => {
     return data
 }
 
+// UPDATE VENDOR
+VendorServices.updateVendor = async (id, body) => {
+    const existingVendor = await Vendor.findOne({ _id: id, deleted_at: null });
+        if (!existingVendor) {
+        throw new Error('Vendor does not exist');
+    }
+    const updatedVendor = await Vendor.findByIdAndUpdate(id, body, { new: true });
+    return updatedVendor;
+};
+
 // DELETE VENDOR
 VendorServices.deleteVendor = async (id) => {
     const existingVendor = await Vendor.findById(id);
