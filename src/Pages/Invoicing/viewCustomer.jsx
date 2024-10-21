@@ -11,7 +11,7 @@ const ViewCustomer = () => {
     const [trigger, setTrigger] = useState(0);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [customerToDelete, setCustomerToDelete] = useState(null);
-    const [filter, setFilter] = useState({ companyTitle: '', country: '' });
+    const [filter, setFilter] = useState({ customerName: '', country: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(5);
 
@@ -55,8 +55,8 @@ const ViewCustomer = () => {
     };
 
     const filteredData = customersData.filter((customer) =>
-        (filter.companyTitle === '' || customer.firmId.companyTitle.includes(filter.companyTitle)) &&
-        (filter.country === '' || customer.address.country.includes(filter.country))
+        (filter.customerName === '' || (customer.firstName + ' ' + customer.lastName).toLowerCase().includes(filter.customerName.toLowerCase())) &&
+        (filter.country === '' || customer.address.country.toLowerCase().includes(filter.country.toLowerCase()))
     );
 
     const indexOfLastItem = currentPage * itemsPerPage;
@@ -73,9 +73,9 @@ const ViewCustomer = () => {
                 <div className="d-flex mb-3">
                     <Input
                         type="text"
-                        placeholder="Filter by Firm Name"
-                        name="companyTitle"
-                        value={filter.companyTitle}
+                        placeholder="Filter by Customer Name"
+                        name="customerName"
+                        value={filter.customerName}
                         onChange={handleFilterChange}
                         className="mr-2"
                     />
@@ -137,8 +137,106 @@ const ViewCustomer = () => {
                     <ModalBody>
                         {selectedCustomer && (
                             <Row>
-                                {/* Display customer details */}
-                            </Row>
+                                <Col md={6}>
+                                    <label><strong>Name:</strong></label>
+                                    <input
+                                        type="text"
+                                        value={selectedCustomer?.firstName + " " + selectedCustomer?.lastName}
+                                        className="form-control"
+                                        readOnly
+                                    />
+                                  </Col>
+                                <Col md={6}>
+                                    <label><strong>Email:</strong></label>
+                                    <input
+                                        type="email"
+                                        value={selectedCustomer?.email}
+                                        className="form-control"
+                                        readOnly
+                                    />
+                                </Col>
+                                        <Col md={6}>
+                                            <label><strong>Mobile:</strong></label>
+                                            <input
+                                                type="number"
+                                                value={selectedCustomer?.mobile}
+                                                className="form-control"
+                                                readOnly
+                                            />
+                                        </Col>
+
+                                        {/* <Col md={12}>
+                                            <h5 className="text-center mt-3">Firm Details</h5>
+                                            <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
+                                                <div>
+                                                    <img 
+                                                        src={selectedCustomer?.firmId.avatar} 
+                                                        alt="Firm Logo" 
+                                                        style={{ width: '50px', height: '50px' }}
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <div><strong>Firm:</strong> {selectedCustomer?.firmId.companyTitle}</div>
+                                                </div>
+                                                <div>
+                                                    <div><strong>Email:</strong> {selectedCustomer?.firmId.email}</div>
+                                                </div>
+                                            </div>
+                                        </Col> */}
+
+                    <Col md={12}>
+                        <h5 className="text-center mt-3"> Customer Address</h5>
+                        <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
+                            <div>
+                                <label><strong>House Number:</strong></label>
+                                <input
+                                    type="text"
+                                    value={selectedCustomer?.address?.h_no}
+                                    className="form-control"
+                                    readOnly
+                                />
+                            </div>
+                           
+                            <div>
+                                <label><strong>State:</strong></label>
+                                <input
+                                    type="text"
+                                    value={selectedCustomer?.address?.state}
+                                    className="form-control"
+                                    readOnly
+                                />
+                            </div>
+                            <div>
+                                <label><strong>City:</strong></label>
+                                <input
+                                    type="text"
+                                    value={selectedCustomer?.address?.city}
+                                    className="form-control"
+                                    readOnly
+                                />
+                            </div>
+                            <div>
+                                <label><strong>Country:</strong></label>
+                                <input
+                                    type="text"
+                                    value={selectedCustomer?.address?.country}
+                                    className="form-control"
+                                    readOnly
+                                />
+                            </div>
+                            <div>
+                                <label><strong>Zip Code:</strong></label>
+                                <input
+                                    type="number"
+                                    value={selectedCustomer?.address?.zip_code}
+                                    className="form-control"
+                                    readOnly
+                                />
+                            </div>
+                        </div>
+
+                        </Col>
+                        </Row>
                         )}
                     </ModalBody>
                 </Modal>

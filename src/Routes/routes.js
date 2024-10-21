@@ -72,6 +72,7 @@ import UserManage from "../Pages/Firms/UserManage.jsx";
 import VerifyOtp from "../Pages/AuthenticationPages/VerifyOtp.jsx";
 import ClientsPayments from "../Pages/ClientsManagement/clientPayments.js";
 import ViewCustomer from "../Pages/Invoicing/viewCustomer.jsx";
+import Vendor from "../Pages/Inventory-MNG/Vendor.jsx";
 
 
 const authProtectedRoutes = [
@@ -97,6 +98,7 @@ const authProtectedRoutes = [
   {path:"/table-taxation", component: <TableTaxation />},
   {path:"/item-configuration", component: <ItemConfiguration />},
   {path:"/manage-category", component: <CategoryManager />},
+  {path:"/vendors/manage", component: <Vendor />},
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firmusers", component: <UserManage />},
