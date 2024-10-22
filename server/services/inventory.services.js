@@ -17,7 +17,7 @@ const calculateStock = (variants) => {
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
-    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, taxId, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
+    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, taxId, selectedTaxTypes, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({ name, createdBy: userId });
     if (existingItem) {
@@ -30,31 +30,34 @@ inventoryServices.createItem = async (userId, body) => {
         vendorId ? Vendor.findById(vendorId) : null,
         taxId ? Tax.findById(taxId) : null
     ]);
-
     if (!user) {
         throw new Error('User not found');
     }
-
     if (!category) {
         throw new Error('This category is not available');
     }
-
-    if(subcategoryId){
-        const subcategory = await Category.findOne({_id: subcategoryId})
+    if (subcategoryId) {
+        const subcategory = await Category.findOne({ _id: subcategoryId });
         if (!subcategory || String(subcategory.parentId) !== String(categoryId)) {
             throw new Error('Invalid subcategory or subcategory does not belong to the parent category');
         }
     }
-
     if (vendorId && !vendor) {
         throw new Error('Vendor not found');
     }
-
-    if(!taxId){
-        throw new Error('Taxes not found for this Item Create a new Tax');
+    if (!taxId || !tax) {
+        throw new Error('Tax not found');
     }
-
-    const totalStock = calculateStock(variants)
+    const finalTaxComponents = tax.taxRates.filter(taxRate => 
+        selectedTaxTypes.includes(taxRate.taxType)
+    ).map(taxRate => ({
+        taxType: taxRate.taxType,
+        rate: taxRate.rate
+    }));
+    if (finalTaxComponents.length === 0) {
+        throw new Error('No valid tax components selected');
+    }
+    const totalStock = calculateStock(variants);
     const newItem = new InventoryItem({
         name,
         description,
@@ -67,13 +70,17 @@ inventoryServices.createItem = async (userId, body) => {
         sellingPrice,
         categoryId,
         ProductHsn,
-        vendor: vendor ? vendor._id : null, 
+        vendor: vendor ? vendor._id : null,
         createdBy: user._id,
         firmId: user.adminId,
-        tax: tax._id,
+        tax: {
+            taxId: tax._id,
+            components: finalTaxComponents
+        },
         subcategoryId: subcategoryId || null,
         variants: variants || []
     });
+
     await newItem.save();
     return newItem;
 };
