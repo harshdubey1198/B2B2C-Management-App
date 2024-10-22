@@ -45,18 +45,18 @@ inventoryServices.createItem = async (userId, body) => {
     if (vendorId && !vendor) {
         throw new Error('Vendor not found');
     }
-    // if (!taxId || !tax) {
-    //     throw new Error('Tax not found');
-    // }
-    // const finalTaxComponents = tax.taxRates.filter(taxRate => 
-    //     selectedTaxTypes.includes(taxRate.taxType)
-    // ).map(taxRate => ({
-    //     taxType: taxRate.taxType,
-    //     rate: taxRate.rate
-    // }));
-    // if (finalTaxComponents.length === 0) {
-    //     throw new Error('No valid tax components selected');
-    // }
+    if (!taxId || !tax) {
+        throw new Error('Tax not found');
+    }
+    const finalTaxComponents = tax.taxRates.filter(taxRate => 
+        selectedTaxTypes.includes(taxRate.taxType)
+    ).map(taxRate => ({
+        taxType: taxRate.taxType,
+        rate: taxRate.rate
+    }));
+    if (finalTaxComponents.length === 0) {
+        throw new Error('No valid tax components selected');
+    }
     const totalStock = variants && variants.length > 0 ? calculateStock(variants) : quantity;   
     const newItem = new InventoryItem({
         name,

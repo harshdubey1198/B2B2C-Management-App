@@ -1,10 +1,11 @@
 import React from "react";
 import { Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input, Button } from "reactstrap";
 
-const VariantModal = ({ isOpen, toggle, variant, handleVariantChange, addVariant }) => {
+const VariantModal = ({ isOpen, toggleModal, variant, handleVariantChange, addVariant }) => {
+  // console.log(isOpen, "isopen")
   return (
-    <Modal isOpen={isOpen} toggle={toggle}>
-      <ModalHeader toggle={toggle}>{variant.variationType ? "Edit Variant" : "Add Variant"}</ModalHeader>
+    <Modal isOpen={isOpen} toggle={toggleModal}>
+      <ModalHeader toggle={toggleModal}>{variant.variationType ? "Edit Variant" : "Add Variant"}</ModalHeader>
       <ModalBody>
         <FormGroup>
           <Label for="variationType">Variant Type</Label>
@@ -35,7 +36,7 @@ const VariantModal = ({ isOpen, toggle, variant, handleVariantChange, addVariant
         <Button color="primary" onClick={addVariant}>
           {variant.variationType ? "Update Variant" : "Add Variant"}
         </Button>{" "}
-        <Button color="secondary" onClick={toggle}>
+        <Button color="secondary" onClick={toggleModal}>
           Cancel
         </Button>
       </ModalFooter>

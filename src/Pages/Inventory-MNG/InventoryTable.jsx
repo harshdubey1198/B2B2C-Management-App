@@ -506,7 +506,7 @@ function InventoryTable() {
         </Modal>
 
         <VariantModal
-          modal={variantModalOpen}
+          isOpen={variantModalOpen}
           toggleModal={() => setVariantModalOpen(!variantModalOpen)}
           variant={variant}
           handleVariantChange={handleVariantChange}

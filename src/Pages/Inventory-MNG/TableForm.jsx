@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
-import axios from "axios";  
-import { useNavigate } from "react-router-dom";
+import { Form, useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
 import hsnData from "../../data/hsn.json";
+import axiosInstance from "../../utils/axiosInstance";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -13,102 +13,63 @@ const InventoryItemForm = () => {
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
   const [editIndex, setEditIndex] = useState(null); 
-  const [variant, setVariant] = useState({
-    variationType: "",
-    optionLabel: "",
-    price: "",
-    stock: "",
-    sku: "",
-    barcode: "",
-  });
-  
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
+  const [taxes, setTaxes] = useState([]);
+  const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
-
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [taxes, setTaxes] = useState([]);
-  const [selectedTax, setSelectedTax] = useState("");
-  const [selectedRate, setSelectedRate] = useState([]); 
-  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "", tax: {}, selectedTaxTypes: [], });
-  
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const [formValues, setFormValues] = useState({name: "",description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",tax: { taxId: "", components: [],},});
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  const [ tosendTaxtype, setToSendTaxtype] = useState([]);
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "", tax: "", selectedTaxTypes: [], });
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",tax: { taxId: "", components: [], }, });
     setVariants([]); 
   };
-  useEffect(() => {
-    const fetchTaxes = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`, config);
-        setTaxes(response.data);
-
-      } catch (error) {
-        toast.error("Failed to fetch tax rates.");
-      }
-    };
-
-    fetchTaxes();
-  }, []);
-  const handleTaxChange = (e) => {
-    const value = e.target.value;
-    setSelectedTax(value);
-    setSelectedRate("");
-    setFormValues((prevState) => ({
-      ...prevState,
-      tax: value, 
-      // taxName: taxes.find((tax) => tax._id === value).taxName,
-    }));
-    
-  };
-  const handleRateChange = (e) => {
-    const value = e.target.value;
-    setFormValues((prevState) => {
-      let selectedTaxTypes = [...prevState.selectedTaxTypes];
-      if (selectedTaxTypes.includes(value)) {
-        selectedTaxTypes = selectedTaxTypes.filter(rate => rate !== value);
-      } else {
-         selectedTaxTypes.push(value);
-      }
-      return {
-        ...prevState,
-        selectedTaxTypes: selectedTaxTypes,
-      };
-    });
-  };
-
-
+  
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         
-        const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`, config);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`);
         const parentCategories = response.data.filter(category => category.parentId === null);
         setCategories(parentCategories);
-      } catch (error) {
+      } catch (error) {        
         toast.error("Failed to fetch categories.");
         console.error(error.message);
       }
     };
     const fetchVendors = async () => { 
       try {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`, config);
+       
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`);
         setVendors(response.data);
       } catch (error) {
         toast.error("Failed to fetch vendors.");
         console.error(error.message);
       }
     };
+    
+    const fetchTaxes = async () => {
+      try {
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`);
+        setTaxes(response.data);
+        console.log(response.data[0]._id);
+        console.log(response.data[0].taxName);
+        console.log(response.data[0].taxRates[0]);
+        console.log(response.data[0].taxRates[0].taxType);
+        console.log(response.data[0].taxRates[0].rate);
+      } catch (error) {
+        toast.error("Failed to fetch taxes.");
+        console.error(error.message);
+      }
+    };
     fetchCategories();
     fetchVendors(); 
-  }, [token]);
+    fetchTaxes();
+  }, [] );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -124,6 +85,32 @@ const InventoryItemForm = () => {
       ...prevState,
       [name]: value,
     }));
+  };
+  
+  const handleTaxChange = (e) => {
+    const { value } = e.target;
+    const selectedTax = taxes.find((tax) => tax._id === value);
+    if (selectedTax) {
+      setFormValues((prevState) => ({
+        ...prevState,
+        tax: {
+          taxId: selectedTax._id,
+          components: selectedTax.taxRates,
+        },
+      }));
+      setSelectedTaxComponents(selectedTax.taxRates);
+    } else {
+      setFormValues((prevState) => ({
+        ...prevState,
+        tax: { taxId: "", components: [] },
+      }));
+      setSelectedTaxComponents([]);
+    }
+  };
+
+  const handleSendTaxType = (e) => {
+    const { value } = e.target;
+    setToSendTaxtype(value);
   };
 
   const addOrUpdateVariant = () => {
@@ -193,7 +180,7 @@ const InventoryItemForm = () => {
 
     if (value) {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`, config);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`);
         const subcategoryData = response.data;
         if (subcategoryData.length === 0) {
           toast.info("This category doesn't have any subcategories.");
@@ -217,18 +204,9 @@ const InventoryItemForm = () => {
       setLoading(false);
       return;
     }
-    const dataToSend = {
-      ...formValues,
-      taxId: selectedTax, 
-      selectedTaxTypes: selectedRate ? selectedRate.split(',') : [],
-      variants,
-    };
-
     try {
-      const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
-      setFormValues({
-        name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: ""
-      });
+      const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants });
+      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", tax: { taxId: "", components: [], }, });
       setVariants([]);
       handleReset();
 
@@ -238,8 +216,7 @@ const InventoryItemForm = () => {
       console.error(error.message);
     } finally {
       setLoading(false);
-    }
-  };
+    }};
 
   return (
     <React.Fragment>
@@ -332,66 +309,70 @@ const InventoryItemForm = () => {
                       </Col>
                     </Row>
                     <Row>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label htmlFor="taxId">Select Tax</Label>
-                              <Input
-                                type="select"
-                                id="taxId"
-                                name="taxId"
-                                value={selectedTax}
-                                onChange={handleTaxChange}
-                              >
-                                <option value="">Select Tax</option>
-                                {taxes.map((tax) => (
-                                  <option key={tax._id} value={tax._id}>
-                                    {tax.taxName}
-                                  </option>
-                                ))}
-                              </Input>
-                            </FormGroup>
-                          </Col>
-
-
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductHsn">HSN</Label>
                           <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
-                      {selectedTax && (
-                        <Row>
-                          <Col md={6}>
-                            <FormGroup>
-                              <Label>Select Tax Types</Label>
-                              {taxes
-                                .find((tax) => tax._id === selectedTax)
-                                ?.taxRates.map((rate) => (
-                                  <FormGroup check key={rate._id}>
-                                    <Label check>
-                                      <Input
-                                        type="checkbox" 
-                                        name="selectedTaxTypes"
-                                        value={rate._id}
-                                        checked={formValues.selectedTaxTypes.includes(rate._id)}
-                                        onChange={handleRateChange}
-                                      />
-                                      {rate.taxType} ({rate.rate}%)
-                                    </Label>
-                                  </FormGroup>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="tax">Tax</Label>
+                          <Input type="select" id="tax" name="tax" value={formValues.tax.taxId} onChange={handleTaxChange}>
+                            <option value="">Select Tax</option>
+                            {taxes.map(tax => (
+                              <option key={tax._id} value={tax._id}>
+                                {tax.taxName}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
+                      {selectedTaxComponents.length > 0 && (
+                      <div className="mt-3">
+                        <h5>Selected Tax Components</h5>
+                        <ul>
+                          {selectedTaxComponents.map((component, index) => (
+                            <li key={index}>
+                              {component.taxType}: {component.rate}%
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+{/* 
+                    {selectedTaxComponents.length > 0 && (
+                      <FormGroup>
+                        <Label htmlFor="tax.components">Tax Components</Label>
+                       {selectedTaxComponents.map((component, index) => (
+                         <div key={index}>
+                            <input
+                              type="radio"
+                              id={`tax-component-${index}`}
+                              name="taxComponents" 
+                              value={component.taxType}  
+                              checked={formValues.tax.components === component.taxType}  
+                              onChange={handleChange}  
+                              /> 
+                            <label className="mx-2" htmlFor={`tax-component-${index}`}> {component.taxType} : {component.rate}%</label>
+                            <Input type="select" id="tax.components" name="tax.components" value={formValues.tax.components} onChange={handleChange} multiple>
+                                {selectedTaxComponents.map((component, index) => (
+                                  <option key={index} value={component.taxType}>
+                                    {component.taxType}
+                                  </option>
                                 ))}
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                      )}
+                              </Input>
+                          </div>
+                        ))}
+
+
+
+
+                      </FormGroup>
+
+                    )} */}
                     </Row>
-                    <VariantModal
-                      isOpen={modal} 
-                      toggle={toggleModal} 
-                      variant={variant}
-                      handleVariantChange={handleVariantChange}
-                      addVariant={addOrUpdateVariant}
-                    />
+                    <VariantModal isOpen={modal}  toggle={toggleModal}  variant={variant} handleVariantChange={handleVariantChange} addVariant={addOrUpdateVariant} />
                     <Row className="mt-3">
                       <Col md={12}>
                         <Button className="mx-2" color="primary" onClick={toggleModal}>Add Variant</Button>
