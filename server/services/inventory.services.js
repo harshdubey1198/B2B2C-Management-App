@@ -4,6 +4,7 @@ const InventoryItem = require('../schemas/inventoryItem.schema');
 const User = require('../schemas/user.schema');
 const VariantMaster = require('../schemas/mastervariant.schema');
 const Vendor = require('../schemas/vendor.schema');
+const Tax = require('../schemas/tax.schema');
 
 let inventoryServices = {};
 
@@ -16,17 +17,18 @@ const calculateStock = (variants) => {
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
-    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
+    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, taxId, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({ name, createdBy: userId });
     if (existingItem) {
         throw new Error('Item with this name already exists for this user');
     }
 
-    const [user, category, vendor] = await Promise.all([
+    const [user, category, vendor, tax] = await Promise.all([
         User.findById(userId),
         Category.findById(categoryId),
-        vendorId ? Vendor.findById(vendorId) : null 
+        vendorId ? Vendor.findById(vendorId) : null,
+        taxId ? Tax.findById(taxId) : null
     ]);
 
     if (!user) {
@@ -48,6 +50,10 @@ inventoryServices.createItem = async (userId, body) => {
         throw new Error('Vendor not found');
     }
 
+    if(!taxId){
+        throw new Error('Taxes not found for this Item Create a new Tax');
+    }
+
     const totalStock = calculateStock(variants)
     const newItem = new InventoryItem({
         name,
@@ -64,6 +70,7 @@ inventoryServices.createItem = async (userId, body) => {
         vendor: vendor ? vendor._id : null, 
         createdBy: user._id,
         firmId: user.adminId,
+        tax: tax._id,
         subcategoryId: subcategoryId || null,
         variants: variants || []
     });
@@ -81,6 +88,7 @@ inventoryServices.getAllItems = async (adminId) => {
         select: "firstName lastName email"
     })
     .populate('vendor')
+    .populate('tax')
     if(!items){
         throw new Error('No items found')
     }
@@ -91,7 +99,9 @@ inventoryServices.getAllItems = async (adminId) => {
 inventoryServices.getItem = async (id) => {
     const items = await InventoryItem.findOne({_id: id, deleted_at:null})
     .populate('categoryId')
-    .populate('subcategoryId');
+    .populate('subcategoryId')
+    .populate('vendor')
+    .populate('tax')
     if(!items){
         throw new Error('No items found')
     }
