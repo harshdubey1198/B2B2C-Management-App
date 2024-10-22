@@ -39,7 +39,7 @@ taxController.getTaxById = async (req, res) => {
 // UPDATE TAX
 taxController.updateTax = async (req, res) => {
     try {
-        const updatedTax = await TaxServices.updateTax(req.params.id, req.body);
+        const updatedTax = await TaxServices.updateTax(req.body);
         return res.status(200).json(createResult("Tax updated successfully", updatedTax));
     } catch (error) {
         console.log('Error updating tax:', error.message);
@@ -48,9 +48,9 @@ taxController.updateTax = async (req, res) => {
 };
 
 // SOFT DELETE TAX
-taxController.softDeleteTax = async (req, res) => {
+taxController.deleteTax = async (req, res) => {
     try {
-        const deletedTax = await TaxServices.softDeleteTax(req.params.id);
+        const deletedTax = await TaxServices.deleteTax(req.params.id);
         return res.status(200).json(createResult("Tax deleted successfully", deletedTax));
     } catch (error) {
         console.log('Error deleting tax:', error.message);
