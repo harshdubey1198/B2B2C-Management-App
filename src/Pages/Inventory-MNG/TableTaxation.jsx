@@ -7,6 +7,7 @@ import axios from 'axios';
 function TaxationTable() {
   const [modalOpen, setModalOpen] = useState(false);
   const [taxes, setTaxes] = useState([]);
+  const [selectedTax, setSelectedTax] = useState(null);
   const authuser = JSON.parse(localStorage.getItem('authUser'));
   const token = authuser.token;
   const userId = authuser.response._id;
@@ -18,11 +19,12 @@ function TaxationTable() {
       Authorization: `Bearer ${token}`,
     },
   };
+  
   const fetchTaxes = async () => {
     try {
       const response = await axios.get(
         `http://localhost:7200/api/tax/get-taxes/${firmId}`,
-      config
+        config
       );
       setTaxes(response.data);
     } catch (error) {
@@ -30,8 +32,18 @@ function TaxationTable() {
     }
   };
 
-  const handleTaxCreated = (newTax) => {
-    setTaxes([...taxes, newTax]);
+  const handleTaxCreatedOrUpdated = (tax) => {
+    if (selectedTax) {
+      setTaxes(taxes.map(t => t._id === tax._id ? tax : t));
+    } else {
+      setTaxes([...taxes, tax]);
+    }
+    setSelectedTax(null);
+  };
+
+  const handleEditClick = (tax) => {
+    setSelectedTax(tax);
+    toggleModal();
   };
 
   useEffect(() => {
@@ -47,7 +59,7 @@ function TaxationTable() {
             <CardBody>
               <div className="d-flex justify-content-between">
                 <h4 className="card-title">Taxation Table</h4>
-                <Button color="primary" onClick={toggleModal}>
+                <Button color="primary" onClick={() => { setSelectedTax(null); toggleModal(); }}>
                   Add New Tax
                 </Button>
               </div>
@@ -57,6 +69,7 @@ function TaxationTable() {
                     <th>#</th>
                     <th>Tax Name</th>
                     <th>Tax Types</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -71,6 +84,10 @@ function TaxationTable() {
                           </div>
                         ))}
                       </td>
+                      <td>
+                        <i className="bx bx-edit mx-1" onClick={() => handleEditClick(tax)} style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }}></i>
+                        <i className="bx bx-trash mx-1" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }}></i>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -84,7 +101,8 @@ function TaxationTable() {
           token={token}
           config={config}
           userId={userId}
-          onTaxCreated={handleTaxCreated}
+          tax={selectedTax}
+          onTaxCreatedOrUpdated={handleTaxCreatedOrUpdated}
         />
       </div>
     </React.Fragment>
