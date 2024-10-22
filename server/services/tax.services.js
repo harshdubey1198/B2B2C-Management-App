@@ -40,4 +40,39 @@ TaxServices.getTaxById = async (taxId) => {
     return tax
 }
 
+TaxServices.updateTax = async (body) => {
+    const {taxId, userId, updateData} = body
+    const user = await User.findOne({_id: userId})
+    if (!user) {
+        throw new Error('User not found')
+    }
+    if (user.role !== 'firm_admin' && user.role !== 'accountant') {
+        throw new Error('Only firm admins or accountants can update the tax');
+    }
+
+    const existingTax = await Tax.findOne({ _id: taxId, deleted_at: null });
+    if (!existingTax) {
+        throw new Error('Tax not found');
+    }
+    const updatedTax = await Tax.findOneAndUpdate({_id: taxId}, updateData, { new: true });    
+    return updatedTax;
+}
+
+TaxServices.deleteTax = async (taxId) => {
+    const existingTax = await Tax.findOne({_id: taxId})
+    if(!existingTax){
+        throw new Error('Tax not found')
+    }
+    const deletedTax = await  Tax.findOneAndUpdate(
+        {_id: taxId},
+        {deleted_at: new Date()},
+        {new : true}
+    )
+    if(!deletedTax){
+        throw new Error('Unable to delete tax')
+    }
+    return deletedTax
+}
+
+
 module.exports = TaxServices
