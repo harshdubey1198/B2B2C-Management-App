@@ -137,8 +137,9 @@ function ItemConfiguration() {
               >
                 Add New Item
               </Button>
-              <Table className="table-bordered mt-3">
-                <thead>
+              <div className="table-responsive">
+              <table className="table-bordered mt-3">
+                <thead className="table-light">
                   <tr>
                     <th>Name</th>
                     <th>Variants</th>
@@ -195,7 +196,8 @@ function ItemConfiguration() {
                       </tr>
                     ))}
                 </tbody>
-              </Table>
+              </table>
+              </div>
             </CardBody>
           </Card>
         </Col>

@@ -21,8 +21,9 @@ const ProductDetail = ({ isOpen, toggleModal, selectedItemDetails }) => {
             <p><strong>Supplier:</strong> {selectedItemDetails.supplier}</p>
 
             <h5>Variants:</h5>
-            <Table bordered>
-              <thead>
+            <div className="table-responsive"></div>
+            <table className="table table-bordered">
+              <thead className="table-light">
                 <tr>
                   <th>Variant</th>
                   <th>Price</th>
@@ -40,7 +41,7 @@ const ProductDetail = ({ isOpen, toggleModal, selectedItemDetails }) => {
                   </tr>
                 ))}
               </tbody>
-            </Table>
+            </table>
           </div>
         )}
       </ModalBody>

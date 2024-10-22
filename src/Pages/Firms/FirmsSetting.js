@@ -179,7 +179,7 @@ const handleSubmit = async (e) => {
                           )}
                      </div>
                     <Row>
-                      <Col md={6}>
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="companyTitle">Firm Name</Label>
                           <Input
@@ -191,8 +191,8 @@ const handleSubmit = async (e) => {
                             // //required
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="firmEmail">Firm Email</Label>
                           <Input
@@ -204,10 +204,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="firmPhone">Firm Phone</Label>
                           <Input
@@ -219,8 +217,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="avatar">Avatar URL</Label>
                           <Input
@@ -232,10 +230,8 @@ const handleSubmit = async (e) => {
                           />
                          
                         </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                        <Col md={6}>
+                      </div>
+                        <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="bankName">Bank Name</Label>
                           <Input
@@ -247,8 +243,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="accountNumber">Account Number</Label>
                           <Input
@@ -260,11 +256,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                     
-                      <Col md={6}>
+                      </div>
+                      <div  className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="ifscCode">IFSC Code</Label>
                           <Input
@@ -276,8 +269,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="accountHolder">Account Holder</Label>
                           <Input
@@ -289,10 +282,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="cifNumber">CIF Number</Label>
                           <Input
@@ -304,8 +295,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="gstin">GSTIN</Label>
                           <Input
@@ -317,10 +308,8 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={6}>
+                      </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="branchName">Branch Name</Label>
                           <Input
@@ -332,7 +321,7 @@ const handleSubmit = async (e) => {
                             //required
                           />
                         </FormGroup>
-                      </Col>
+                      </div>
                       
                     </Row>
                   {firmDetails.address.length > 0 ? (

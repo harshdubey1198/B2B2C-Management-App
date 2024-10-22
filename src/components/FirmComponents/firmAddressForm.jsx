@@ -71,7 +71,7 @@ const handleCountryChange = (selectedOption) => {
     <div className="mb-3">
       <h5>Address</h5>
       <Row>
-        <Col md={6}>
+        <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
           <FormGroup>
             <Label for="h_no">House Number</Label>
             <Input
@@ -83,9 +83,9 @@ const handleCountryChange = (selectedOption) => {
               onChange={(e) => handleAddressChange(index, e)} 
             />
           </FormGroup>
-        </Col>
+        </div>
         
-        <Col md={6}>
+        <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
         <FormGroup>
           <Label for="nearby">Nearby Landmark</Label>
           <Input
@@ -97,11 +97,8 @@ const handleCountryChange = (selectedOption) => {
             onChange={(e) => handleAddressChange(index, e)} 
           />
         </FormGroup>
-       </Col>
-
-      </Row>
-      <Row>  
-      <Col md={6}>
+       </div> 
+      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
       <FormGroup>
         <Label for="zip_code">Zip Code</Label>
         <Input
@@ -112,8 +109,8 @@ const handleCountryChange = (selectedOption) => {
           value={address.zip_code || ""}
           onChange={(e) => handleAddressChange(index, e)} 
         />
-      </FormGroup></Col>
-      <Col md={6}>
+      </FormGroup></div>
+      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
       <FormGroup>
         <Label for="district">District</Label>
         <Input
@@ -124,9 +121,8 @@ const handleCountryChange = (selectedOption) => {
           value={address.district || ""}
           onChange={(e) => handleAddressChange(index, e)} 
         />
-      </FormGroup></Col>
-      </Row>
-      <Row><Col md={6}>
+      </FormGroup></div>
+     <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
       <FormGroup>
         <Label for="city">City</Label>
         <Input
@@ -139,8 +135,8 @@ const handleCountryChange = (selectedOption) => {
           //required
         />
       </FormGroup>
-      </Col>
-      <Col md={6}>
+      </div>
+      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
       <FormGroup>
         <Label for="state">State</Label>
         <Input
@@ -151,8 +147,8 @@ const handleCountryChange = (selectedOption) => {
           value={address.state || ""}
           onChange={(e) => handleAddressChange(index, e)} 
         />
-      </FormGroup></Col>
-      </Row>
+      </FormGroup></div>
+      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
       <FormGroup>
         <Label for="country">Country</Label>
         <Select
@@ -162,6 +158,9 @@ const handleCountryChange = (selectedOption) => {
           placeholder="Country"
         />
       </FormGroup>
+      </div>
+      </Row>
+      
     </div>
   );
 };
