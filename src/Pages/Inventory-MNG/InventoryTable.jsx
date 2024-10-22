@@ -123,7 +123,8 @@ function InventoryTable() {
   
         setTrigger((prev) => prev + 1);
         setModalOpen(!modalOpen);
-        toast.success(response.data.message);
+        toast.success(response.message);
+        
       } catch (error) {
         console.error("Error adding or updating variant:", error);
       }

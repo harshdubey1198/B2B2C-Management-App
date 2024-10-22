@@ -173,7 +173,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   return (
     <div>
       {items.map((item, index) => (
-        <div className="d-flex flex-wrap flex-lg-row justify-content-between align-items-center w-100 mb-3" key={index}>
+        <div className="row d-flex  align-items-center w-100 mb-3 p-4 bg-light" key={index}>
+          <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`name-${index}`}>Item Name</Label>
             <Input
@@ -192,7 +193,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               ))}
             </Input>
           </FormGroup>
-
+          </div>
+          <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`variant-${index}`}>Variant</Label>
             <Input
@@ -220,7 +222,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
             
 
 
-
+            </div>
+            <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
             <Input
@@ -240,6 +243,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               required
             />
           </FormGroup>
+          </div>
+          <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`price-${index}`}>Price</Label>
             <Input
@@ -251,7 +256,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               readOnly
             />
           </FormGroup>
-{/* 
+          </div>
+          {/* <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`tax-${index}`}>Tax (%)</Label>
             <Input
@@ -263,7 +269,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               required
             />
           </FormGroup>
-
+          </div> */}
+          {/* <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`discount-${index}`}>Discount (%)</Label>
             <Input
@@ -274,8 +281,9 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               onChange={(e) => handleItemChange(index, 'discount', e.target.value)}
               required
             />
-          </FormGroup> */}
-
+          </FormGroup>
+          </div> */}
+          <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`total-${index}`}>Total</Label>
             <Input
@@ -286,10 +294,12 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               readOnly
             />
           </FormGroup>
-
+          </div>
+          <div className="col-lg-2 col-md-3 col-sm-12">
           <Button color='danger' onClick={() => removeItem(index)}>
             Remove Item
           </Button>
+          </div>
         </div>
       ))}
     </div>

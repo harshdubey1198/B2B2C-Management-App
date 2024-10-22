@@ -3,6 +3,7 @@ const Category = require('../schemas/category.schema');
 const InventoryItem = require('../schemas/inventoryItem.schema');
 const User = require('../schemas/user.schema');
 const VariantMaster = require('../schemas/mastervariant.schema');
+const Vendor = require('../schemas/vendor.schema');
 
 let inventoryServices = {};
 
@@ -15,21 +16,25 @@ const calculateStock = (variants) => {
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
-    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
+    const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
-    const existingItem = await InventoryItem.findOne({ name: name, createdBy: userId });
+    const existingItem = await InventoryItem.findOne({ name, createdBy: userId });
     if (existingItem) {
         throw new Error('Item with this name already exists for this user');
     }
 
-    const user = await User.findOne({_id: userId})
-    if(!user){
-        throw new Error('User not found')
+    const [user, category, vendor] = await Promise.all([
+        User.findById(userId),
+        Category.findById(categoryId),
+        vendorId ? Vendor.findById(vendorId) : null 
+    ]);
+
+    if (!user) {
+        throw new Error('User not found');
     }
 
-    const category = await Category.findOne({_id: categoryId})
-    if(!category){
-        throw new Error('This category is not Available')
+    if (!category) {
+        throw new Error('This category is not available');
     }
 
     if(subcategoryId){
@@ -37,6 +42,10 @@ inventoryServices.createItem = async (userId, body) => {
         if (!subcategory || String(subcategory.parentId) !== String(categoryId)) {
             throw new Error('Invalid subcategory or subcategory does not belong to the parent category');
         }
+    }
+
+    if (vendorId && !vendor) {
+        throw new Error('Vendor not found');
     }
 
     const totalStock = calculateStock(variants)
@@ -52,6 +61,7 @@ inventoryServices.createItem = async (userId, body) => {
         sellingPrice,
         categoryId,
         ProductHsn,
+        vendor: vendor ? vendor._id : null, 
         createdBy: user._id,
         firmId: user.adminId,
         subcategoryId: subcategoryId || null,
@@ -69,7 +79,8 @@ inventoryServices.getAllItems = async (adminId) => {
     .populate({
         path: 'createdBy',
         select: "firstName lastName email"
-    });
+    })
+    .populate('vendor')
     if(!items){
         throw new Error('No items found')
     }

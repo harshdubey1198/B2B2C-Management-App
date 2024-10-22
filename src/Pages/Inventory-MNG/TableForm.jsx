@@ -5,27 +5,65 @@ import { toast } from "react-toastify";
 import axios from "axios";  
 import { useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
-import hsnData from "../../data/hsn.json"
+import hsnData from "../../data/hsn.json";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
-  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
+  const [editIndex, setEditIndex] = useState(null); // Index for editing variant
+  const [variant, setVariant] = useState({
+    variationType: "",
+    optionLabel: "",
+    price: "",
+    stock: "",
+    sku: "",
+    barcode: "",
+  });
   
   const [variants, setVariants] = useState([]);
   const toggleModal = () => setModal(!modal);
 
   const [subcategories, setSubcategories] = useState([]);
-  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: ""});
+  const [vendors, setVendors] = useState([]);
+  const [formValues, setFormValues] = useState({
+    name: "",
+    description: "",
+    costPrice: "",
+    sellingPrice: "",
+    supplier: "",
+    manufacturer: "",
+    brand: "",
+    ProductHsn: "",
+    qtyType: "",
+    categoryId: "",
+    subcategoryId: "",
+    vendorId: "",
+    quantity: ""
+  });
+  
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "",
+    setFormValues({
+      name: "",
+      description: "",
+      costPrice: "",
+      sellingPrice: "",
+      supplier: "",
+      manufacturer: "",
+      brand: "",
+      ProductHsn: "",
+      qtyType: "",
+      categoryId: "",
+      subcategoryId: "",
+      vendorId: "",
+      quantity: "",
     });
+    setVariants([]); // Reset variants
   };
   
   useEffect(() => {
@@ -44,7 +82,22 @@ const InventoryItemForm = () => {
         console.error(error.message);
       }
     };
+    const fetchVendors = async () => { 
+      try {
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        const response = await axios.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`, config);
+        setVendors(response.data);
+      } catch (error) {
+        toast.error("Failed to fetch vendors.");
+        console.error(error.message);
+      }
+    };
     fetchCategories();
+    fetchVendors(); 
   }, [token]);
 
   const handleChange = (e) => {
@@ -63,7 +116,7 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const addVariant = () => {
+  const addOrUpdateVariant = () => {
     if (
       variant.variationType &&
       variant.optionLabel &&
@@ -72,7 +125,16 @@ const InventoryItemForm = () => {
       variant.sku &&
       variant.barcode
     ) {
-      setVariants([...variants, variant]);
+      if (editIndex !== null) {
+        // Update existing variant
+        const updatedVariants = [...variants];
+        updatedVariants[editIndex] = variant;
+        setVariants(updatedVariants);
+        setEditIndex(null);
+      } else {
+        // Add new variant
+        setVariants([...variants, variant]);
+      }
       setVariant({
         variationType: "",
         optionLabel: "",
@@ -85,6 +147,17 @@ const InventoryItemForm = () => {
     } else {
       toast.error("Please fill in all variant details");
     }
+  };
+
+  const editVariant = (index) => {
+    setVariant(variants[index]);
+    setEditIndex(index);
+    toggleModal();
+  };
+
+  const deleteVariant = (index) => {
+    const updatedVariants = variants.filter((_, i) => i !== index);
+    setVariants(updatedVariants);
   };
 
   const handleCategory = async (e) => {
@@ -156,8 +229,24 @@ const InventoryItemForm = () => {
     };
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
-      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", quantity: "", brand:"", manufacturer:"", supplier:""});
+      setFormValues({
+        name: "",
+        description: "",
+        costPrice: "",
+        sellingPrice: "",
+        ProductHsn: "",
+        qtyType: "",
+        categoryId: "",
+        subcategoryId: "",
+        vendorId: "", 
+        quantity: "",
+        brand: "",
+        manufacturer: "",
+        supplier: ""
+      });
       setVariants([]);
+      handleReset();
+
       toast.success(response.message);
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
@@ -166,8 +255,6 @@ const InventoryItemForm = () => {
       setLoading(false);
     }
   };
-
-  console.log(formValues, "formvalues")
 
   return (
     <React.Fragment>
@@ -195,10 +282,9 @@ const InventoryItemForm = () => {
                           <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                    
                     </Row>
                     <Row>
-                    <Col md={6}>
+                      <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="categoryId">Category</Label>
                           <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleCategory} >
@@ -224,89 +310,78 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
-                      
                     </Row>
                     <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="vendorId">Vendor</Label>
+                          <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
+                            <option value="">Select Vendor</option>
+                            {vendors.map(vendor => (
+                              <option key={vendor._id} value={vendor._id}>
+                                {vendor.name}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      </Col>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="costPrice">Cost Price</Label>
                           <Input type="number" id="costPrice" name="costPrice" placeholder="Enter cost price" value={formValues.costPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
+                    </Row>
+                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="sellingPrice">Selling Price</Label>
                           <Input type="number" id="sellingPrice" name="sellingPrice" placeholder="Enter selling price" value={formValues.sellingPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="qtyType">Unit Type</Label>
-                          <Input type="select" id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} >
-                            <option value="">Select Unit Type</option>
-                            <option value="litres">Litres</option>
-                            <option value="kg">Kilograms</option>
-                            <option value="packets">Packets</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="single unit">Single Unit</option>
-                            <option value="gm">Grams</option>
-                          </Input>
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="quantity">Quantity In Stock</Label>
-                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity in stock" value={formValues.quantity} onChange={handleChange} />
+                          <Label htmlFor="quantity">Quantity</Label>
+                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity" value={formValues.quantity} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={6}>
+                      <Col md={12}>
                         <FormGroup>
-                          <Label htmlFor="ProductHsn">HSN Code</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN code" value={formValues.ProductHsn} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="brand">Brand</Label>
-                          <Input type="text" id="brand" name="brand" placeholder="Enter brand" value={formValues.brand} onChange={handleChange} />
+                          <Label htmlFor="ProductHsn">HSN</Label>
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
                     </Row>
-                    <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="manufacturer">Manufacturer</Label>
-                          <Input type="text" id="manufacturer" name="manufacturer" placeholder="Enter manufacturer" value={formValues.manufacturer} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="supplier">Supplier</Label>
-                          <Input type="text" id="supplier" name="supplier" placeholder="Enter supplier" value={formValues.supplier} onChange={handleChange}/>
-                        </FormGroup>
+                    <VariantModal
+                      isOpen={modal} 
+                      toggle={toggleModal} 
+                      variant={variant}
+                      handleVariantChange={handleVariantChange}
+                      addVariant={addOrUpdateVariant}
+                    />
+                    <Row className="mt-3">
+                      <Col md={12}>
+                        <Button className="mx-2" color="primary" onClick={toggleModal}>Add Variant</Button>
+                        <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
+                        <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
                       </Col>
                     </Row>
-                  <div className=" d-flex gap-2 justify-content-center mt-4">
-                    <Button color="info" onClick={toggleModal}>Add Variant</Button>
-                    <Button color="primary" type="submit" disabled={loading}> {loading ? "Saving..." : "Save Item"} </Button>
-                  </div>
                   </form>
                   {variants.length > 0 && (
                   <div className="mt-4">
-                    <h5 className="font-size-16 text-muted">Added Variants</h5>
+                    <h5 className="font-size-15 mb-3">Variants</h5>
                     <table className="table table-bordered">
                       <thead>
                         <tr>
-                          <th>Variation Type</th>
-                          <th>Option Label</th>
-                          <th>Price Adjustment</th>
+                          <th>Type</th>
+                          <th>Option</th>
+                          <th>Price</th>
                           <th>Stock</th>
                           <th>SKU</th>
                           <th>Barcode</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -318,18 +393,22 @@ const InventoryItemForm = () => {
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
+                            <td>
+                              {/* <Button color="warning" size="sm" onClick={() => editVariant(index)}>Edit</Button>{" "}
+                              <Button color="danger" size="sm" onClick={() => deleteVariant(index)}>Delete</Button> */}
+                              <i className="bx bx-edit mr-2" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => editVariant(index)}></i>
+                              <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => deleteVariant(index)}></i>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                )}
+                  )}
                 </CardBody>
               </Card>
             </Col>
           </Row>
-
-          <VariantModal modal={modal} toggleModal={toggleModal} variant={variant} handleVariantChange={handleVariantChange} addVariant={addVariant}/>
         </Container>
       </div>
     </React.Fragment>

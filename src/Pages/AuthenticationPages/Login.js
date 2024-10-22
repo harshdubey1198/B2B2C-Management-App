@@ -168,7 +168,7 @@ const Login = (props) => {
                                 </Label>
                               </div>
                             </Col>
-                            <Col className="col-12 col-sm-6 col-md-6 col-lg-6 d-flex flex-row justify-content-flex-end">
+                            <Col className="col-12 col-sm-6 col-md-6 col-lg-6 text-end">
                               <div>
                                 <Link
                                   to="/recover-password"

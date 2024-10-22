@@ -154,8 +154,9 @@ const handleSubmit = async (e) => {
           <Col lg={12} className="mx-auto mt-2">
             <Card>
               <CardBody>
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h4 className="w-50">Edit Firm Settings</h4>
+              <div className="row d-flex justify-content-between align-items-center mb-2">
+                <h4 className="col-lg-6 col-md-6 col-sm-12 mb-3 m-text-center">Edit Firm Settings</h4>
+                <div className="col-lg-6 col-md-6 col-sm-12 mb-3 text-end m-text-center">
                 {authUser?.response?.role === "client_admin" && (
                   <FirmSwitcher
                     firms={firmsData}
@@ -163,6 +164,7 @@ const handleSubmit = async (e) => {
                     onSelectFirm={handleFirmChange}
                   />
                 )}
+                </div>
               </div>
             {authUser?.response?.role === "firm_admin" || selectedFirmId ? (
                <Form onSubmit={handleSubmit}>
@@ -349,7 +351,7 @@ const handleSubmit = async (e) => {
                         />
                       )}
 
-                    <Button color="primary" type="submit">Save Changes</Button>
+                    <Button color="primary" type="submit" className='m-w-100'>Save Changes</Button>
                   </Form>
                 ) : (
                   <Alert color="info">Please select a firm to edit its settings.</Alert>

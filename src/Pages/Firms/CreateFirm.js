@@ -131,7 +131,7 @@ function CreateFirm() {
           <Row className="justify-content-center">
             <Col lg={8} md={10}>
               <Card className="mt-1">
-                <CardBody>
+                <CardBody className="m-0 p-0">
                   <h4 className="font-size-22 text-center card-title-heading">
                     Create Firm
                   </h4>

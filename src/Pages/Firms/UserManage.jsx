@@ -85,7 +85,7 @@ function UserManage() {
         </div>
         <Col lg={12}>
           <Card>
-            <CardBody>
+            <CardBody className="p-0 m-0">
               
                 <UserTable selectedFirmId={selectedFirmId} trigger={trigger} />
              

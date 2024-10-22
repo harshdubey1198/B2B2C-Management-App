@@ -19,17 +19,37 @@
 }
 
 @media only screen and (max-width: 767px){
-
+    .m-text-center{
+        text-align: center !important;
+    }
+    .m-w-100{
+        width: 100% !important;
+    }
 }
 
 @media only screen and (max-width: 599px){
-
+    .m-text-center{
+        text-align: center !important;
+    }
+    .m-w-100{
+        width: 100% !important;
+    }
 }
 
 @media only screen and (max-width: 499px){
- 
+    .m-text-center{
+        text-align: center !important;
+    }
+    .m-w-100{
+        width: 100% !important;
+    }
 }
 
 @media only screen and (max-width: 399px){
-
+.m-text-center{
+    text-align: center !important;
+}
+.m-w-100{
+    width: 100% !important;
+}
 }

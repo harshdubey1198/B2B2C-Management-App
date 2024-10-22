@@ -120,10 +120,10 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
   return (
     <div className="invoice-form">
       <Row className="align-items-center mb-3">
-        <Col>
+      <Col  lg={6} md={6} sm={12} className="m-text-center mb-2">
           <h3>Invoice Details</h3>
         </Col>
-        <Col className="text-right">
+        <Col  lg={6} md={6} sm={12} className="text-right">
           <FormGroup className="mb-0">
             <Input
               type="text"

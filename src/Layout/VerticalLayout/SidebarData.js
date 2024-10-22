@@ -289,6 +289,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Table Form", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
+        { sublabel: "Vendor Management", link: "/vendors/manage" },
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
@@ -353,7 +354,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-cash-multiple",
       subItem: [
         { sublabel: "Inventory Management", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/add-inventory" },
+        // { sublabel: "Table Form", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
@@ -401,6 +402,8 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Table Form", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
+        { sublabel: "Vendor Management", link: "/vendors/manage" },
+
         // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
