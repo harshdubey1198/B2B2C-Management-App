@@ -82,23 +82,53 @@ function InventoryTable() {
       variant.barcode
     ) {
       try {
-        const response = await axios.put(
-          `${process.env.REACT_APP_URL}/inventory/add-variant/${selectedItem._id}`,
-          variant,
-          config
-        );
-        setSelectedItem({
-          ...selectedItem,
-          variants: [...selectedItem.variants, variant],
-        });
+        let response;
+        if (variantIndex !== null) {
+          // Update existing variant
+          response = await axios.put(
+            `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
+            {
+              variants: [
+                {
+                  _id: selectedItem.variants[variantIndex]._id,
+                  ...variant,
+                },
+              ],
+            },
+            config
+          );
+  
+          // Update the selectedItem's variants list with the updated variant
+          const updatedVariants = [...selectedItem.variants];
+          updatedVariants[variantIndex] = { ...variant, _id: updatedVariants[variantIndex]._id }; // Retain original variant ID
+          setSelectedItem({
+            ...selectedItem,
+            variants: updatedVariants,
+          });
+        } else {
+          // Add new variant
+          response = await axios.put(
+            `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
+            {
+              variants: [...selectedItem.variants, variant],
+            },
+            config
+          );
+  
+          setSelectedItem({
+            ...selectedItem,
+            variants: [...selectedItem.variants, variant],
+          });
+        }
+  
         setTrigger((prev) => prev + 1);
         setModalOpen(!modalOpen);
         toast.success(response.message);
         
       } catch (error) {
-        console.error("Error adding variant:", error);
+        console.error("Error adding or updating variant:", error);
       }
-
+  
       setVariant({
         variationType: "",
         optionLabel: "",
@@ -112,6 +142,7 @@ function InventoryTable() {
       toast.error("Please fill in all variant details");
     }
   };
+  
 
   const deleteVariant = async (variantId) => {
     if (selectedItem) {
@@ -148,6 +179,12 @@ function InventoryTable() {
       console.error("Error updating item:", error);
     }
   };
+  
+  const handleEditVariant = (variant, index) => {
+    setVariant(variant);
+    setVariantIndex(index);
+    setVariantModalOpen(true);
+  }; 
 
   return (
     <React.Fragment>
@@ -183,8 +220,8 @@ function InventoryTable() {
                 {item.quantity} {item.qtyType}
               </td>
               <td>{item.brand}</td>
-              <td>${item.costPrice?.toFixed(2)}</td>
-              <td>${item.sellingPrice?.toFixed(2)}</td>
+              <td>₹ {item.costPrice?.toFixed(2)}</td>
+              <td>₹ {item.sellingPrice?.toFixed(2)}</td>
               <td>
                
                 <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} color="info"
@@ -247,7 +284,7 @@ function InventoryTable() {
           quantity: e.target.value,
         })
       }
-      className="form-control w-75 mr-2" 
+      className="form-control w-25 mr-2" 
       // readOnly
     />
     
@@ -261,7 +298,8 @@ function InventoryTable() {
           qtyType: e.target.value,
         })
       }
-      className="form-control w-25"
+      className="form-control w-50"
+      readOnly
     >
       <option value="">Select Unit Type</option>
       <option value="litres">Litres</option>
@@ -417,7 +455,7 @@ function InventoryTable() {
                             <td>{vIndex + 1}</td>
                             <td>{variant.variationType}</td>
                             <td>{variant.optionLabel}</td>
-                            <td>${variant.price}</td>
+                            <td>₹ {variant.price}</td>
                             <td>{variant.stock}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
@@ -428,6 +466,7 @@ function InventoryTable() {
                               >
                                 Delete
                               </Button> */}
+                              <i className="bx bx-pencil" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginRight: "5px" }} onClick={() => handleEditVariant(variant, vIndex)} ></i>
                               <i className="bx bx-trash"  style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer"}} onClick={() => deleteVariant(variant._id)}></i>
                             </td>
                           </tr>

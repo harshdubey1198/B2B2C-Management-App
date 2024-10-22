@@ -56,12 +56,12 @@ const Dashboard = () => {
               ) : null}        
           </Row>
 
-          <Row>
-            {/* Overview Chart */}
-            <OverView />
             {/* Social Source Chart */}
+            {/* Overview Chart */}
+          {/* <Row>
+            <OverView />
             <SocialSource />
-          </Row>
+          </Row> */}
 
           {/* Latest Transaction Table */}
           {/* <LatestTransation /> */}

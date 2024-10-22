@@ -1,144 +1,137 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, Col, Button, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Input } from 'reactstrap';
+import { Card, CardBody, Col, Button, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import TaxationModal from '../../Modal/taxationModal';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function TaxationTable() {
-  const [taxations, setTaxations] = useState([]);
-  const [editingItem, setEditingItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    const storedData = localStorage.getItem("taxationData");
-    if (storedData) {
-      try {
-        setTaxations(JSON.parse(storedData));
-      } catch (e) {
-        console.error("Failed to parse taxation data from local storage", e);
-        setTaxations([]);
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("taxationData", JSON.stringify(taxations));
-  }, [taxations]);
+  const [taxes, setTaxes] = useState([]);
+  const [selectedTax, setSelectedTax] = useState(null);
+  const authuser = JSON.parse(localStorage.getItem('authUser'));
+  const token = authuser.token;
+  const userId = authuser.response._id;
+  const firmId = authuser.response.adminId;
 
   const toggleModal = () => setModalOpen(!modalOpen);
-
-  const handleEdit = (item) => {
-    setEditingItem(item);
-    toggleModal();
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
-
-  const handleDelete = (id) => {
-    setTaxations(taxations.filter(item => item.id !== id));
-  };
-
-  const handleSave = () => {
-    if (editingItem.id) {
-      setTaxations(taxations.map(item => item.id === editingItem.id ? editingItem : item));
-    } else {
-      setTaxations([...taxations, { ...editingItem, id: taxations.length + 1 }]);
+  
+  const fetchTaxes = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:7200/api/tax/get-taxes/${firmId}`,
+        config
+      );
+      setTaxes(response.data);
+    } catch (error) {
+      console.error('Error fetching taxes:', error);
     }
-    toggleModal();
-    setEditingItem(null); 
   };
 
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setEditingItem({ ...editingItem, [id]: value });
+  const handleTaxCreatedOrUpdated = (tax) => {
+    if (selectedTax) {
+      setTaxes(taxes.map(t => t._id === tax._id ? tax : t));
+    } else {
+      setTaxes([...taxes, tax]);
+    }
+    setSelectedTax(null);
   };
+
+  const handleEditClick = (tax) => {
+    setSelectedTax(tax);
+    toggleModal();
+  };
+
+  const handleDeleteClick = async (taxId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this tax?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:7200/api/tax/delete-tax/${taxId}`,
+        config
+      );
+      setTaxes(taxes.filter(t => t._id !== taxId));
+      toast.success(response.data.message || "Tax deleted successfully");
+    } catch (error) {
+      console.error('Error deleting tax:', error);
+      toast.error('Failed to delete tax');
+    }
+  };
+
+  useEffect(() => {
+    fetchTaxes();
+  }, []);
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Taxation Management" breadcrumbItem="Taxation Table" />
-        <p className='mm-active'>
-          This is the Taxation Table page. 
-          Here you can view and manage taxation items.
-        </p>
-        <p style={{}} >
-          We are working on it 
-        </p>
-        <Col lg={12}>
+        <Col lg="12">
           <Card>
             <CardBody>
-              <div className="table-responsive">
-                <Button color="primary" onClick={() => { setEditingItem({ id: null, name: '', rate: '', description: '' }); toggleModal(); }}>
-                  Add New Taxation
+              <div className="d-flex justify-content-between">
+                <h4 className="card-title">Taxation Table</h4>
+                <Button color="primary" onClick={() => { setSelectedTax(null); toggleModal(); }}>
+                  Add New Tax
                 </Button>
-                <table className="table table-bordered mb-0 mt-3">
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Rate (%)</th>
-                      <th>Description</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {taxations.map(item => (
-                      <tr key={item.id}>
-                        <td>{item.name}</td>
-                        <td>{item.rate}</td>
-                        <td>{item.description}</td>
-                        <td className='d-flex justify-content-evenly'> 
-                          <Button color="warning"  onClick={() => handleEdit(item)}>Edit</Button>
-                          <Button color="danger" onClick={() => handleDelete(item.id)}>Delete</Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
+              <Table className="mt-4" responsive>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Tax Name</th>
+                    <th>Tax Types</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {taxes.map((tax, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{tax.taxName}</td>
+                      <td>
+                        {tax.taxRates.map((rate, idx) => (
+                          <div key={idx}>
+                            {rate.taxType}: {rate.rate}%
+                          </div>
+                        ))}
+                      </td>
+                      <td>
+                        <i
+                          className="bx bx-edit mx-1"
+                          onClick={() => handleEditClick(tax)}
+                          style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                        ></i>
+                        <i
+                          className="bx bx-trash mx-1"
+                          onClick={() => handleDeleteClick(tax._id)}
+                          style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                        ></i>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
             </CardBody>
           </Card>
         </Col>
+        <TaxationModal
+          isOpen={modalOpen}
+          toggle={toggleModal}
+          config={config}
+          userId={userId}
+          tax={selectedTax}
+          onTaxCreatedOrUpdated={handleTaxCreatedOrUpdated}
+        />
       </div>
-
-      <Modal isOpen={modalOpen} toggle={toggleModal}>
-        <ModalHeader toggle={toggleModal}>
-          {editingItem?.id ? 'Edit Taxation' : 'Add New Taxation'}
-        </ModalHeader>
-        <ModalBody>
-          <FormGroup>
-            <Label for="name">Name</Label>
-            <Input
-              type="text"
-              id="name"
-              value={editingItem?.name || ''}
-              onChange={handleInputChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="rate">Rate (%)</Label>
-            <Input
-              type="number"
-              id="rate"
-              value={editingItem?.rate || ''}
-              onChange={handleInputChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="description">Description</Label>
-            <Input
-              type="text"
-              id="description"
-              value={editingItem?.description || ''}
-              onChange={handleInputChange}
-            />
-          </FormGroup>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={handleSave}>
-            {editingItem?.id ? 'Save Changes' : 'Add Taxation'}
-          </Button>{' '}
-          <Button color="secondary" onClick={toggleModal}>Cancel</Button>
-        </ModalFooter>
-      </Modal>
     </React.Fragment>
   );
 }
 
 export default TaxationTable;
- 
