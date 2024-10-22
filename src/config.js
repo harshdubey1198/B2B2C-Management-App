@@ -1,3 +1,5 @@
+const token = localStorage.getItem('authUser') ? JSON.parse(localStorage.getItem('authUser')).token : '';
+
 module.exports = {
   google: {
     API_KEY: "",
@@ -7,4 +9,6 @@ module.exports = {
   facebook: {
     APP_ID: "",
   },
+  token: {token}
+  
 }

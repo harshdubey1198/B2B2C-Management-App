@@ -12,7 +12,7 @@ const InventoryItemForm = () => {
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
-  const [editIndex, setEditIndex] = useState(null); // Index for editing variant
+  const [editIndex, setEditIndex] = useState(null); 
   const [variant, setVariant] = useState({
     variationType: "",
     optionLabel: "",
@@ -27,53 +27,68 @@ const InventoryItemForm = () => {
 
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [formValues, setFormValues] = useState({
-    name: "",
-    description: "",
-    costPrice: "",
-    sellingPrice: "",
-    supplier: "",
-    manufacturer: "",
-    brand: "",
-    ProductHsn: "",
-    qtyType: "",
-    categoryId: "",
-    subcategoryId: "",
-    vendorId: "",
-    quantity: ""
-  });
+  const [taxes, setTaxes] = useState([]);
+  const [selectedTax, setSelectedTax] = useState("");
+  const [selectedRate, setSelectedRate] = useState([]); 
+  const [formValues, setFormValues] = useState({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "", tax: {}, selectedTaxTypes: [], });
   
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
-  
-  const handleReset = () => {
-    setFormValues({
-      name: "",
-      description: "",
-      costPrice: "",
-      sellingPrice: "",
-      supplier: "",
-      manufacturer: "",
-      brand: "",
-      ProductHsn: "",
-      qtyType: "",
-      categoryId: "",
-      subcategoryId: "",
-      vendorId: "",
-      quantity: "",
-    });
-    setVariants([]); // Reset variants
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   };
-  
+  const handleReset = () => {
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "", tax: "", selectedTaxTypes: [], });
+    setVariants([]); 
+  };
+  useEffect(() => {
+    const fetchTaxes = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`, config);
+        setTaxes(response.data);
+
+      } catch (error) {
+        toast.error("Failed to fetch tax rates.");
+      }
+    };
+
+    fetchTaxes();
+  }, []);
+  const handleTaxChange = (e) => {
+    const value = e.target.value;
+    setSelectedTax(value);
+    setSelectedRate("");
+    setFormValues((prevState) => ({
+      ...prevState,
+      tax: value, 
+      // taxName: taxes.find((tax) => tax._id === value).taxName,
+    }));
+    
+  };
+  const handleRateChange = (e) => {
+    const value = e.target.value;
+    setFormValues((prevState) => {
+      let selectedTaxTypes = [...prevState.selectedTaxTypes];
+      if (selectedTaxTypes.includes(value)) {
+        selectedTaxTypes = selectedTaxTypes.filter(rate => rate !== value);
+      } else {
+         selectedTaxTypes.push(value);
+      }
+      return {
+        ...prevState,
+        selectedTaxTypes: selectedTaxTypes,
+      };
+    });
+  };
+
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
+        
         const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`, config);
         const parentCategories = response.data.filter(category => category.parentId === null);
         setCategories(parentCategories);
@@ -84,11 +99,6 @@ const InventoryItemForm = () => {
     };
     const fetchVendors = async () => { 
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
         const response = await axios.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`, config);
         setVendors(response.data);
       } catch (error) {
@@ -126,23 +136,14 @@ const InventoryItemForm = () => {
       variant.barcode
     ) {
       if (editIndex !== null) {
-        // Update existing variant
         const updatedVariants = [...variants];
         updatedVariants[editIndex] = variant;
         setVariants(updatedVariants);
         setEditIndex(null);
       } else {
-        // Add new variant
         setVariants([...variants, variant]);
       }
-      setVariant({
-        variationType: "",
-        optionLabel: "",
-        price: "",
-        stock: "",
-        sku: "",
-        barcode: "",
-      });
+      setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "",   });
       toggleModal();
     } else {
       toast.error("Please fill in all variant details");
@@ -192,11 +193,6 @@ const InventoryItemForm = () => {
 
     if (value) {
       try {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
         const response = await axios.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`, config);
         const subcategoryData = response.data;
         if (subcategoryData.length === 0) {
@@ -221,28 +217,17 @@ const InventoryItemForm = () => {
       setLoading(false);
       return;
     }
-
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    const dataToSend = {
+      ...formValues,
+      taxId: selectedTax, 
+      selectedTaxTypes: selectedRate ? selectedRate.split(',') : [],
+      variants,
     };
+
     try {
       const response = await axios.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants }, config);
       setFormValues({
-        name: "",
-        description: "",
-        costPrice: "",
-        sellingPrice: "",
-        ProductHsn: "",
-        qtyType: "",
-        categoryId: "",
-        subcategoryId: "",
-        vendorId: "", 
-        quantity: "",
-        brand: "",
-        manufacturer: "",
-        supplier: ""
+        name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: ""
       });
       setVariants([]);
       handleReset();
@@ -347,12 +332,58 @@ const InventoryItemForm = () => {
                       </Col>
                     </Row>
                     <Row>
-                      <Col md={12}>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label htmlFor="taxId">Select Tax</Label>
+                              <Input
+                                type="select"
+                                id="taxId"
+                                name="taxId"
+                                value={selectedTax}
+                                onChange={handleTaxChange}
+                              >
+                                <option value="">Select Tax</option>
+                                {taxes.map((tax) => (
+                                  <option key={tax._id} value={tax._id}>
+                                    {tax.taxName}
+                                  </option>
+                                ))}
+                              </Input>
+                            </FormGroup>
+                          </Col>
+
+
+                      <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductHsn">HSN</Label>
                           <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
+                      {selectedTax && (
+                        <Row>
+                          <Col md={6}>
+                            <FormGroup>
+                              <Label>Select Tax Types</Label>
+                              {taxes
+                                .find((tax) => tax._id === selectedTax)
+                                ?.taxRates.map((rate) => (
+                                  <FormGroup check key={rate._id}>
+                                    <Label check>
+                                      <Input
+                                        type="checkbox" 
+                                        name="selectedTaxTypes"
+                                        value={rate._id}
+                                        checked={formValues.selectedTaxTypes.includes(rate._id)}
+                                        onChange={handleRateChange}
+                                      />
+                                      {rate.taxType} ({rate.rate}%)
+                                    </Label>
+                                  </FormGroup>
+                                ))}
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
                     </Row>
                     <VariantModal
                       isOpen={modal} 
@@ -394,8 +425,6 @@ const InventoryItemForm = () => {
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
                             <td>
-                              {/* <Button color="warning" size="sm" onClick={() => editVariant(index)}>Edit</Button>{" "}
-                              <Button color="danger" size="sm" onClick={() => deleteVariant(index)}>Delete</Button> */}
                               <i className="bx bx-edit mr-2" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => editVariant(index)}></i>
                               <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => deleteVariant(index)}></i>
                             </td>

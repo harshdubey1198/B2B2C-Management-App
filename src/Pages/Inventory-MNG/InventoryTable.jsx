@@ -181,6 +181,8 @@ function InventoryTable() {
   };
   
   const handleEditVariant = (variant, index) => {
+    console.log("Editing Variant:", variant);
+    console.log("Variant Index:", index);
     setVariant(variant);
     setVariantIndex(index);
     setVariantModalOpen(true);
@@ -444,6 +446,7 @@ function InventoryTable() {
                           <th>Option Label</th>
                           <th>Price ⬆️</th>
                           <th>Stock</th>
+                          <th>Reserved</th>
                           <th>SKU</th>
                           <th>Barcode</th>
                           <th className="d-flex justify-content-center">Actions</th>
@@ -457,6 +460,7 @@ function InventoryTable() {
                             <td>{variant.optionLabel}</td>
                             <td>₹ {variant.price}</td>
                             <td>{variant.stock}</td>
+                            <td>{variant.reservedQuantity}</td>
                             <td>{variant.sku}</td>
                             <td>{variant.barcode}</td>
                             <td className="d-flex justify-content-center">

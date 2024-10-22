@@ -48,7 +48,7 @@ import Maintenance from "../Pages/Utility/Maintenance-Page";
 import ComingSoon from "../Pages/Utility/ComingSoon-Page";
 // import TimeLine from "../Pages/Utility/TimeLine-Page";
 import FAQs from "../Pages/Utility/FAQs-Page";
-import Pricing from "../Pages/Utility/Pricing-Page";
+import Pricing from "../Pages/Plans/Pricing-Page.js";
 import Error404 from "../Pages/Utility/Error404-Page";
 import Error500 from "../Pages/Utility/Error500-Page";
 

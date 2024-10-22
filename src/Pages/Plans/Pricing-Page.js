@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, CardBody, Button } from "reactstrap";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
@@ -30,8 +31,8 @@ const Pricing = () => {
 
      if (role === "firm_admin") {
       
-      axios
-      .get(`${process.env.REACT_APP_URL}/plan/firmplan/${authuser.response.adminId}`, config)
+      axiosInstance
+      .get(`${process.env.REACT_APP_URL}/plan/firmplan/${authuser.response.adminId}`)
       .then((response) => {
         setSelectedPlanDetails(response?.data?.adminId?.planId);  
         // console.log("Client admin's plan details:", response?.data?.adminId?.planId);
@@ -45,8 +46,8 @@ const Pricing = () => {
 
 
 if ( role !== "firm_admin") {
-    axios
-      .get(`${process.env.REACT_APP_URL}/plan/all`, config)
+    axiosInstance
+      .get(`${process.env.REACT_APP_URL}/plan/all`)
       .then((response) => {
         setPlans(response.response); 
       })
@@ -71,19 +72,15 @@ if ( role !== "firm_admin") {
   }, [token]);
 
   const handlePaymentPlan = (plan) => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
+   
     const data = {
       userId: authuser.response._id,
       planId: plan._id,
       amount: plan.price,
     };
 
-    axios
-      .post(`${process.env.REACT_APP_URL}/payment/create-payment`, data, config)
+    axiosInstance
+      .post(`${process.env.REACT_APP_URL}/payment/create-payment`, data)
       .then(() => {
         toast.success("Payment has been done successfully");
         setPaymentSuccess(true);
@@ -107,7 +104,6 @@ if ( role !== "firm_admin") {
       <div className="page-content">
         <Container fluid>
           <Breadcrumbs title="Utility" breadcrumbItem="Pricing" />
-
           {selectedPlanDetails && (
             <Row className="justify-content-center">
               <Col lg={8}>

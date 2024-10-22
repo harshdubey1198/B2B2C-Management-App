@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody, FormText } from 'reactstrap';
 import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const ProfileSettings = () => {
   const [formData, setFormData] = useState({ 
@@ -32,9 +33,8 @@ const ProfileSettings = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(
+        const response = await axiosInstance.get(
           `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,
-          config
         );
         const userData = response;
         setFormData({
@@ -85,10 +85,9 @@ const ProfileSettings = () => {
     }
 
     try {
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
-        updatedData,
-        config
+        updatedData
       );
       toast.success('Profile updated successfully!');
       setPreview(response.avatar); 
