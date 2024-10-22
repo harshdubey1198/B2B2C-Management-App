@@ -24,4 +24,20 @@ TaxServices.createTax = async (userId, body) => {
     return newTax
 }
 
+TaxServices.getAllTaxes = async (adminId) => {
+    const data = await Tax.find({firmId: adminId, deleted_at: null})
+    if(!data){
+        throw new Error('There is no Tax for this Firms!')
+    }
+    return data
+}
+
+TaxServices.getTaxById = async (taxId) => {
+    const tax = await Tax.findOne({_id: taxId, deleted_at: null})
+    if(!tax){
+        throw new Error('Tax not Found')
+    }
+    return tax
+}
+
 module.exports = TaxServices
