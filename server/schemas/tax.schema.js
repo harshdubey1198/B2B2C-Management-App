@@ -5,7 +5,7 @@ const TaxSchema = new Schema({
     taxName: { type: String, required: true },  
     taxRates: [
         {
-            taxType: { type: String, enum: ['SGST', 'CGST', 'IGST'] },  
+            taxType: { type: String },  
             rate: { type: Number, required: true }  
         }
     ],
