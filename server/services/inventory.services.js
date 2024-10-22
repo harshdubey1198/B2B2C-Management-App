@@ -45,19 +45,19 @@ inventoryServices.createItem = async (userId, body) => {
     if (vendorId && !vendor) {
         throw new Error('Vendor not found');
     }
-    if (!taxId || !tax) {
-        throw new Error('Tax not found');
-    }
-    const finalTaxComponents = tax.taxRates.filter(taxRate => 
-        selectedTaxTypes.includes(taxRate.taxType)
-    ).map(taxRate => ({
-        taxType: taxRate.taxType,
-        rate: taxRate.rate
-    }));
-    if (finalTaxComponents.length === 0) {
-        throw new Error('No valid tax components selected');
-    }
-    const totalStock = calculateStock(variants);
+    // if (!taxId || !tax) {
+    //     throw new Error('Tax not found');
+    // }
+    // const finalTaxComponents = tax.taxRates.filter(taxRate => 
+    //     selectedTaxTypes.includes(taxRate.taxType)
+    // ).map(taxRate => ({
+    //     taxType: taxRate.taxType,
+    //     rate: taxRate.rate
+    // }));
+    // if (finalTaxComponents.length === 0) {
+    //     throw new Error('No valid tax components selected');
+    // }
+    const totalStock = variants && variants.length > 0 ? calculateStock(variants) : quantity;   
     const newItem = new InventoryItem({
         name,
         description,
@@ -156,7 +156,8 @@ inventoryServices.updateItem = async (id, body) => {
         }
     }
     const updateItem = await InventoryItem.findById(id);
-    totalStock = calculateStock(updateItem.variants);
+    // totalStock = calculateStock(updateItem.variants);
+    totalStock = variants && variants.length > 0 ? calculateStock(updateItem.variants) : quantity;   
     const updatedItem = await InventoryItem.findByIdAndUpdate(
         id,
         {   name,

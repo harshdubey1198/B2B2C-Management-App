@@ -424,6 +424,7 @@ function InventoryTable() {
                       name: selectedItem.name,
                       description: selectedItem.description,
                       qtyType: selectedItem.qtyType,
+                      quantity: selectedItem.quantity,
                       supplier: selectedItem.supplier,
                       manufacturer: selectedItem.manufacturer,
                       brand: selectedItem.brand,
