@@ -377,7 +377,7 @@ function InventoryTable() {
                   </Col>
                 </Row>
 
-                <Button
+                <Button className="my-4"
                   color="primary"
                   onClick={() =>
                     updateItem({
@@ -395,11 +395,11 @@ function InventoryTable() {
                   Update Item
                 </Button>
 
-                <div>
+                <div className="table-responsive">
                   <strong>Variants:</strong>
                   {selectedItem.variants.length > 0 ? (
-                    <Table bordered className="mt-3">
-                      <thead>
+                    <table className="table table-bordered mt-3">
+                      <thead className="table-light">
                         <tr>
                           <th>#</th>
                           <th>Variation Type</th>
@@ -433,7 +433,7 @@ function InventoryTable() {
                           </tr>
                         ))}
                       </tbody>
-                    </Table>
+                    </table>
                   ) : (
                     <p>No Variants</p>
                   )}

@@ -43,9 +43,9 @@ function FirmsTable({handleViewDetails}) {
             onSelectFirm={setSelectedFirmId}
             />
         </div>
-
-        <Table bordered className="mb-0">
-      <thead>
+    <div className="table-responsive">
+        <table className="table table-bordered mb-0">
+      <thead className="table-light text-center">
         <tr>
           <th>Name</th>
           <th>Description</th>
@@ -68,7 +68,7 @@ function FirmsTable({handleViewDetails}) {
               <td>{item.brand}</td>
               <td>${item.costPrice?.toFixed(2)}</td>
               <td>${item.sellingPrice?.toFixed(2)}</td>
-              <td className="d-flex gap-2">
+              <td className="text-center">
                
                 <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer" , marginLeft:"5px"}}  onClick={() => handleViewDetails(item)}></i>
 
@@ -87,7 +87,8 @@ function FirmsTable({handleViewDetails}) {
           </tr>
         )}
       </tbody>
-    </Table>
+    </table>
+    </div>
     </div>
   );
 }
