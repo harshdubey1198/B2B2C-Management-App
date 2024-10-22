@@ -12,6 +12,7 @@ const InventoryItemForm = () => {
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
+  const [editIndex, setEditIndex] = useState(null); // Index for editing variant
   const [variant, setVariant] = useState({
     variationType: "",
     optionLabel: "",
@@ -62,6 +63,7 @@ const InventoryItemForm = () => {
       vendorId: "",
       quantity: "",
     });
+    setVariants([]); // Reset variants
   };
   
   useEffect(() => {
@@ -114,7 +116,7 @@ const InventoryItemForm = () => {
     }));
   };
 
-  const addVariant = () => {
+  const addOrUpdateVariant = () => {
     if (
       variant.variationType &&
       variant.optionLabel &&
@@ -123,7 +125,16 @@ const InventoryItemForm = () => {
       variant.sku &&
       variant.barcode
     ) {
-      setVariants([...variants, variant]);
+      if (editIndex !== null) {
+        // Update existing variant
+        const updatedVariants = [...variants];
+        updatedVariants[editIndex] = variant;
+        setVariants(updatedVariants);
+        setEditIndex(null);
+      } else {
+        // Add new variant
+        setVariants([...variants, variant]);
+      }
       setVariant({
         variationType: "",
         optionLabel: "",
@@ -136,6 +147,17 @@ const InventoryItemForm = () => {
     } else {
       toast.error("Please fill in all variant details");
     }
+  };
+
+  const editVariant = (index) => {
+    setVariant(variants[index]);
+    setEditIndex(index);
+    toggleModal();
+  };
+
+  const deleteVariant = (index) => {
+    const updatedVariants = variants.filter((_, i) => i !== index);
+    setVariants(updatedVariants);
   };
 
   const handleCategory = async (e) => {
@@ -223,6 +245,8 @@ const InventoryItemForm = () => {
         supplier: ""
       });
       setVariants([]);
+      handleReset();
+
       toast.success(response.message);
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
@@ -245,7 +269,7 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                    <Row>
+                  <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="name">Item Name</Label>
@@ -326,25 +350,61 @@ const InventoryItemForm = () => {
                       <Col md={12}>
                         <FormGroup>
                           <Label htmlFor="ProductHsn">HSN</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} readOnly />
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
                     </Row>
-                    <Row>
-                      <Col md={12}>
-                        <Button color="primary" onClick={toggleModal}>Add Variant</Button>
-                      </Col>
-                    </Row>
-                    <VariantModal isOpen={modal} toggle={toggleModal} variant={variant} handleChange={handleVariantChange} addVariant={addVariant} />
+                    <VariantModal
+                      isOpen={modal} 
+                      toggle={toggleModal} 
+                      variant={variant}
+                      handleVariantChange={handleVariantChange}
+                      addVariant={addOrUpdateVariant}
+                    />
                     <Row className="mt-3">
                       <Col md={12}>
-                        <Button type="submit" color="success" disabled={loading}>
-                          {loading ? "Adding..." : "Add Item"}
-                        </Button>
-                        <Button type="button" color="secondary" className="mx-2" onClick={handleReset}>Reset</Button>
+                        <Button className="mx-2" color="primary" onClick={toggleModal}>Add Variant</Button>
+                        <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
+                        <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
                       </Col>
                     </Row>
                   </form>
+                  {variants.length > 0 && (
+                  <div className="mt-4">
+                    <h5 className="font-size-15 mb-3">Variants</h5>
+                    <table className="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Type</th>
+                          <th>Option</th>
+                          <th>Price</th>
+                          <th>Stock</th>
+                          <th>SKU</th>
+                          <th>Barcode</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {variants.map((variant, index) => (
+                          <tr key={index}>
+                            <td>{variant.variationType}</td>
+                            <td>{variant.optionLabel}</td>
+                            <td>{variant.price}</td>
+                            <td>{variant.stock}</td>
+                            <td>{variant.sku}</td>
+                            <td>{variant.barcode}</td>
+                            <td>
+                              {/* <Button color="warning" size="sm" onClick={() => editVariant(index)}>Edit</Button>{" "}
+                              <Button color="danger" size="sm" onClick={() => deleteVariant(index)}>Delete</Button> */}
+                              <i className="bx bx-edit mr-2" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => editVariant(index)}></i>
+                              <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => deleteVariant(index)}></i>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  )}
                 </CardBody>
               </Card>
             </Col>
