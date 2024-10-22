@@ -3,6 +3,7 @@ import { Card, CardBody, Col, Button, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import TaxationModal from '../../Modal/taxationModal';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 function TaxationTable() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -46,6 +47,23 @@ function TaxationTable() {
     toggleModal();
   };
 
+  const handleDeleteClick = async (taxId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this tax?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:7200/api/tax/delete-tax/${taxId}`,
+        config
+      );
+      setTaxes(taxes.filter(t => t._id !== taxId));
+      toast.success(response.data.message || "Tax deleted successfully");
+    } catch (error) {
+      console.error('Error deleting tax:', error);
+      toast.error('Failed to delete tax');
+    }
+  };
+
   useEffect(() => {
     fetchTaxes();
   }, []);
@@ -85,8 +103,16 @@ function TaxationTable() {
                         ))}
                       </td>
                       <td>
-                        <i className="bx bx-edit mx-1" onClick={() => handleEditClick(tax)} style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }}></i>
-                        <i className="bx bx-trash mx-1" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }}></i>
+                        <i
+                          className="bx bx-edit mx-1"
+                          onClick={() => handleEditClick(tax)}
+                          style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                        ></i>
+                        <i
+                          className="bx bx-trash mx-1"
+                          onClick={() => handleDeleteClick(tax._id)}
+                          style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                        ></i>
                       </td>
                     </tr>
                   ))}
@@ -98,7 +124,6 @@ function TaxationTable() {
         <TaxationModal
           isOpen={modalOpen}
           toggle={toggleModal}
-          token={token}
           config={config}
           userId={userId}
           tax={selectedTax}

@@ -6,8 +6,7 @@ import { toast } from 'react-toastify';
 function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpdated }) {
   const [taxName, setTaxName] = useState('');
   const [taxRates, setTaxRates] = useState([
-    { taxType: 'SGST', rate: 0 },
-    { taxType: 'CGST', rate: 0 },
+    { taxType: '', rate: 0 },
   ]);
 
   useEffect(() => {
@@ -17,7 +16,6 @@ function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpda
     } else {
       setTaxName('');
       setTaxRates([
-        { taxType: '', rate: 0 },
         { taxType: '', rate: 0 },
       ]);
     }
@@ -29,12 +27,21 @@ function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpda
     setTaxRates(updatedTaxRates);
   };
 
+  const handleAddTaxRate = () => {
+    setTaxRates([...taxRates, { taxType: '', rate: 0 }]);
+  };
+
+  const handleRemoveTaxRate = (index) => {
+    const updatedTaxRates = taxRates.filter((_, i) => i !== index);
+    setTaxRates(updatedTaxRates);
+    };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const endpoint = tax 
-        ? `http://localhost:7200/api/tax/update-tax` 
-        : `http://localhost:7200/api/tax/create-tax/${userId}`;
+        ? `${process.env.REACT_APP_URL}/tax/update-tax` 
+        : `${process.env.REACT_APP_URL}/tax/create-tax/${userId}`;
       const method = tax ? 'put' : 'post';
       const payload = tax 
         ? { taxId: tax._id, updateData: { taxName, taxRates }, userId }
@@ -43,7 +50,7 @@ function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpda
       const response = await axios[method](endpoint, payload, config);
       onTaxCreatedOrUpdated(response.data);
       toggle();
-      toast.success(response.data.message || 'Tax successfully saved');
+      toast.success(response.message);
     } catch (error) {
       console.error('Error creating or updating tax:', error);
       toast.error('Failed to save tax');
@@ -85,7 +92,13 @@ function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpda
               />
             </FormGroup>
           ))}
-          <Button type="submit" color="primary">
+          <Button className="mx-1" color="info" onClick={handleAddTaxRate} style={{ marginBottom: '10px' }}>
+            Add Tax Rate
+          </Button>
+          <Button className="mx-1" color="danger" onClick={() => handleRemoveTaxRate(taxRates.length - 1)} style={{ marginBottom: '10px' }}>
+            Remove Tax Rate
+            </Button>
+          <Button className="mx-1" type="submit" color="primary" style={{ marginBottom: '10px' }}>
             {tax ? 'Update' : 'Create'} Tax
           </Button>
         </Form>
