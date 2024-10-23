@@ -136,7 +136,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
   
-      const price = basePrice + variantPrice;
+      const price = basePrice;
       const total = calculateTotal(quantity, price, tax, discount);
   
       updatedItems[index] = {
