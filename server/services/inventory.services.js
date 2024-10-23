@@ -140,11 +140,12 @@ inventoryServices.updateItem = async (id, body) => {
     let totalStock = existingItem.quantity;
     if(variants && variants.length > 0){
         for (const variant of variants){
-            const {_id, price, optionLabel, stock, sku, barcode} = variant;
+            const {_id, price, optionLabel, stock, sku, barcode, variationType} = variant;
             await InventoryItem.updateOne(
             { _id:id, "variants._id": _id },
             {
                 $set: {
+                    "variants.$.variationType": variationType,
                     "variants.$.price": price,
                     "variants.$.optionLabel": optionLabel,
                     "variants.$.stock": stock,
