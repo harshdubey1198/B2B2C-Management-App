@@ -73,7 +73,6 @@ const TopBar = () => {
             </div>
             <NotificationDropdown />
             <ProfileMenu />
-
             <div className="dropdown d-inline-block">
               <button
                 type="button"

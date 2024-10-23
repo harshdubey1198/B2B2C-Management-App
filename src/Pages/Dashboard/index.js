@@ -17,11 +17,6 @@ const Dashboard = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumbs title="aaMOBee" breadcrumbItem="Dashboard" />
-          {/* User Panel Charts */}
-          <RolewiseDashboard/>
-          <UsePanel />
-
-          
           <Row className="mb-4">
             {/* Order Stats */}
             {/* <OrderStatus /> */}
@@ -30,16 +25,29 @@ const Dashboard = () => {
             {/* Revenue by Location Vector Map */}
             {/* <RevenueByLocation /> */}
             {authuser.role === "client_admin" ? (
-                  <div className="d-flex justify-content-evenly">
-                    <Button color="primary" onClick={() => navigate('/create-firm')}>
-                        Create Firm
-                    </Button>
-                    <Button color="primary" onClick={() => navigate('/pricing')}>
-                        Pricing & plans 
-                    </Button>
-                    <Button color="primary" onClick={() => navigate('/view-invoices')}>
-                        Invoices
-                    </Button>    
+                  <div className="row d-flex">
+                    <div className="col-lg-9 col-md-12 col-sm-12">
+                    <div className="row d-flex">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                      <Button className="w-100" color="primary" onClick={() => navigate('/create-firm')}>
+                          Create Firm
+                      </Button>
+                    </div>
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                      <Button className="w-100" color="primary" onClick={() => navigate('/pricing')}>
+                          Pricing & plans 
+                      </Button>
+                    </div>
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                      <Button className="w-100" color="primary" onClick={() => navigate('/view-invoices')}>
+                          Invoices
+                      </Button>  
+                    </div>
+                    </div>
+                    </div>
+                    <div className="col-lg-3 col-md-12 col-sm-12">
+
+                    </div>
                   </div>
               ) : authuser.role === "firm_admin" ? (
                   <Button color="primary" onClick={() => navigate('/firmusers')}>
@@ -55,6 +63,12 @@ const Dashboard = () => {
                   </Button>
               ) : null}        
           </Row>
+          {/* User Panel Charts */}
+          <RolewiseDashboard/>
+          <UsePanel />
+
+          
+          
 
             {/* Social Source Chart */}
             {/* Overview Chart */}

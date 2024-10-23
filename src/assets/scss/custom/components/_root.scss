@@ -48,8 +48,8 @@
     --#{$prefix}sidebar-menu-item-color: #74788d;
     --#{$prefix}sidebar-menu-sub-item-color: #7c8a96;
     --#{$prefix}sidebar-menu-item-icon-color: #505d69;
-    --#{$prefix}sidebar-menu-item-hover-color: #0bb197;
-    --#{$prefix}sidebar-menu-item-active-color: #0bb197;
+    --#{$prefix}sidebar-menu-item-hover-color: #FAA624;
+    --#{$prefix}sidebar-menu-item-active-color: #FAA624;
     // --#{$prefix}sidebar-menu-sub-item-active-color: #5052ba;
     // --#{$prefix}sidebar-menu-item-active-bg-color: #f3f5f9;
     // --#{$prefix}sidebar-menu-sub-item-line-color: #eaecf1;
@@ -74,7 +74,7 @@
     // Horizontal nav
     --#{$prefix}topnav-bg: #fff;
     --#{$prefix}menu-item-color: #74788d;
-    --#{$prefix}menu-item-active-color: #0bb197;
+    --#{$prefix}menu-item-active-color: #FAA624;
 
     [data-topbar="dark"] {
         --#{$prefix}header-bg: $gray-800;

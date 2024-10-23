@@ -114,11 +114,15 @@ const RolewiseDashboard = () => {
     return () => clearInterval(intervalId);
   }, []);
   return (
-    <div className='d-flex flex-row w-100'>
+    <div className='mb-3'>
       {user ? (
-        <div className='d-flex flex-row w-100 justify-content-evenly align-items-center'>
-          <h4 className="m-0 mb-1">Welcome {user.firstName}</h4>
-          <h5 className="m-0 mb-1">Role: {user.role}</h5>
+        <div className='row d-flex m-text-center'>
+          <div className='colo-lg-6 col-md-6 col-sm-12'>
+          <h4 className="font-size-20">Welcome {user.firstName}</h4>
+          </div>
+          <div className='colo-lg-6 col-md-6 col-sm-12'>
+          <h5 className="font-size-20">Role: {user.role}</h5>
+          </div>
         </div>
       ) : (
         <div>Loading user data...</div>
