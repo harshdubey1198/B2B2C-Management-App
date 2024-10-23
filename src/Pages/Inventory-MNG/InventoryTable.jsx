@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {Table,Modal,ModalHeader,ModalBody,Button,Row,Col,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import axios from "axios";
 import { toast } from "react-toastify";
 import VariantModal from "./VariantModal";
 import FirmsTable from "../../components/InventoryComponents/firmsTable";
+import axiosInstance from "../../utils/axiosInstance";
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
@@ -24,20 +24,12 @@ function InventoryTable() {
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
-
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
   useEffect(() => {
     if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
       const fetchInventoryData = async () => {
         try {
-          const response = await axios.get(
-            `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`,
-            config
+          const response = await axiosInstance.get(
+            `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`
           );
           setInventoryData(response.data);
         } catch (error) {
@@ -61,9 +53,9 @@ function InventoryTable() {
 
   const handleDeleteInventory = async (item) => {
     try {
-      await axios.delete(
-        `${process.env.REACT_APP_URL}/inventory/delete-item/${item._id}`,
-        config
+      await axiosInstance.delete(
+        `${process.env.REACT_APP_URL}/inventory/delete-item/${item._id}`
+        
       );
       setTrigger((prev) => prev + 1);
       // setModalOpen(!modalOpen);
@@ -85,7 +77,7 @@ function InventoryTable() {
         let response;
         if (variantIndex !== null) {
           // Update existing variant
-          response = await axios.put(
+          response = await axiosInstance.put(
             `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
             {
               variants: [
@@ -94,8 +86,7 @@ function InventoryTable() {
                   ...variant,
                 },
               ],
-            },
-            config
+            }
           );
   
           // Update the selectedItem's variants list with the updated variant
@@ -107,12 +98,10 @@ function InventoryTable() {
           });
         } else {
           // Add new variant
-          response = await axios.put(
+          response = await axiosInstance.put(
             `${process.env.REACT_APP_URL}/inventory/add-variant/${selectedItem._id}`,
             
-            variant,
-            
-            config
+            variant
           );
   
           setSelectedItem({
@@ -147,10 +136,8 @@ function InventoryTable() {
   const deleteVariant = async (variantId) => {
     if (selectedItem) {
       try {
-        await axios.delete(
-          `${process.env.REACT_APP_URL}/inventory/${selectedItem._id}/delete-variant/${variantId}`,
-          config
-        );
+        await axiosInstance.delete(
+          `${process.env.REACT_APP_URL}/inventory/${selectedItem._id}/delete-variant/${variantId}`);
         setSelectedItem((prevState) => ({
           ...prevState,
           variants: prevState.variants.filter((v) => v._id !== variantId),
@@ -166,10 +153,9 @@ function InventoryTable() {
 
   const updateItem = async (updatedFields) => {
     try {
-      const response = await axios.put(
+      const response = await axiosInstance.put(
         `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
-        updatedFields,
-        config
+        updatedFields
       );
       setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
       toast.success(response.message);
