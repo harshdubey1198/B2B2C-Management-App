@@ -160,7 +160,6 @@ const handleSubmit = (e) => {
     toast.error("Invalid Phone Number");
     return;
   }
-
   const invoicePayload = {
     customer: {
       firstName: invoiceData.firstName, 
@@ -179,7 +178,7 @@ const handleSubmit = (e) => {
     },
     items: invoiceData.items.map(item => ({
       itemId: item.itemId,
-      selectedVariant: item.selectedVariant.map(variant => ({
+      selectedVariant: item.selectedVariant && item.selectedVariant.map(variant => ({
         variationType: variant.variationType,
         optionLabel: variant.optionLabel,
         price: variant.price,
