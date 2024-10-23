@@ -108,10 +108,10 @@ function InventoryTable() {
         } else {
           // Add new variant
           response = await axios.put(
-            `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
-            {
-              variants: [...selectedItem.variants, variant],
-            },
+            `${process.env.REACT_APP_URL}/inventory/add-variant/${selectedItem._id}`,
+            
+            variant,
+            
             config
           );
   

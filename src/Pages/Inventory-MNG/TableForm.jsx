@@ -2,14 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
-import { Form, useNavigate } from "react-router-dom";
+import axiosInstance from "../../utils/axiosInstance";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
 import hsnData from "../../data/hsn.json";
-import axiosInstance from "../../utils/axiosInstance";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
   const [editIndex, setEditIndex] = useState(null); 
@@ -20,15 +22,55 @@ const InventoryItemForm = () => {
   const toggleModal = () => setModal(!modal);
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [formValues, setFormValues] = useState({name: "",description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",tax: { taxId: "", components: [],},});
+  const [formValues, setFormValues] = useState({name: "",description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",taxId:  "", selectedTaxTypes: [],});
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [ tosendTaxtype, setToSendTaxtype] = useState([]);
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",tax: { taxId: "", components: [], }, });
+    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
   };
-  
+  useEffect(() => {
+    const fetchTaxes = async () => {
+      try {
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`);
+        setTaxes(response.data);
+
+      } catch (error) {
+        toast.error("Failed to fetch tax rates.");
+      }
+    };
+
+    fetchTaxes();
+  }, []);
+  // const handleTaxChange = (e) => {
+  //   const value = e.target.value;
+  //   setSelectedTax(value);
+  //   setSelectedRate("");
+  //   setFormValues((prevState) => ({
+  //     ...prevState,
+  //     tax: value, 
+  //     // taxName: taxes.find((tax) => tax._id === value).taxName,
+  //   }));
+    
+  // };
+  const handleRateChange = (e) => {
+    const value = e.target.value;
+    setFormValues((prevState) => {
+      let selectedTaxTypes = [...prevState.selectedTaxTypes];
+      if (selectedTaxTypes.includes(value)) {
+        selectedTaxTypes = selectedTaxTypes.filter(rate => rate !== value);
+      } else {
+         selectedTaxTypes.push(value);
+      }
+      return {
+        ...prevState,
+        selectedTaxTypes: selectedTaxTypes,
+      };
+    });
+  };
+
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -93,25 +135,21 @@ const InventoryItemForm = () => {
     if (selectedTax) {
       setFormValues((prevState) => ({
         ...prevState,
-        tax: {
-          taxId: selectedTax._id,
-          components: selectedTax.taxRates,
-        },
+        taxId: selectedTax._id,
+        selectedTaxTypes: selectedTax.taxRates,
+        
       }));
       setSelectedTaxComponents(selectedTax.taxRates);
     } else {
       setFormValues((prevState) => ({
         ...prevState,
-        tax: { taxId: "", components: [] },
+        taxId: "",
+        selectedTaxTypes: [] 
       }));
       setSelectedTaxComponents([]);
     }
   };
 
-  const handleSendTaxType = (e) => {
-    const { value } = e.target;
-    setToSendTaxtype(value);
-  };
 
   const addOrUpdateVariant = () => {
     if (
@@ -206,7 +244,7 @@ const InventoryItemForm = () => {
     }
     try {
       const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants });
-      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", tax: { taxId: "", components: [], }, });
+      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", taxId: "" , selectedTaxTypes: [] });
       setVariants([]);
       handleReset();
 
@@ -318,7 +356,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="tax">Tax</Label>
-                          <Input type="select" id="tax" name="tax" value={formValues.tax.taxId} onChange={handleTaxChange}>
+                          <Input type="select" id="tax" name="tax" value={formValues.taxId} onChange={handleTaxChange}>
                             <option value="">Select Tax</option>
                             {taxes.map(tax => (
                               <option key={tax._id} value={tax._id}>
