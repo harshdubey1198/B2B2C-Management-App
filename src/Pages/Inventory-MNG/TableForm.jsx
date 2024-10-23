@@ -14,12 +14,14 @@ const InventoryItemForm = () => {
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [editIndex, setEditIndex] = useState(null); 
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
   const [taxes, setTaxes] = useState([]);
   const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
   const [variants, setVariants] = useState([]);
-  const toggleModal = () => setModal(!modal);
+  // const toggleModal = () => setModal(!modal);
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [formValues, setFormValues] = useState({name: "",description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",taxId:  "", selectedTaxTypes: [],});
@@ -172,7 +174,7 @@ const InventoryItemForm = () => {
         setVariants([...variants, variant]);
       }
       setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "",   });
-      toggleModal();
+      modalOpen(false);
     } else {
       toast.error("Please fill in all variant details");
     }
@@ -181,7 +183,7 @@ const InventoryItemForm = () => {
   const editVariant = (index) => {
     setVariant(variants[index]);
     setEditIndex(index);
-    toggleModal();
+    setVariantModalOpen(true);
   };
 
   const deleteVariant = (index) => {
@@ -358,6 +360,22 @@ const InventoryItemForm = () => {
                       </Col>
                       <Col md={6}>
                         <FormGroup>
+                          <Label htmlFor="qtyType">Quantity Type</Label>
+                          <select id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} className="form-control">
+                            <option value="">Select Quantity Type</option>
+                            <option value="litres">Litres</option>
+                            <option value="kg">Kilograms</option>
+                            <option value="packets">Packets</option>
+                            <option value="pieces">Pieces</option>
+                            <option value="single unit">Single Unit</option>
+                            <option value="gm">Grams</option>
+                          </select>
+                        </FormGroup>
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6}>
+                        <FormGroup>
                           <Label htmlFor="tax">Tax</Label>
                           <Input type="select" id="tax" name="tax" value={formValues.taxId} onChange={handleTaxChange}>
                             <option value="">Select Tax</option>
@@ -413,10 +431,12 @@ const InventoryItemForm = () => {
 
                     )} */}
                     </Row>
-                    <VariantModal isOpen={modal}  toggle={toggleModal}  variant={variant} handleVariantChange={handleVariantChange} addVariant={addOrUpdateVariant} />
+                    <VariantModal  isOpen={variantModalOpen} toggleModal={() => setVariantModalOpen(!variantModalOpen)}  variant={variant} handleVariantChange={handleVariantChange} addVariant={addOrUpdateVariant} />
                     <Row className="mt-3">
                       <Col md={12}>
-                        <Button className="mx-2" color="primary" onClick={toggleModal}>Add Variant</Button>
+                        <Button className="mx-2" color="primary" onClick={()=>{
+                          setVariantModalOpen(true);
+                        }}>Add Variant</Button>
                         <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
                         <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
                       </Col>
