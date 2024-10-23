@@ -133,13 +133,15 @@ const InventoryItemForm = () => {
     const { value } = e.target;
     const selectedTax = taxes.find((tax) => tax._id === value);
     if (selectedTax) {
-      setFormValues((prevState) => ({
-        ...prevState,
-        taxId: selectedTax._id,
-        selectedTaxTypes: selectedTax.taxRates,
-        
-      }));
-      setSelectedTaxComponents(selectedTax.taxRates);
+      
+        const taxTypesArray = selectedTax.taxRates.map(rate => rate.taxType);
+        setFormValues((prevState) => ({
+            ...prevState,
+            taxId: selectedTax._id,
+            selectedTaxTypes: taxTypesArray,
+        }));
+        setSelectedTaxComponents(taxTypesArray);
+        console.log(taxTypesArray);
     } else {
       setFormValues((prevState) => ({
         ...prevState,
@@ -148,7 +150,8 @@ const InventoryItemForm = () => {
       }));
       setSelectedTaxComponents([]);
     }
-  };
+};
+
 
 
   const addOrUpdateVariant = () => {
@@ -370,9 +373,9 @@ const InventoryItemForm = () => {
                       <div className="mt-3">
                         <h5>Selected Tax Components</h5>
                         <ul>
-                          {selectedTaxComponents.map((component, index) => (
+                          {selectedTaxComponents.map(( index) => (
                             <li key={index}>
-                              {component.taxType}: {component.rate}%
+                              {index}
                             </li>
                           ))}
                         </ul>
