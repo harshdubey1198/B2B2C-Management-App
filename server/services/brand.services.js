@@ -31,4 +31,22 @@ BrandServices.createBrand = async (userId, body) => {
     return newBrand;
 };
 
+BrandServices.getBrands = async (firmId) => {
+    const data = await Brand.find({adminId: firmId, deleted_at: null})
+    if(!data){
+        throw new Error('No brands found')
+    }
+    return data
+}
+
+BrandServices.getBrandById = async (brandId) => {
+    const data = await Brand.findOne({_id: brandId, deleted_at: null})
+    if(!data){
+        throw new Error('No brands found')
+    }
+    return data
+}
+
+
+
 module.exports = BrandServices
