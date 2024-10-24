@@ -26,9 +26,9 @@ brandController.getBrands = async (req, res) => {
 };
 
 // GET SINGLE BRAND
-brandController.getBrand = async (req, res) => {
+brandController.getBrandById = async (req, res) => {
     try {
-        const brand = await BrandServices.getBrand(req.params.id);
+        const brand = await BrandServices.getBrandById(req.params.id);
         return res.status(200).json(createResult("Brand fetched successfully", brand));
     } catch (error) {
         console.log('Error fetching brand:', error.message); 
