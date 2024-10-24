@@ -15,6 +15,7 @@ function UserTable({ selectedFirmId, trigger }) {
 
   const firmId = selectedFirmId || defaultFirm?._id;
   const companyTitle = defaultFirm?.companyTitle;
+  // const avatar = defaultFirm?.avatar;
   const fetchUsers = async () => {
     try {
       let response;
@@ -37,7 +38,7 @@ function UserTable({ selectedFirmId, trigger }) {
 
   return (
     <div>
-      <h5 className="text-center card-title-heading m-0">Users of <span>{companyTitle}</span></h5>
+      <h5 className="text-center card-title-heading m-0"><span>{companyTitle}</span></h5>
     <div className="table-responsive ">
       <table className="table table-bordered mb-0">
         <thead className="table-light">

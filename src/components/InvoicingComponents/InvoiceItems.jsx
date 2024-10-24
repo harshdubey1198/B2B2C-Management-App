@@ -136,7 +136,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
   
-      const price = basePrice + variantPrice;
+      const price = basePrice;
       const total = calculateTotal(quantity, price, tax, discount);
   
       updatedItems[index] = {
@@ -296,9 +296,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
           </FormGroup>
           </div>
           <div className="col-lg-2 col-md-3 col-sm-12">
-          <Button color='danger' onClick={() => removeItem(index)}>
-            Remove Item
-          </Button>
+            <i className="bx bx-trash text-danger" style={{ cursor: 'pointer', fontSize:'22px' }} onClick={() => removeItem(index)}></i>
           </div>
         </div>
       ))}

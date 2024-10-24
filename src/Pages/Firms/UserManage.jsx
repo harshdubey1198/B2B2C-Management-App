@@ -72,7 +72,7 @@ function UserManage() {
             This is the user management page. Here you can manage users.
           </p>
         </div>
-        <div className="d-flex justify-content-between mb-4">
+        <div className="d-flex mb-4" style={{justifyContent:"flex-end" , gap:"15px"}}>
           <Button color="primary" onClick={toggleModal}>
             Add User
           </Button>

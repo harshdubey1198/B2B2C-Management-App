@@ -30,7 +30,6 @@ export const masterAdminSidebarData = () => [
     subItem: [
       { sublabel: "Manage Firms", link: "/firms" },
       { sublabel: "Create New Firm", link: "/create-firm" },
-      // { sublabel: "Switch Between Firms", link: "/firms/switch" },
       { sublabel: "Firm-Specific Settings", link: "/firms-setting" },
     ],
   },
@@ -39,17 +38,13 @@ export const masterAdminSidebarData = () => [
     icon: "mdi mdi-archive-outline",
     subItem: [
       { sublabel: "Inventory Management", link: "/inventory-table" },
-      // { sublabel: "Table Form", link: "/add-inventory" },
-      // {sublabel : "Categories" ,link :"/manage-category"},
       { sublabel: "Table Taxation", link: "/table-taxation" },
-      // { sublabel: "Item Config", link: "/item-configuration" },
     ],
   },
   {
     label: "Invoices",
     icon: "mdi mdi-file-document-outline",
     subItem: [
-      // { sublabel: "Create Invoice", link: "/create-invoice" },
       { sublabel: "View Invoices", link: "/view-invoices" },
       { sublabel: "Recurring Invoices", link: "/invoices/recurring" },
       { sublabel: "Payment Tracking", link: "/invoices/payment-tracking" },
@@ -104,38 +99,6 @@ export const masterAdminSidebarData = () => [
       { sublabel: "Link to Purchase Orders", link: "/purchase-bills/link-orders" },
     ],
   },
-  // {
-  //   label: "Expenses",
-  //   icon: "mdi mdi-currency-usd",
-  //   subItem: [
-  //     { sublabel: "Record Expense", link: "/expenses/record" },
-  //     { sublabel: "Manage Expenses", link: "/expenses/manage" },
-  //     { sublabel: "Expense Categories", link: "/expenses/categories" },
-  //     { sublabel: "Receipt Upload", link: "/expenses/upload-receipt" },
-  //     { sublabel: "Approval Workflow", link: "/expenses/approval-workflow" },
-  //   ],
-  // },
-  // {
-  //   label: "Payments",
-  //   icon: "mdi mdi-cash-multiple",
-  //   subItem: [
-  //     { sublabel: "Record Payment Received", link: "/payments/received" },
-  //     { sublabel: "Record Payment Made", link: "/payments/made" },
-  //     { sublabel: "Manage Payments", link: "/payments/manage" },
-  //     { sublabel: "Payment Reconciliation", link: "/payments/reconciliation" },
-  //   ],
-  // },
-  // {
-  //   label: "Reports",
-  //   icon: "mdi mdi-chart-bar",
-  //   subItem: [
-  //     { sublabel: "Standard Reports", link: "/reports/standard" },
-  //     { sublabel: "Custom Reports", link: "/reports/custom" },
-  //     { sublabel: "Data Export", link: "/reports/export" },
-  //     { sublabel: "Budgeting and Forecasting", link: "/reports/budgeting" },
-  //     { sublabel: "Aged Receivables/Payables", link: "/reports/aged-receivables-payables" },
-  //   ],
-  // },
   {
     label: "Preferences",
     icon: "mdi mdi-cog-outline",
@@ -290,56 +253,29 @@ export const masterAdminSidebarData = () => [
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         { sublabel: "Vendor Management", link: "/vendors/manage" },
-        // { sublabel: "Item Config", link: "/item-configuration" },
+        {sublabel : "Brands" ,link :"/brands"},
+        {sublabel : "Manufacturers" ,link :"/manufacturers"},
+    
       ],
     },
     {
       label: "Invoicing",
       icon: "mdi mdi-cash-multiple",
       subItem: [
-        // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "View Customers", link: "/view-customers" }
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Expenses", link: "/expenses" },
-        // { sublabel: "Reports", link: "/reports" },
+    
       ],
     },
-    // {
-    //   label: "Authentication",
-    //   icon: "mdi mdi-account-circle-outline",
-    //   subItem: [
-    //     { sublabel: "Login", link: "/login" },
-    //     { sublabel: "Register", link: "/register" },
-    //     { sublabel: "Recover Password", link: "/recover-password" },
-    //     { sublabel: "Lock Screen", link: "/auth-lock-screen" },
-    //   ],
-    // },
+   
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",
         subItem: [
           { sublabel: "Profile Settings", link: "/profile-settings" },
-          // { sublabel: "Accounts Settings", link: "/accounts-setting" },
-          // { sublabel: "Recover Password", link: "/recover-password" },
-          // { sublabel: "Lock Screen", link: "/auth-lock-screen" },
         ],
       } 
-      // {
-      //   label: "Extra Pages",
-      //   icon: "mdi mdi-file-document-outline",
-      //   subItem: [
-          
-      //     { sublabel: "Ui Cards", link: "/ui-cards" },
-      //     { sublabel: "Ui Buttons", link: "/ui-buttons" },
-      //     { sublabel: "Ui Modals", link: "/ui-modals" },
-      //     { sublabel: "Boxicons", link: "/icon-boxicon" },
-      //     { sublabel: "MDI", link: "/icons-materialdesign" },
-      //     { sublabel: "FA-Icons", link: "/icons-fontawesome" },
-      //     { sublabel: "Drip-Icons", link: "/icon-dripicons" },
-      //   ],
 
-      // }
   ]
 
   export const accountantSidebarData = () => [
@@ -354,10 +290,8 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-cash-multiple",
       subItem: [
         { sublabel: "Inventory Management", link: "/inventory-table" },
-        // { sublabel: "Table Form", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
-        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     {
@@ -367,8 +301,6 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "View Customers", link: "/view-customers" },
-        // { sublabel: "Payments", link: "/payments" },
-        // { sublabel: "Reports", link: "/reports-invoice" },
       ],
     },
     {
@@ -385,15 +317,6 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    // {
-    //   label: "Invoicing",
-    //   icon: "mdi mdi-cash-multiple",
-    //   subItem: [
-    //     { sublabel: "Create Invoice", link: "/create-invoice" },
-    //     { sublabel: "View Invoices", link: "/view-invoices" },
-    //     // { sublabel: "Payments", link: "/payments" },
-    //   ],
-    // },
     {
       label: "Inventory",
       icon: "mdi mdi-archive-outline",
@@ -403,8 +326,6 @@ export const masterAdminSidebarData = () => [
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         { sublabel: "Vendor Management", link: "/vendors/manage" },
-
-        // { sublabel: "Item Config", link: "/item-configuration" },
       ],
     },
     {
@@ -421,13 +342,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    // {
-    //   label: "Invoicing",
-    //   icon: "mdi mdi-cash-multiple",
-    //   subItem: [
-    //     { sublabel: "View Invoices", link: "/view-invoices" },
-    //   ],
-    // },
+  
   ];
   
   export const readOnlySidebarData = () => [

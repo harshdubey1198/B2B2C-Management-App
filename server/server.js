@@ -23,6 +23,8 @@ const customerRoute = require("./routers/customer.router")
 const invoiceRoute = require("./routers/invoice.router")
 const vendorRoute = require("./routers/vendor.router")
 const taxRouter = require("./routers/tax.router")
+const brandRouter = require("./routers/brand.router")
+const manufacturerRouter = require("./routers/manufacturer.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -33,6 +35,8 @@ app.use("/api/customer", customerRoute);
 app.use("/api/invoice", invoiceRoute);
 app.use("/api/vendor", vendorRoute);
 app.use("/api/tax", taxRouter);
+app.use("/api/brand", brandRouter);
+app.use("/api/manufacturer", manufacturerRouter);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
