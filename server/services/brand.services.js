@@ -47,6 +47,32 @@ BrandServices.getBrandById = async (brandId) => {
     return data
 }
 
+// UPDATE VENDOR
+BrandServices.updateBrand = async (id, body) => {
+    const existingBrand = await Brand.findOne({ _id: id, deleted_at: null });
+        if (!existingBrand) {
+        throw new Error('Vendor does not exist');
+    }
+    const updatedBrand = await Brand.findByIdAndUpdate(id, body, { new: true });
+    return updatedBrand;
+};
 
+// DELETE VENDOR
+BrandServices.deleteBrand = async (brandId) => {
+    const existingBrand = await Brand.findOne({ _id: brandId, deleted_at: null });
+    if (!existingBrand) {
+        throw new Error('Vendor does not exist');
+    }
+    
+    const deletedBrand = await Brand.findOneAndUpdate(
+        {_id: brandId},
+        {deleted_at: new Date()},
+        {new: true}
+    )
+    if(!deletedBrand){
+        throw new Error('unable to delete Brand')
+    }
+    return deletedBrand
+}
 
 module.exports = BrandServices
