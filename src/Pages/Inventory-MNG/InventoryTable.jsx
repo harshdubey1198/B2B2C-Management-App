@@ -25,6 +25,7 @@ function InventoryTable() {
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
+  const firmId = authuser?.adminId;
   useEffect(() => {
     if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
       const fetchInventoryData = async () => {
@@ -242,6 +243,7 @@ function InventoryTable() {
       modalOpen={modalOpen}
       setModalOpen={setModalOpen}
       selectedItem={selectedItem} 
+      firmId={firmId}
     />
 
         <VariantModal

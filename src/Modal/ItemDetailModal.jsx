@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {Table,Modal,ModalHeader,ModalBody,Button,Row,Col,} from "reactstrap";
+import axiosInstance from '../utils/axiosInstance';
 
-const ItemDetailModal = ({setVariantIndex,setVariant ,setVariantModalOpen ,setSelectedItem ,deleteVariant ,updateItem ,handleEditVariant,modalOpen,setModalOpen,selectedItem }) => {
-  return (
+const ItemDetailModal = ({setVariantIndex,setVariant ,setVariantModalOpen ,setSelectedItem ,deleteVariant ,updateItem ,handleEditVariant,modalOpen,setModalOpen,selectedItem,firmId }) => {
+    const [vendors, setVendors] = useState([]);
+    useEffect(() => {
+    const fetchVendors = async () => { 
+        try {
+          const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`);
+          setVendors(response.data);
+          console.log(response.data);
+        } catch (error) {
+          console.error(error.message);
+        }
+      };
+       fetchVendors();
+    },[]);
+    return (
     <Modal
     modalClassName="custom-modal-width"
     isOpen={modalOpen}
@@ -51,6 +65,33 @@ const ItemDetailModal = ({setVariantIndex,setVariant ,setVariantModalOpen ,setSe
                 className="form-control"
               />
             </Col>
+            </Row>
+            <Row>
+
+            <Col md={6}>
+                <label>
+                    <strong>Vendors</strong>
+                </label>
+                <select
+                    id="vendorId"
+                    name="vendorId"
+                    value={selectedItem.vendorId}
+                    onChange={(e) =>
+                    setSelectedItem({
+                        ...selectedItem,
+                        vendorId: e.target.value,
+                    })
+                    }
+                    className="form-control"
+                >
+                    <option value="">Select Vendor</option>
+                    {vendors.map((vendor) => (
+                    <option key={vendor._id} value={vendor._id}>
+                        {vendor.name}
+                    </option>
+                    ))}
+                    </select>
+                </Col>
             <Col md={6}>  
               <label>
                 <strong>Quantity Type:</strong>
@@ -195,22 +236,7 @@ const ItemDetailModal = ({setVariantIndex,setVariant ,setVariantModalOpen ,setSe
                 className="form-control"
               />
             </Col>
-            {/* <Col md={3}>
-              <label>
-                <strong>Vendor:</strong>
-              </label>
-              <input
-                type="text"
-                value={selectedItem.vendorId}
-                onChange={(e) =>
-                  setSelectedItem({
-                    ...selectedItem,
-                    vendorId: e.target.value,
-                  })
-                }
-                className="form-control"
-              />
-            </Col> */}
+           
           </Row>
 
           <Button className="my-4"
