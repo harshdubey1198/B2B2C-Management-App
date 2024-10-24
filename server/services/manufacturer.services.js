@@ -17,7 +17,7 @@ ManufacturerServices.createManufacturer = async (userId, body) => {
     }
 
     // Create new vendor
-    const newVendor = new Manufacturer({
+    const newManufacturer = new Manufacturer({
         name,
         contactPerson,
         phone,
@@ -27,6 +27,24 @@ ManufacturerServices.createManufacturer = async (userId, body) => {
         firmId: user.adminId
     });
 
-    await newVendor.save();
-    return newVendor;
+    await newManufacturer.save();
+    return newManufacturer;
 };
+
+ManufacturerServices.getManufacturers = async (firmId) => {
+    const data = await Manufacturer.find({firmId: firmId, deleted_at: null})
+    if(data.length === 0){
+        throw new Error('No Manufacturer found for these firms')
+    }
+    return data
+}
+
+ManufacturerServices.getManufacturerById = async (manufacturerId) => {
+    const data = await Manufacturer.findOne({_id: manufacturerId, deleted_at: null})
+    if(!data){
+        throw new Error('No Manufacturer found')
+    }
+    return data
+}
+
+module.exports = ManufacturerServices

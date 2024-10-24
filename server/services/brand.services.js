@@ -32,9 +32,9 @@ BrandServices.createBrand = async (userId, body) => {
 };
 
 BrandServices.getBrands = async (firmId) => {
-    const data = await Brand.find({adminId: firmId, deleted_at: null})
-    if(!data){
-        throw new Error('No brands found')
+    const data = await Brand.find({ firmId: firmId, deleted_at: null });
+    if(data.length === 0){
+        throw new Error('No brands found for this Firm')
     }
     return data
 }
