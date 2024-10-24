@@ -1,4 +1,3 @@
-// FetchBrands.js
 import React, { useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
@@ -18,7 +17,7 @@ const FetchBrands = ({ firmId, onBrandsFetched }) => {
     };
 
     fetchBrands();
-  }, []);
+  }, []); 
 
   return null; 
 };

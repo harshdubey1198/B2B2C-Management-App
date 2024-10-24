@@ -253,6 +253,8 @@ export const masterAdminSidebarData = () => [
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         { sublabel: "Vendor Management", link: "/vendors/manage" },
+        {sublabel : "Brands" ,link :"/brands"},
+        {sublabel : "Manufacturers" ,link :"/manufacturers"},
     
       ],
     },

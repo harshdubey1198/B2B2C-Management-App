@@ -122,9 +122,9 @@ if ( role !== "firm_admin") {
                         </p>
                       ))}
                     </div>
-                    <Button color="primary" onClick={() => navigate('/dashboard')}>
+                    {/* <Button color="primary" onClick={() => navigate('/dashboard')}>
                       Back to Dashboard
-                    </Button>
+                    </Button> */}
                   </CardBody>
                 </Card>
               </Col>

@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import VariantModal from "./VariantModal";  
 import hsnData from "../../data/hsn.json";
 import BrandModal from "../../Modal/BrandModal";
+import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
 
 const InventoryItemForm = () => {
@@ -31,11 +32,13 @@ const InventoryItemForm = () => {
   const [categories, setCategories] = useState([]);
   const [ tosendTaxtype, setToSendTaxtype] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
   
-  // Callback function to handle the fetched brands
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
+  
+
   const handleReset = () => {
     setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
@@ -56,6 +59,9 @@ const InventoryItemForm = () => {
   const toggleBrandModal = () => {
     setModalOpen(!modalOpen);
   };
+  const toggleManufacturerModal = () => {
+    setModal(!modal);
+};
   const handleRateChange = (e) => {
     const value = e.target.value;
     setFormValues((prevState) => {
@@ -100,11 +106,11 @@ const InventoryItemForm = () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`);
         setTaxes(response.data);
-        console.log(response.data[0]._id);
-        console.log(response.data[0].taxName);
-        console.log(response.data[0].taxRates[0]);
-        console.log(response.data[0].taxRates[0].taxType);
-        console.log(response.data[0].taxRates[0].rate);
+        // console.log(response.data[0]._id);
+        // console.log(response.data[0].taxName);
+        // console.log(response.data[0].taxRates[0]);
+        // console.log(response.data[0].taxRates[0].taxType);
+        // console.log(response.data[0].taxRates[0].rate);
       } catch (error) {
         toast.error("Failed to fetch taxes.");
         console.error(error.message);
@@ -321,7 +327,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                           <FormGroup>
                             <Label htmlFor="brand">Brand</Label>
-                            <div className="d-flex">
+                            <div className="d-flex align-items-center">
                               <select id="brand" name="brand" value={formValues.brand} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
                                 <option value="">Select Brand</option>
                                 {brands.map((brand) => (
@@ -330,7 +336,26 @@ const InventoryItemForm = () => {
                                   </option>
                                 ))}
                               </select>
-                              <Button color="primary" onClick={toggleBrandModal} style={{ marginLeft: "10px" }} > Add Brand </Button>
+                              {/* <Button color="primary" onClick={toggleBrandModal} style={{ marginLeft: "10px" }} > Add Brand </Button> */}
+                              <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleBrandModal}></i>
+                            </div>
+                          </FormGroup>
+                        </Col>
+                        <Col md={6}>
+                          <FormGroup>
+                            <Label htmlFor="manufacturer">Manufacturer</Label>
+                            <div className="d-flex align-items-center">
+                              <select id="manufacturer" name="manufacturer
+                              " value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
+                                <option value="">Select </option>
+                                {manufacturers.map((manufacturer) => (
+                                  <option key={manufacturer._id} value={manufacturer._id}>
+                                    {manufacturer.name}
+                                  </option>
+                                ))}
+                              </select>
+                              {/* <Button color="primary" onClick={toggleManufacturerModal} style={{ marginLeft: "10px" }} > Add Manufacturer </Button> */}
+                                <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleManufacturerModal}></i>
                             </div>
                           </FormGroup>
                         </Col>
@@ -471,6 +496,7 @@ const InventoryItemForm = () => {
           </Row>
         </Container>
         <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} />
+        <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} />
 
       </div>
     </React.Fragment>

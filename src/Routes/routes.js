@@ -73,6 +73,8 @@ import VerifyOtp from "../Pages/AuthenticationPages/VerifyOtp.jsx";
 import ClientsPayments from "../Pages/ClientsManagement/clientPayments.js";
 import ViewCustomer from "../Pages/Invoicing/viewCustomer.jsx";
 import Vendor from "../Pages/Inventory-MNG/Vendor.jsx";
+import Brands from "../Pages/Inventory-MNG/Brands.jsx";
+import Manufacturers from "../Pages/Inventory-MNG/Manufacturers.jsx";
 
 
 const authProtectedRoutes = [
@@ -99,6 +101,8 @@ const authProtectedRoutes = [
   {path:"/item-configuration", component: <ItemConfiguration />},
   {path:"/manage-category", component: <CategoryManager />},
   {path:"/vendors/manage", component: <Vendor />},
+  {path:"/brands", component: <Brands />},
+  {path:"/manufacturers", component: <Manufacturers />},
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firmusers", component: <UserManage />},

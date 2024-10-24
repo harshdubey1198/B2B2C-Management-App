@@ -42,9 +42,20 @@ const Dashboard = () => {
                     </Button>    
                   </div>
               ) : authuser.role === "firm_admin" ? (
+                  <div className="d-flex justify-content-evenly">
                   <Button color="primary" onClick={() => navigate('/firmusers')}>
                       Create User
                   </Button>
+                  <Button color="primary" onClick={() => navigate('/add-inventory')}>
+                      Create Inventory
+                  </Button>
+                  <Button color="primary" onClick={() => navigate('/view-invoices')}>
+                      Invoices
+                  </Button>    
+                  <Button color="primary" onClick={() => navigate('/manage-category')}>
+                      Manage Category
+                  </Button>
+                  </div>
               ) : authuser.role === "accountant" ? (
                   <Button color="primary" onClick={() => navigate('/add-inventory')}>
                       Create Inventory
