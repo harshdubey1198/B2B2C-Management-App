@@ -6,7 +6,7 @@ const manufacturerController = {};
 // CREATE MANUFACTURER
 manufacturerController.createManufacturer = async (req, res) => {
     try {
-        const newManufacturer = await ManufacturerServices.createManufacturer(req.body);
+        const newManufacturer = await ManufacturerServices.createManufacturer(req.params.id, req.body);
         return res.status(200).json(createResult("Manufacturer created successfully", newManufacturer));
     } catch (error) {
         console.log('Error creating manufacturer:', error.message);
@@ -17,7 +17,7 @@ manufacturerController.createManufacturer = async (req, res) => {
 // GET ALL MANUFACTURERS
 manufacturerController.getManufacturers = async (req, res) => {
     try {
-        const manufacturers = await ManufacturerServices.getManufacturers();
+        const manufacturers = await ManufacturerServices.getManufacturers(req.params.id);
         return res.status(200).json(createResult("Manufacturers fetched successfully", manufacturers));
     } catch (error) {
         console.log('Error fetching manufacturers:', error.message); 
