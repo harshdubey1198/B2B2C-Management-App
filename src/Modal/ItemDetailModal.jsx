@@ -11,7 +11,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
           `${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`
         );
         setVendors(response.data);
-        console.log(response.data);
+        // console.log(response.data);
       } catch (error) {
         console.error(error.message);
       }

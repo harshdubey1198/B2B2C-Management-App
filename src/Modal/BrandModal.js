@@ -3,7 +3,7 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, FormGroup, Label, I
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 
-const BrandModal = ({ isOpen, toggle, onBrandAdded , firmId }) => {
+const BrandModal = ({ isOpen,onBrandAdded, toggle}) => {
   const [brand, setBrand] = useState({ name: "", description: "", website: "", country: "" });
   const [selectedBrand, setSelectedBrand] = useState("");
   const [brands, setBrands] = useState([]);
@@ -18,25 +18,40 @@ const BrandModal = ({ isOpen, toggle, onBrandAdded , firmId }) => {
     }));
   };
 
-  const handleSubmit = async () => {
-    if (!brand.name) {
-      toast.error("Please enter the brand name.");
-      return;
-    }
+    const formReset = () => {
+    setBrand({ name: "", description: "", website: "", country: "" });
+    };
 
-    setLoading(true);
-    try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/brand/create-brand/${userId}`, brand);
-      onBrandAdded(response.data);
-      toast.success(response.message);
-      toggle();
-    } catch (error) {
-    
-      console.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const handleSubmit = async () => {
+        if (!brand.name) {
+          toast.error("Please enter the brand name.");
+          return;
+        }
+      
+        setLoading(true);
+        try {
+          const response = await axiosInstance.post(
+            `${process.env.REACT_APP_URL}/brand/create-brand/${userId}`,
+            brand
+          );
+          setBrands((prevBrands) => [...prevBrands, response.data]);
+          toast.success("Brand added successfully.");
+          toggle();
+          formReset();
+        } catch (error) {
+          if (error.response && error.response && error.response.error) {
+
+            toast.error(error.response.error);
+          } else {
+            // Fallback for other errors
+            console.log(error);
+            toast.error("Failed to add brand.");
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+      
 
 
 
