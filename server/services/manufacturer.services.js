@@ -47,4 +47,32 @@ ManufacturerServices.getManufacturerById = async (manufacturerId) => {
     return data
 }
 
+// UPDATE VENDOR
+ManufacturerServices.updateManufacturer = async (id, body) => {
+    const existingManufacturer = await Manufacturer.findOne({ _id: id, deleted_at: null });
+        if (!existingManufacturer) {
+        throw new Error('Manufacturer does not exist');
+    }
+    const updatedManufacturer = await Manufacturer.findByIdAndUpdate(id, body, { new: true });
+    return updatedManufacturer;
+};
+
+// DELETE VENDOR
+ManufacturerServices.deleteManufacturer = async (manufacturerId) => {
+    const existingManufacturer = await Manufacturer.findOne({ _id: manufacturerId, deleted_at: null });
+    if (!existingManufacturer) {
+        throw new Error('Manufacturer does not exist');
+    }
+    
+    const deletedManufacturer = await Manufacturer.findOneAndUpdate(
+        {_id: manufacturerId},
+        {deleted_at: new Date()},
+        {new: true}
+    )
+    if(!deletedManufacturer){
+        throw new Error('unable to delete Manufacturer')
+    }
+    return deletedManufacturer
+}
+
 module.exports = ManufacturerServices
