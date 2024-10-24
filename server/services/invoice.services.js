@@ -462,7 +462,7 @@ const releaseReservedStock = async (items) => {
 
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })
-    .populate({ path: "items.itemId" })
+    .populate({ path: "items.itemId", populate: {path: "tax.taxId"} })
     .populate({ path: "firmId", select: "-password" })
     .populate({ path: "createdBy", select: "firstName lastName email" });
 
