@@ -54,8 +54,8 @@ const UserPanel = () => {
   return (
     <React.Fragment>
       <Row>
-        <Col xl={6} sm={6}>
-          <Card style={{marginBottom:"0px"}}>
+      <Col lg={6} md={6} sm={12} className="mb-3"> 
+          <Card className="cust-card">
             <CardBody>
               <div className="d-flex text-muted">
                 <div className="flex-shrink-0 me-3 align-self-center">
@@ -80,8 +80,8 @@ const UserPanel = () => {
           </Card>
         </Col>
 
-        <Col xl={6} sm={6}>
-          <Card>
+        <Col lg={6} md={6} sm={12}>
+          <Card className="cust-card">
             <CardBody>
               <div className="d-flex">
                 <div className="flex-shrink-0 me-3 align-self-center">

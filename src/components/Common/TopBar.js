@@ -58,7 +58,7 @@ const TopBar = () => {
               </div>
             </form> */}
           </div>
-          
+          <div>Hari</div>
           <div className="d-flex">
             <LanguageDropdown />
             <AppsDropdown />

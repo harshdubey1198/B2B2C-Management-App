@@ -29,17 +29,17 @@ const Dashboard = () => {
                     <div className="col-lg-9 col-md-12 col-sm-12">
                     <div className="row d-flex">
                     <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
-                      <Button className="w-100" color="primary" onClick={() => navigate('/create-firm')}>
+                      <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/create-firm')}>
                           Create Firm
                       </Button>
                     </div>
                     <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
-                      <Button className="w-100" color="primary" onClick={() => navigate('/pricing')}>
+                      <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/pricing')}>
                           Pricing & plans 
                       </Button>
                     </div>
                     <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
-                      <Button className="w-100" color="primary" onClick={() => navigate('/view-invoices')}>
+                      <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/view-invoices')}>
                           Invoices
                       </Button>  
                     </div>

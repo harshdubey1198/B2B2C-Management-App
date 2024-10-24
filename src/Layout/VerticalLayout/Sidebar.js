@@ -104,7 +104,7 @@ const Sidebar = (props) => {
                       >
                         <i
                           className={item.icon}
-                          style={{ marginRight: "5px" }}
+                          style={{ marginRight: "10px" }}
                         ></i>
                         {item.subItem && (
                           <span

@@ -7,10 +7,10 @@ const Breadcrumbs = (props) => {
     <React.Fragment>
       <Row>
         <Col xs="12">
-          <div className="page-title-box d-sm-flex align-items-center justify-content-between">
-            <h4 className="">{props.breadcrumbItem}</h4>
+          <div className="page-title-box d-sm-flex align-items-center justify-content-between m-text-center">
+            <h4 className="m-mt-2">{props.breadcrumbItem}</h4>
             <div className="page-title-right">
-              <Breadcrumb listClassName="m-0">
+              <Breadcrumb listClassName="m-0 m-pl">
                 <BreadcrumbItem>
                   <Link to="#">{props.title}</Link>
                 </BreadcrumbItem>

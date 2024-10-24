@@ -10,8 +10,8 @@ import NotificationDropdown from "../../components/Common/TopbarDropdown/Notific
 import { withTranslation } from "react-i18next";
 
 //import images
-import logoSm from "../../assets/images/logo-sm.png";
-import logoDark from "../../assets/images/logo-dark.png";
+import logoSm from "../../assets/images/logo-sm-svg.svg";
+import logoDark from "../../assets/images/logo-dark-svg.svg";
 import logoLight from "../../assets/images/logo-light.png";
 
 // Redux Store
@@ -104,19 +104,19 @@ const Header = (props) => {
             <div className="navbar-brand-box text-center">
               <Link to="/" className="logo logo-dark">
                 <span className="logo-sm">
-                  <img src={logoSm} alt="logo-sm-dark" height="22" />
+                  <img src={logoSm} alt="logo-sm-dark" height={60} width={60} />
                 </span>
                 <span className="logo-lg">
-                  <img src={logoDark} alt="logo-dark" height="24" />
+                  <img src={logoDark} alt="logo-dark"  height={60} width={228} />
                 </span>
               </Link>
 
               <Link to="/" className="logo logo-light">
                 <span className="logo-sm">
-                  <img src={logoSm} alt="logo-sm-light" height="22" />
+                  <img src={logoSm} alt="logo-sm-light" height={60} width={60} />
                 </span>
                 <span className="logo-lg">
-                  <img src={logoLight} alt="logo-light" height="24" />
+                  <img src={logoDark} alt="logo-light" height={60} width={228} />
                 </span>
               </Link>
             </div>
@@ -143,7 +143,13 @@ const Header = (props) => {
               </div>
             </form> */}
           </div>
-
+          <div className="d-flex w-50 align-item-center">
+            <ul className="top-navbar-links">
+              <li><Link to="/create-firm">Create Firm</Link></li>
+              <li><Link to="/pricing">Pricing & plan</Link></li>
+              <li><Link to="/view-invoices">invoices</Link></li>
+            </ul>
+          </div>
           <div className="d-flex">
             {/* <div className="dropdown d-inline-block d-lg-none ms-2">
               <button

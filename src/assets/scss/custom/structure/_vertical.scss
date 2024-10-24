@@ -3,7 +3,7 @@
 //
 
 .metismenu {
-    margin: 0;
+    margin: 20px;
 
     li {
         display: block;
@@ -79,33 +79,43 @@
             li {
                 a {
                     display: block;
-                    padding: 0.625rem 1.5rem;
-                    color: var(--#{$prefix}sidebar-menu-item-color);
+                    padding: 1rem 1.5rem;
+                    color: var(--bs-sidebar-menu-item-color);
                     position: relative;
-                    font-size: 0.92rem;
+                    font-size: 1rem;
                     transition: all 0.4s;
-                    font-family: var(--#{$prefix}font-family-secondary);
+                    font-family: var(--bs-font-family-secondary);
+                    margin-bottom: 10px;
 
                     i {
                         display: inline-block;
                         min-width: 1.5rem;
-                        font-size: 1.1rem;
+                        font-size: 2rem;
                         line-height: 1.40625rem;
                         vertical-align: middle;
-                        color: var(--#{$prefix}sidebar-menu-item-icon-color);
+                        color: var(--#{$prefix}sidebar-menu-item-icon-color);                        
                         transition: all 0.4s;
                         opacity: 0.75;
                     }
 
                     &:hover {
                         color: var(--#{$prefix}sidebar-menu-item-hover-color) !important;
-
+                        background: var(--#{$prefix}sidebar-menu-item-bg-color) !important;
+                        border-radius: 6px;
                         i {
-                            color: var(--#{$prefix}sidebar-menu-item-hover-color);
+                            color: var(--#{$prefix}sidebar-menu-item-active-icon-color);
                         }
                     }
                 }
+                .active{
+                    color: var(--#{$prefix}sidebar-menu-sub-item-active-color) !important;
+                    background: var(--#{$prefix}sidebar-menu-item-bg-color) !important;
+                    border-radius: 6px;
 
+                    i {
+                        color: var(--#{$prefix}sidebar-menu-item-active-icon-color);
+                    }
+                }
                 .badge {
                     margin-top: 4px;
                 }
@@ -161,12 +171,14 @@
         color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
     }
     .active {
-        color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
+        background: var(--#{$prefix}sidebar-menu-item-bg-color) !important;
+        color: var(--#{$prefix}sidebar-menu-sub-item-active-color) !important;
 
         i {
-            color: var(--#{$prefix}sidebar-menu-item-active-color) !important;
+            color: var(--#{$prefix}sidebar-menu-sub-item-active-color) !important;
         }
     }
+    
 }
 
 @media (max-width: 992px) {
@@ -249,9 +261,11 @@
                     white-space: nowrap;
 
                     > a {
-                        padding: 15px 20px;
-                        min-height: 55px;
-                        transition: none;
+                        border-radius: 6px;
+                            width: 60px;
+                            height: 60px;
+                            padding: 15px;
+                            opacity: 1;
 
                         &:hover,
                         &:active,
@@ -260,16 +274,15 @@
                         }
 
                         i {
-                            font-size: 20px;
-                            margin-left: 4px;
+                            font-size: 32px;
+                            
                         }
-
+                        
                         span {
                             display: none;
                             padding-left: 25px;
                         }
                     }
-
                     &:hover {
                         > a {
                             position: relative;
@@ -279,7 +292,7 @@
                             transition: none;
 
                             i {
-                                color: $primary;
+                                color: var(--bs-sidebar-menu-sub-item-active-color) !important;
                             }
 
                             span {
@@ -366,7 +379,7 @@ body[data-sidebar="dark"] {
                     color: var(--#{$prefix}sidebar-dark-menu-item-color);
 
                     i {
-                        color: var(--#{$prefix}sidebar-dark-menu-item-icon-color);
+                        color: var(--#{$prefix}sidebar-dark-menu-item-hover-color);
                     }
 
                     &:hover {

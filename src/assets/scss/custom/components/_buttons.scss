@@ -35,7 +35,7 @@ a {
 
 @mixin button-variant-subtle($bg) {
     color: $bg;
-    background-color: rgba($bg, 0.1);
+    background-color: rgba(#FAA624, 0.1);
     border-color: transparent;
 
     &:hover,
