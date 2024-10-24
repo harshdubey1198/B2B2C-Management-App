@@ -26,9 +26,9 @@ manufacturerController.getManufacturers = async (req, res) => {
 };
 
 // GET SINGLE MANUFACTURER
-manufacturerController.getManufacturer = async (req, res) => {
+manufacturerController.getManufacturerById = async (req, res) => {
     try {
-        const manufacturer = await ManufacturerServices.getManufacturer(req.params.id);
+        const manufacturer = await ManufacturerServices.getManufacturerById(req.params.id);
         return res.status(200).json(createResult("Manufacturer fetched successfully", manufacturer));
     } catch (error) {
         console.log('Error fetching manufacturer:', error.message); 
