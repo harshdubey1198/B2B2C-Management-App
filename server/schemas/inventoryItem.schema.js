@@ -12,6 +12,8 @@ const InventoryItemSchema = new Schema({
     brand: { type: String },
     costPrice: { type: Number },
     sellingPrice: { type: Number },
+    manufacturer: { type: Schema.Types.ObjectId, ref: 'Manufacturer' },
+    brand: { type: Schema.Types.ObjectId, ref: 'Brand' },   
     categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
     subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
