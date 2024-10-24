@@ -382,6 +382,13 @@ $warning:       $yellow ;
 $danger:        $red ;
 $light:         $gray-100 ;
 $dark:          $gray-900 ;
+$yellowTheme:   $yellow ;
+$greenTheme:    $green ;
+$redTheme:      $red ;
+$blueTheme:     $blue ;
+$purpleTheme:   $purple ;
+$indigoTheme:   $indigo ;
+
 // scss-docs-end theme-color-variables
 
 // scss-docs-start theme-colors-map
@@ -393,7 +400,13 @@ $theme-colors: (
   "warning":    $warning,
   "danger":     $danger,
   "light":      $light,
-  "dark":       $dark
+  "dark":       $dark,
+  "yellow":     $yellowTheme,
+  "green":      $greenTheme,
+  "red":        $redTheme,
+  "blue":       $blueTheme,
+  "purple":     $purpleTheme,
+  "indigo":     $indigoTheme
 ) ;
 // scss-docs-end theme-colors-map
 
