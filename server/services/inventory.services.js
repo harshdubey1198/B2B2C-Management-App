@@ -111,7 +111,13 @@ inventoryServices.getItem = async (id) => {
     .populate('categoryId')
     .populate('subcategoryId')
     .populate('vendor')
+    .populate({
+        path: 'createdBy',
+        select: "firstName lastName email"
+    })
     .populate('tax')
+    .populate('brand')
+    .populate('manufacturer')
     if(!items){
         throw new Error('No items found')
     }
