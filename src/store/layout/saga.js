@@ -69,11 +69,11 @@ function* changeLayoutMode({ payload: layoutMode }) {
   try {
     if (layoutMode === "light") {
       yield call(changeBodyAttribute, "data-bs-theme", layoutMode);
-      yield put(changeTopbarThemeAction("light"));
+      // yield put(changeTopbarThemeAction("light"));
     }
     else if (layoutMode === "dark") {
-      yield call(changeBodyAttribute, "data-bs-theme", layoutMode);
-      yield put(changeTopbarThemeAction("dark"));
+      // yield call(changeBodyAttribute, "data-bs-theme", layoutMode);
+      // yield put(changeTopbarThemeAction("dark"));
     }
   } catch (error) { }
 }
