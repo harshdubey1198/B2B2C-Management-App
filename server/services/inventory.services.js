@@ -97,6 +97,8 @@ inventoryServices.getAllItems = async (adminId) => {
     })
     .populate('vendor')
     .populate('tax')
+    .populate('brand')
+    .populate('manufacturer')
     if(!items){
         throw new Error('No items found')
     }
