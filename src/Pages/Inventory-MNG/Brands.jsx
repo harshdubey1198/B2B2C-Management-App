@@ -20,7 +20,7 @@ const Brands = () => {
     return description;
   };
 
-  return (
+  return ( 
     <React.Fragment>
       <div className="page-content">
         <div className="container-fluid">
