@@ -183,7 +183,7 @@ const InventoryItemForm = () => {
         setVariants([...variants, variant]);
       }
       setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "",   });
-      modalOpen(false);
+      setVariantModalOpen(false);
     } else {
       toast.error("Please fill in all variant details");
     }
