@@ -455,7 +455,6 @@ const InventoryItemForm = () => {
                         }}>Add Variant</Button>
                         <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
                         <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
-                        <Button color="primary" onClick={toggleBrandModal}> Add Brand </Button>
                       </Col>
                     </Row>
                   </form>

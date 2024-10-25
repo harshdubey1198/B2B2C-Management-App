@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Alert } from 'reactstrap';
+import { Table, Button, Alert} from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
@@ -7,6 +7,8 @@ import { formatDate } from '../Utility/formatDate';
 import FirmSwitcher from '../Firms/FirmSwitcher';
 import ViewFormat from '../../components/InvoicingComponents/viewFormat';
 import { toast } from 'react-toastify';
+import Breadcrumbs from '../../components/Common/Breadcrumb';
+import axiosInstance from '../../utils/axiosInstance';
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
@@ -15,15 +17,8 @@ const ViewInvoices = () => {
     const [trigger, setTrigger] = useState(0);
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser")).response;
-    const token = JSON.parse(localStorage.getItem("authUser")).token;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
 
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        },
-    };
 
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -32,8 +27,10 @@ const ViewInvoices = () => {
                     ? `${process.env.REACT_APP_URL}/invoice/get-invoices/${selectedFirmId}` 
                     : `${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`;
                 
-                const response = await axios.get(url, config);
+                const response = await axiosInstance.get(url);
                 setInvoices(response.data);
+                console.log("tax rate" , response.data[0].items[0].itemId.tax.components[0].rate );
+                console.log("tax name" , response.data[0].items[0].itemId.tax.components[0].taxType );
             } catch (error) {
                 console.error("Error fetching invoices:", error);
                 setInvoices([]);
@@ -45,7 +42,7 @@ const ViewInvoices = () => {
 
     const fetchAndPrintInvoice = async (invoiceId) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`, config);
+            const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
             setSelectedInvoice(response.data);
             handlePrint(); 
         } catch (error) {
@@ -65,7 +62,7 @@ const ViewInvoices = () => {
         }
     
         try {
-            const response = await axios.put(`${process.env.REACT_APP_URL}/invoice/reject-invoice/${invoiceId}`, {}, config);
+            const response = await axiosInstance.put(`${process.env.REACT_APP_URL}/invoice/reject-invoice/${invoiceId}`, {});
             console.log("Proforma invoice rejected successfully:", response.message);
             toast.success(response.message);
             setTrigger(prev => prev + 1);
@@ -80,11 +77,11 @@ const ViewInvoices = () => {
 
     const handleApproveStatus = async (invoice, status) => {
         try {
-            await axios.put(`${process.env.REACT_APP_URL}/invoice/update-invoice-approval`, {
+            await axiosInstance.put(`${process.env.REACT_APP_URL}/invoice/update-invoice-approval`, {
                 id: invoice._id,
                 userId: authuser._id,
                 approvalStatus: status
-            }, config);
+            });
             setTrigger(prev => prev + 1); 
         } catch (error) {
             console.error("Error updating invoice status:", error);
@@ -94,7 +91,8 @@ const ViewInvoices = () => {
     return (
         <React.Fragment>
             <div className='page-content'>
-                <h1>View Invoices</h1>
+                <Breadcrumbs title="Invoicing" breadcrumbItem="View Invoices" />
+                {/* <h1>View Invoices</h1> */}
                 <div className="d-flex justify-content-between mb-4">
                     {authuser.role === "client_admin" && (
                         <FirmSwitcher
@@ -106,14 +104,15 @@ const ViewInvoices = () => {
                 {invoices.length === 0 ? (
                     <Alert color="info">No invoices found.</Alert>
                 ) : (
-                    <div class="table-responsive">
+                    <div className="table-responsive">
                     <Table bordered>
-                        <thead class="table-light text-center">
+                        <thead className="table-light">
                             <tr>
                                 <th>Invoice ID</th>
-                                <th>Customer Name</th>
+                                <th>Client</th>
                                 <th>Amount Total</th>
                                 <th>Amount Due</th>
+                                <th>Taxes</th>
                                 <th>Date</th>
                                 <th>Country</th>
                                 <th>Status</th>
@@ -129,7 +128,18 @@ const ViewInvoices = () => {
                                     <td>{invoice.invoiceNumber}</td>
                                     <td>{invoice.customerName}</td>
                                     <td>{invoice.totalAmount} ₹</td>
-                                    <td>{invoice.amountDue} ₹</td>
+                                    <td style={{color:"red"}}>{invoice.amountDue} ₹</td>
+                                    <td>
+                                        <ul style={{paddingLeft:"0.5rem", listStyle:"none"}}>
+                                            {invoice.items.map((item, itemIndex) => (
+                                                item.itemId.tax.components.map((tax, taxIndex) => (
+                                                    <li key={`${itemIndex}-${taxIndex}`}>
+                                                        {tax.taxType} - {tax.rate}%
+                                                    </li>
+                                                ))
+                                            ))}
+                                        </ul>
+                                     </td>
                                     <td>{formatDate(invoice.invoiceDate)}</td>
                                     <td>{invoice.customerAddress.country}</td>
                                     <td>{invoice.approvalStatus}</td>
@@ -153,13 +163,13 @@ const ViewInvoices = () => {
                                         </td>
                                     )}
                                     {authuser.role === "firm_admin" && invoice.invoiceType === "Proforma" && (
-                                       <Button color="danger" size="sm" onClick={() => {
+                                       <td><Button color="danger" size="sm" onClick={() => {
                                                 console.log("Rejecting Proforma Invoice ID:", invoice._id);
                                                 handleRejectProforma(invoice._id);
                                              }}>
                                         Reject Proforma
                                     </Button>
-                                    
+                                    </td>
                                     )}
                                     {authuser.role === "firm_admin" && (
                                         <td>{invoice.status}</td>
