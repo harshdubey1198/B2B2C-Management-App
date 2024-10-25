@@ -349,8 +349,7 @@ const InventoryItemForm = () => {
                           <FormGroup>
                             <Label htmlFor="manufacturer">Manufacturer</Label>
                             <div className="d-flex align-items-center">
-                              <select id="manufacturer" name="manufacturer
-                              " value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
+                              <select id="manufacturer" name="manufacturer" value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
                                 <option value="">Select </option>
                                 {manufacturers.map((manufacturer) => (
                                   <option key={manufacturer._id} value={manufacturer._id}>
