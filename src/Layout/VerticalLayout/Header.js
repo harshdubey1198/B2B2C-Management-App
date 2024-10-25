@@ -233,7 +233,7 @@ const Header = (props) => {
 
             
           
-            {/* <div
+            <div
               className="dropdown d-inline-block"
               onClick={() => {
                 props.showRightSidebarAction(!props.showRightSidebar);
@@ -245,7 +245,7 @@ const Header = (props) => {
               >
                 <i className="mdi mdi-cog"></i>
               </button>
-            </div> */}
+            </div>
 
             {/* Button for toggling the theme */}
            
