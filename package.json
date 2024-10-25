@@ -30,7 +30,7 @@
     "react-router-dom": "^6.20.1",
     "react-scripts": "^5.0.1",
     "react-select": "^5.8.0",
-    "react-to-print": "^3.0.1",
+    "react-to-print": "^2.15.1",
     "react-toastify": "^10.0.5",
     "reactstrap": "^9.2.1",
     "redux": "^5.0.0",
