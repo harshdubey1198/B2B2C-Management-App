@@ -65,9 +65,15 @@ const Dashboard = () => {
                   </Button>
                   </div>
               ) : authuser.role === "accountant" ? (
+                 <div className="d-flex justify-content-evenly">
+
                   <Button color="primary" onClick={() => navigate('/add-inventory')}>
                       Create Inventory
                   </Button>
+                  <Button color="primary" onClick={() => navigate('/create-invoice')}>
+                      Create Invoice
+                  </Button>
+                  </div>
               ) : authuser.role === "employee" ? (
                   <Button color="primary" onClick={() => navigate('/create-invoice')}>
                       Create Invoice
