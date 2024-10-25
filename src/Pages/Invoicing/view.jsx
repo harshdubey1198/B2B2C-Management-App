@@ -108,10 +108,10 @@ const ViewInvoices = () => {
                     <Table bordered>
                         <thead className="table-light">
                             <tr>
-                                <th>Invoice ID</th>
+                                <th>Inv ID</th>
                                 <th>Client</th>
-                                <th>Amount Total</th>
-                                <th>Amount Due</th>
+                                <th>Total</th>
+                                <th>Due</th>
                                 <th>Taxes</th>
                                 <th>Date</th>
                                 <th>Country</th>
@@ -129,7 +129,7 @@ const ViewInvoices = () => {
                                     <td>{invoice.customerName}</td>
                                     <td>{invoice.totalAmount} ₹</td>
                                     <td style={{color:"red"}}>{invoice.amountDue} ₹</td>
-                                    <td>
+                                    <td style={{minWidth:"110px"}}>
                                         <ul style={{paddingLeft:"0.5rem", listStyle:"none"}}>
                                             {invoice.items.map((item, itemIndex) => (
                                                 item.itemId.tax.components.map((tax, taxIndex) => (

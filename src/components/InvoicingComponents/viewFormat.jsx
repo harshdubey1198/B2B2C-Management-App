@@ -109,7 +109,7 @@ const ViewFormat = forwardRef(({ invoiceData, selectedInvoice, userRole }, ref) 
             </div>
             <div class="table-responsive">
                 <table className="table table-bordered">
-                <thead className="table-light text-center">
+                <thead className="table-light ">
                     <tr>
                     <th>Sr. no</th>
                     <th>Item Name</th>
