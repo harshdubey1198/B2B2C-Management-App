@@ -61,7 +61,9 @@
 
     // Vertical Sidebar - Dark
     [data-sidebar="dark"] {
-        --#{$prefix}sidebar-dark-bg: #1b2c3f; //2c313a
+        // --#{$prefix}sidebar-dark-bg: #1b2c3f; //2c313a
+        --#{$prefix}sidebar-dark-bg: #0D4251; //2c313a
+
         --#{$prefix}sidebar-dark-menu-item-color: #FFFFFF;
         --#{$prefix}sidebar-menu-item-hover-color: #FFFFFF;
         --#{$prefix}sidebar-dark-menu-sub-item-color: #FFFFFF;

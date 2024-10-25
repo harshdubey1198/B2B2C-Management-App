@@ -14,6 +14,7 @@ const layoutWidthTypes = {
 }
 
 const topBarThemeTypes = {
+  DEFAULT: "dark",
   LIGHT: "light",
   DARK: "dark",
 }
@@ -25,7 +26,7 @@ const leftSidebarTypes = {
 }
 
 const leftSideBarThemeTypes = {
-  DEFAULT:"light",
+  DEFAULT:"dark",
   LIGHT: "light",
   DARK: "dark",
 }
