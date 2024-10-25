@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import FetchManufacturers from './fetchManufacturers';
+import FetchManufacturers from './FetchManufacturers';
 import { Table } from 'reactstrap';
 
 const Manufacturers = () => {

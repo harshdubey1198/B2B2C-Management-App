@@ -10,6 +10,7 @@ import hsnData from "../../data/hsn.json";
 import BrandModal from "../../Modal/BrandModal";
 import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
+import FetchManufacturers from "./FetchManufacturers";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -37,7 +38,9 @@ const InventoryItemForm = () => {
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
-  
+  const handleManufacturersFetched = (fetchedManufacturers) => {
+    setManufacturers(fetchedManufacturers);
+  };
 
   const handleReset = () => {
     setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
@@ -270,6 +273,7 @@ const InventoryItemForm = () => {
   return (
     <React.Fragment>
       <FetchBrands firmId={firmId} onBrandsFetched={handleBrandsFetched} />
+      <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
         <Container>
