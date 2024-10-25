@@ -175,8 +175,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
 
   // Generate invoice number
   const invoiceNumber = await generateInvoiceNumber(firmId);
-
-  const amountDue = totalAmount - (amountPaid || 0);
+  const amountDue = Math.max(totalAmount - amountPaid, 0);
 
   const newInvoice = new Invoice({
     invoiceNumber,
@@ -309,7 +308,6 @@ const calculateTotalTax = async (inventoryItem, itemTotal) => {
   return totalTaxForItem;
 };
 
-
 // update stock function
 const updateInventoryStock = async (items, isProforma) => {
   for (let item of items) {
@@ -385,8 +383,6 @@ const updateInventoryStock = async (items, isProforma) => {
     await inventoryItem.save();
   }
 };
-
-
 
 
 // PERFORMA INVOICE GETS REJECTED

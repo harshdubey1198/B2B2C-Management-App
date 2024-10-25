@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import FetchManufacturers from './FetchManufacturers';
+import FetchManufacturers from './fetchManufacturers';
 import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import ManufacturerModal from '../../Modal/ManufacturerModal';
 import axiosInstance from '../../utils/axiosInstance';

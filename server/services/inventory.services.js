@@ -17,6 +17,7 @@ const calculateStock = (variants) => {
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
+    console.log(body, "body ")
     const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, taxId, selectedTaxTypes, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({ name, createdBy: userId });
@@ -96,6 +97,8 @@ inventoryServices.getAllItems = async (adminId) => {
     })
     .populate('vendor')
     .populate('tax')
+    .populate('brand')
+    .populate('manufacturer')
     if(!items){
         throw new Error('No items found')
     }

@@ -10,7 +10,7 @@ import hsnData from "../../data/hsn.json";
 import BrandModal from "../../Modal/BrandModal";
 import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
-import FetchManufacturers from "./FetchManufacturers";
+import FetchManufacturers from "./fetchManufacturers";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
