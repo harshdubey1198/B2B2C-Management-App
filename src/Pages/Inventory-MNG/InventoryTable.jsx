@@ -211,7 +211,7 @@ function InventoryTable() {
               <td>
                 {item.quantity} {item.qtyType}
               </td>
-              <td>{item.brand}</td>
+              <td>{item.brand?.name}</td>
               <td>₹ {item.costPrice?.toFixed(2)}</td>
               <td>₹ {item.sellingPrice?.toFixed(2)}</td>
               <td>

@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { Table, Modal, ModalHeader, ModalBody, Button, Row, Col, } from "reactstrap";
 import axiosInstance from "../utils/axiosInstance";
+import FetchBrands from "../Pages/Inventory-MNG/FetchBrands";
+import FetchManufacturers from "../Pages/Inventory-MNG/fetchManufacturers";
 
 const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, setSelectedItem, deleteVariant, updateItem, handleEditVariant, modalOpen, setModalOpen, selectedItem, firmId, }) => {
   const [vendors, setVendors] = useState([]);
+  const [brands, setBrands] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
+  const handleBrandsFetched = (fetchedBrands) => {
+    setBrands(fetchedBrands);
+  };
+  const handleManufacturersFetched = (fetchedManufacturers) => {
+    setManufacturers(fetchedManufacturers);
+  };
+
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const response = await axiosInstance.get(
+        const response = await axiosInstance.get( 
           `${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`
         );
         setVendors(response.data);
@@ -24,6 +35,8 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
       isOpen={modalOpen}
       toggle={() => setModalOpen(!modalOpen)}
     >
+      <FetchBrands firmId={firmId} onBrandsFetched={handleBrandsFetched} />
+      <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
       <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
         {" "}
         {selectedItem?.name} Details{" "}
@@ -134,17 +147,88 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
               </Col>
             </Row>
             <Row>
-              <Col md={6}>
+            <Col md={6}>
                 <label>
                   <strong>Brand:</strong>
                 </label>
+                {selectedItem.brand && selectedItem.brand.name ? (
+                  <input
+                    type="text"
+                    value={selectedItem.brand.name}
+                    className="form-control"
+                    readOnly
+                  />
+                ) : (
+                  <select
+                    className="form-control"
+                    value={selectedItem.brand?._id || ""}
+                    onChange={(e) => {
+                      const selectedBrand = brands.find(
+                        (brand) => brand._id === e.target.value
+                      );
+                      setSelectedItem({
+                        ...selectedItem,
+                        brand: selectedBrand || null,
+                      });
+                    }}
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((brand) => (
+                      <option key={brand._id} value={brand._id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </Col>
+
+               <Col md={6}>
+    <label>
+      <strong>Manufacturer:</strong>
+    </label>
+    {selectedItem.manufacturer && selectedItem.manufacturer.name ? (
+      <input
+        type="text"
+        value={selectedItem.manufacturer.name}
+        className="form-control"
+        readOnly
+      />
+    ) : (
+      <select
+        className="form-control"
+        value={selectedItem.manufacturer?._id || ""}
+        onChange={(e) => {
+          const selectedManufacturer = manufacturers.find(
+            (manufacturer) => manufacturer._id === e.target.value
+          );
+          setSelectedItem({
+            ...selectedItem,
+            manufacturer: selectedManufacturer || null,
+          });
+        }}
+      >
+        <option value="">Select Manufacturer</option>
+        {manufacturers.map((manufacturer) => (
+          <option key={manufacturer._id} value={manufacturer._id}>
+            {manufacturer.name}
+          </option>
+        ))}
+      </select>
+    )}
+  </Col>
+              </Row>
+            <Row>
+              <Col md={6}>
+                <label>
+                  <strong>Selling Price:</strong>
+                </label>
                 <input
-                  type="text"
-                  value={selectedItem.brand}
+                  type="number"
+                  value={selectedItem.sellingPrice}
                   onChange={(e) =>
                     setSelectedItem({
                       ...selectedItem,
-                      brand: e.target.value,
+                      sellingPrice: parseFloat(e.target.value),
                     })
                   }
                   className="form-control"
@@ -168,57 +252,8 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
               </Col>
             </Row>
             <Row>
+       
               <Col md={6}>
-                <label>
-                  <strong>Selling Price:</strong>
-                </label>
-                <input
-                  type="number"
-                  value={selectedItem.sellingPrice}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      sellingPrice: parseFloat(e.target.value),
-                    })
-                  }
-                  className="form-control"
-                />
-              </Col>
-              <Col md={6}>
-                <label>
-                  <strong>Supplier:</strong>
-                </label>
-                <input
-                  type="text"
-                  value={selectedItem.supplier}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      supplier: e.target.value,
-                    })
-                  }
-                  className="form-control"
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-                <label>
-                  <strong>Manufacturer:</strong>
-                </label>
-                <input
-                  type="text"
-                  value={selectedItem.manufacturer}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      manufacturer: e.target.value,
-                    })
-                  }
-                  className="form-control"
-                />
-              </Col>
-              <Col md={3}>
                 <label>
                   <strong>HSN Code:</strong>
                 </label>
@@ -245,7 +280,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   description: selectedItem.description,
                   qtyType: selectedItem.qtyType,
                   quantity: selectedItem.quantity,
-                  supplier: selectedItem.supplier,
                   manufacturer: selectedItem.manufacturer,
                   brand: selectedItem.brand,
                   costPrice: selectedItem.costPrice,
