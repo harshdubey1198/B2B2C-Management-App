@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 
-const FetchManufacturers = ({ firmId, onManufacturersFetched }) => {
+const FetchManufacturers = ({ firmId, onManufacturersFetched, triggerManufacturer }) => {
   useEffect(() => {
     const fetchManufacturers = async () => {
       try {
@@ -15,7 +15,7 @@ const FetchManufacturers = ({ firmId, onManufacturersFetched }) => {
     };
 
     fetchManufacturers();
-  }, []); 
+  }, [triggerManufacturer]); 
 
   return null; 
 };

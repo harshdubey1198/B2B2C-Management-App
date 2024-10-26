@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { validateEmail, validatePhone } from "../Pages/Utility/FormValidation";
 
-const ManufacturerModal = ({ isOpen, toggle,manufacturerAdd, manufacturerToEdit, onManufacturerUpdated }) => {
+const ManufacturerModal = ({ isOpen, toggle,manufacturerAdd, manufacturerToEdit, onManufacturerUpdated, setTriggerManufacurer }) => {
   const [manufacturer, setManufacturer] = useState({
     name: "",
     address: { h_no: "", city: "", state: "", zip_code: "", country: "" },
@@ -78,6 +78,7 @@ const ManufacturerModal = ({ isOpen, toggle,manufacturerAdd, manufacturerToEdit,
       if (method === "put"){
         onManufacturerUpdated(response.data);
         }
+        setTriggerManufacurer((prev) => prev + 1)
       toast.success(response.message);
       toggle();
       formReset();

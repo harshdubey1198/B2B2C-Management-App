@@ -12,7 +12,7 @@ import {
 import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 
-const BrandModal = ({ isOpen, toggle, brandToEdit, onBrandUpdated }) => {
+const BrandModal = ({ isOpen, toggle, brandToEdit, onBrandUpdated, setTriggerBrand }) => {
   const [brand, setBrand] = useState({ name: "", description: "", website: "", country: "" });
   const [loading, setLoading] = useState(false);
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
@@ -66,8 +66,9 @@ const BrandModal = ({ isOpen, toggle, brandToEdit, onBrandUpdated }) => {
           `${process.env.REACT_APP_URL}/brand/create-brand/${userId}`,
           brand
         );
+        setTriggerBrand((prev) => prev + 1)
         toast.success(response.message);
-        onBrandUpdated(response.data);
+        // onBrandUpdated(response.data);
       }
       toggle();
       formReset();

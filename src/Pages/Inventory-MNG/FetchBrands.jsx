@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import axiosInstance from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 
-const FetchBrands = ({ firmId, onBrandsFetched }) => {
+const FetchBrands = ({ firmId, onBrandsFetched, triggerBrand }) => {
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -17,7 +17,7 @@ const FetchBrands = ({ firmId, onBrandsFetched }) => {
     };
 
     fetchBrands();
-  }, []); 
+  }, [triggerBrand]); 
 
   return null; 
 };

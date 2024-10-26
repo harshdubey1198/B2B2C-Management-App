@@ -34,6 +34,8 @@ const InventoryItemForm = () => {
   const [ tosendTaxtype, setToSendTaxtype] = useState([]);
   const [brands, setBrands] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
+  const [triggerManufacturer, setTriggerManufacurer] = useState(0)
+  const [triggerBrand, setTriggerBrand] = useState(0)
   
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
@@ -272,8 +274,8 @@ const InventoryItemForm = () => {
 
   return (
     <React.Fragment>
-      <FetchBrands firmId={firmId} onBrandsFetched={handleBrandsFetched} />
-      <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
+      <FetchBrands firmId={firmId} onBrandsFetched={handleBrandsFetched} triggerBrand={triggerBrand}/>
+      <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} triggerManufacturer={triggerManufacturer}/>
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
         <Container>
@@ -497,8 +499,8 @@ const InventoryItemForm = () => {
             </Col>
           </Row>
         </Container>
-        <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} />
-        <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} />
+        <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} setTriggerBrand={setTriggerBrand}/>
+        <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} setTriggerManufacurer={setTriggerManufacurer}/>
 
       </div>
     </React.Fragment>
