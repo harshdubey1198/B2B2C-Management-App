@@ -79,7 +79,7 @@ const Brands = () => {
       <div className="page-content">
         <div className="container-fluid">
           <Breadcrumbs title="Inventory Management" breadcrumbItem="Brands" />
-          <FetchBrands onBrandsFetched={handleBrandsFetched} firmId={firmId} />
+          <FetchBrands onBrandsFetched={handleBrandsFetched} triggerBrand={setTriggerBrand} firmId={firmId} />
         </div>
         <div className='relative h-35'>   
           <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleBrandAdd}></i>

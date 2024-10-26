@@ -7,6 +7,7 @@ import Calendar from "../Calender/index";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import RolewiseDashboard from "./RolewiseDashboard";
 import { useNavigate } from "react-router-dom";
+import SelfProfiling from "../Utility/SelfProfiling";
 
 const Dashboard = () => {
   const authuser = JSON.parse(localStorage.getItem('authUser'))?.response
@@ -91,10 +92,13 @@ const Dashboard = () => {
 
           {/* Latest Transaction Table */}
           {/* <LatestTransation /> */}
-          <Row>
-           <Col sm="12" md="6" lg="6">  
-          <Calendar />
-          </Col>
+          <Row style={{marginBottom:"20px"}}>
+            <Col sm="12" md="6" lg="6">  
+              <Calendar />
+            </Col>
+            <Col sm="12" md="6" lg="6">
+              <SelfProfiling /> 
+            </Col>
           </Row>
 
         </Container>

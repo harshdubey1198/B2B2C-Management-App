@@ -171,7 +171,7 @@ const Calender = (props) => {
               <CardBody>
                 <FullCalendar
                   plugins={[BootstrapTheme, dayGridPlugin, interactionPlugin]}
-                  slotDuration={"00:15:00"}
+                  slotDuration={"00:16:00"}
                   handleWindowResize={true}
                   themeSystem="bootstrap"
                   headerToolbar={{
