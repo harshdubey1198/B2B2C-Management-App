@@ -97,3 +97,10 @@
     position: absolute;
     right: 0;
 }
+.btn-primary{
+    background-color: #FAA624 !important;
+    &:hover{
+        background-color: #ffa318 !important;
+        border: 1px solid grey;
+    }
+}

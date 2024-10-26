@@ -4,11 +4,7 @@ export const masterAdminSidebarData = () => [
     icon: "mdi mdi-home-variant-outline",
     url: "/dashboard",
   },
-  {
-    label: "Calendar",
-    icon: "mdi mdi-calendar",
-    url: "/calendar",
-  },
+
   {
     label: "Clients/Customers",
     icon: "mdi mdi-account-multiple-outline",
@@ -145,11 +141,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Calendar",
-      icon: "mdi mdi-calendar",
-      url: "/calendar",
-    },
+
     {
       label:"Companies",
       icon:"mdi mdi-account-multiple-outline",
@@ -236,11 +228,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Calendar",
-      icon: "mdi mdi-calendar",
-      url: "/calendar",
-    },
+
     // {
     //   label: "google maps",
     //   icon: "mdi mdi-home-variant-outline",
@@ -300,11 +288,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Calendar",
-      icon: "mdi mdi-calendar",
-      url: "/calendar",
-    },
+
     {
       label: "Inventory",
       icon: "mdi mdi-cash-multiple",
@@ -337,11 +321,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
-    {
-      label: "Calendar",
-      icon: "mdi mdi-calendar",
-      url: "/calendar",
-    },
+
     {
       label: "Inventory",
       icon: "mdi mdi-archive-outline",

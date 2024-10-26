@@ -175,8 +175,8 @@ const Calender = (props) => {
                   handleWindowResize={true}
                   themeSystem="bootstrap"
                   headerToolbar={{
-                    left: "prev,next today",
-                    center: "title",
+                    // left: "prev,next today",
+                    // center: "title",
                     right: "dayGridMonth,dayGridWeek,dayGridDay",
                   }}
                   events={events}

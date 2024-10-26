@@ -144,7 +144,7 @@ const Header = (props) => {
             </form> */}
           </div>
           <div className="d-flex w-50 align-item-center">
-            <ul className="top-navbar-links">
+            <ul className="top-navbar-links" id="nav-links">
               <li><Link to="/create-firm">Create Firm</Link></li>
               <li><Link to="/pricing">Pricing & plan</Link></li>
               <li><Link to="/view-invoices">invoices</Link></li>

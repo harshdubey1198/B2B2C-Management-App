@@ -227,6 +227,9 @@ body[data-topbar="dark"] {
             color: $header-dark-item-color;
         }
     }
+    .top-navbar-links li a {
+        color: #e9ecef !important;
+    }
 
     .header-profile-user {
         background-color: rgba($white, 0.25);
