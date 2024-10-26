@@ -10,6 +10,7 @@ import hsnData from "../../data/hsn.json";
 import BrandModal from "../../Modal/BrandModal";
 import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
+import FetchManufacturers from "./fetchManufacturers";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -37,7 +38,9 @@ const InventoryItemForm = () => {
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
-  
+  const handleManufacturersFetched = (fetchedManufacturers) => {
+    setManufacturers(fetchedManufacturers);
+  };
 
   const handleReset = () => {
     setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
@@ -180,7 +183,7 @@ const InventoryItemForm = () => {
         setVariants([...variants, variant]);
       }
       setVariant({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "",   });
-      modalOpen(false);
+      setVariantModalOpen(false);
     } else {
       toast.error("Please fill in all variant details");
     }
@@ -270,6 +273,7 @@ const InventoryItemForm = () => {
   return (
     <React.Fragment>
       <FetchBrands firmId={firmId} onBrandsFetched={handleBrandsFetched} />
+      <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
       <div className="page-content">
         <Breadcrumbs title="Inventory Management" breadcrumbItem="Inventory Form" />
         <Container>
@@ -345,8 +349,7 @@ const InventoryItemForm = () => {
                           <FormGroup>
                             <Label htmlFor="manufacturer">Manufacturer</Label>
                             <div className="d-flex align-items-center">
-                              <select id="manufacturer" name="manufacturer
-                              " value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
+                              <select id="manufacturer" name="manufacturer" value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
                                 <option value="">Select </option>
                                 {manufacturers.map((manufacturer) => (
                                   <option key={manufacturer._id} value={manufacturer._id}>
@@ -452,7 +455,6 @@ const InventoryItemForm = () => {
                         }}>Add Variant</Button>
                         <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
                         <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
-                        <Button color="primary" onClick={toggleBrandModal}> Add Brand </Button>
                       </Col>
                     </Row>
                   </form>
