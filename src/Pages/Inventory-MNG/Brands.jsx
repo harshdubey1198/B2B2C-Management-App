@@ -76,6 +76,9 @@ const Brands = () => {
           <Breadcrumbs title="Inventory Management" breadcrumbItem="Brands" />
           <FetchBrands onBrandsFetched={handleBrandsFetched} firmId={firmId} />
         </div>
+        <div className='relative h-35'>   
+          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleBrandEdit}></i>
+        </div>
         <div className='table-responsive'>
           <Table bordered className='table table-centered table-nowrap mb-0'>
             <thead className='thead-light'>
