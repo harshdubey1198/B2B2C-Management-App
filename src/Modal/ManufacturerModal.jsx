@@ -75,13 +75,15 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
         : `${process.env.REACT_APP_URL}/manufacturer/create-manufacturer/${userId}`;
       const method = manufacturerToEdit ? "put" : "post";
       const response = await axiosInstance[method](url, manufacturer);
-      onManufacturerUpdated(response.data);
+      if (method === "put"){
+        onManufacturerUpdated(response.data);
+        }
       toast.success(response.message);
       toggle();
       formReset();
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to save manufacturer");
+      // toast.error("Failed to save manufacturer");
     } finally {
       setLoading(false);
     }
