@@ -53,11 +53,12 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   };
   
 
-  const calculateTotal = (quantity, price, tax, discount) => {
-    const totalBeforeTax = quantity * price;
+  const calculateTotal = (quantity,varSelPrice, price, tax, discount) => {
+    // const totalBeforeTax =  quantity * varSelPrice;
+    const totalBeforeTax = (varSelPrice > 0) ? (quantity * varSelPrice) : (quantity * price);
     const totalTax = totalBeforeTax * (tax / 100);
     const totalDiscount = totalBeforeTax * (discount / 100);
-    const total = totalBeforeTax + totalTax - totalDiscount;
+    const total = totalBeforeTax + totalTax - totalDiscount ;
     return parseFloat(total.toFixed(2));
   };
 
@@ -84,20 +85,29 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       return;
     }
   
+    // Reset fields for new item selection
+    const updatedItems = [...items];
+    updatedItems[index] = {
+      itemId: selectedItemId,
+      name: "",
+      description: "",
+      quantity: 0,
+      price: 0,
+      tax: 0,
+      discount: 0,
+      total: 0,
+      selectedVariant: [], // Reset selectedVariant when new item is selected
+    };
+  
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
-      const updatedItems = [...items];
       const price = getSellingPrice(selectedItem._id);
       updatedItems[index] = {
         ...updatedItems[index],
-        itemId: selectedItem._id,
         name: selectedItem.name,
         description: selectedItem.description || '',
-        quantity: 0,
         price,
-        tax: 0,
-        discount: 0,
-        total: calculateTotal(1, price, 0, 0),
+        total: calculateTotal(0, 0, price, 0, 0),
       };
   
       setInvoiceData((prevData) => ({
@@ -106,6 +116,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       }));
     }
   };
+  
   
   const handleVariantChange = (itemId, variantName, index) => {
     if (!variantName) {
@@ -137,12 +148,14 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const discount = selectedItem.discount || 0;
   
       const price = basePrice;
+      const varSelPrice= basePrice + variantPrice;
       const total = calculateTotal(quantity, price, tax, discount);
   
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, price: variantPrice, stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
+        selectedVariant: [{ optionLabel: variantName, varSelPrice:varSelPrice, price: variantPrice, stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
         price,
+        varSelPrice,
         total,
       };
   
@@ -161,10 +174,11 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     const selectedItem = newItems[index];
     const quantity = selectedItem.quantity || 0;
     const price = selectedItem.price || 0;
+    const varSelPrice = selectedItem.varSelPrice || 0;
     const tax = selectedItem.tax || 0;
     const discount = selectedItem.discount || 0;
 
-    newItems[index].total = calculateTotal(quantity, price, tax, discount);
+    newItems[index].total = calculateTotal(quantity,varSelPrice, price, tax, discount);
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
 
@@ -194,6 +208,37 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
             </Input>
           </FormGroup>
           </div>
+          <div className="col-lg-2 col-md-3 col-sm-12">
+          {/* <FormGroup>
+            <Label for={`tax-${index}`}>Tax</Label>
+          <Input
+            type="select" 
+            name={`tax-${index}`}
+            id={`tax-${index}`}
+            value={item.tax || ""}
+            onChange={(e) => handleItemChange(index, 'tax', e.target.value)}
+            required
+          >
+          <option value="">Select Tax</option>
+          {inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.components.map((taxComponent, index) => (
+            <option key={index} value={taxComponent.taxType}>
+              {taxComponent.taxType} - {taxComponent.rate}%
+            </option>
+          ))}
+          </Input>
+          </FormGroup> */}
+             <FormGroup>
+                  <p>Tax</p>
+                  {inventoryItems
+                    .find((invItem) => invItem._id === item.itemId)
+                    ?.tax?.components.map((taxComponent, index) => (
+                      <div key={index} >
+                        {taxComponent.taxType} - {taxComponent.rate}%
+                      </div>
+                    ))}
+                </FormGroup>
+          </div>
+
           <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`variant-${index}`}>Variant</Label>
@@ -230,9 +275,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               type="number"
               name={`quantity-${index}`}
               id={`quantity-${index}`}
-              min={0}
               max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
-              value={item.quantity || 0}
+              value={item.quantity}
               onChange={(e) =>
                 handleItemChange(
                   index,
@@ -246,7 +290,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
           </div>
           <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
-            <Label for={`price-${index}`}>Price</Label>
+            <Label for={`price-${index}`}>Item Price</Label>
             <Input
               type="number"
               name={`price-${index}`}
@@ -285,7 +329,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
           </div> */}
           <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
-            <Label for={`total-${index}`}>Total</Label>
+            <Label for={`total-${index}`}>Total <span style={{fontSize:"10px"}}>Item + variant</span></Label>
             <Input
               type="number"
               name={`total-${index}`}

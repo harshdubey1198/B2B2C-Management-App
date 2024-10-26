@@ -43,7 +43,8 @@ const Index = () => {
     country: 'India',
     items: [],
     paymentLink: '',
-    id: ''
+    id: '',
+    varSelPrice: '',
 });
 const config = {
   headers: {
@@ -55,6 +56,10 @@ const fetchInventoryItems = () => {
   axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config)
     .then(response => {
       setFakeItems(response.data || []);
+      // console.log("response.data", response.data);
+      console.log("response.data[5]", response.data[5]);
+      console.log("tax rate", response.data[5].tax.components[0].rate);
+      console.log("tax type", response.data[5].tax.components[0].taxType);
     })
     .catch(error => {
       console.log(error);
