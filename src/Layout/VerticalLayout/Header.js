@@ -200,9 +200,9 @@ const Header = (props) => {
               }}
             >
               {props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? (
-                <i className="mdi mdi-white-balance-sunny"></i>
+              <i className="mdi mdi-brightness-4"></i>
               ) : (
-                <i className="mdi mdi-brightness-4"></i>
+                <i className="mdi mdi-white-balance-sunny"></i>
               )}
             </button>
             {/* <div

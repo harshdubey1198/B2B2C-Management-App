@@ -2,8 +2,8 @@ import React from "react";
 import UsePanel from "./UserPanel";
 import SocialSource from "./SocialSource";
 import OverView from "./OverView";
-import { Row, Container, Button } from "reactstrap";
-
+import { Row, Container, Button, Col } from "reactstrap";
+import Calendar from "../Calender/index"; 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import RolewiseDashboard from "./RolewiseDashboard";
 import { useNavigate } from "react-router-dom";
@@ -96,6 +96,12 @@ const Dashboard = () => {
 
           {/* Latest Transaction Table */}
           {/* <LatestTransation /> */}
+          <Row>
+           <Col sm="12" md="6" lg="6">  
+          <Calendar />
+          </Col>
+          </Row>
+
         </Container>
       </div>
     </React.Fragment>
