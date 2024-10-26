@@ -204,6 +204,8 @@ const ViewFormat = forwardRef(
                 {/* <th>HSN/SAC</th> */}
                 <th>Quantity</th>
                 <th>Price</th>
+                <th>Amount</th>
+                <th>Tax</th>
                 {/* {isSameState ? (
                         <>
                         <th>CGST ({taxRate / 2}%)</th>
@@ -213,7 +215,6 @@ const ViewFormat = forwardRef(
                         <th>IGST ({taxRate}%)</th>
                     )} */}
                 <th>Total Amount</th>
-                <th>Tax</th>
               </tr>
             </thead>
             <tbody>
@@ -243,6 +244,31 @@ const ViewFormat = forwardRef(
                     <td>
                       {item.sellingPrice + item?.selectedVariant?.[0]?.price}
                     </td>
+                    <td>
+                      {item.quantity * (item.sellingPrice + item?.selectedVariant?.[0]?.price)}
+                    </td>
+                    <td>
+                      {item?.itemId?.tax?.components?.length > 0 ? (
+                        <div
+                          style={{
+                            border: "1px solid #ccc",
+                            padding: "8px",
+                            borderRadius: "5px",
+                            backgroundColor: "#f9f9f9",
+                          }}
+                        >
+                          {item.itemId.tax.components.map(
+                            (taxComponent, idx) => (
+                              <div key={idx} style={{ padding: "2px 0" }}>
+                                {taxComponent.taxType}: {taxComponent.rate}%
+                              </div>
+                            )
+                          )}
+                        </div>
+                      ) : (
+                        "N/A"
+                      )}
+                    </td>
                     {/* {isSameState ? (
                             <>
                             <td>{itemCgstAmount.toFixed(2)}</td>
@@ -252,17 +278,7 @@ const ViewFormat = forwardRef(
                             <td>{itemIgstAmount.toFixed(2)}</td>
                         )} */}
                     <td>{item?.total}</td>
-                    <td>
-                      {item?.itemId?.tax?.components?.length > 0
-                        ? item.itemId.tax.components.map(
-                            (taxComponent, idx) => (
-                              <div key={idx}>
-                                {taxComponent.taxType} ({taxComponent.rate}%)
-                              </div>
-                            )
-                          )
-                        : "N/A"}
-                    </td>
+                   
                   </tr>
                 );
               })}
