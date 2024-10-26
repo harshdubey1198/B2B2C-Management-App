@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../utils/axiosInstance";
 import { validateEmail, validatePhone } from "../Pages/Utility/FormValidation";
 
-const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerUpdated }) => {
+const ManufacturerModal = ({ isOpen, toggle,manufacturerAdd, manufacturerToEdit, onManufacturerUpdated }) => {
   const [manufacturer, setManufacturer] = useState({
     name: "",
     address: { h_no: "", city: "", state: "", zip_code: "", country: "" },
@@ -94,7 +94,7 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
       <ModalHeader toggle={toggle}>{manufacturerToEdit ? "Edit Manufacturer" : "Add New Manufacturer"}</ModalHeader>
       <ModalBody>
         <Row>
-          <Col md={12}>
+          <Col md={6}>
             <FormGroup>
               <Label for="name">Name</Label>
               <Input
@@ -107,20 +107,20 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
               />
             </FormGroup>
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <FormGroup>
               <Label for="contactPerson">Contact Person</Label>
               <Input
                 type="text"
                 name="contactPerson"
                 id="contactPerson"
-                placeholder="Enter contact person's name"
+                placeholder="Contact person's name"
                 value={manufacturer.contactPerson}
                 onChange={handleChange}
               />
             </FormGroup>
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <FormGroup>
               <Label for="phone">Phone</Label>
               <Input
@@ -132,8 +132,6 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 onChange={handleChange}
               />
             </FormGroup>
-          </Col>
-          <Col md={12}>
             <FormGroup>
               <Label for="email">Email</Label>
               <Input
@@ -146,7 +144,7 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
               />
             </FormGroup>
           </Col>
-          <Col md={12}>
+          <Col md={6}>
             <FormGroup>
               <Label for="website">Website</Label>
               <Input
@@ -158,10 +156,9 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 onChange={handleChange}
               />
             </FormGroup>
-          </Col>
-          <Col md={12}>
+          
             <FormGroup>
-              <Label for="h_no">Address</Label>
+              <Label for="h_no">House No.</Label>
               <Input
                 type="text"
                 name="address.h_no"
@@ -169,7 +166,12 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 placeholder="House Number"
                 value={manufacturer.address.h_no}
                 onChange={handleChange}
-              />
+                />
+                </FormGroup>
+          </Col>
+          <Col md={6}>
+              <FormGroup>
+              <Label for="city">City</Label>
               <Input
                 type="text"
                 name="address.city"
@@ -179,6 +181,11 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 onChange={handleChange}
                 className="mt-2"
               />
+              </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="state">State</Label>
               <Input
                 type="text"
                 name="address.state"
@@ -188,6 +195,11 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 onChange={handleChange}
                 className="mt-2"
               />
+              </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="zip_code">Zip Code</Label>
               <Input
                 type="text"
                 name="address.zip_code"
@@ -197,6 +209,11 @@ const ManufacturerModal = ({ isOpen, toggle, manufacturerToEdit, onManufacturerU
                 onChange={handleChange}
                 className="mt-2"
               />
+            </FormGroup>
+          </Col>
+          <Col md={6}>
+            <FormGroup>
+              <Label for="country">Country</Label>
               <Input
                 type="text"
                 name="address.country"

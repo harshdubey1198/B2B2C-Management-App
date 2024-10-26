@@ -14,7 +14,7 @@ const Manufacturers = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [manufacturerToDelete, setManufacturerToDelete] = useState(null);
   const [manufacturerToEdit, setManufacturerToEdit] = useState(null);
-
+  const [manufacturerToAdd, setManufacturerToAdd] = useState(null);
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -31,6 +31,11 @@ const Manufacturers = () => {
   const handleManufacturerEdit = (manufacturer) => {
     setManufacturerToEdit(manufacturer);
     toggleModal();
+  };
+
+  const handleManufacturerToAdd = (manufacturer) => {
+    setManufacturerToAdd(manufacturer);
+    toggleModal();  
   };
 
   const handleManufacturerDelete = (manufacturer) => {
@@ -72,7 +77,10 @@ const Manufacturers = () => {
           <Breadcrumbs title="Inventory Management" breadcrumbItem="Manufacturer" />
           <FetchManufacturers onManufacturersFetched={handleManufacturersFetched} firmId={firmId} />
         </div>
-        <div className='table-responsive'>
+        <div className='relative h-35'>   
+          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleManufacturerToAdd}></i>
+        </div>
+        <div className='table-responsive relative'>
           <Table bordered className='table table-centered table-nowrap mb-0'>
             <thead className='thead-light'>
               <tr>
@@ -111,6 +119,7 @@ const Manufacturers = () => {
         isOpen={isModalOpen}
         toggle={toggleModal}
         manufacturerToEdit={manufacturerToEdit}
+        manufacturerAdd={manufacturerToAdd}
         onManufacturerUpdated={handleManufacturerUpdated}
       />
 
