@@ -2,8 +2,8 @@ import React from "react";
 import UsePanel from "./UserPanel";
 import SocialSource from "./SocialSource";
 import OverView from "./OverView";
-import { Row, Container, Button } from "reactstrap";
-
+import { Row, Container, Button, Col } from "reactstrap";
+import Calendar from "../Calender/index"; 
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import RolewiseDashboard from "./RolewiseDashboard";
 import { useNavigate } from "react-router-dom";
@@ -65,9 +65,15 @@ const Dashboard = () => {
                   </Button>
                   </div>
               ) : authuser.role === "accountant" ? (
+                 <div className="d-flex justify-content-evenly">
+
                   <Button color="primary" onClick={() => navigate('/add-inventory')}>
                       Create Inventory
                   </Button>
+                  <Button color="primary" onClick={() => navigate('/create-invoice')}>
+                      Create Invoice
+                  </Button>
+                  </div>
               ) : authuser.role === "employee" ? (
                   <Button color="primary" onClick={() => navigate('/create-invoice')}>
                       Create Invoice
@@ -84,6 +90,12 @@ const Dashboard = () => {
 
           {/* Latest Transaction Table */}
           {/* <LatestTransation /> */}
+          <Row>
+           <Col sm="12" md="6" lg="6">  
+          <Calendar />
+          </Col>
+          </Row>
+
         </Container>
       </div>
     </React.Fragment>

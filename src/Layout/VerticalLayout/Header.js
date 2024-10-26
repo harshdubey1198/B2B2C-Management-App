@@ -200,9 +200,9 @@ const Header = (props) => {
               }}
             >
               {props.layoutModeTypes === layoutModeTypes.LIGHTMODE ? (
-                <i className="mdi mdi-white-balance-sunny"></i>
+              <i className="mdi mdi-brightness-4"></i>
               ) : (
-                <i className="mdi mdi-brightness-4"></i>
+                <i className="mdi mdi-white-balance-sunny"></i>
               )}
             </button>
             {/* <div
@@ -239,7 +239,7 @@ const Header = (props) => {
 
             
           
-            {/* <div
+            <div
               className="dropdown d-inline-block"
               onClick={() => {
                 props.showRightSidebarAction(!props.showRightSidebar);
@@ -251,7 +251,7 @@ const Header = (props) => {
               >
                 <i className="mdi mdi-cog"></i>
               </button>
-            </div> */}
+            </div>
 
             {/* Button for toggling the theme */}
            

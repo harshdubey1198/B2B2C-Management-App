@@ -11,8 +11,7 @@ import ReportsInvoice from "../Pages/Invoicing/reports.jsx";
 import CategoryManager from "../Pages/Inventory-MNG/categoryManager.jsx";
 
 import Firm from "../Pages/Firms/FirmsTable.jsx";
-// Import Calender
-
+import Calender from "../Pages/Calender/index.js";
 
 // Import E-mail
 // import Inbox from "../Pages/E-mail/Inbox";
@@ -82,7 +81,7 @@ const authProtectedRoutes = [
   { path: "/dashboard", component: <Dashboard /> },
   { path: "/clients-management", component: <ClientManagement /> },
   { path: "/clients-payments", component: <ClientsPayments /> },
-
+  {path:"/calendar", component: <Calender />},
   // plans
   { path: "/create-plan", component: <CreatePlan /> },
   { path: "/manage-plan", component: <ManagePlan /> },
