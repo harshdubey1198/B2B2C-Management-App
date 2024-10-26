@@ -97,6 +97,27 @@ const ViewFormat = forwardRef(
     const companyAddress = selectInvoice.address || [];
     const country = companyAddress.length ? companyAddress[0].country : "India";
     const customerState = invoiceData?.customerState || "";
+    // Initialize total values
+    let subtotal = 0;
+    let totalTaxAmount = 0;
+
+    const calculateTotals = () => {
+      items.forEach((item) => {
+        const itemPrice =
+          item.quantity *
+          (item.sellingPrice + item?.selectedVariant?.[0]?.price);
+
+        subtotal += itemPrice;
+
+        if (item?.itemId?.tax?.components?.length > 0) {
+          item.itemId.tax.components.forEach((taxComponent) => {
+            totalTaxAmount += (itemPrice * taxComponent.rate) / 100;
+          });
+        }
+      });
+    };
+    calculateTotals();
+    const grandTotal = subtotal + totalTaxAmount;
 
     const taxRate = countries[country]?.gst || 0;
     const companyState = companyAddress.length
@@ -245,7 +266,8 @@ const ViewFormat = forwardRef(
                       {item.sellingPrice + item?.selectedVariant?.[0]?.price}
                     </td>
                     <td>
-                      {item.quantity * (item.sellingPrice + item?.selectedVariant?.[0]?.price)}
+                      {item.quantity *
+                        (item.sellingPrice + item?.selectedVariant?.[0]?.price)}
                     </td>
                     <td>
                       {item?.itemId?.tax?.components?.length > 0 ? (
@@ -278,7 +300,6 @@ const ViewFormat = forwardRef(
                             <td>{itemIgstAmount.toFixed(2)}</td>
                         )} */}
                     <td>{item?.total}</td>
-                   
                   </tr>
                 );
               })}
@@ -320,6 +341,18 @@ const ViewFormat = forwardRef(
 
           <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
             <h5>Payment Summary</h5>
+            <p className="my-1">
+              <strong>Subtotal (Amount before Tax):</strong> ₹{" "}
+              {subtotal.toFixed(2)}
+            </p>
+            <p className="my-1">
+              <strong>Total Tax Amount:</strong> ₹ {totalTaxAmount.toFixed(2)}
+            </p>
+            <p className="my-1">
+              <strong>Grand Total (After Tax):</strong> ₹{" "}
+              {grandTotal.toFixed(2)}
+            </p>
+
             {/* <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p> */}
             {/* {isSameState ? (
                         <>
