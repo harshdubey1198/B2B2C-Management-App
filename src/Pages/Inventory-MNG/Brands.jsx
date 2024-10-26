@@ -13,8 +13,9 @@ const Brands = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [brandToEdit, setBrandToEdit] = useState(null);
+  const [brandToAdd, setBrandToAdd] = useState(null);
   const [brandToDelete, setBrandToDelete] = useState(null);
-
+  const [triggerBrand, setTriggerBrand] = useState(0)
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -30,6 +31,10 @@ const Brands = () => {
 
   const handleBrandEdit = (brand) => {
     setBrandToEdit(brand);
+    toggleModal();
+  };
+  const handleBrandAdd = (brand) => {
+    setBrandToAdd(brand);
     toggleModal();
   };
 
@@ -77,7 +82,7 @@ const Brands = () => {
           <FetchBrands onBrandsFetched={handleBrandsFetched} firmId={firmId} />
         </div>
         <div className='relative h-35'>   
-          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleBrandEdit}></i>
+          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleBrandAdd}></i>
         </div>
         <div className='table-responsive'>
           <Table bordered className='table table-centered table-nowrap mb-0'>
@@ -127,6 +132,8 @@ const Brands = () => {
         toggle={toggleModal}
         brandToEdit={brandToEdit}
         onBrandUpdated={handleBrandUpdated}
+        setTriggerBrand={setTriggerBrand}
+        brandToAdd={brandToAdd}
       />
       <Modal isOpen={isDeleteModalOpen} toggle={toggleDeleteModal}>
         <ModalBody>Are you sure you want to delete this brand?</ModalBody>

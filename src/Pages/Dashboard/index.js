@@ -80,7 +80,8 @@ const Dashboard = () => {
                   </Button>
               ) : null}        
           </Row>
- 
+          <RolewiseDashboard/>
+          <UsePanel />
             {/* Social Source Chart */}
             {/* Overview Chart */}
           {/* <Row>

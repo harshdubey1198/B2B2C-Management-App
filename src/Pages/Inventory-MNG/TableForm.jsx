@@ -43,7 +43,7 @@ const InventoryItemForm = () => {
   const handleManufacturersFetched = (fetchedManufacturers) => {
     setManufacturers(fetchedManufacturers);
   };
-
+  
   const handleReset = () => {
     setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
