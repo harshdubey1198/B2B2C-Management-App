@@ -74,13 +74,7 @@ const Dashboard = () => {
                   </Button>
               ) : null}        
           </Row>
-          {/* User Panel Charts */}
-          <RolewiseDashboard/>
-          <UsePanel />
-
-          
-          
-
+ 
             {/* Social Source Chart */}
             {/* Overview Chart */}
           {/* <Row>
