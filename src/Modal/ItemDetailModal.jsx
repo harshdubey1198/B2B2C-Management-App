@@ -80,7 +80,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <label>
                   <strong>Vendor:</strong>
                 </label>
-                <input type="text" value={selectedItem.vendor.name} className="form-control" readOnly />
+                <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly />
               </Col>
               {/* <Col md={3}>
                 <label>
@@ -111,7 +111,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <div className="d-flex">
                   <input
                     type="number"
-                    value={selectedItem.quantity}
+                    value={selectedItem?.quantity}
                     onChange={(e) =>
                       setSelectedItem({
                         ...selectedItem,
@@ -125,7 +125,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   <select
                     id="qtyType"
                     name="qtyType"
-                    value={selectedItem.qtyType}
+                    value={selectedItem?.qtyType}
                     onChange={(e) =>
                       setSelectedItem({
                         ...selectedItem,
@@ -151,17 +151,17 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <label>
                   <strong>Brand:</strong>
                 </label>
-                {selectedItem.brand && selectedItem.brand.name ? (
+                {selectedItem?.brand && selectedItem?.brand?.name ? (
                   <input
                     type="text"
-                    value={selectedItem.brand.name}
+                    value={selectedItem?.brand?.name}
                     className="form-control"
                     readOnly
                   />
                 ) : (
                   <select
                     className="form-control"
-                    value={selectedItem.brand?._id || ""}
+                    value={selectedItem?.brand?._id || ""}
                     onChange={(e) => {
                       const selectedBrand = brands.find(
                         (brand) => brand._id === e.target.value
@@ -186,10 +186,10 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     <label>
       <strong>Manufacturer:</strong>
     </label>
-    {selectedItem.manufacturer && selectedItem.manufacturer.name ? (
+    {selectedItem?.manufacturer && selectedItem?.manufacturer?.name ? (
       <input
         type="text"
-        value={selectedItem.manufacturer.name}
+        value={selectedItem?.manufacturer?.name}
         className="form-control"
         readOnly
       />
@@ -224,7 +224,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 </label>
                 <input
                   type="number"
-                  value={selectedItem.sellingPrice}
+                  value={selectedItem?.sellingPrice}
                   onChange={(e) =>
                     setSelectedItem({
                       ...selectedItem,
@@ -241,7 +241,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 </label>
                 <input
                   type="number"
-                  value={selectedItem.costPrice}
+                  value={selectedItem?.costPrice}
                   onChange={(e) =>
                     setSelectedItem({
                       ...selectedItem,
@@ -261,7 +261,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 </label>
                 <input
                   type="text"
-                  value={selectedItem.ProductHsn}
+                  value={selectedItem?.ProductHsn}
                   onChange={(e) =>
                     setSelectedItem({
                       ...selectedItem,
