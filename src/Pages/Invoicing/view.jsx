@@ -40,13 +40,12 @@ const ViewInvoices = () => {
         fetchInvoices();
     }, [trigger, selectedFirmId, authuser.role, firmId]);
 
-    const fetchAndPrintInvoice = async (invoiceId) => {
+    const fetchInvoice = async (invoiceId) => {
         try {
             const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
-            setSelectedInvoice(response.data);
-            handlePrint(); 
+            setSelectedInvoice(response.data); 
         } catch (error) {
-            console.error("Error fetching invoice for printing:", error);
+            console.error("Error fetching invoice for viewing:", error);
         }
     };
 
@@ -144,7 +143,16 @@ const ViewInvoices = () => {
                                     <td>{invoice.customerAddress.country}</td>
                                     <td>{invoice.approvalStatus}</td>
                                     <td>
-                                        <i className="bx bx-printer" style={{ fontSize: "22px", fontWeight:"bold", cursor: "pointer" }} onClick={() => fetchAndPrintInvoice(invoice._id)}></i>
+                                        <i
+                                            className="bx bx-show"
+                                            style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                                            onClick={() => fetchInvoice(invoice._id)} 
+                                        ></i>
+                                        <i
+                                            className="bx bx-printer"
+                                            style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "10px" }}
+                                            onClick={() => handlePrint()} 
+                                        ></i>
                                     </td>
                                     {authuser.role === "firm_admin" && (
                                         <td>
