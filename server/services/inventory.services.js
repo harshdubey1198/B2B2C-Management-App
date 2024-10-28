@@ -96,7 +96,7 @@ inventoryServices.getAllItems = async (adminId) => {
         select: "firstName lastName email"
     })
     .populate('vendor')
-    .populate('tax')
+    .populate('tax.taxId')
     .populate('brand')
     .populate('manufacturer')
     if(!items){

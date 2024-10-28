@@ -80,7 +80,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <label>
                   <strong>Vendor:</strong>
                 </label>
-                <input type="text" value={selectedItem.vendor.name} className="form-control" readOnly />
+                <input type="text"   value={selectedItem?.vendor?.name ?? 'N/A'} className="form-control" readOnly />
               </Col>
               {/* <Col md={3}>
                 <label>

@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { FormGroup, Label, Input, Button, Spinner } from 'reactstrap';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosInstance';
 
 const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const token = authuser?.token;
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
   const firmId = authuser?.response?.adminId;
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config);
+        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`);
         setInventoryItems(response.data);
       } catch (err) {
-        setError(err.message);
+        // setError(err.message);
+        console.log(err);
       } finally {
         setLoading(false);
       }
@@ -53,18 +47,33 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   };
   
 
-  const calculateTotal = (quantity,varSelPrice, price, tax, discount) => {
-    // const totalBeforeTax =  quantity * varSelPrice;
-    const totalBeforeTax = (varSelPrice > 0) ? (quantity * varSelPrice) : (quantity * price);
-    const totalTax = totalBeforeTax * (tax / 100);
-    const totalDiscount = totalBeforeTax * (discount / 100);
-    const total = totalBeforeTax + totalTax - totalDiscount ;
-    return parseFloat(total.toFixed(2));
-  };
+  // const calculateTotal = (quantity,varSelPrice, price, tax, discount) => {
+  //   // const totalBeforeTax =  quantity * varSelPrice;
+  //   const totalBeforeTax = (varSelPrice > 0) ? (quantity * varSelPrice) : (quantity * price);
+  //   const totalTax = totalBeforeTax * (tax / 100);
+  //   const totalDiscount = totalBeforeTax * (discount / 100);
+  //   const total = totalBeforeTax + totalTax - totalDiscount ;
+  //   return parseFloat(total.toFixed(2));
+  // };
 
+  const calculateTotal = (quantity, varSelPrice, price, taxComponents, discount) => {
+    const totalBeforeTax = varSelPrice > 0 ? quantity * varSelPrice : quantity * price;
+    const totalTax = Array.isArray(taxComponents)
+      ? taxComponents.reduce((acc, tax) => acc + (totalBeforeTax * (tax.rate / 100)), 0)
+      : 0; 
+    const totalDiscount = totalBeforeTax * (discount / 100);
+    const total = totalBeforeTax + totalTax - totalDiscount;
+    const afterTax = totalTax;
+  
+    return {
+      total: parseFloat(total.toFixed(2)),
+      afterTax: parseFloat(afterTax.toFixed(2)),
+    };
+  };
+  
+  
   const handleItemSelection = (index, selectedItemId) => {
     if (!selectedItemId) {
-      // If item is deselected, reset the item fields
       const updatedItems = [...items];
       updatedItems[index] = {
         itemId: "",
@@ -85,7 +94,6 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       return;
     }
   
-    // Reset fields for new item selection
     const updatedItems = [...items];
     updatedItems[index] = {
       itemId: selectedItemId,
@@ -96,7 +104,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       tax: 0,
       discount: 0,
       total: 0,
-      selectedVariant: [], // Reset selectedVariant when new item is selected
+      selectedVariant: [], 
     };
   
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
@@ -119,14 +127,22 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   
   
   const handleVariantChange = (itemId, variantName, index) => {
+    const updatedItems = [...items];
+    const selectedItem = updatedItems[index];
+  
     if (!variantName) {
-      const updatedItems = [...items];
       updatedItems[index] = {
-        ...updatedItems[index],
+        ...selectedItem,
         selectedVariant: [],
         price: getSellingPrice(itemId),
-        total: calculateTotal(updatedItems[index].quantity || 1, getSellingPrice(itemId), updatedItems[index].tax || 0, updatedItems[index].discount || 0),
       };
+      const { quantity = 0, discount = 0 } = updatedItems[index];
+  
+      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
+      const itemPrice = updatedItems[index].price;
+      
+      updatedItems[index].total = calculateTotal(quantity, 0, itemPrice, taxComponents, discount).total;
+      updatedItems[index].afterTax = calculateTotal(quantity, 0, itemPrice, taxComponents, discount).afterTax;
   
       setInvoiceData((prevData) => ({
         ...prevData,
@@ -135,29 +151,27 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       return;
     }
   
-    const selectedItem = items[index];
     const selectedVariant = inventoryItems.find((invItem) => invItem._id === itemId)?.variants.find((variant) => variant.optionLabel === variantName);
   
     if (selectedVariant) {
-      const maxQuantity = selectedVariant.stock - selectedVariant.reservedQuantity;
-      const updatedItems = [...items];
       const basePrice = getSellingPrice(itemId);
       const variantPrice = selectedVariant.price || 0;
       const quantity = selectedItem.quantity || 0;
-      const tax = selectedItem.tax || 0;
       const discount = selectedItem.discount || 0;
   
       const price = basePrice;
-      const varSelPrice= basePrice + variantPrice;
-      const total = calculateTotal(quantity, price, tax, discount);
+      const varSelPrice = basePrice + variantPrice; // Total price including variant price
   
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, varSelPrice:varSelPrice, price: variantPrice, stock: selectedVariant.stock, sku: selectedVariant.sku, barcode: selectedVariant.barcode }],
+        selectedVariant: [{ optionLabel: variantName, varSelPrice, price: variantPrice }],
         price,
         varSelPrice,
-        total,
       };
+  
+      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
+      updatedItems[index].total = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).total;
+      updatedItems[index].afterTax = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).afterTax;
   
       setInvoiceData((prevData) => ({
         ...prevData,
@@ -166,21 +180,27 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     }
   };
   
+  
+  
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...items];
     newItems[index] = { ...newItems[index], [field]: value };
-
+  
     const selectedItem = newItems[index];
     const quantity = selectedItem.quantity || 0;
     const price = selectedItem.price || 0;
-    const varSelPrice = selectedItem.varSelPrice || 0;
-    const tax = selectedItem.tax || 0;
+    const varSelPrice = selectedItem.varSelPrice || 0; // Total price including variant price
     const discount = selectedItem.discount || 0;
-
-    newItems[index].total = calculateTotal(quantity,varSelPrice, price, tax, discount);
+    const taxComponents = inventoryItems.find((invItem) => invItem._id === selectedItem.itemId)?.tax?.components || [];
+  
+    newItems[index].total = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).total;
+    newItems[index].afterTax = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).afterTax;
+  
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
+  
+  
 
   if (loading) return <Spinner color="primary" />;
 
@@ -209,34 +229,15 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
           </FormGroup>
           </div>
           <div className="col-lg-2 col-md-3 col-sm-12">
-          {/* <FormGroup>
-            <Label for={`tax-${index}`}>Tax</Label>
-          <Input
-            type="select" 
-            name={`tax-${index}`}
-            id={`tax-${index}`}
-            value={item.tax || ""}
-            onChange={(e) => handleItemChange(index, 'tax', e.target.value)}
-            required
-          >
-          <option value="">Select Tax</option>
-          {inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.components.map((taxComponent, index) => (
-            <option key={index} value={taxComponent.taxType}>
-              {taxComponent.taxType} - {taxComponent.rate}%
-            </option>
-          ))}
-          </Input>
-          </FormGroup> */}
-             <FormGroup>
-                  <p>Tax</p>
-                  {inventoryItems
-                    .find((invItem) => invItem._id === item.itemId)
-                    ?.tax?.components.map((taxComponent, index) => (
-                      <div key={index} >
+           <FormGroup>
+                <p>Tax <span style={{fontSize:"10px",fontWeight:"bolder"}}>{` (${inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.taxId?.taxName || 'N/A'})`}</span></p>
+                {inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.components && inventoryItems.find((invItem) => invItem._id === item.itemId).tax.components.map((taxComponent, index) => (
+                    <div key={index}>
                         {taxComponent.taxType} - {taxComponent.rate}%
-                      </div>
-                    ))}
-                </FormGroup>
+                    </div>
+                ))}
+            </FormGroup>
+
           </div>
 
           <div className="col-lg-2 col-md-3 col-sm-12">
@@ -253,21 +254,13 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               <option value="">Select Variant</option>
               {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants.map((variant) => (
                 <option key={variant._id} value={variant.optionLabel}>
-                  {variant.optionLabel} 
-                  {/* - {getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")} */}
+                  {variant.optionLabel} - {variant.price}₹
                 </option>
               ))}
             </Input>
          
           </FormGroup>
-
-          {/* <small className="text-muted">
-            Available Stock: {getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
-          </small> */}
-            
-
-
-            </div>
+        </div>
             <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
@@ -295,41 +288,28 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               type="number"
               name={`price-${index}`}
               id={`price-${index}`}
-              value={item.price || 0}
+              value={(item.selectedVariant && item.selectedVariant.length > 0) ? item.varSelPrice : item.price || 0}
               required
               readOnly
             />
           </FormGroup>
           </div>
-          {/* <div className="col-lg-2 col-md-3 col-sm-12">
-          <FormGroup>
-            <Label for={`tax-${index}`}>Tax (%)</Label>
-            <Input
-              type="number"
-              name={`tax-${index}`}
-              id={`tax-${index}`}
-              value={item.tax || 0}
-              onChange={(e) => handleItemChange(index, 'tax', e.target.value)}
-              required
-            />
-          </FormGroup>
-          </div> */}
-          {/* <div className="col-lg-2 col-md-3 col-sm-12">
-          <FormGroup>
-            <Label for={`discount-${index}`}>Discount (%)</Label>
-            <Input
-              type="number"
-              name={`discount-${index}`}
-              id={`discount-${index}`}
-              value={item.discount || 0}
-              onChange={(e) => handleItemChange(index, 'discount', e.target.value)}
-              required
-            />
-          </FormGroup>
-          </div> */}
+          <div className="col-lg-2 col-md-3 col-sm-12">
+                <FormGroup>
+                  <Label for={`afterTax-${index}`}>Tax Applied</Label>
+                  <Input
+                    type="number"
+                    name={`afterTax-${index}`}
+                    id={`afterTax-${index}`}
+                    value={item.afterTax || 0}
+                    readOnly
+                  />
+                </FormGroup>
+              </div>
+
           <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
-            <Label for={`total-${index}`}>Total <span style={{fontSize:"10px"}}>Item + variant</span></Label>
+            <Label for={`total-${index}`}>Total <span style={{fontSize:"10px"}}>Item + variant,tax</span></Label>
             <Input
               type="number"
               name={`total-${index}`}

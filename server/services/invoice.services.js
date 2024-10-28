@@ -294,8 +294,8 @@ const calculateTotalTax = async (inventoryItem, itemTotal) => {
   let totalTaxForItem = 0;
   inventoryItem.tax.components.forEach((selectedComponent) => {
     const taxComponent = tax.taxRates.find(
-      (tc) => tc.taxType === selectedComponent.taxType
-    );
+      (tc) => tc.taxType.toLowerCase() === selectedComponent.taxType.toLowerCase()
+        );
     if (!taxComponent) {
       throw new Error(
         `Selected tax component ${selectedComponent.taxType} not found in tax object`

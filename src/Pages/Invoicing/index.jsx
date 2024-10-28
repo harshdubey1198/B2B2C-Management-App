@@ -9,6 +9,7 @@ import Breadcrumbs from '../../components/Common/Breadcrumb';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import CompanyModal from '../../components/InvoicingComponents/companyModal';
 import InvoiceItems from '../../components/InvoicingComponents/InvoiceItems';
+import axiosInstance from '../../utils/axiosInstance';
 
 const Index = () => {
   const [companyData, setCompanyData] = useState({});
@@ -18,7 +19,6 @@ const Index = () => {
   const printRef = useRef();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const firmId = authuser?.response?.adminId;
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
   const [invoiceData, setInvoiceData] = useState({
     companyName: "",
     companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
@@ -43,17 +43,12 @@ const Index = () => {
     country: 'India',
     items: [],
     paymentLink: '',
+    tax:'',
     id: '',
     varSelPrice: '',
 });
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-  },
-};
 const fetchInventoryItems = () => {
-  axios.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`, config)
+  axiosInstance.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`)
     .then(response => {
       setFakeItems(response.data || []);
       // console.log("response.data", response.data);
@@ -63,12 +58,12 @@ const fetchInventoryItems = () => {
     })
     .catch(error => {
       console.log(error);
-      toast.error("Failed to fetch inventory items");
+      // toast.error("Failed to fetch inventory items");
     });
 };
   
   useEffect(() => {
-    axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authuser?.response?.adminId}`, config)
+    axiosInstance.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authuser?.response?.adminId}`)
       .then((response) => {
         const companyDetails = response[0];
         const companyAddress = companyDetails.address ? companyDetails.address : [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }];
@@ -206,10 +201,10 @@ const handleSubmit = (e) => {
     notes: 'Please pay by due date.'
 
   };
-  axios.post(
+  axiosInstance.post(
     `${process.env.REACT_APP_URL}/invoice/create-invoice`,
     invoicePayload,
-    config
+    
   )
   
   .then(response => {
