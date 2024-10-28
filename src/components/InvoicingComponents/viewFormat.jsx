@@ -93,7 +93,7 @@ const ViewFormat = forwardRef(
     const selectInvoice = invoiceData?.firmId || {};
     // console.log("selectInvoice", selectInvoice.firmId.companyTitle);
     const items = invoiceData?.items || [];
-    console.log("items", items);
+    // console.log("items", items);
     const companyAddress = selectInvoice.address || [];
     const country = companyAddress.length ? companyAddress[0].country : "India";
     const customerState = invoiceData?.customerState || "";
@@ -103,10 +103,7 @@ const ViewFormat = forwardRef(
 
     const calculateTotals = () => {
       items.forEach((item) => {
-        const itemPrice =
-          item.quantity *
-          (item.sellingPrice + item?.selectedVariant?.[0]?.price);
-
+        const itemPrice = item.quantity * (item.sellingPrice + (item?.selectedVariant?.[0]?.price || 0));
         subtotal += itemPrice;
 
         if (item?.itemId?.tax?.components?.length > 0) {
@@ -129,7 +126,6 @@ const ViewFormat = forwardRef(
     // const taxAmount = (totalAmount * taxRate) / 100;
     // const amountDue = totalAmount + taxAmount;
     // const netReceived = amountDue;
-    console.log("totalAmount", totalAmount);
     const customerName =
       invoiceData?.firstName && invoiceData?.lastName
         ? `${invoiceData.firstName} ${invoiceData.lastName}`
@@ -263,11 +259,11 @@ const ViewFormat = forwardRef(
                     {/* <td>{item.hsn}</td> */}
                     <td>{item.quantity}</td>
                     <td>
-                      {item.sellingPrice + item?.selectedVariant?.[0]?.price}
+                      {(item.sellingPrice + (item?.selectedVariant?.[0]?.price || 0))}
                     </td>
                     <td>
                       {item.quantity *
-                        (item.sellingPrice + item?.selectedVariant?.[0]?.price)}
+                        (item.sellingPrice + (item?.selectedVariant?.[0]?.price || 0))}
                     </td>
                     <td>
                       {item?.itemId?.tax?.components?.length > 0 ? (
