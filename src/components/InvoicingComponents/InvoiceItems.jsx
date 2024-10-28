@@ -81,10 +81,11 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
         description: "",
         quantity: 0,
         price: 0,
-        tax: 0,
+        ProductHsn:"",
         discount: 0,
         total: 0,
         selectedVariant: [],
+        taxComponents: [],
       };
   
       setInvoiceData((prevData) => ({
@@ -102,20 +103,25 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       quantity: 0,
       price: 0,
       tax: 0,
+      ProductHsn:"",
+      taxComponents: [], 
       discount: 0,
       total: 0,
-      selectedVariant: [], 
+      selectedVariant: [],
     };
   
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
       const price = getSellingPrice(selectedItem._id);
+      const taxComponents = selectedItem.tax?.components || []; // Get tax components
       updatedItems[index] = {
         ...updatedItems[index],
         name: selectedItem.name,
         description: selectedItem.description || '',
         price,
-        total: calculateTotal(0, 0, price, 0, 0),
+        ProductHsn:selectedItem.ProductHsn,
+        taxComponents, // Set tax components in the item
+        total: calculateTotal(0, 0, price, taxComponents, 0).total,
       };
   
       setInvoiceData((prevData) => ({
@@ -139,8 +145,9 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const { quantity = 0, discount = 0 } = updatedItems[index];
   
       const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
+      updatedItems[index].taxComponents = taxComponents; 
+  
       const itemPrice = updatedItems[index].price;
-      
       updatedItems[index].total = calculateTotal(quantity, 0, itemPrice, taxComponents, discount).total;
       updatedItems[index].afterTax = calculateTotal(quantity, 0, itemPrice, taxComponents, discount).afterTax;
   
@@ -160,16 +167,17 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const discount = selectedItem.discount || 0;
   
       const price = basePrice;
-      const varSelPrice = basePrice + variantPrice; // Total price including variant price
+      const varSelPrice = basePrice + variantPrice;
   
+      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
       updatedItems[index] = {
         ...selectedItem,
         selectedVariant: [{ optionLabel: variantName, varSelPrice, price: variantPrice }],
         price,
         varSelPrice,
+        taxComponents,
       };
   
-      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
       updatedItems[index].total = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).total;
       updatedItems[index].afterTax = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).afterTax;
   
@@ -182,6 +190,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   
   
   
+  
 
   const handleItemChange = (index, field, value) => {
     const newItems = [...items];
@@ -190,10 +199,10 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     const selectedItem = newItems[index];
     const quantity = selectedItem.quantity || 0;
     const price = selectedItem.price || 0;
-    const varSelPrice = selectedItem.varSelPrice || 0; // Total price including variant price
+    const varSelPrice = selectedItem.varSelPrice || 0; 
     const discount = selectedItem.discount || 0;
     const taxComponents = inventoryItems.find((invItem) => invItem._id === selectedItem.itemId)?.tax?.components || [];
-  
+    // console.log(taxComponents);
     newItems[index].total = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).total;
     newItems[index].afterTax = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).afterTax;
   
@@ -274,7 +283,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(0, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
+                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
                 )
               }
               required

@@ -43,29 +43,29 @@ const Index = () => {
     country: 'India',
     items: [],
     paymentLink: '',
-    tax:'',
+    taxComponents: [],
     id: '',
     varSelPrice: '',
 });
 const fetchInventoryItems = () => {
   axiosInstance.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`)
-    .then(response => {
+  .then(response => {
       setFakeItems(response.data || []);
       // console.log("response.data", response.data);
-      console.log("response.data[5]", response.data[5]);
-      console.log("tax rate", response.data[5].tax.components[0].rate);
-      console.log("tax type", response.data[5].tax.components[0].taxType);
+      // console.log("response.data[5]", response.data[5]);
+      // console.log("tax rate", response.data[5].tax.components[0].rate);
+      // console.log("tax type", response.data[5].tax.components[0].taxType);
     })
     .catch(error => {
       console.log(error);
       // toast.error("Failed to fetch inventory items");
     });
-};
+  };
   
   useEffect(() => {
     axiosInstance.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authuser?.response?.adminId}`)
-      .then((response) => {
-        const companyDetails = response[0];
+    .then((response) => {
+      const companyDetails = response[0];
         const companyAddress = companyDetails.address ? companyDetails.address : [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }];
         
         setCompanyData(companyDetails);
@@ -87,14 +87,14 @@ const fetchInventoryItems = () => {
         console.log(error);
       });
       fetchInventoryItems();
-    const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"));
+      const storedItemData = JSON.parse(localStorage.getItem("inventoryItems"));
     setFakeItems(storedItemData || []);
   }, []);
   
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-  
+    
     if (name.includes('.')) {
       const [parent, child] = name.split('.');
       setInvoiceData(prevData => ({
@@ -119,7 +119,7 @@ const fetchInventoryItems = () => {
     updatedAddress[index][name] = value;
     setInvoiceData(prevState => ({ ...prevState, companyAddress: updatedAddress }));
   };
-
+  
   const removeAddress = (index) => {
     const updatedAddress = [...invoiceData.companyAddress];
     updatedAddress.splice(index, 1);
@@ -139,26 +139,26 @@ const fetchInventoryItems = () => {
       reader.readAsDataURL(file);
     }
   };
-
+  
   const addItem = () => {
     setInvoiceData(prevData => ({
       ...prevData,
       items: [...prevData.items, { name: '', variant: '', quantity: 1, price: 0 }]
     }));
   };
-
+  
   const removeItem = (index) => {
     const newItems = [...invoiceData.items];
     newItems.splice(index, 1);
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
   
-const handleSubmit = (e) => {
-  e.preventDefault();
-
-  if (!validatePhone(invoiceData.customerPhone)) {
-    toast.error("Invalid Phone Number");
-    return;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!validatePhone(invoiceData.customerPhone)) {
+      toast.error("Invalid Phone Number");
+      return;
   }
   const invoicePayload = {
     customer: {
@@ -242,13 +242,29 @@ const handleSubmit = (e) => {
   });
 };
 
-  const printInvoice = useReactToPrint({
-    content: () => printRef.current
-  });
+const printInvoice = useReactToPrint({
+  content: () => printRef.current
+});
 
-  // console.log(invoiceData, "invoicedata")
+// console.log(invoiceData, "invoicedata")
 
-  return (
+// console.log(
+//   "invoiceData tax component taxType : ",
+//   invoiceData.items && invoiceData.items.length > 0 && invoiceData.items[0].taxComponents && invoiceData.items[0].taxComponents.length > 0
+//     ? invoiceData.items[0].taxComponents[0].taxType
+//     : "N/A"
+// );
+
+// console.log(
+//   "invoiceData tax component rate    : ",
+//   invoiceData.items && invoiceData.items.length > 0 && invoiceData.items[0].taxComponents && invoiceData.items[0].taxComponents.length > 0
+//     ? invoiceData.items[0].taxComponents[0].rate
+//     : "N/A"
+// );
+
+
+
+return (
     <Container>
       <div className='page-content'>
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Create Invoice" />
@@ -302,6 +318,7 @@ const handleSubmit = (e) => {
         <PrintFormat 
           ref={printRef} 
           invoiceData={invoiceData}
+          fakeItems={fakeItems}
           companyData={companyData}
         />
       </div>

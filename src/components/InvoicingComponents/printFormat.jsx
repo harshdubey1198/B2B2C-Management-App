@@ -1,11 +1,5 @@
 import React, { forwardRef } from 'react';
 import '../../assets/scss/bootstrap.scss';
-const countries = {
-    India: { currency: 'INR', gst: 0 },
-    Malaysia: { currency: 'MYR', gst: 6 },
-    Dubai: { currency: 'AED', gst: 5 },
-    Indonesia: { currency: 'IDR', gst: 10 }
-};
 
 const convertNumberToWords = (num) => {
     const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
@@ -16,7 +10,7 @@ const convertNumberToWords = (num) => {
         if (n < 20) return a[n];
         if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
         if (n < 1000) return a[Math.floor(n / 100)] + ' ' + g[0] + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
-        
+
         for (let i = 0; i < g.length; i++) {
             const divisor = Math.pow(1000, i + 1);
             if (n < divisor) {
@@ -46,17 +40,24 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};  
     const items = invoiceData?.items || []; 
     const companyAddress = companyData.address || [];
-    const country = companyAddress.length ? companyAddress[0].country : 'India'; 
-    const customerState = invoiceData?.customerState || '';
-    
-    const taxRate = countries[country]?.gst || 0;
-    const companyState = companyAddress.length ? companyAddress[0]?.state?.toLowerCase() : '';
-    const isSameState = companyState === customerState?.toLowerCase();
-    
-    const totalAmount = invoiceData?.items?.reduce((acc, item) => acc + (item.quantity * item.varSelPrice), 0) || 0;
-    const taxAmount = (totalAmount * taxRate) / 100;
-    const amountDue = totalAmount + taxAmount;
-    const netReceived = amountDue;
+
+    // Calculate total amount based on quantity and price of each item
+    const subtotal = items.reduce((acc, item) => {
+        const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
+        return acc + (item.quantity * itemPrice); // Accumulate subtotal
+    }, 0);
+
+    const totalTaxAmount = items.reduce((acc, item) => {
+        const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
+        const itemTotalValue = item.quantity * itemPrice;
+        const taxRate = (item.taxComponents || []).reduce((sum, tax) => sum + tax.rate, 0); // Sum all tax rates
+        return acc + (itemTotalValue * (taxRate / 100)); // Accumulate tax amount
+    }, 0);
+
+    const grandTotal = subtotal + totalTaxAmount; // Grand total after tax
+    const amountPaid = Number(invoiceData.amountPaid) || 0;    
+     const totalInWords = convertNumberToWords(grandTotal); // Total in words
+
     const customerName = invoiceData?.firstName && invoiceData?.lastName
         ? `${invoiceData.firstName} ${invoiceData.lastName}`
         : invoiceData?.customerName || 'Please select a customer';
@@ -87,9 +88,9 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <p><strong>Invoice Number:</strong> INV-24-MAG</p>
-                    <p><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
                     <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
                     <p><strong>Due Date:</strong> {invoiceData?.dueDate || selectInvoice.dueDate}</p>
+                    <p><strong>Amount Due:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
                 </div>
             </div>
 
@@ -102,10 +103,11 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1">Phone : {invoiceData?.customerPhone} | Email : {invoiceData?.customerEmail}</p>
                 </div>
             </div>
+
             <div className="table-responsive">
-                    <table className="table table-bordered">
-                        <thead className='table-light'>
-                            <tr>
+                <table className="table table-bordered">
+                    <thead className='table-light'>
+                        <tr>
                             <th>Sr. no</th>
                             <th>Item Name</th>
                             <th>Variant</th>
@@ -114,97 +116,63 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                             <th>HSN/SAC</th>
                             <th>Quantity</th>
                             <th>Price</th>
-                            {/* <th>Total Value</th> */}
-                            {/* {isSameState ? (
-                                <>
-                                <th>CGST ({taxRate / 2}%)</th>
-                                <th>SGST ({taxRate / 2}%)</th>
-                                </>
-                            ) : (
-                                <th>IGST ({taxRate}%)</th>
-                            )} */}
                             <th>Amount</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {invoiceData?.items?.map((item, index) => {
-                            const itemTotalValue = item.quantity * item.varSelPrice;
-                            const itemCgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                            const itemSgstAmount = isSameState ? (itemTotalValue * (taxRate / 2)) / 100 : 0;
-                            const itemIgstAmount = !isSameState ? (itemTotalValue * taxRate) / 100 : 0;
-                            const itemTotalAmount = isSameState
-                                ? itemTotalValue + itemCgstAmount + itemSgstAmount
-                                : itemTotalValue + itemIgstAmount;
-                            const taxes = item.tax?.components || [];
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {items.map((item, index) => {
+                            const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
+                            const itemTotalValue = item.quantity * itemPrice;
+                            const taxRate = (item.taxComponents || []).reduce((sum, tax) => sum + tax.rate, 0);
+                            const itemTaxAmount = itemTotalValue * (taxRate / 100);
+                            const totalWithTax = itemTotalValue + itemTaxAmount; // Total including tax
+
                             return (
                                 <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item?.name || 'N/A'}</td> 
-                                <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
-                                <td>{sliceDescription(item.description)}</td>
-                                <td>
-                {taxes.length > 0 ? (
-                    <div>
-                        {taxes.map((tax, idx) => (
-                            <div key={idx}>
-                                {tax.taxType} - {tax.rate}%
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    'N/A'
-                )}
-            </td>
-                                <td>{item.hsn}</td>
-                                <td>{item.quantity}</td>
-                                {/* <td>{item.price}</td> */}
-                                <td>{item.varSelPrice ? item.varSelPrice : item.price}</td>
-                                {/* <td>{itemTotalValue.toFixed(2)}</td> */}
-                                {/* {isSameState ? (
-                                    <>
-                                    <td>{itemCgstAmount.toFixed(2)}</td>
-                                    <td>{itemSgstAmount.toFixed(2)}</td>
-                                    </>
-                                ) : (
-                                    <td>{itemIgstAmount.toFixed(2)}</td>
-                                )} */}
-                                <td>{itemTotalAmount.toFixed(2)}</td>
+                                    <td>{index + 1}</td>
+                                    <td>{item?.name || 'N/A'}</td> 
+                                    <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
+                                    <td>{sliceDescription(item.description)}</td>
+                                    <td>
+                                        {item.taxComponents && item.taxComponents.length > 0 ? (
+                                            <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
+                                                {item.taxComponents.map((tax, taxIndex) => (
+                                                    <li key={taxIndex}>
+                                                        <span>{tax.taxType + " : " || 'N/A'}</span>  
+                                                        <span>{tax.rate || 'N/A'}%</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        ) : 'N/A'}
+                                    </td>
+                                    <td>{item.ProductHsn}</td>
+                                    <td>{item.quantity}</td>
+                                    <td>{itemPrice.toFixed(2)}</td>
+                                    <td>{totalWithTax.toFixed(2)}</td>
                                 </tr>
                             );
-                            })}
-                        </tbody>
-                        </table>
-                </div>
+                        })}
+                    </tbody>
+                </table>
+            </div>
 
             <div className="row bg-light p-4 m-0">
-                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center mb-4">
+                <div className="col-lg-6 col-md-6 col-sm-12 m-text-center ">
                     <h5>Bank Details</h5>
                     <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice.bankName || 'Your Bank Name'}</p>
                     <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice.accountNumber || 'Your Account Number'}</p>
                     <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice.ifscCode || 'Your IFSC Code'}</p>
-                    <p className="my-1"><strong>Branch:</strong> {invoiceData?.branchName || selectInvoice.branchName || 'Your Branch'}</p>
-                    <p className='my-1'><strong>Sub-Type:</strong> {invoiceData?.invoiceSubType ||selectInvoice.invoiceSubType}</p>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
-                    <h5>Payment Summary</h5>
-                    <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p>
-                    {isSameState ? (
-                        <>
-                            <p><strong>CGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
-                            <p><strong>SGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
-                        </>
-                    ) : (
-                        <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
-                    )}
-                    <p className="my-1"><strong>Total:</strong> ₹ {amountDue.toFixed(2)}</p>
-                    <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
-                    <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>
-                    <p className="my-1"><strong>Amount Due:</strong> ₹ {amountDue.toFixed(2)}</p>
+                    <h4>Summary:</h4>
+                    <p className="my-1"><strong>Subtotal:</strong> ₹ {subtotal.toFixed(2)}</p>
+                    <p className="my-1"><strong>Tax:</strong> ₹ {totalTaxAmount.toFixed(2)}</p>
+                    <p className="my-1"><strong>Grand Total:</strong> ₹ {grandTotal.toFixed(2)}</p>
+                    <p><strong>Amount Paid:</strong> ₹ {amountPaid.toFixed(2)}</p>
+                    <p className="my-1"><strong>Balance:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
+                    <p className="my-1"><strong>Amount in Words:</strong> {totalInWords}</p>
                 </div>
             </div>
-
-           
-           
         </div>
     );
 });
