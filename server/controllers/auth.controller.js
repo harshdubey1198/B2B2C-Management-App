@@ -132,7 +132,7 @@ authController.registration = async (req, res) => {
       return res.status(200).json(createResult("Registration Successfully", response));
     } catch (error) {
       console.log("Error Creating User", error);
-      return res.status(400).json(createResult(error.message, null, null ));
+      return res.status(400).json(createResult(null, null, error.message ));
     }
   });
 };

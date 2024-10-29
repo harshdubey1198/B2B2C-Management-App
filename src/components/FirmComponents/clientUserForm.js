@@ -49,11 +49,20 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
     //   toast.error("Fill All the Fields");
     //   return;
     // }
+    if (!formValues.firstName || !formValues.lastName || !formValues.email || !formValues.mobile || !formValues.password || !formValues.confirmPassword || !formValues.birthday || !formValues.role )
+    {
+      setError("Fill All the Fields");
+      toast.error("Fill All the Fields");
+      return;
+    }
+
+
     if (!validateEmail(formValues.email)) {
       setError("Invalid Email");
       toast.error("Invalid Email");
       return;
     }
+    
     if (!validatePhone(formValues.mobile)) {
       setError("Invalid Phone Number");
       toast.error("Invalid Phone Number");
@@ -64,6 +73,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
       toast.error("Passwords do not match");
       return;
     }
+
     if (Object.keys(address).length === 0) {
       setError("Address is required");
       toast.error("Address is required");
@@ -100,10 +110,9 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
       })
       .catch((error) => {
         console.log("Full error object:", error);
-        toast.error("Error creating user");
+        // toast.error("Error creating user");
       });
   };
-
 
 
   const formatDate = (date) => {

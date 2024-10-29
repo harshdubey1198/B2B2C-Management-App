@@ -116,7 +116,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     const response = await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails , config);
-    toast.success(response.message);
+    toast.success("Firm details updated successfully");
 
     // Increment trigger to refetch data
     setTrigger(prev => prev + 1);
