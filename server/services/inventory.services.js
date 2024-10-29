@@ -11,13 +11,13 @@ let inventoryServices = {};
 
 // CALCULATE STOCK FUNCTION FOR REUSABILITY
 const calculateStock = (variants) => {
-    console.log(variants, "varianst")
-    return variants.reduce((sum, variant) => sum + (variant.stock || 0), 0 )
+    // console.log(variants, "varianst")
+    return variants.reduce((sum, variant) => sum + (parseInt(variant.stock, 10) || 0), 0 )
 }
 
 // CREATE INVENTORY ITEM WITH VARIANTS
 inventoryServices.createItem = async (userId, body) => {
-    console.log(body, "body ")
+    // console.log(body, "body ")
     const { name, description, quantity, qtyType, ProductHsn, supplier, manufacturer, taxId, selectedTaxTypes, vendorId, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
 
     const existingItem = await InventoryItem.findOne({ name, createdBy: userId });
