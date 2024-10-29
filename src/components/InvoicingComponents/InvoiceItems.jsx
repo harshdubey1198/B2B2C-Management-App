@@ -294,7 +294,7 @@ const totalAfterTax = totalPrice - totalTax;
                 handleItemChange(
                   index,
                   'quantity',
-                  Math.max(1, Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
+                  Math.max(0 , Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
                 )
               }
               required
