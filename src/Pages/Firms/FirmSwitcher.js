@@ -18,6 +18,9 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
       axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authuser?.response._id}`)
         .then((response) => {
           setFirms(response);  
+          if(!selectedFirmId){
+            onSelectFirm(response[0]._id);
+          }
         })
         .catch((error) => {
           console.log(error, "Error getting firms");
