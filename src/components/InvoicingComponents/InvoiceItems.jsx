@@ -165,16 +165,22 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const variantPrice = selectedVariant.price || 0;
       const quantity = selectedItem.quantity || 0;
       const discount = selectedItem.discount || 0;
-  
+      const sku = selectedVariant.sku || "";
+      const barcode = selectedVariant.barcode || "";
+      const variationType = selectedVariant.variationType || "";
+      // console.log(sku);
       const price = basePrice;
       const varSelPrice = basePrice + variantPrice;
   
       const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
       updatedItems[index] = {
         ...selectedItem,
-        selectedVariant: [{ optionLabel: variantName, varSelPrice, price: variantPrice }],
+        selectedVariant: [{ optionLabel: variantName, sku:sku ,variationType, barcode, varSelPrice, price: variantPrice }],
         price,
         varSelPrice,
+        variationType,
+        barcode,
+        sku,
         taxComponents,
       };
   
