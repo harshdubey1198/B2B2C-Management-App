@@ -215,7 +215,11 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     setInvoiceData(prevData => ({ ...prevData, items: newItems }));
   };
   
-  
+const totalItems = items.length;
+const totalPrice = items.reduce((acc, item) => acc + (item.total || 0), 0);
+const totalTax = items.reduce((acc, item) => acc + (item.afterTax || 0), 0);
+const totalAfterTax = totalPrice - totalTax;
+
 
   if (loading) return <Spinner color="primary" />;
 
@@ -285,6 +289,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
               id={`quantity-${index}`}
               max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
               value={item.quantity}
+              onWheel={(e) => e.target.blur()}
               onChange={(e) =>
                 handleItemChange(
                   index,
@@ -339,6 +344,14 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
           </div>
         </div>
       ))}
+      <div className="summary-panel bg-light p-3 my-3">
+          <h5 className="mb-3">Invoice Summary</h5>
+          <p><strong>Total Items:</strong> {totalItems}</p>
+          <p><strong>Total Price (Before Tax):</strong> ₹ {totalAfterTax.toFixed(2)}</p>
+          <p><strong>Total Tax:</strong> ₹ {totalTax.toFixed(2)}</p>
+          <p><strong>Total After Tax:</strong> ₹ {totalPrice.toFixed(2)}</p> 
+      </div>
+
     </div>
   );
 };

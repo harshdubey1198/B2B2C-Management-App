@@ -46,6 +46,7 @@ const Index = () => {
     taxComponents: [],
     id: '',
     varSelPrice: '',
+    overallAmount: '',
 });
 const fetchInventoryItems = () => {
   axiosInstance.get(`${process.env.REACT_APP_URL}/inventory/get-items/${firmId}`)
@@ -246,6 +247,7 @@ const printInvoice = useReactToPrint({
   content: () => printRef.current
 });
 
+
 // console.log(invoiceData, "invoicedata")
 
 // console.log(
@@ -280,7 +282,9 @@ return (
                 printInvoice={printInvoice}
                 addItem={addItem}
                 removeItem={removeItem}
+                setInvoiceData={setInvoiceData}
               />
+               
               <h3 className='my-4'>Invoice Items</h3>
               <InvoiceItems
                 items={invoiceData.items}

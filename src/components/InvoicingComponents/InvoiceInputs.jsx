@@ -2,18 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { FormGroup, Label, Input, Row, Col } from "reactstrap";
 import useDebounce from "../../Hooks/UseDebounceHook";
 import axios from "axios";
+import axiosInstance from "../../utils/axiosInstance";
 
-const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
+const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const token = authuser?.token;
   const firmId = authuser?.response?.adminId;
-
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-  };
   const suggestionsRef = useRef(null); 
   const [searchResults, setSearchResults] = useState([]);
   const [searchKey, setSearchKey] = useState("");
@@ -38,10 +31,8 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
   const searchCustomer = useDebounce(async (searchKey) => {
     if (searchKey) {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_URL}/customer/search?q=${searchKey}&firmId=${firmId}`,
-          config
-        );
+        const response = await axiosInstance.get(
+          `${process.env.REACT_APP_URL}/customer/search?q=${searchKey}&firmId=${firmId}`);
         setSearchResults(response.data || []); 
         setShowSuggestions(true);
       } catch (error) {
@@ -116,6 +107,21 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
       </span>
     ));
   };
+  // const handleAmountPaidChange = (event) => {
+  //   const amountPaid = parseFloat(event.target.value) || 0;
+  //   const totalInclusiveTaxes = invoiceData.items.reduce((acc, item) => acc + (item.total || 0), 0);
+  
+  //   if (amountPaid > totalInclusiveTaxes) {
+  //     alert(`Amount Paid cannot exceed the total invoice amount inclusive of taxes (₹ ${totalInclusiveTaxes.toFixed(2)}).`);
+  //     return;
+  //   }
+  
+  //   setInvoiceData((prevData) => ({
+  //     ...prevData,
+  //     amountPaid,
+  //   }));
+  // };
+  const totalInclusiveTaxes = invoiceData.items.reduce((acc, item) => acc + (item.total || 0), 0);
 
   return (
     <div className="invoice-form">
@@ -249,6 +255,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
         placeholder="Customer Phone"
         value={invoiceData.customerPhone}
         onChange={handleInputChange}
+        onWheel={(e) => e.target.blur()}
         required
       />
     </FormGroup>
@@ -345,14 +352,20 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
     <FormGroup>
       <Label for="amountPaid">Amount Paid</Label>
       <Input
-        type="number"
-        name="amountPaid"
-        id="amountPaid"
-        placeholder="Amount Paid"
-        value={invoiceData.amountPaid}
-        onChange={handleInputChange}
-        required
-      />
+              type="number"
+              name="amountPaid"
+              id="amountPaid"
+              placeholder="Amount Paid"
+              value={invoiceData.amountPaid}
+              onChange={(e) => {
+                const value = Math.max(0, Math.min(totalInclusiveTaxes, e.target.value)); 
+                handleInputChange({ target: { name: "amountPaid", value } });
+              }}
+              required
+              min={0}
+              max={totalInclusiveTaxes} 
+              onWheel={(e) => e.target.blur()} 
+            />
     </FormGroup>
   </Col>
 
@@ -414,7 +427,9 @@ const InvoiceInputs = ({ invoiceData, handleInputChange }) => {
     </FormGroup>
   </Col>
 </Row>
-
+                <div className="invoice-total">
+                  <h4>Final Invoice Amount : ₹ {invoiceData.items.reduce((acc, item) => acc + (item.total || 0), 0).toFixed(2)}</h4>
+                </div>
     </div>
   );
 };
