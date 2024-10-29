@@ -144,7 +144,7 @@ export const masterAdminSidebarData = () => [
 
     {
       label:"Companies",
-      icon:"mdi mdi-account-multiple-outline",
+      icon:"mdi mdi-domain",
       subItem: [
         { sublabel: "Firms", link: "/firms" },
         { sublabel: "Create New Firm", link: "/create-firm" },
@@ -161,7 +161,7 @@ export const masterAdminSidebarData = () => [
     },
     {
       label: "Inventory",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         // { sublabel: "Table Form", link: "/add-inventory" },
@@ -172,7 +172,7 @@ export const masterAdminSidebarData = () => [
     },
     {
       label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-file-document-outline",
       subItem: [
         // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
@@ -236,7 +236,7 @@ export const masterAdminSidebarData = () => [
     // },
     {
       label:"Company",
-      icon:"mdi mdi-account-multiple-outline",
+      icon:"mdi mdi-domain",
       subItem: [
         { sublabel: "Firm Users", link: "/firmusers" },
         { sublabel: "Firm Setting", link: "/firms-setting" }
@@ -249,7 +249,7 @@ export const masterAdminSidebarData = () => [
     },
     {
       label: "Inventory",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
         { sublabel: "Table Form", link: "/add-inventory" },
@@ -263,7 +263,7 @@ export const masterAdminSidebarData = () => [
     },
     {
       label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-file-document-outline",
       subItem: [
         { sublabel: "View Invoices", link: "/view-invoices" },
         { sublabel: "View Customers", link: "/view-customers" }
@@ -291,7 +291,7 @@ export const masterAdminSidebarData = () => [
 
     {
       label: "Inventory",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Management", link: "/inventory-table" },
         {sublabel : "Categories" ,link :"/manage-category"},
@@ -300,7 +300,7 @@ export const masterAdminSidebarData = () => [
     },
     {
       label: "Invoicing",
-      icon: "mdi mdi-cash-multiple",
+      icon: "mdi mdi-file-document-outline",
       subItem: [
         { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
