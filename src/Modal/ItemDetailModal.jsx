@@ -29,6 +29,9 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     };
     fetchVendors();
   }, []);
+
+  
+
   return (
     <Modal
       modalClassName="custom-modal-width"
@@ -80,7 +83,29 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <label>
                   <strong>Vendor:</strong>
                 </label>
-                <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly />
+                {/* <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly /> */}
+                {selectedItem?.vendor && selectedItem?.vendor?.name ? (
+                  <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly />
+                ) : (
+                  <select className="form-control" value={selectedItem.vendorId || ""}
+                    onChange={(e) => {
+                      const selectedVendor = vendors.find((vendor) => vendor._id === e.target.value);
+                      setSelectedItem({
+                        ...selectedItem,
+                        vendor: selectedVendor || null,
+                      });
+                    }
+                    }
+                  >
+                    <option value="">Select Vendor</option>
+                    {vendors.map((vendor) => (
+                      <option key={vendor._id} value={vendor._id}>
+                        {vendor.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
               </Col>
               {/* <Col md={3}>
                 <label>
@@ -287,7 +312,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   brand: selectedItem.brand,
                   costPrice: selectedItem.costPrice,
                   sellingPrice: selectedItem.sellingPrice,
-                  // vendor:selectedItem.vendorId
+                  vendor:selectedItem.vendor
                 })
               }
             >

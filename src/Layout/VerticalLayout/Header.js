@@ -193,7 +193,7 @@ const Header = (props) => {
               {role === "employee" ? (
                 <ul className="top-navbar-links" id="nav-links">
                 <li><Link to="/inventory-table">Inventory</Link></li>
-                <li><Link to="/view-invoices">Invoices</Link></li>
+                <li><Link to="/add-inventory">Add Item</Link></li>
                 </ul>
                 ) : null
                 }
