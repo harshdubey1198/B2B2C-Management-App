@@ -39,6 +39,13 @@ import {
 
 const Header = (props) => {
   // const [search, setsearch] = useState(false);.
+  const [role, setRole] = React.useState("");
+  const authuser = JSON.parse(localStorage.getItem("authUser"))?.response;
+  React.useEffect(() => {
+    if (authuser) {
+      setRole(authuser.role);
+    }
+  }, []);
 
   // function for toggle the theme of application
   const handleThemeToggle = (mode) => {
@@ -143,13 +150,55 @@ const Header = (props) => {
               </div>
             </form> */}
           </div>
-          <div className="d-flex w-50 align-item-center">
+          {/* <div className="d-flex w-50 align-item-center">
             <ul className="top-navbar-links" id="nav-links">
               <li><Link to="/create-firm">Create Firm</Link></li>
               <li><Link to="/pricing">Pricing & plan</Link></li>
               <li><Link to="/view-invoices">invoices</Link></li>
             </ul>
-          </div>
+          </div> */}
+
+          <div className="d-flex w-50 align-item-center">
+             {role === "super_admin" ? (
+              <ul className="top-navbar-links" id="nav-links">
+                {/* <li><Link to="/create-firm">Create Firm</Link></li> */}
+                <li><Link to="/manage-plan">Manage plan</Link></li>
+                <li><Link to="/view-invoices">Invoices</Link></li>
+              </ul>
+            ) : null  
+            }
+            {role === "client_admin" ? (
+              <ul className="top-navbar-links" id="nav-links">
+                <li><Link to="/firms">Firms</Link></li>
+                <li><Link to="/pricing">Pricing</Link></li>
+                <li><Link to="/inventory-table">Inventory</Link></li>
+              </ul>
+            ) : null  
+            }
+            {role === "firm_admin" ? (
+              <ul className="top-navbar-links" id="nav-links">
+                <li><Link to="/firmusers">Users</Link></li>
+                <li><Link to="/inventory-table">Inventory</Link></li>
+                <li><Link to="/view-invoices">Invoices</Link></li>
+              </ul>
+            ) : null  
+              }
+              {role === "accountant" ? (
+                <ul className="top-navbar-links" id="nav-links">
+                <li><Link to="/inventory-table">Inventory</Link></li>
+                <li><Link to="/view-invoices">Invoices</Link></li>
+                </ul>
+                ) : null
+                }
+              {role === "employee" ? (
+                <ul className="top-navbar-links" id="nav-links">
+                <li><Link to="/inventory-table">Inventory</Link></li>
+                <li><Link to="/view-invoices">Invoices</Link></li>
+                </ul>
+                ) : null
+                }
+
+           </div>
           <div className="d-flex">
             {/* <div className="dropdown d-inline-block d-lg-none ms-2">
               <button

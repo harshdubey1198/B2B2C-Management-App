@@ -60,7 +60,7 @@ export const masterAdminSidebarData = () => [
     label: "Vendors",
     icon: "mdi mdi-truck-delivery-outline",
     subItem: [
-      { sublabel: "Manage Vendors", link: "/vendors/manage" },
+      // { sublabel: "Manage Vendors", link: "/vendors/manage" },
       { sublabel: "Track Payments", link: "/vendors/payments" },
       { sublabel: "Vendor Invoices", link: "/vendors/invoices" },
       { sublabel: "Supplier Information", link: "/vendors/info" },

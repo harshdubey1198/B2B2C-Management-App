@@ -23,6 +23,7 @@ function Vendor() {
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [selectedVendorId, setSelectedVendorId] = useState(null);
+    const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
     const authuser = JSON.parse(localStorage.getItem("authUser"));
     const token = authuser.token;
@@ -151,8 +152,21 @@ function Vendor() {
     };
 
     useEffect(() => {
-        fetchVendors();
+        if (authuser.role === 'super_admin') {
+            setIsSuperAdmin(true);
+        } else {
+            fetchVendors();
+        }
     }, []);
+
+    if (isSuperAdmin) {
+        return (
+            <div className="page-content">
+                <Breadcrumbs title="Inventory Management" breadcrumbItem="Vendors" />
+                <h3>Coming Soon</h3>
+            </div>
+        );
+    }
 
     return (
         <React.Fragment>
@@ -277,17 +291,15 @@ function Vendor() {
                         ) : (
                             vendors.map((vendor, index) => (
                                 <tr key={vendor._id}>
-                                    <td>{index + 1}</td>
+                                    <th scope="row">{index + 1}</th>
                                     <td>{vendor.name}</td>
                                     <td>{vendor.contactPerson}</td>
                                     <td>{vendor.phone}</td>
                                     <td>{vendor.email}</td>
                                     <td>
-                                        {/* <Button color="info" size="sm" className="mr-2" onClick={() => handleEditClick(vendor)}>Edit</Button>
-                                        <Button color="danger" size="sm" onClick={() => handleDeleteClick(vendor._id)}>Delete</Button> */}
-
-                                        <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleEditClick(vendor)}></i>
-                                        <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteClick(vendor._id)}></i>
+                                        <Button color="secondary" size="sm" onClick={() => handleEditClick(vendor)}>Edit</Button>
+                                        {' '}
+                                        <Button color="danger" size="sm" onClick={() => handleDeleteClick(vendor._id)}>Delete</Button>
                                     </td>
                                 </tr>
                             ))
