@@ -6,7 +6,7 @@ export const masterAdminSidebarData = () => [
   },
 
   {
-    label: "Clients/Customers",
+    label: "Clients",
     icon: "mdi mdi-account-multiple-outline",
     subItem: [
       { sublabel: "Manage Clients", link: "/clients-management" },
@@ -35,7 +35,7 @@ export const masterAdminSidebarData = () => [
     ],
   },
   {
-    label: "Inventory Items",
+    label: "Inventory",
     icon: "mdi mdi-archive-outline",
     subItem: [
       { sublabel: "Inventory Management", link: "/inventory-table" },
@@ -57,7 +57,7 @@ export const masterAdminSidebarData = () => [
     ],
   },
   {
-    label: "Vendors/Suppliers",
+    label: "Vendors",
     icon: "mdi mdi-truck-delivery-outline",
     subItem: [
       { sublabel: "Manage Vendors", link: "/vendors/manage" },
