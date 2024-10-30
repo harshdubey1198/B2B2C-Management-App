@@ -3,6 +3,7 @@ import { Card, CardBody, Col, Row } from "reactstrap";
 import axios from "axios";
 import RadialChart1 from "./userpanelChart1";
 import RadialChart2 from "./userpanelChart2";
+import axiosInstance from "../../utils/axiosInstance";
 
 const UserPanel = () => {
   const [userCount, setUserCount] = useState(0); 
@@ -25,9 +26,8 @@ const UserPanel = () => {
           userId: userId,
         };
 
-        const response = await axios.post(
-          `${process.env.REACT_APP_URL}/auth/count-company`, body, config
-        );
+        const response = await axiosInstance.post(
+          `${process.env.REACT_APP_URL}/auth/count-company`, body );
         setUserCount(response.count.data); 
       } catch (error) {
         console.error("Error fetching user count:", error);

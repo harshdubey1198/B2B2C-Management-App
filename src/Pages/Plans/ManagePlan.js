@@ -3,6 +3,7 @@ import { Button, Card, CardBody, Col, Dropdown, DropdownToggle, DropdownMenu, Dr
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import axiosInstance from '../../utils/axiosInstance';
 
 const predefinedIcons = ["fas fa-cube", "fas fa-trophy", "fas fa-shield-alt"];
 
@@ -54,12 +55,7 @@ function ManagePlan() {
     }
   };
   const handleUpdate = () => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    };
-    axios.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan, config)
+       axiosInstance.put(`${process.env.REACT_APP_URL}/plan/update/${selectedPlan._id}`, selectedPlan)
       .then((response) => {
         setTrigger(prev => prev + 1);
         toggleModal();

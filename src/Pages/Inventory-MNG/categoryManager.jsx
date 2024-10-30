@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, CardBody, Button, Table, Modal, ModalHeader,
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import axiosInstance from '../../utils/axiosInstance';
 
 const CategoryManager = () => {
   const [categories, setCategories] = useState([]);
@@ -62,17 +63,15 @@ const CategoryManager = () => {
   
     try {
       if (editMode) {
-        const response = await axios.put(
+        const response = await axiosInstance.put(
           `${process.env.REACT_APP_URL}/category/update-category/${selectedCategoryId}`,
-          updatedFormValues,
-          config
+          updatedFormValues
         );
         toast.success(response.message);
       } else {
-        const response = await axios.post(
+        const response = await axiosInstance.post(
           `${process.env.REACT_APP_URL}/category/create-category/${createdBy}`,
-          updatedFormValues,
-          config
+          updatedFormValues
        
         );
         

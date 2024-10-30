@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 // import firmAddressForm from '../../components/FirmComponents/firmAddressForm';
 import FirmAddressForm from '../../components/FirmComponents/firmAddressForm';
+import axiosInstance from '../../utils/axiosInstance';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -115,7 +116,7 @@ function FirmSettings() {
 const handleSubmit = async (e) => {
   e.preventDefault();
   try {
-    const response = await axios.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails , config);
+    const response = await axiosInstance.put(`${process.env.REACT_APP_URL}/auth/update/${firmDetails._id}`, firmDetails );
     toast.success("Firm details updated successfully");
 
     // Increment trigger to refetch data
@@ -125,7 +126,7 @@ const handleSubmit = async (e) => {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authUser.response.adminId}`, config);
+          const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/auth/getfirm/${authUser.response.adminId}`);
           const firmData = response[0] || {};
           setFirmDetails({ ...firmData, address: firmData.address || [] });
         } catch (error) {
