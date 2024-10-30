@@ -51,16 +51,17 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
       return;
     }
 
-   const response = axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser/${formValues.firmId}`, {
-        ...formValues,
-        address,
-      })
+    fetch(`${process.env.REACT_APP_URL}/auth/createUser/${formValues.firmId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...formValues, address }),
+    })
       .then(async (response) => {
         if (!response.ok) {
           const error = await response.json();
-          console.log("Error creating user", error);
-          toast.error("Error creating user");
+          toast.error(error.error);
           return;
         }
         toast.success("User added successfully.");
@@ -84,8 +85,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
         console.log("Error creating user", error);
         toast.error("Error creating user");
       });
-  };
-
+    };    
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues((prevState) => ({

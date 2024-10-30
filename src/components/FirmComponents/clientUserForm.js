@@ -98,7 +98,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
     .then(async (response) => {
       if (!response.ok) {
         const error = await response.json();
-        console.log(error.error, "Error creating user");
+        // console.log(error.error, "Error creating user");
         toast.error(error.error);
         return;
       }
