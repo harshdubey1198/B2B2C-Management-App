@@ -105,7 +105,9 @@ const authProtectedRoutes = [
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firmusers", component: <UserManage />},
+  {path:"/firmusers-uc", component: <ComingSoon />},
   {path:"/firms-setting", component: <FirmsSetting />},
+  {path:"/firms-setting-uc", component: <ComingSoon />},
   {path:"/create-firm", component: <CreateFirm />},
   {path:"/switch-firm", component: <SwitchFirm/>},
 

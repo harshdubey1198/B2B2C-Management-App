@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, CardBody, Button, Table, Modal, ModalHeader, ModalBody, FormGroup, Label, Input, ModalFooter } from 'reactstrap';
+import { Container, Row, Col, Card, CardBody, Button, Table, Modal, ModalHeader, ModalBody, FormGroup, Label, Input, ModalFooter, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -7,29 +7,30 @@ import axiosInstance from '../../utils/axiosInstance';
 
 const CategoryManager = () => {
   const [categories, setCategories] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const [modal, setModal] = useState(false);
   const [formValues, setFormValues] = useState({
     categoryName: "",
     description: "",
     parentId: "",
-    
   });
   const [parentCategories, setParentCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showOnlyParents, setShowOnlyParents] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [categoriesPerPage] = useState(5);
 
   const token = JSON.parse(localStorage.getItem("authUser")).token;
-
-  const toggleModal = () => setModal(!modal);
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
-
+  const config = { headers: { Authorization: `Bearer ${token}` } };
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+
+  const toggleModal = () => setModal(!modal);
+
   const fetchCategories = async () => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`, config);
@@ -41,8 +42,54 @@ const CategoryManager = () => {
   };
 
   useEffect(() => {
-    fetchCategories(); 
+    fetchCategories();
   }, []);
+
+  useEffect(() => {
+    let updatedCategories = categories;
+
+    if (searchTerm) {
+      updatedCategories = updatedCategories.filter(category =>
+        category.categoryName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        category.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (showOnlyParents) {
+      updatedCategories = updatedCategories.filter(category => !category.parentId);
+    }
+
+    if (sortOrder === 'asc') {
+      updatedCategories = updatedCategories.sort((a, b) => a.categoryName.localeCompare(b.categoryName));
+    } else {
+      updatedCategories = updatedCategories.sort((a, b) => b.categoryName.localeCompare(a.categoryName));
+    }
+
+    setFilteredCategories(updatedCategories);
+  }, [categories, searchTerm, showOnlyParents, sortOrder]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleFilterToggle = () => {
+    setShowOnlyParents(!showOnlyParents);
+    setCurrentPage(1);
+  };
+
+  const handleSortToggle = () => {
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const currentCategories = filteredCategories.slice(
+    (currentPage - 1) * categoriesPerPage,
+    currentPage * categoriesPerPage
+  );
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,9 +119,7 @@ const CategoryManager = () => {
         const response = await axiosInstance.post(
           `${process.env.REACT_APP_URL}/category/create-category/${createdBy}`,
           updatedFormValues
-       
         );
-        
         toast.success(response.message);
       }
       setModal(false);
@@ -92,7 +137,6 @@ const CategoryManager = () => {
       setLoading(false);
     }
   };
-  
 
   const handleEdit = (category) => {
     setFormValues({
@@ -136,43 +180,60 @@ const CategoryManager = () => {
           <Row>
             <Col lg={12}>
               <Card>
-                <CardBody className='relative'>
-                  <Button className='position-absolute top-0 end-0' style={{ margin: '1.2rem' }} color="primary" onClick={openAddCategoryModal}>
+                <CardBody>
+                  <div className='d-flex align-items-center flex-column flex-md-row custom-gap'>
+                    <Input
+                        type="text"
+                        placeholder="Search by Category Name or Description"
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        className="my-1 input-width"
+                      />
+
+                    <FormGroup check>
+                      <Label check>
+                        <Input type="checkbox" checked={showOnlyParents} onChange={handleFilterToggle} />
+                        Show Only Parent Categories
+                      </Label>
+                    </FormGroup>
+                    {/* <Button color="link" onClick={handleSortToggle}>
+                      Sort by Name ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
+                    </Button> */}
+                  <Button color="primary" onClick={openAddCategoryModal}>
                     Add Category
                   </Button>
+                  </div>
 
-                  <Table className="table table-bordered mt-5">
+                  <Table className="table table-bordered mt-2">
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Category Name</th>
+                        <th onClick={handleSortToggle} className='cursor-pointer'>Category Name</th>
                         <th>Description</th>
                         <th>Parent Category</th>
-                        <th>Status</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {categories.length > 0 ? (
-                        categories.map((category, index) => (
+                      {currentCategories.length > 0 ? (
+                        currentCategories.map((category, index) => (
                           <tr key={category._id}>
-                            <td>{index + 1}</td>
+                            <td>{index + 1 + (currentPage - 1) * categoriesPerPage}</td>
                             <td>{category.categoryName}</td>
                             <td>{category.description}</td>
+                            <td>{category.parentId ? category.parentId.categoryName : "None"}</td>
                             <td>
-                              {category.parentId ? category.parentId.categoryName : "None"}
+                              <i
+                                className="bx bx-edit"
+                                style={{ fontSize: "22px", cursor: "pointer" }}
+                                onClick={() => handleEdit(category)}
+                              ></i>
+                              <i
+                                className="bx bx-trash"
+                                style={{ fontSize: "22px", cursor: "pointer" }}
+                                onClick={() => handleDelete(category._id)}
+                              ></i>
                             </td>
-                            <td>{category.status}</td>
-                            <td className='d-flex gap-2'>
-                              {/* <Button color="warning" className="mr-2" onClick={() => handleEdit(category)}>
-                                Edit
-                              </Button> */}
-                              <i className="bx bx-edit mr-2" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleEdit(category)}></i>
-                              {/* <Button color="danger" onClick={() => handleDelete(category._id)}>
-                                Delete
-                              </Button> */}
-                              <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleDelete(category._id)}></i>
-                              </td>
                           </tr>
                         ))
                       ) : (
@@ -182,7 +243,6 @@ const CategoryManager = () => {
                       )}
                     </tbody>
                   </Table>
-
                   <Modal isOpen={modal} toggle={toggleModal}>
                     <ModalHeader toggle={toggleModal}>{editMode ? "Edit Category" : "Add Category"}</ModalHeader>
                     <ModalBody>
@@ -239,6 +299,15 @@ const CategoryManager = () => {
                       </Button>
                     </ModalFooter>
                   </Modal>
+                  <Pagination>
+                    {[...Array(Math.ceil(filteredCategories.length / categoriesPerPage)).keys()].map((_, index) => (
+                      <PaginationItem active={index + 1 === currentPage} key={index}>
+                        <PaginationLink onClick={() => handlePageChange(index + 1)}>
+                          {index + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                  </Pagination>
                 </CardBody>
               </Card>
             </Col>

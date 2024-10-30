@@ -52,6 +52,25 @@ function FirmSettings() {
     }
   }, [authUser , trigger]);
   
+  // useEffect(() => {
+  //   if (authUser?.response?.role === "super_admin") {
+  //     const fetchFirms = async () => {
+  //       try {
+  //         const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`,config);
+  //         const firms = response || [];
+  //         setFirmsData(firms);
+  //         if (firms.length > 0 && !selectedFirmId) {
+  //           setSelectedFirmId(firms[0]._id);
+  //         }
+  //       } catch (error) {
+  //         console.error("Error getting firms:", error.response || error.message);
+  //         toast.error("Failed to fetch firms data");
+  //       }
+  //     };
+  //     fetchFirms();
+  //   }
+  // }, [authUser , trigger]);
+  
   useEffect(() => {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
@@ -165,6 +184,13 @@ const handleSubmit = async (e) => {
                     onSelectFirm={handleFirmChange}
                   />
                 )}
+                {/* {authUser?.response?.role === "client_admin" && (
+                  <FirmSwitcher
+                    firms={firmsData}
+                    selectedFirmId={selectedFirmId}
+                    onSelectFirm={handleFirmChange}
+                  />
+                )} */}
                 </div>
               </div>
             {authUser?.response?.role === "firm_admin" || selectedFirmId ? (

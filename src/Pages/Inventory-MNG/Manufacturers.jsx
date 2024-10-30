@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import FetchManufacturers from './fetchManufacturers';
-import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
 import ManufacturerModal from '../../Modal/ManufacturerModal';
 import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-toastify';
@@ -15,6 +15,8 @@ const Manufacturers = () => {
   const [manufacturerToDelete, setManufacturerToDelete] = useState(null);
   const [manufacturerToEdit, setManufacturerToEdit] = useState(null);
   const [manufacturerToAdd, setManufacturerToAdd] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
@@ -25,7 +27,6 @@ const Manufacturers = () => {
 
   const handleManufacturersFetched = (fetchedManufacturers) => {
     setManufacturers(fetchedManufacturers);
-    console.log(fetchedManufacturers);
   };
 
   const handleManufacturerEdit = (manufacturer) => {
@@ -70,6 +71,13 @@ const Manufacturers = () => {
     toggleModal();
   };
 
+  // Filter manufacturers based on search query for title, lead, or phone
+  const filteredManufacturers = manufacturers.filter((manufacturer) =>
+    manufacturer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    manufacturer.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    manufacturer.phone.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -77,24 +85,37 @@ const Manufacturers = () => {
           <Breadcrumbs title="Inventory Management" breadcrumbItem="Manufacturer" />
           <FetchManufacturers onManufacturersFetched={handleManufacturersFetched} firmId={firmId} />
         </div>
+
+        {/* Search Input */}
+        <Input
+          type="text"
+          placeholder="Search by title, lead, or phone"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="my-3"
+        />
+
         <div className='relative h-35'>   
           <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleManufacturerToAdd}></i>
         </div>
+
         <div className='table-responsive relative'>
           <Table bordered className='table table-centered table-nowrap mb-0'>
             <thead className='thead-light'>
               <tr>
                 <th>Title</th>
                 <th>Lead</th>
+                <th>Email</th>
                 <th>Phone</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {manufacturers.map((manufacturer) => (
+              {filteredManufacturers.map((manufacturer) => (
                 <tr key={manufacturer._id}>
                   <td>{manufacturer.name}</td>
                   <td>{manufacturer.contactPerson}</td>
+                  <td>{manufacturer.email}</td>
                   <td>{manufacturer.phone}</td>
                   <td>
                     <i

@@ -31,7 +31,8 @@ export const masterAdminSidebarData = () => [
     subItem: [
       { sublabel: "Manage Firms", link: "/firms" },
       { sublabel: "Create New Firm", link: "/create-firm" },
-      { sublabel: "Firm-Specific Settings", link: "/firms-setting" },
+      { sublabel: "Firm Users", link: "/firmusers-uc" },
+      { sublabel: "Firm-Specific Settings", link: "/firms-setting-uc" },
     ],
   },
   {

@@ -104,3 +104,35 @@
         border: 1px solid grey;
     }
 }
+
+.cursor-pointer{
+    cursor: pointer;
+}
+
+
+.input-width {
+    width: 100%;
+  }
+  
+  @media (min-width: 768px) {
+    .input-width {
+      width: 50%;
+    }
+  }
+  
+  @media (min-width: 992px) {
+    .input-width {
+      width: 50%;
+    }
+  }
+  
+  .custom-gap {
+    gap: 8px; 
+  }
+  
+  @media (min-width: 768px) {
+    .custom-gap {
+      gap: 24px;
+    }
+  }
+  
