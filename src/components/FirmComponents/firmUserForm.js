@@ -51,12 +51,18 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
       return;
     }
 
-    axios
+   const response = axios
       .post(`${process.env.REACT_APP_URL}/auth/createUser/${formValues.firmId}`, {
         ...formValues,
         address,
       })
-      .then(() => {
+      .then(async (response) => {
+        if (!response.ok) {
+          const error = await response.json();
+          console.log("Error creating user", error);
+          toast.error("Error creating user");
+          return;
+        }
         toast.success("User added successfully.");
         setTrigger((prev) => prev + 1);
         setFormValues({

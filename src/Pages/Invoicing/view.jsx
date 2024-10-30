@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Alert} from 'reactstrap';
+import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
@@ -15,10 +15,11 @@ const ViewInvoices = () => {
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [selectedFirmId, setSelectedFirmId] = useState(null);
     const [trigger, setTrigger] = useState(0);
+    const [currentPage, setCurrentPage] = useState(1); 
+    const invoicesPerPage = 10; 
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser")).response;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
-
 
     useEffect(() => {
         const fetchInvoices = async () => {
@@ -29,8 +30,6 @@ const ViewInvoices = () => {
                 
                 const response = await axiosInstance.get(url);
                 setInvoices(response.data);
-                console.log("tax rate" , response.data[0].items[0].itemId.tax.components[0].rate );
-                console.log("tax name" , response.data[0].items[0].itemId.tax.components[0].taxType );
             } catch (error) {
                 console.error("Error fetching invoices:", error);
                 setInvoices([]);
@@ -55,24 +54,17 @@ const ViewInvoices = () => {
     });
 
     const handleRejectProforma = async (invoiceId) => {
-        if (!invoiceId) {
-            console.error("Invoice ID is not provided");
-            return;
-        }
+        if (!invoiceId) return;
     
         try {
             const response = await axiosInstance.put(`${process.env.REACT_APP_URL}/invoice/reject-invoice/${invoiceId}`, {});
-            console.log("Proforma invoice rejected successfully:", response.message);
             toast.success(response.message);
             setTrigger(prev => prev + 1);
         } catch (error) {
-            // console.error("Error rejecting proforma invoice:", error);
-            const errorMessage = error ;
-            console.log(errorMessage);
+            const errorMessage = error.message || "Error rejecting invoice";
             toast.error(errorMessage);
         }
     };
-    
 
     const handleApproveStatus = async (invoice, status) => {
         try {
@@ -87,11 +79,13 @@ const ViewInvoices = () => {
         }
     };
 
+    const totalPages = Math.ceil(invoices.length / invoicesPerPage);
+    const currentInvoices = invoices.slice((currentPage - 1) * invoicesPerPage, currentPage * invoicesPerPage);
+
     return (
         <React.Fragment>
             <div className='page-content'>
                 <Breadcrumbs title="Invoicing" breadcrumbItem="View Invoices" />
-                {/* <h1>View Invoices</h1> */}
                 <div className="d-flex justify-content-between mb-4">
                     {authuser.role === "client_admin" && (
                         <FirmSwitcher
@@ -122,7 +116,7 @@ const ViewInvoices = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {invoices.map((invoice) => (
+                            {currentInvoices.map((invoice) => (
                                 <tr key={invoice._id}>
                                     <td>{invoice.invoiceNumber}</td>
                                     <td>{invoice.customerName}</td>
@@ -171,10 +165,7 @@ const ViewInvoices = () => {
                                         </td>
                                     )}
                                     {authuser.role === "firm_admin" && invoice.invoiceType === "Proforma" && (
-                                       <td><Button color="danger" size="sm" onClick={() => {
-                                                console.log("Rejecting Proforma Invoice ID:", invoice._id);
-                                                handleRejectProforma(invoice._id);
-                                             }}>
+                                       <td><Button color="danger" size="sm" onClick={() => handleRejectProforma(invoice._id)}>
                                         Reject Proforma
                                     </Button>
                                     </td>
@@ -182,11 +173,25 @@ const ViewInvoices = () => {
                                     {authuser.role === "firm_admin" && (
                                         <td>{invoice.status}</td>
                                     )}
-
                                 </tr>
                             ))}
                         </tbody>
                     </Table>
+                    <Pagination className="d-flex justify-content-center">
+                        <PaginationItem disabled={currentPage === 1}>
+                            <PaginationLink previous onClick={() => setCurrentPage(currentPage - 1)} />
+                        </PaginationItem>
+                        {[...Array(totalPages)].map((_, index) => (
+                            <PaginationItem active={index + 1 === currentPage} key={index}>
+                                <PaginationLink onClick={() => setCurrentPage(index + 1)}>
+                                    {index + 1}
+                                </PaginationLink>
+                            </PaginationItem>
+                        ))}
+                        <PaginationItem disabled={currentPage === totalPages}>
+                            <PaginationLink next onClick={() => setCurrentPage(currentPage + 1)} />
+                        </PaginationItem>
+                    </Pagination>
                     </div>
                 )}
                 {selectedInvoice && (

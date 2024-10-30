@@ -85,35 +85,46 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
       return;
     }
 
-    axios
-      .post(`${process.env.REACT_APP_URL}/auth/createUser/${firmId}`, {
+    fetch(`${process.env.REACT_APP_URL}/auth/createUser/${firmId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         ...formValues,
         address
       })
-      .then((response) => {
-        toast.success("User added successfully.");
-        setError("");
-        setTrigger((prev) => prev + 1);
-        setFormValues({
-          firstName: "",
-          lastName: "",
-          email: "",
-          mobile: "",
-          password: "",
-          confirmPassword: "",
-          birthday: "",
-          gender: "",
-          role: "",
-        });
-        setAddress({});
-        toggle();
-      })
-      .catch((error) => {
-        console.log("Full error object:", error);
-        // toast.error("Error creating user");
+    })
+    .then(async (response) => {
+      if (!response.ok) {
+        const error = await response.json();
+        console.log(error.error, "Error creating user");
+        toast.error(error.error);
+        return;
+      }
+      const data = await response.json();
+      toast.success("User added successfully.");
+      setError("");
+      setTrigger((prev) => prev + 1);
+      setFormValues({
+        firstName: "",
+        lastName: "",
+        email: "",
+        mobile: "",
+        password: "",
+        confirmPassword: "",
+        birthday: "",
+        gender: "",
+        role: "",
       });
+      setAddress({});
+      toggle();
+    })
+    .catch((error) => {
+      console.log("Full error object:", error);
+      // toast.error("Error creating user");
+    });
   };
-
 
   const formatDate = (date) => {
     const [year, month, day] = date.split("-");
