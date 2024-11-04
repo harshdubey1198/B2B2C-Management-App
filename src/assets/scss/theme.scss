@@ -34,6 +34,7 @@ body {
   background-image: url('../images/logo-sm.png'); 
   background-size: cover;
   z-index: 10000;
+  transition: top 0.1s ease, left 0.1s ease; // Add smooth transition effect
 }
 .width-90 {
   width: 90% !important;
