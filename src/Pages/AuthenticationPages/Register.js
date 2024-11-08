@@ -89,7 +89,7 @@ const Register = (props) => {
 
   // Start the countdown for redirection
   const startRedirectCountdown = () => {
-    toast.success(`Registration successful! Redirecting to login page in ${countdown} seconds...`);
+    toast.success(`Registration successful! Redirecting to Verify account page in ${countdown} seconds...`);
     const intervalId = setInterval(() => {
       setCountdown((prevCountdown) => {
         if (prevCountdown === 1) {
