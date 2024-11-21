@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 // import firmAddressForm from '../../components/FirmComponents/firmAddressForm';
 import FirmAddressForm from '../../components/FirmComponents/firmAddressForm';
 import axiosInstance from '../../utils/axiosInstance';
+import FirmTypeForm from '../../components/FirmComponents/firmTypeForm';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -366,12 +367,14 @@ const handleSubmit = async (e) => {
                           handleAddressChange={handleAddressChange}
                         />
                       )}
-
+                    <FirmTypeForm/>
                     <Button color="primary" type="submit" className='m-w-100'>Save Changes</Button>
                   </Form>
                 ) : (
                   <Alert color="info">Please select a firm to edit its settings.</Alert>
                 )}
+                
+
               </CardBody>
             </Card>
           </Col>
