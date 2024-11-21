@@ -181,6 +181,7 @@ const ViewInvoices = () => {
                 {filteredInvoices.length === 0 ? (
                     <Alert color="info">No invoices found.</Alert>
                 ) : (
+                <>
                     <Card>
                         <CardBody>
                             <div className="table-responsive">
@@ -192,12 +193,11 @@ const ViewInvoices = () => {
                                             <th>Total</th>
                                             <th>Due</th>
                                             <th>Taxes</th>
-                                            <th>Date</th> {/* Date column header */}
+                                            <th>Date</th>
                                             <th>Country</th>
                                             <th>Status</th>
                                             <th>Actions</th>
                                             {authuser.role === "firm_admin" && <th className='d-flex justify-content-center'>Approvals</th>}
-                                            {authuser.role === "firm_admin" && <th>Proforma Actions</th>}
                                             {authuser.role === "firm_admin" && <th>Proforma Status</th>}
                                         </tr>
                                     </thead>
@@ -210,13 +210,13 @@ const ViewInvoices = () => {
                                                 <td style={{ color: "red" }}>{invoice.amountDue} ₹</td>
                                                 <td style={{ minWidth: "110px" }}>
                                                     <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
-                                                        {invoice.items.map((item, itemIndex) => (
+                                                        {invoice.items.map((item, itemIndex) =>
                                                             item.itemId.tax.components.map((tax, taxIndex) => (
                                                                 <li key={`${itemIndex}-${taxIndex}`}>
                                                                     {tax.taxType} - {tax.rate}%
                                                                 </li>
                                                             ))
-                                                        ))}
+                                                        )}
                                                     </ul>
                                                 </td>
                                                 <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
@@ -272,7 +272,16 @@ const ViewInvoices = () => {
                             </Pagination>
                         </CardBody>
                     </Card>
-                )}
+                    {selectedInvoice && (
+                        <Card className="mt-4">
+                            <CardBody>
+                                <h4>Invoice Preview</h4>
+                                <ViewFormat invoiceData={selectedInvoice} />
+                            </CardBody>
+                        </Card>
+                    )}
+                </>
+            )}
             </div>
             {selectedInvoice && (
                 <div style={{ display: 'none' }}>

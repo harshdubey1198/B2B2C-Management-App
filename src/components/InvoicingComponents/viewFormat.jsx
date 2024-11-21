@@ -89,7 +89,7 @@ const sliceDescription = (description) => {
 };
 
 const ViewFormat = forwardRef(
-  ({ invoiceData, selectedInvoice, userRole }, ref) => {
+  ({ invoiceData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};
     // console.log("selectInvoice", selectInvoice.firmId.companyTitle);
     const items = invoiceData?.items || [];
