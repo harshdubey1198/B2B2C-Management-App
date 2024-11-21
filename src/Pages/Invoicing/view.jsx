@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,Row,Col, CardBody, Input } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
-import PrintFormat from '../../components/InvoicingComponents/printFormat';
+// import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
 import { formatDate } from '../Utility/formatDate'; // Importing the formatDate function
 import FirmSwitcher from '../Firms/FirmSwitcher';
 import { toast } from 'react-toastify';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axiosInstance from '../../utils/axiosInstance';
+import ViewFormat from '../../components/InvoicingComponents/viewFormat';
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
@@ -276,7 +277,7 @@ const ViewInvoices = () => {
             {selectedInvoice && (
                 <div style={{ display: 'none' }}>
                     <div ref={printRef}>
-                        <PrintFormat invoice={selectedInvoice} />
+                        <ViewFormat invoiceData={selectedInvoice} />
                     </div>
                 </div>
             )}
