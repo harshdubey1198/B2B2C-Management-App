@@ -11,7 +11,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
   const authUser = JSON.parse(localStorage.getItem("authUser"));
   const [firmData, setFirmData] = useState(null);
   const [address, setAddress] = useState({});
-
+  
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser?.response.adminId}`)
@@ -51,7 +51,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
       return;
     }
 
-    fetch(`${process.env.REACT_APP_URL}/auth/createUser/${formValues.firmId}`, {
+    fetch(`${process.env.REACT_APP_URL}/auth/createUser/${authUser?.response.adminId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
