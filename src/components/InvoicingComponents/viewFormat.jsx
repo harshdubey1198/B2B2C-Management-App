@@ -1,47 +1,10 @@
 import React, { forwardRef } from "react";
 import { formatDate } from "../../Pages/Utility/formatDate";
-const countries = {
-  India: { currency: "INR", gst: 18 },
-  Malaysia: { currency: "MYR", gst: 6 },
-  Dubai: { currency: "AED", gst: 5 },
-  Indonesia: { currency: "IDR", gst: 10 },
-};
+const countries = { India: { currency: "INR", gst: 18 }, Malaysia: { currency: "MYR", gst: 6 }, Dubai: { currency: "AED", gst: 5 }, Indonesia: { currency: "IDR", gst: 10 }, };
 
 const convertNumberToWords = (num) => {
-  const a = [
-    "",
-    "One",
-    "Two",
-    "Three",
-    "Four",
-    "Five",
-    "Six",
-    "Seven",
-    "Eight",
-    "Nine",
-    "Ten",
-    "Eleven",
-    "Twelve",
-    "Thirteen",
-    "Fourteen",
-    "Fifteen",
-    "Sixteen",
-    "Seventeen",
-    "Eighteen",
-    "Nineteen",
-  ];
-  const b = [
-    "",
-    "",
-    "Twenty",
-    "Thirty",
-    "Forty",
-    "Fifty",
-    "Sixty",
-    "Seventy",
-    "Eighty",
-    "Ninety",
-  ];
+  const a = [ "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", ];
+  const b = [ "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety", ];
   const g = ["Hundred", "Thousand", "Million", "Billion", "Trillion"];
 
   const convert = (n) => {
