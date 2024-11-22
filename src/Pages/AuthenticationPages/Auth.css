@@ -7,6 +7,14 @@
   font-family: "Poppins", sans-serif;
 }
 
+.bg-pattern {
+    background-image: url("../../assets/images/bg.jpg");
+    /* background-image: url("../../../images/bg.jpg"); */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
 .auth-container {
   position: relative;
   width: 850px;
@@ -40,6 +48,7 @@ form {
   background: #fff;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: #333;
   text-align: center;
   padding: 40px;

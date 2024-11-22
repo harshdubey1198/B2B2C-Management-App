@@ -144,7 +144,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="bg-pattern">
+    <div className="auth-container ">
       {/* Login Form */}
       <div className="auth-form-box login">
         <form onSubmit={handleLoginSubmit}>
@@ -279,6 +280,7 @@ const Auth = () => {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };
