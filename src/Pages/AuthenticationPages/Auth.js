@@ -144,7 +144,8 @@ const Auth = () => {
   };
 
   return (
-    <div className="bg-pattern">
+    <div className="auth-bg-pattern" style={{ minHeight: "100vh", height: "100%" }}>
+    <div className="bg-overlay"></div>
     <div className="auth-container ">
       {/* Login Form */}
       <div className="auth-form-box login">
