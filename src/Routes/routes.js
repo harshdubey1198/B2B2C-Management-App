@@ -74,6 +74,7 @@ import ViewCustomer from "../Pages/Invoicing/viewCustomer.jsx";
 import Vendor from "../Pages/Inventory-MNG/Vendor.jsx";
 import Brands from "../Pages/Inventory-MNG/Brands.jsx";
 import Manufacturers from "../Pages/Inventory-MNG/Manufacturers.jsx";
+import Auth from "../Pages/AuthenticationPages/Auth.js";
 
 
 const authProtectedRoutes = [
@@ -210,6 +211,7 @@ const authProtectedRoutes = [
 const publicRoutes = [
 
   // Authentication Page
+  { path: "/auth", component: <Auth /> },
   { path: "/logout", component: <Logout /> },
   { path: "/login", component: <Login1 /> },
   { path: "/forgot-password", component: <RecoverPassword /> },
