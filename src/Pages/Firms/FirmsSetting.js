@@ -13,10 +13,12 @@ function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
   const [selectedFirmId, setSelectedFirmId] = useState(null);
   const [firmDetails, setFirmDetails] = useState({
-    address: []
+    address: [],
+    firmDetails: { firmType: "", bankName: "", accountNumber: "", ifscCode: "", cifNumber: "", branchName: "", accountHolder: "", gstin: "", pan: "", partnershipDeed: "", llpAgreement: "", aoa: "", moa: "", digitalSignature: "", din: "", udyam: "",
+    },
   });
-  // const [error, setError] = useState("");
-  // const [success, setSuccess] = useState("");
+  // const firmType = firmDetails.firmDetails.firmType;
+  const [firmType, setFirmType] = useState("");
   const [authUser, setAuthUser] = useState(null);
   const [trigger, setTrigger] = useState(0)
   const token = JSON.parse(localStorage.getItem("authUser")).token;
@@ -53,25 +55,6 @@ function FirmSettings() {
     }
   }, [authUser , trigger]);
   
-  // useEffect(() => {
-  //   if (authUser?.response?.role === "super_admin") {
-  //     const fetchFirms = async () => {
-  //       try {
-  //         const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getCompany/${authUser.response._id}`,config);
-  //         const firms = response || [];
-  //         setFirmsData(firms);
-  //         if (firms.length > 0 && !selectedFirmId) {
-  //           setSelectedFirmId(firms[0]._id);
-  //         }
-  //       } catch (error) {
-  //         console.error("Error getting firms:", error.response || error.message);
-  //         toast.error("Failed to fetch firms data");
-  //       }
-  //     };
-  //     fetchFirms();
-  //   }
-  // }, [authUser , trigger]);
-  
   useEffect(() => {
     if (authUser?.response?.role === "firm_admin") {
       const fetchFirmAdminData = async () => {
@@ -103,6 +86,23 @@ function FirmSettings() {
   }, [selectedFirmId, firmsData]);
 
   // console.log(firmDetails.bankName , "firm id")
+
+  const handleFirmTypeChange = (selectedType, additionalFields) => {
+    setFirmDetails((prevDetails) => ({
+      ...prevDetails,
+      firmType: selectedType,
+      ...Object.fromEntries(
+        additionalFields.map((field) => [field.toLowerCase().replace(/\s+/g, ""), ""])
+      ),
+    }));
+  };
+
+  const handleFieldChange = (fieldName, value) => {
+    setFirmDetails((prevDetails) => ({
+      ...prevDetails,
+      [fieldName.toLowerCase().replace(/\s+/g, "")]: value,
+    }));
+  };
 
   const handleFirmChange = (id) => {
     setSelectedFirmId(id);

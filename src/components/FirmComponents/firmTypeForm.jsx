@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 
 function FirmTypeForm({ firmDetails, setFirmDetails }) {
   console.log(firmDetails, "firmdetails")
@@ -6,72 +6,75 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
   const [fields, setFields] = useState([]);
 
   const firmTypes = [
-    "Sole Proprietorship",
-    "Partnership Firm",
-    "Limited Liability Partnership (LLP)",
-    "Private Limited Company (Pvt. Ltd.)",
-    "Public Limited Company (Ltd.)",
-    "One Person Company (OPC)",
-    "Hindu Undivided Family (HUF)",
-    "Cooperative Society",
-    "Section 8 Company (Non-Profit Organization)",
-    "Joint Venture (JV)"
+    { value: "sole_proprietorship", label: "Sole Proprietorship" },
+    { value: "partnership", label: "Partnership Firm" },
+    { value: "llp", label: "Limited Liability Partnership (LLP)" },
+    { value: "pvt_ltd", label: "Private Limited Company (Pvt. Ltd.)" },
+    { value: "public_ltd", label: "Public Limited Company (Ltd.)" },
+    { value: "opc", label: "One Person Company (OPC)" },
   ];
 
-  const fieldOptions = {
-    "Sole Proprietorship": ["PAN", "GSTIN", "Udyam Registration", "Shop and Establishment License", "Current Bank Account"],
-    "Partnership Firm": ["PAN for Partnership Firm", "Partnership Deed", "GSTIN", "TAN", "Udyam Registration", "Shop and Establishment License"],
-    "Limited Liability Partnership (LLP)": ["PAN for LLP", "Certificate of Incorporation", "LLP Agreement", "GSTIN", "TAN", "Digital Signature Certificate", "DIN", "Udyam Registration"],
-    "Private Limited Company (Pvt. Ltd.)": ["PAN for Company", "Certificate of Incorporation", "MOA and AOA", "GSTIN", "TAN", "DSC", "DIN", "ESI and PF Registration", "Udyam Registration"],
-    "Public Limited Company (Ltd.)": ["PAN for Company", "Certificate of Incorporation", "MOA and AOA", "GSTIN", "TAN", "DSC", "DIN", "ESI and PF Registration", "CIN", "SEBI Registration"],
-    "One Person Company (OPC)": ["PAN for Company", "Certificate of Incorporation", "MOA and AOA", "GSTIN", "TAN", "DSC", "DIN", "Udyam Registration"],
-    "Hindu Undivided Family (HUF)": ["HUF PAN", "GSTIN", "TAN", "Current Bank Account"],
-    "Cooperative Society": ["PAN for Society", "Registration Certificate", "GSTIN", "TAN", "ESI and PF Registration"],
-    "Section 8 Company (Non-Profit Organization)": ["PAN for Company", "Certificate of Incorporation", "MOA and AOA", "GSTIN", "TAN", "12A and 80G Registration", "ESI and PF Registration"],
-    "Joint Venture (JV)": ["PAN for JV Entity", "JV Agreement", "Certificate of Incorporation", "GSTIN", "TAN", "Other Business-Specific Licenses"]
+  const fieldsMap = {
+    sole_proprietorship: ["gstin", "pan", "udyam"],
+    partnership: ["pan", "partnershipDeed"],
+    llp: ["pan", "llpAgreement", "digitalSignature", "din"],
+    pvt_ltd: ["pan", "aoa", "moa", "digitalSignature", "din"],
+    public_ltd: ["pan", "aoa", "moa", "digitalSignature", "din"],
+    opc: ["pan", "aoa", "moa", "digitalSignature", "din"],
   };
+
+
+  useEffect(() => {
+    setFields(fieldsMap[firmDetails.firmDetails?.firmType] || []);
+  }, [firmDetails.firmDetails?.firmType]);
 
   const handleFirmTypeChange = (e) => {
     const selectedFirmType = e.target.value;
-    setFirmType(selectedFirmType);
-    setFields(fieldOptions[selectedFirmType] || []);
+    setFirmDetails((prev) => ({
+      ...prev,
+      firmDetails: { ...prev.firmDetails, firmType: selectedFirmType },
+    }));
+  };
+
+  const handleFieldChange = (e) => {
+    const { name, value } = e.target;
+    setFirmDetails((prev) => ({
+      ...prev,
+      firmDetails: { ...prev.firmDetails, [name]: value },
+    }));
   };
 
   return (
-    <div className="container mt-4">
-      <h3>Select Firm Type</h3>
-      <div className="mb-3">
-        <label htmlFor="firmType" className="form-label">Firm Type</label>
+    <div>
+      <div className="form-group">
+        <label>Firm Type</label>
         <select
-          id="firmType"
-          className="form-select"
-          value={firmType}
+          className="form-control"
+          value={firmDetails.firmDetails?.firmType || ""}
           onChange={handleFirmTypeChange}
         >
-          <option value="" >Select Firm Type</option>
-          {firmTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
+          <option value="">Select Firm Type</option>
+          {firmTypes.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
           ))}
         </select>
       </div>
-      {fields.length > 0 && (
-        <div>
-          <h4>Required Fields</h4>
-          <form>
-            {fields.map((field, index) => (
-              <div className="mb-3" key={index}>
-                <label htmlFor={`field-${index}`} className="form-label">{field}</label>
-                <input
-                  type="text"
-                  id={`field-${index}`}
-                  className="form-control"
-                  placeholder={`Enter ${field}`}
-                />
-              </div>
-            ))}
-          </form>
+
+      {fields.map((field) => (
+        <div className="form-group" key={field}>
+          <label>{field .replace(/[_-]/g, ' ') 
+    .replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())}</label>
+          <input
+            type="text"
+            className="form-control"
+            name={field}
+            value={firmDetails.firmDetails[field] || ""}
+            onChange={handleFieldChange}
+          />
         </div>
-      )}
+      ))}
     </div>
   );
 }
