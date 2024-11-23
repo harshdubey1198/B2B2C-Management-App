@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-function FirmTypeForm() {
+function FirmTypeForm({ firmDetails, setFirmDetails }) {
+  console.log(firmDetails, "firmdetails")
   const [firmType, setFirmType] = useState('');
   const [fields, setFields] = useState([]);
 

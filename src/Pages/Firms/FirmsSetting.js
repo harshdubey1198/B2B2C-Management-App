@@ -367,7 +367,7 @@ const handleSubmit = async (e) => {
                           handleAddressChange={handleAddressChange}
                         />
                       )}
-                    <FirmTypeForm/>
+                    <FirmTypeForm firmDetails={firmDetails} setFirmDetails={setFirmDetails} />
                     <Button color="primary" type="submit" className='m-w-100'>Save Changes</Button>
                   </Form>
                 ) : (
