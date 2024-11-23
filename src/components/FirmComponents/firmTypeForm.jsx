@@ -15,12 +15,16 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
   ];
 
   const fieldsMap = {
-    sole_proprietorship: ["gstin", "pan", "udyam"],
-    partnership: ["pan", "partnershipDeed"],
-    llp: ["pan", "llpAgreement", "digitalSignature", "din"],
-    pvt_ltd: ["pan", "aoa", "moa", "digitalSignature", "din"],
-    public_ltd: ["pan", "aoa", "moa", "digitalSignature", "din"],
-    opc: ["pan", "aoa", "moa", "digitalSignature", "din"],
+    soleProprietorship: [ "pan", "gstin", "udyam", "shopAndEstablishmentLicense", "currentBankAccount", ],
+    partnershipFirm: [ "pan", "partnershipDeed", "gstin", "tan", "udyam", "shopAndEstablishmentLicense", ],
+    limitedLiabilityPartnership: [ "pan", "certificateOfIncorporation", "llpAgreement", "gstin", "tan", "digitalSignatureCertificate", "din", "udyam", ],
+    privateLimitedCompany: [ "pan", "certificateOfIncorporation", "moaAndAoa", "gstin", "tan", "dsc", "din", "esiAndPfRegistration", "udyam", ],
+    publicLimitedCompany: [ "pan", "certificateOfIncorporation", "moaAndAoa", "gstin", "tan", "dsc", "din", "esiAndPfRegistration", "cin", "sebiRegistration", ],
+    onePersonCompany: [ "pan", "certificateOfIncorporation", "moaAndAoa", "gstin", "tan", "dsc", "din", "udyam", ],
+    hinduUndividedFamily: [ "hufPan", "gstin", "tan", "currentBankAccount", ],
+    cooperativeSociety: [ "panForSociety", "registrationCertificate", "gstin", "tan", "esiAndPfRegistration", ],
+    section8Company: [ "pan", "certificateOfIncorporation", "moaAndAoa", "gstin", "tan", "12aAnd80gRegistration", "esiAndPfRegistration", ],
+    jointVenture: [ "pan", "jvAgreement", "certificateOfIncorporation", "gstin", "tan", "otherBusinessSpecificLicenses", ],
   };
 
 
