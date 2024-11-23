@@ -266,9 +266,9 @@ const Auth = () => {
       {/* Toggle Panel */}
       <div className="auth-toggle-box">
         <div className="auth-toggle-panel toggle-left">
-          <h1>Hello, Welcome!</h1>
+          <h1>Welcome to aaMOBee !</h1>
           <p>Don't have an account?</p>
-          <button className="auth-btn" onClick={() => handleToggle("register")}>
+          <button className="auth-btn panel" onClick={() => handleToggle("register")}>
             Register
           </button>
         </div>
@@ -276,7 +276,7 @@ const Auth = () => {
         <div className="auth-toggle-panel toggle-right">
           <h1>Welcome Back!</h1>
           <p>Already have an account?</p>
-          <button className="auth-btn" onClick={() => handleToggle("login")}>
+          <button className="auth-btn panel" onClick={() => handleToggle("login")}>
             Login
           </button>
         </div>

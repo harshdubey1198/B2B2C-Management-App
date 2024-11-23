@@ -23,6 +23,7 @@
 
 .auth-container h1 {
   font-size: 36px;
+  color: #fff;
   margin: -10px 0;
 }
 
@@ -101,13 +102,14 @@ form {
   border: none;
   cursor: pointer;
   font-size: 16px;
-  color: #fff;
+  color: #000000;
   font-weight: 600;
   transition: background 0.3s;
 }
 
 .auth-btn:hover {
-  background: #E8961E;
+  background: #0d4251;
+  color: whitesmoke;
 }
 
 .auth-toggle-box {
@@ -122,7 +124,7 @@ form {
   left: -250%;
   width: 300%;
   height: 100%;
-  background: #FAA624;
+  background: #0d4251;
   border-radius: 150px;
   z-index: 2;
   transition: 1.8s ease-in-out;
@@ -181,7 +183,9 @@ form {
   .auth-container {
     height: calc(100vh - 40px);
   }
-
+  .auth-container h1 {
+    font-size: 30px !important;
+  }
   .auth-form-box {
     bottom: 0;
     width: 100%;
@@ -238,4 +242,13 @@ form {
   .auth-toggle-panel h1 {
     font-size: 30px;
   }
+ 
+}
+
+.panel{
+  color: white !important;
+}
+.panel:hover{
+  color:#FAA624 !important;
+  border : 2px solid #FAA624 !important;
 }
