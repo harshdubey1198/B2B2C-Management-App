@@ -96,7 +96,12 @@ const userSchema = new Schema(
         {
           firmType: {
             type: String,
-            enum: [ "sole_proprietorship","partnership","llp","pvt_ltd","public_ltd",
+            enum: [ 
+              "sole_proprietorship",
+              "partnership",
+              "llp",
+              "pvt_ltd",
+              "public_ltd",
               "opc",
               "huf",
               "cooperative",
