@@ -134,7 +134,7 @@ const ProfileSettings = () => {
                       ) : (
                         <div className='d-flex align-items-center'>
                           <div className='flex-grow-1'>{formData.firstName || 'No first name set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('firstName')}>
+                          <Button color="primary" onClick={() => toggleEditMode('firstName')}>
                             Edit
                           </Button>
                         </div>
@@ -162,7 +162,7 @@ const ProfileSettings = () => {
                       ) : (
                         <div className='d-flex align-items-center'>
                           <div className='flex-grow-1'>{formData.lastName || 'No last name set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('lastName')}>
+                          <Button color="primary" onClick={() => toggleEditMode('lastName')}>
                             Edit
                           </Button>
                         </div>
@@ -190,7 +190,7 @@ const ProfileSettings = () => {
                       ) : (
                         <div className='d-flex align-items-center'>
                           <div className='flex-grow-1'>{formData.email || 'No email set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('email')}>
+                          <Button color="primary" onClick={() => toggleEditMode('email')}>
                             Edit
                           </Button>
                         </div>
@@ -218,7 +218,7 @@ const ProfileSettings = () => {
                       ) : (
                         <div className='d-flex align-items-center'>
                           <div className='flex-grow-1'>{formData.mobile || 'No mobile number set'}</div>
-                          <Button color="info" onClick={() => toggleEditMode('mobile')}>
+                          <Button color="primary" onClick={() => toggleEditMode('mobile')}>
                             Edit
                           </Button>
                         </div>
