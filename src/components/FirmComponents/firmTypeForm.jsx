@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 
 function FirmTypeForm({ firmDetails, setFirmDetails }) {
   const [fields, setFields] = useState([]);
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const role = authuser.response.role;
+  // console.log(role);
 
   const firmTypes = [
     { value: "sole_proprietorship", label: "Sole Proprietorship" },
@@ -55,19 +58,24 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
               }}> 
               Firm Type details section
           </div>
-        <label>Firm Type</label>
-        <select
-          className="form-control mb-3"
-          value={firmDetails.firmDetails?.firmType || ""}
-          onChange={handleFirmTypeChange}
-        >
-          <option value="">Select Firm Type</option>
-          {firmTypes.map(({ value, label }) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </select>
+            {(role === "client_admin" || role === "super_admin") && (
+                <>
+                  <label>Firm Type</label>
+                  <select
+                    className="form-control mb-3"
+                    value={firmDetails.firmDetails?.firmType || ""}
+                    onChange={handleFirmTypeChange}
+                  >
+                    <option value="">Select Firm Type</option>
+                    {firmTypes.map(({ value, label }) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              )}
+
       </div>
 
       {fields.map((field) => (
