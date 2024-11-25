@@ -21,25 +21,14 @@ function CreateFirm() {
     avatar: null, 
     password: "",
     confirmPassword: "",
-    startDate: "",
+    incorporationDate: "",
     firmType: "",
   });
   
   const [firmType, setFirmType] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const firmTypes = [
-                      "Sole Proprietorship",
-                      "Partnership Firm",
-                      "Limited Liability Partnership (LLP)",
-                      "Private Limited Company (Pvt. Ltd.)",
-                      "Public Limited Company (Ltd.)",
-                      "One Person Company (OPC)",
-                      "Hindu Undivided Family (HUF)",
-                      "Cooperative Society",
-                      "Section 8 Company (Non-Profit Organization)",
-                      "Joint Venture (JV)"
-                    ];
+  const firmTypes = [ "sole_proprietorship", "partnership", "llp", "pvt_ltd", "public_ltd", "opc"];
 
 
   const handleFirmTypeChange = (e) => {
@@ -105,7 +94,7 @@ function CreateFirm() {
     formData.append("companyMobile", formValues.companyMobile);
     formData.append("email", formValues.email);
     formData.append("password", formValues.password);
-    formData.append("startDate", formValues.startDate);
+    formData.append("incorporationDate", formValues.incorporationDate);
     formData.append("firmType", firmType);
 
     if (formValues.avatar) {
@@ -132,7 +121,7 @@ function CreateFirm() {
         password: "",
         confirmPassword: "",
         avatar: null,
-        startDate: "",
+        incorporationDate: "",
       });
       navigate('/firms');
     } catch (error) {
@@ -263,13 +252,13 @@ function CreateFirm() {
                       </Col>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="startDate">Start Date</Label>
+                          <Label htmlFor="incorporationDate">Incorporation Date</Label>
                           <Input
                             type="date"
-                            id="startDate"
-                            name="startDate"
+                            id="incorporationDate"
+                            name="incorporationDate"
                             placeholder="Select start date"
-                            value={formValues.startDate}
+                            value={formValues.incorporationDate}
                             onChange={handleChange}
                           />
                         </FormGroup>
