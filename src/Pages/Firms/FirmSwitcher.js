@@ -53,7 +53,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
           ? <i className="mdi mdi-chevron-up"></i> 
           : <i className="mdi mdi-chevron-down"></i>}
       </DropdownToggle>
-      <DropdownMenu>
+      <DropdownMenu className='hd-nt'>
         {firms.map(firm => (
           <DropdownItem
             key={firm._id}
