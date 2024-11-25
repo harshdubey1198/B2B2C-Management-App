@@ -63,7 +63,7 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
                   <label>Firm Type</label>
                   <select
                     className="form-control mb-3"
-                    value={firmDetails.firmDetails?.firmType || ""}
+                    value={firmDetails?.firmDetails?.firmType || ""}
                     onChange={handleFirmTypeChange}
                   >
                     <option value="">Select Firm Type</option>
@@ -91,7 +91,7 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
             type="text"
             className="form-control mb-2"
             name={field}
-            value={firmDetails.firmDetails[field] || ""}
+            value={firmDetails?.firmDetails[field] || ""}
             onChange={handleFieldChange}
           />
         </div>
