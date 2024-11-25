@@ -69,7 +69,17 @@ const handleCountryChange = (selectedOption) => {
 
   return (
     <div className="mb-3">
-      <h5>Address</h5>
+       <div
+          className='p-2 my-2 col-lg-3 col-md-3 col-sm-12 rounded'  
+          style={{
+            width:"100%",
+            height:"auto",
+            fontWeight:"bolder",
+            background : "var(--bs-header-dark-bg)",
+            color:"white"
+              }}> 
+              Address 
+          </div>
       <Row>
         <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
           <FormGroup>

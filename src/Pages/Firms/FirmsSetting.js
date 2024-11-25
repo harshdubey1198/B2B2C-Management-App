@@ -201,8 +201,8 @@ const handleSubmit = async (e) => {
                             <img
                               src={firmDetails.avatar}
                               alt="Firm Avatar"
-                              className="img-fluid my-5 mt-0"
-                              style={{ width:'auto', height:'150px', objectFit:'cover' , borderRadius:'10px' }}
+                              className="img-fluid my-1 mt-0"
+                              style={{ width:'auto', height:'150px', objectFit:'cover' , borderRadius:'10px' , border:"2px solid var(--bs-header-dark-bg)" }}
                             />
                           )}
                      </div>
@@ -259,6 +259,19 @@ const handleSubmit = async (e) => {
                          
                         </FormGroup>
                       </div>
+                      {/* <hr/> */}
+                      <div
+                      className='p-2 my-2 col-lg-3 col-md-3 col-sm-12 rounded'  
+                      style={{
+                        width:"100%",
+                        height:"auto",
+                        fontWeight:"bolder",
+                        background : "var(--bs-header-dark-bg)",
+                        color:"white"
+                          }}> 
+                            Banking Details 
+                      </div>
+                      <br/>
                         <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
                         <FormGroup>
                           <Label for="bankName">Bank Name</Label>

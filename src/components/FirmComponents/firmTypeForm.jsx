@@ -44,9 +44,20 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
   return (
     <div>
       <div className="form-group">
+      <div
+          className='p-2 my-2 col-lg-3 col-md-3 col-sm-12 rounded'  
+          style={{
+            width:"100%",
+            height:"auto",
+            fontWeight:"bolder",
+            background : "var(--bs-header-dark-bg)",
+            color:"white"
+              }}> 
+              Firm Type details section
+          </div>
         <label>Firm Type</label>
         <select
-          className="form-control"
+          className="form-control mb-3"
           value={firmDetails.firmDetails?.firmType || ""}
           onChange={handleFirmTypeChange}
         >
@@ -62,13 +73,15 @@ function FirmTypeForm({ firmDetails, setFirmDetails }) {
       {fields.map((field) => (
         <div className="form-group" key={field}>
           <label>
-            {field
-              .replace(/[_-]/g, " ")
-              .replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())}
-          </label>
+              {field
+                .replace(/([a-z])([A-Z])/g, "$1 $2") 
+                .replace(/[_-]/g, " ") 
+                .replace(/(?:^|\s)\S/g, (match) => match.toUpperCase())} 
+            </label>
+
           <input
             type="text"
-            className="form-control"
+            className="form-control mb-2"
             name={field}
             value={firmDetails.firmDetails[field] || ""}
             onChange={handleFieldChange}
