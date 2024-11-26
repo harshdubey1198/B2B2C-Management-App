@@ -63,7 +63,7 @@ const AuthProtected = (props) => {
           const minutes = Math.floor((timeUntilExpiryInSeconds % (60 * 60)) / 60);
           const seconds = timeUntilExpiryInSeconds % 60;
   
-          console.log(`Token Expiry In: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
+          // console.log(`Token Expiry In: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`);
           const logoutTimeout = setTimeout(() => {
             localStorage.removeItem("authUser");
             console.log("Token Expired - User Logged Out Automatically");
