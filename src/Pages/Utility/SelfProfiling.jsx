@@ -4,20 +4,20 @@ import { Card, CardBody, Col, Row } from 'reactstrap';
 
 function SelfProfiling() {
     const authuser = JSON.parse(localStorage.getItem('authUser'))?.response
-    const userId = authuser?._id
+    // const userId = authuser?._id
 
-    useEffect(() => {
-        const selfProfiling = async () => {
-            try {
-                const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getaccount/${userId}`);
-                console.log(response)
-            } catch (error) {
-                console.error("Error fetching user count:", error);
-            }
-        };
-        selfProfiling()
-    }
-    ,[])
+    // useEffect(() => {
+    //     const selfProfiling = async () => {
+    //         try {
+    //             const response = await axios.get(`${process.env.REACT_APP_URL}/auth/getaccount/${userId}`);
+    //             // console.log(response)
+    //         } catch (error) {
+    //             console.error("Error fetching user count:", error);
+    //         }
+    //     };
+    //     selfProfiling()
+    // }
+    // ,[])
 
 
   return (
@@ -38,7 +38,13 @@ function SelfProfiling() {
                     <div>
                         <p className="my-1">Name: {authuser?.firstName + " " + authuser?.lastName}</p>
                         <p className="mb-1">Email: {authuser?.email}</p>
-                        <p className="mb-1">Role: {authuser?.role}</p>
+                        <p className="mb-1">
+                            Role:{" "}
+                            {authuser?.role
+                                ?.replace(/[_-]/g, " ") 
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}
+                            </p>
+
                         <p className="mb-1">Phone: {authuser?.mobile}</p>
                     </div>
                     </Col>
