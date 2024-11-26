@@ -237,7 +237,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
     <FormGroup>
       <Label for="customerEmail">Customer Email</Label>
       <Input
-        type="email"
+        type="text"
         name="customerEmail"
         id="customerEmail"
         placeholder="Customer Email"

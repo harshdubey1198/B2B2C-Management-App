@@ -247,7 +247,7 @@ authService.UserForgetPassword = async (body) => {
             from: process.env.GOOGLE_MAIL,
             to: email,
             subject: 'Password Reset',
-            text: `Your temporary password is: ${temporaryPassword}. Please use this password to login and reset your password immediately. http://localhost:3000/reset-password/${temporaryPassword}`
+            text: `Your temporary password is: ${temporaryPassword}. Please use this password to login and reset your password immediately. https://aamobee.com/reset-password/${temporaryPassword}`
         };
         await transporter.sendMail(mailOptions);
         return 'Temporary password sent to your email.';

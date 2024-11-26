@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import FirmAddressForm from '../../components/FirmComponents/firmAddressForm';
 import axiosInstance from '../../utils/axiosInstance';
 import FirmTypeForm from '../../components/FirmComponents/firmTypeForm';
+import { validateEmail } from '../Utility/FormValidation';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -27,6 +28,9 @@ function FirmSettings() {
       Authorization: `Bearer ${token}`,
     },
   };
+
+
+  
   useEffect(() => {
     const fetchAuthUser = () => {
       const user = JSON.parse(localStorage.getItem("authUser"));

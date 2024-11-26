@@ -117,7 +117,7 @@ const RecoverPassword = () => {
                                   Email
                                 </Label>
                                 <Input
-                                  type="email"
+                                  type="text"
                                   className="form-control"
                                   id="email"
                                   placeholder="Enter your registered email"
