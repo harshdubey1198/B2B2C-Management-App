@@ -32,6 +32,7 @@ function* forgetUser({ payload: { user, history } }) {
       })
       if (response) {
         toast.success("Password reset link has been sent to your email.")
+        
         yield put(
           userForgetPasswordSuccess(
             "Password reset link has been sent to your email.")
