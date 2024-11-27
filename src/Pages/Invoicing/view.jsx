@@ -221,7 +221,8 @@ const ViewInvoices = () => {
                                                 </td>
                                                 <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
                                                 <td>{invoice.customerAddress.country}</td>
-                                                <td>{invoice.approvalStatus}</td>
+                                                <td>{invoice.approvalStatus?.replace(/[_-]/g, " ") 
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}</td>
                                                 <td>
                                                     <i
                                                         className="bx bx-show"
