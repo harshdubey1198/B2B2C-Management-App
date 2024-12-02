@@ -12,10 +12,11 @@ const ChangePasswordModal = ({ isOpen, toggle, email }) => {
 
   const sendOtp = async () => {
     try {
-      await axiosInstance.post(`${process.env.REACT_APP_URL}/auth/send-password-reset-otp`, { email });
+      const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/auth/send-password-reset-otp`, { email });
       setOtpSent(true);
-      toast.success('OTP sent to your email!');
+      toast.success(response.message);
     } catch (error) {
+      // setOtpSent(false);
       toast.error('Failed to send OTP.');
     }
   };
