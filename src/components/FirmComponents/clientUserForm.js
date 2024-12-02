@@ -207,7 +207,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                 <Label>Email</Label>
                 <Input
                   name="email"
-                  type="email"
+                  type="text"
                   value={formValues.email}
                   onChange={handleChange}
                 />

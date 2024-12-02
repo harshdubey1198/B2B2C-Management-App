@@ -84,7 +84,10 @@ const RecoverPassword = () => {
             <Row className="d-flex justify-content-center  width-90">
               <Col lg={6} md={8} xl={4}>
                 <Card className="mt-5 shadow-lg">
-                  <CardBody className="p-4">
+                  <CardBody className="p-4 relative">
+                   <span class="mdi mdi-arrow-left " style={{fontSize:"25px", cursor:"pointer"}} onClick={()=>{
+                    window.location.href="/login"
+                   }}></span>
                     <div>
                       <div className="text-center">
                         <Link to="/" className="">
@@ -117,7 +120,7 @@ const RecoverPassword = () => {
                                   Email
                                 </Label>
                                 <Input
-                                  type="email"
+                                  type="text"
                                   className="form-control"
                                   id="email"
                                   placeholder="Enter your registered email"

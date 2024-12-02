@@ -124,7 +124,7 @@ const Login = (props) => {
                               name="email"
                               className="form-control"
                               placeholder="Enter email"
-                              type="email"
+                              type="text"
                               autoComplete="email"
                               onChange={emailHandler}
                               value={formValues.email}

@@ -121,7 +121,8 @@ const RolewiseDashboard = () => {
           <h4 className="font-size-20">Welcome {user.firstName}</h4>
           </div>
           <div className='colo-lg-6 col-md-6 col-sm-12'>
-          <h5 className="font-size-20">Role: {user.role}</h5>
+          <h5 className="font-size-20">Role: {user.role?.replace(/[_-]/g, " ") 
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}</h5>
           </div>
         </div>
       ) : (

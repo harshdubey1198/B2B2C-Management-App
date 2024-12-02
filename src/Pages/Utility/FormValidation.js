@@ -7,14 +7,18 @@ export function checkEmptyFields(obj) {
     return false;
 }
 
-export function validateEmail(email){
-    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)+$/;
-    if (email.match(validRegex)) {
+export function validateEmail(email) {
+    const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    console.log("Validating email:", email); 
+    if (validRegex.test(email)) {
+        console.log("Email is valid"); 
         return true;
     } else {
+        console.log("Email is invalid"); 
         return false;
     }
 }
+
 
 export function validatePhone(phone){
     const validRegex = /^(?!.*(\d)\1{9})[6-9]\d{9}$/;

@@ -137,7 +137,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
                 <Label>Email</Label>
                 <Input
                   name="email"
-                  type="email"
+                  type="text"
                   value={formValues.email}
                   onChange={handleChange}
                 />
