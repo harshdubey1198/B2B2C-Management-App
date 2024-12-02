@@ -13,6 +13,7 @@ router.get('/getAccount/:id', authController.getAccount);
 router.get('/getCompany/:id', authController.getCompany);
 router.get('/getfirm/:id',tokenVerification, authController.getfirm);
 router.put('/update/:id', authController.updateAccount);
+router.put('/updatePassword/:id',tokenVerification, authController.updatePassword);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/resend-otp', authController.resendOtp);
 router.post('/count-company',tokenVerification, authController.countUsers);

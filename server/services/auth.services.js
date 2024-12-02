@@ -325,6 +325,22 @@ authService.registration = async (id, data) => {
     await sendCredentialsEmail(user.email, temporaryPassword, "https://aamobee.com/login");
     return user;
 };
+
+// UPDATE PASSWORD
+authService.updatePassword = async (id, data) => {
+    const user = await User.findById(id);
+    if (!user) {
+        throw new Error("User not found");
+    }
+    const encryptedPassword = await PasswordService.passwordHash(data.password);
+    if(user.password !== encryptedPassword){
+        throw new Error("Current Password Doesn't match")
+    }
+    const newPassword = await PasswordService.passwordHash(data.newPassword)
+    user.password = newPassword
+    await user.save()
+    return user
+}
   
 
 // GET FIRMS  

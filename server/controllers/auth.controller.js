@@ -137,6 +137,18 @@ authController.registration = async (req, res) => {
   });
 };
 
+// update password
+authController.updatePassword = async (req, res) => {
+  try {
+    const response = await authService.updatePassword(req.params.id, req.body);
+    return res.status(200).json(createResult("Password Updated Successfully", response, false));
+  } catch (error) {
+    console.log("Error Creating User", error);
+    return res.status(400).json(createResult(error.message, null, true));
+  }
+}
+
+
 
 // GET ACCOUNT
 authController.getAccount = async (req, res) => {
