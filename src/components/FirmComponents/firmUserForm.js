@@ -42,10 +42,10 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
       toast.error("Invalid Phone Number");
       return;
     }
-    if (formValues.password !== formValues.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+    // if (formValues.password !== formValues.confirmPassword) {
+    //   toast.error("Passwords do not match");
+    //   return;
+    // }
     if (Object.keys(address).length === 0) {
       toast.error("Address is required");
       return;
@@ -71,8 +71,8 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
           lastName: "",
           email: "",
           mobile: "",
-          password: "",
-          confirmPassword: "",
+          // password: "",
+          // confirmPassword: "",
           emergencyContact: "",
           birthday: "",
           gender: "",
@@ -154,7 +154,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
               </FormGroup>
             </Col>
           </Row>
-          <Row>
+          {/* <Row>
             <Col md={6}>
               <FormGroup>
                 <Label>Password</Label>
@@ -177,7 +177,7 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
                 />
               </FormGroup>
             </Col>
-          </Row>
+          </Row> */}
           <Row>
             <Col md={6}>
               <FormGroup>

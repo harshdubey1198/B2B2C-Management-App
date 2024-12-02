@@ -9,10 +9,10 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [firms, setFirms] = useState([]);
-  const [show, setShow] = useState({
-    password: false,
-    confirmPassword: false,
-  });
+  // const [show, setShow] = useState({
+  //   password: false,
+  //   confirmPassword: false,
+  // });
   const [address, setAddress] = useState({});
   const authuser = JSON.parse(localStorage.getItem("authUser"));
 
@@ -49,7 +49,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
     //   toast.error("Fill All the Fields");
     //   return;
     // }
-    if (!formValues.firstName || !formValues.lastName || !formValues.email || !formValues.mobile || !formValues.password || !formValues.confirmPassword || !formValues.birthday || !formValues.role )
+    if (!formValues.firstName || !formValues.lastName || !formValues.email || !formValues.mobile || !formValues.birthday || !formValues.role )
     {
       setError("Fill All the Fields");
       toast.error("Fill All the Fields");
@@ -68,11 +68,11 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
       toast.error("Invalid Phone Number");
       return;
     }
-    if (formValues.password !== formValues.confirmPassword) {
-      setError("Passwords do not match");
-      toast.error("Passwords do not match");
-      return;
-    }
+    // if (formValues.password !== formValues.confirmPassword) {
+    //   setError("Passwords do not match");
+    //   toast.error("Passwords do not match");
+    //   return;
+    // }
 
     if (Object.keys(address).length === 0) {
       setError("Address is required");
@@ -111,8 +111,8 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
         lastName: "",
         email: "",
         mobile: "",
-        password: "",
-        confirmPassword: "",
+        // password: "",
+        // confirmPassword: "",
         birthday: "",
         gender: "",
         role: "",
@@ -181,7 +181,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup className="position-relative">
+              {/* <FormGroup className="position-relative">
                 <Label>Password</Label>
                 <Input
                   name="password"
@@ -202,7 +202,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                 >
                   <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
                 </button>
-              </FormGroup>
+              </FormGroup> */}
               <FormGroup>
                 <Label>Email</Label>
                 <Input
@@ -221,6 +221,23 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                   onChange={handleChange}
                 />
               </FormGroup>
+              <FormGroup>
+                <Label>Role</Label>
+                <Input
+                  type="select"
+                  name="role"
+                  value={formValues.role}
+                  onChange={handleChange}
+                >
+                  <option value="">Select Role</option>
+                  {availableRoles.map((role) => (
+                    <option key={role} value={role}>
+                      {role?.replace(/[_-]/g, " ") 
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}
+                    </option>
+                  ))}
+                </Input>
+              </FormGroup>
             </Col>
 
             <Col md={6}>
@@ -232,7 +249,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup className="position-relative">
+              {/* <FormGroup className="position-relative">
                 <Label>Confirm Password</Label>
                 <Input
                   name="confirmPassword"
@@ -253,7 +270,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                 >
                   <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
                 </button>
-              </FormGroup>
+              </FormGroup> */}
               <FormGroup>
                 <Label>Gender</Label>
                 <Input
@@ -276,23 +293,7 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                   onChange={handleChange}
                 />
               </FormGroup>
-              <FormGroup>
-                <Label>Role</Label>
-                <Input
-                  type="select"
-                  name="role"
-                  value={formValues.role}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Role</option>
-                  {availableRoles.map((role) => (
-                    <option key={role} value={role}>
-                      {role?.replace(/[_-]/g, " ") 
-                                .replace(/\b\w/g, (char) => char.toUpperCase())}
-                    </option>
-                  ))}
-                </Input>
-              </FormGroup>
+              
             </Col>
           </Row>
 
