@@ -275,7 +275,8 @@ function CreateFirm() {
                             >
                               <option value="" >Select Firm Type</option>
                               {firmTypes.map((type) => (
-                                <option key={type} value={type}>{type}</option>
+                                <option key={type} value={type}>{type?.replace(/[_-]/g, " ") 
+                                  .replace(/\b\w/g, (char) => char.toUpperCase())}</option>
                               ))}
                             </select>
 

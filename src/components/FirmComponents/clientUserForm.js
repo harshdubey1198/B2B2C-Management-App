@@ -287,7 +287,8 @@ const ClientUserCreateForm = ({ isOpen, toggle, setTrigger, selectedFirm, formVa
                   <option value="">Select Role</option>
                   {availableRoles.map((role) => (
                     <option key={role} value={role}>
-                      {role}
+                      {role?.replace(/[_-]/g, " ") 
+                                .replace(/\b\w/g, (char) => char.toUpperCase())}
                     </option>
                   ))}
                 </Input>

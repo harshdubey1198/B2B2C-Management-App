@@ -57,7 +57,7 @@ function UserTable({ selectedFirmId, trigger }) {
                 <td>{toPascalCase(`${user.firstName} ${user.lastName}`)}</td>
                 <td>{user.mobile}</td>
                 <td>{user.email}</td>
-                <td>{user.role}</td>
+                <td>{user.role?.replace(/[_-]/g, " ")  .replace(/\b\w/g, (char) => char.toUpperCase())}</td>
                 <td>Edit/Pause</td>
               </tr>
             ))
