@@ -1,10 +1,113 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody, FormText } from 'reactstrap';
+import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody, FormText, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance';
 
+const ChangePasswordModal = ({ isOpen, toggle, email }) => {
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  const sendOtp = async () => {
+    try {
+      await axiosInstance.post(`${process.env.REACT_APP_URL}/auth/send-password-reset-otp`, { email });
+      setOtpSent(true);
+      toast.success('OTP sent to your email!');
+    } catch (error) {
+      toast.error('Failed to send OTP.');
+    }
+  };
+
+  const verifyOtpAndChangePassword = async () => {
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match!');
+      return;
+    }
+
+    try {
+      await axiosInstance.post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
+        email,
+        otp,
+        password,
+      });
+      toast.success('Password changed successfully!');
+      toggle();
+    } catch (error) {
+      toast.error('Failed to change password.');
+    }
+  };
+
+  return (
+    <Modal isOpen={isOpen} toggle={toggle}>
+      <ModalHeader toggle={toggle}>Change Password</ModalHeader>
+      <ModalBody>
+        {!otpSent ? (
+          <div>
+            <p className='primary'>Send OTP to your <span style={{color:"#0d4251" , fontWeight:"bolder"}}>{email}</span> email to proceed.</p>
+            <Button color="primary" onClick={sendOtp}>
+              Send OTP
+            </Button>
+          </div>
+        ) : (
+          <Form>
+            <FormGroup>
+              <Label for="otp">Enter OTP</Label>
+              <Input
+                type="text"
+                name="otp"
+                id="otp"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                placeholder="Enter the OTP sent to your email"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="password">New Password</Label>
+              <Input
+                type="password"
+                name="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your new password"
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="confirmPassword">Confirm Password</Label>
+              <Input
+                type="password"
+                name="confirmPassword"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Confirm your new password"
+              />
+            </FormGroup>
+          </Form>
+        )}
+      </ModalBody>
+      <ModalFooter>
+        {otpSent ? (
+          <Button color="primary" onClick={verifyOtpAndChangePassword}>
+            Submit
+          </Button>
+        ) : null}
+        <Button color="secondary" onClick={toggle}>
+          Cancel
+        </Button>
+      </ModalFooter>
+    </Modal>
+  );
+};
+
 const ProfileSettings = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
+
+  const toggleModal = () => {
+    setModalOpen(!isModalOpen);
+  };
   const [formData, setFormData] = useState({ 
     firstName: '', 
     lastName: '', 
@@ -224,7 +327,10 @@ const ProfileSettings = () => {
                         </div>
                       )}
                     </FormGroup>
-                    <Button color="primary" type="submit" className='mb-1'>Update Profile</Button>
+                      <div className='d-flex justify-content-between'>  
+                        <Button color="primary" type="submit" className='mb-1'>Update Profile</Button>
+                        <Button color="info" onClick={toggleModal} className='ml-2'>Change Password</Button>
+                      </div>
                   </Form>
                 </CardBody>
               </Card>
@@ -245,21 +351,46 @@ const ProfileSettings = () => {
                         onChange={handleFileChange}
                       />
                       {preview && (
-                        <div className="d-flex justify-content-center text-bg-light border-dashed p-4 my-4">
-                          <img src={preview} alt="Profile Preview" className="img-thumbnail" style={{ width: '98px', height: '98.81px' }} />
-                        </div>
+                        // <div className="d-flex justify-content-center text-bg-light border-dashed p-4 my-4">
+                          <img src={preview} alt="Profile Preview" className="img-thumbnail mt-2" style={{ width: '98px', height: '98.81px' }} />
+                        //</div>
                       )}
-                      <FormText color="muted">
-                        Choose a profile picture to upload.
-                      </FormText>
+                      
                     </FormGroup>
                     <Button color="primary" type="submit" className='my-3'>Update Profile Picture</Button>
                   </Form>
                 </CardBody>
               </Card>
             </Col>
+            
+            {/* modal for password reset using the otp verification , password and confirm password , email from authuser.email  */}
+            {/* <Col xs={12} sm={6} md={6} lg={6}>
+              <Card>
+              <h2 class="card-title-heading">Change Password</h2>
+                <CardBody>
+                  <Form>
+                    <FormGroup>
+                      <Label for="password">Password</Label>
+                      <Input type="password" name="password" id="password" placeholder="Enter your new password" />
+                    </FormGroup>
+                    <FormGroup>
+                      <Label for="confirmPassword">Confirm Password</Label>
+                      <Input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your new password" />
+                    </FormGroup>
+                    <Button color="primary">Change Password</Button>
+                  </Form>
+                </CardBody> 
+              </Card>
+            </Col> */}
+
           </Row>
         </Container>
+        <ChangePasswordModal 
+            isOpen={isModalOpen} 
+            toggle={toggleModal} 
+            email={authUser?.response?.email} 
+         />
+
       </div>
     </React.Fragment>
   );
