@@ -212,7 +212,12 @@ authService.userLogin = async (body) => {
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
-
+        
+        if (user.role === "client_admin"){
+            if(user.isVerified === false){
+                throw new Error("Please verify your account");
+            }
+        }
         // Return user data without password
         return await User.findOne({ _id: user._id }).select("-password");
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 function FirmTypeForm({ firmDetails, setFirmDetails }) {
   const [fields, setFields] = useState([]);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
-  const role = authuser.response.role;
+  const role = authuser?.response?.role;
   // console.log(role);
 
   const firmTypes = [
