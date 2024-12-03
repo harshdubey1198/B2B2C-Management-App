@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody, FormText, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import axios from 'axios';
+import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardBody} from 'reactstrap';
+// import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance';
 import ChangePasswordModal from '../../Modal/ChangePasswordModal';
 
@@ -30,12 +30,8 @@ const ProfileSettings = () => {
   const [preview, setPreview] = useState(null);
 
   const authUser = JSON.parse(localStorage.getItem('authUser'));
-  const token = authUser.token;
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+  // const token = authUser.token;
+
 
   useEffect(() => {
     const fetchUserData = async () => {
