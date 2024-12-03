@@ -332,9 +332,9 @@ authService.updatePassword = async (id, data) => {
     if (!user) {
         throw new Error("User not found");
     }
-    const encryptedPassword = await PasswordService.passwordHash(data.password);
-    if(user.password !== encryptedPassword){
-        throw new Error("Current Password Doesn't match")
+    const isPasswordValid = await PasswordService.comparePassword(data.password, user.password);
+    if (!isPasswordValid) {
+        throw new Error("Current Password Doesn't Match");
     }
     const newPassword = await PasswordService.passwordHash(data.newPassword)
     user.password = newPassword
