@@ -243,11 +243,11 @@ const ProfileSettings = () => {
             {/* Profile Picture Section */}
             <Col xs={12} sm={6} md={6} lg={6}>
               <Card>
-              <h2 class="card-title-heading">Profile Picture</h2>
+              <h2 className="card-title-heading">Profile Picture</h2>
                 <CardBody>                  
                   <Form onSubmit={handleSubmit}>
                     <FormGroup>
-                      <Label for="avatar" class="mb-4">Upload Profile Picture</Label>
+                      <Label for="avatar" className="mb-4">Upload Profile Picture</Label>
                       <Input
                         type="file"
                         name="avatar"
@@ -292,7 +292,7 @@ const ProfileSettings = () => {
         <ChangePasswordModal 
             isOpen={isModalOpen} 
             toggle={toggleModal} 
-            email={authUser?.response?.email} 
+            authUser={authUser}
          />
 
       </div>
