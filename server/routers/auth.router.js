@@ -14,6 +14,7 @@ router.get('/getCompany/:id', authController.getCompany);
 router.get('/getfirm/:id',tokenVerification, authController.getfirm);
 router.put('/update/:id', authController.updateAccount);
 router.put('/updatePassword/:id',tokenVerification, authController.updatePassword);
+router.put('/userInactive/:id', authController.userInactive);
 router.post('/verify-otp', authController.verifyOtp);
 router.post('/resend-otp', authController.resendOtp);
 router.post('/count-company',tokenVerification, authController.countUsers);

@@ -109,6 +109,11 @@ authService.userLogin = async (body) => {
                 throw new Error("Please verify your account");
             }
         }
+        if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
+            if(user.isActive === false){
+                throw new Error("Your account is inactive");
+            }
+        }
         // Return user data without password
         return await User.findOne({ _id: user._id }).select("-password");
 
@@ -342,6 +347,17 @@ authService.updatePassword = async (id, data) => {
     return user
 }
   
+// USER INACTIVE
+authService.userInactive = async (id, body) => {
+    const {status} = body
+    const user = await User.findOne({_id: id});
+    if (!user) {
+        throw new Error("User not found");
+    }
+    user.isActive = status;
+    await user.save();
+    return user;
+}
 
 // GET FIRMS  
 authService.getCompany  = async (id) => {
