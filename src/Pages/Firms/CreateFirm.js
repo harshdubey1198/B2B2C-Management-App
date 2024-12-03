@@ -19,8 +19,7 @@ function CreateFirm() {
     companyMobile: "",
     email: "",
     avatar: null, 
-    password: "",
-    confirmPassword: "",
+    password: "Admin@123",
     incorporationDate: "",
     firmType: "",
   });
@@ -73,11 +72,11 @@ function CreateFirm() {
       setLoading(false);
       return;
     }
-    if (formValues.password !== formValues.confirmPassword) {
-      toast.error("Passwords do not match");
-      setLoading(false);
-      return;
-    }
+    // if (formValues.password !== formValues.confirmPassword) {
+    //   toast.error("Passwords do not match");
+    //   setLoading(false);
+    //   return;
+    // }
     const authUserData = JSON.parse(localStorage.getItem("authUser"));
     const authUser = authUserData?.response;
     const clientId = authUser?._id;
@@ -118,8 +117,8 @@ function CreateFirm() {
         companyTitle: "",
         companyMobile: "",
         email: "",
-        password: "",
-        confirmPassword: "",
+        password: "Admin@123",
+        // confirmPassword: "",
         avatar: null,
         incorporationDate: "",
       });
@@ -186,58 +185,7 @@ function CreateFirm() {
                           />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup className="position-relative">
-                          <Label htmlFor="password">Password</Label>
-                          <Input
-                            type={show.password ? "text" : "password"}
-                            id="password"
-                            name="password"
-                            placeholder="Enter password"
-                            value={formValues.password}
-                            onChange={handleChange}
-                          />
-                          <button
-                            className="cursor btn btn-link position-absolute end-0"
-                            style={{ top: "74%", transform: "translateY(-50%)" }}
-                            onClick={() =>
-                              setShow((prevState) => ({
-                                ...prevState,
-                                password: !prevState.password,
-                              }))
-                            }
-                            type="button"
-                          >
-                            <i className={`mdi mdi-eye${show.password ? "-off" : ""}`}></i>
-                          </button>
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup className="position-relative">
-                          <Label htmlFor="confirmPassword">Confirm Password</Label>
-                          <Input
-                            type={show.confirmPassword ? "text" : "password"}
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            placeholder="Confirm password"
-                            value={formValues.confirmPassword}
-                            onChange={handleChange}
-                          />
-                          <button
-                            onClick={() =>
-                              setShow((prevState) => ({
-                                ...prevState,
-                                confirmPassword: !prevState.confirmPassword,
-                              }))
-                            }
-                            className="btn btn-link position-absolute end-0"
-                            style={{ top: "74%", transform: "translateY(-50%)" }}
-                            type="button"
-                          >
-                            <i className={`mdi mdi-eye${show.confirmPassword ? "-off" : ""}`}></i>
-                          </button>
-                        </FormGroup>
-                      </Col>
+                    
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="avatar">Avatar</Label>
