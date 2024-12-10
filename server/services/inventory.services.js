@@ -1,8 +1,6 @@
-const Variant = require('../schemas/variant.schema');
 const Category = require('../schemas/category.schema');
 const InventoryItem = require('../schemas/inventoryItem.schema');
 const User = require('../schemas/user.schema');
-const VariantMaster = require('../schemas/mastervariant.schema');
 const Vendor = require('../schemas/vendor.schema');
 const Tax = require('../schemas/tax.schema');
 

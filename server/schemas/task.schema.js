@@ -1,41 +1,53 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const taskSchema = new mongoose.Schema(
-  {
+const taskSchema = new Schema({
     leadId: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'Lead',
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'Lead',
     },
-    assignedTo: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'CRMUser',
-    },
+    assignedTo: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+        },
+    ],
     assignedBy: {
-      type: mongoose.Schema.Types.ObjectId, 
-      ref: 'CRMUser',
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User',
     },
     assignDate: {
-      type: Date,
-      default: Date.now, 
+        type: Date,
+        default: Date.now, 
     },
-    remark: {
-      type: String,
-      default: null, 
-    },
-    remarkMessage: {
-      type: String,
-      default: null, 
-    },
+    remarks: [
+        {
+            message: String,
+            createdAt: { type: Date, default: Date.now },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        },
+    ],
     status: {
-      type: String,
-      default: 'Pending', 
+        type: String,
+        enum: ['Pending', 'Completed', 'In Progress', 'Overdue'],
+        default: 'Pending', 
     },
+    // priority: {
+    //     type: String,
+    //     enum: ['Low', 'Medium', 'High', 'Critical'],
+    //     default: 'Medium',
+    // },
     dueDate: {
-      type: Date, 
-      default: null,
+        type: Date, 
+        validate: {
+            validator: function(value) {
+                return value > Date.now();
+            },
+            message: 'Due date must be in the future.',
+        },
+        default: null,
     },
-  },
-  { timestamps: true }
-);
+}, { timestamps: true });
 
-module.exports = mongoose.model('Task', taskSchema);
+const Task = mongoose.model('Task', taskSchema);
+module.exports = Task;

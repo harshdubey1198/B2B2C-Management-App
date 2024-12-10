@@ -5,20 +5,19 @@ const leadSchema = new Schema(
   {
     firstName: {
       type: String,
-      required: true,
+      // required: true,
     },
     lastName: {
       type: String,
-      required: true,
+      // required: true,
     },
     email: {
       type: String,
-      required: true,
-      unique: true,
+      // required: true,
     },
     mobileNumber: {
       type: String,
-      required: true,
+      // required: true,
     },
     adId: {
       type: String,
@@ -67,7 +66,11 @@ const leadSchema = new Schema(
     status: {
       type: String,
     },
-  },{ timestamps: true, strict: false }
+    deleted_at: { 
+      type: Date, 
+      default: null 
+    }
+  },  { timestamps: true, strict: false }
 );
 
 const Lead = mongoose.model('Lead', leadSchema);

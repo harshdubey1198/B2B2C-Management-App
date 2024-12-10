@@ -8,7 +8,7 @@ const path = require("path");
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors()); 
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
@@ -25,6 +25,9 @@ const vendorRoute = require("./routers/vendor.router")
 const taxRouter = require("./routers/tax.router")
 const brandRouter = require("./routers/brand.router")
 const manufacturerRouter = require("./routers/manufacturer.router")
+const roleRouter = require("./routers/role.router")
+const leadRouter = require("./routers/lead.router")
+const taskRouter = require("./routers/task.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -37,6 +40,9 @@ app.use("/api/vendor", vendorRoute);
 app.use("/api/tax", taxRouter);
 app.use("/api/brand", brandRouter);
 app.use("/api/manufacturer", manufacturerRouter);
+app.use("/api/role", roleRouter);
+app.use("/api/lead", leadRouter);
+app.use("/api/task", taskRouter);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
