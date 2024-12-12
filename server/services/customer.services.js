@@ -1,4 +1,4 @@
-const { customerFilter } = require("../filter");
+const { customerFilter, buildFilter } = require("../filter");
 const Customer = require("../schemas/cutomer.schema");
 
 const customerServices = {};
@@ -9,12 +9,12 @@ customerServices.searchCustomer = async (searchQuery, firmId) => {
     throw new Error("Search query and firmId are required");
   }
 
-  const filter = customerFilter(searchQuery)
-  const customer = await Customer.find({
+  const filter = {
     firmId,
     deleted_at: null,
-    ...filter
-  }).limit(10);
+    ...buildFilter(searchQuery)
+  }
+  const customer = await Customer.find(filter).limit(10).lean();
 
   if (customer.length === 0) {
     throw new Error("No Customer Found");
