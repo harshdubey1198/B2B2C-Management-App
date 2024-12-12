@@ -52,24 +52,40 @@ leadService.createLead = async (body) => {
 // }
 
 leadService.getAllLeads = async () => {
-    const result = await Lead.aggregate([
-        { $facet: {
-            data: [ { $match: { deleted_at: null } } ], 
-            count: [ 
-                { $match: { deleted_at: null } },
-                { $count: "total" } 
-            ] 
-        }}
-    ]);
+    // const result = await Lead.aggregate([
+    //     { $facet: {
+    //         data: [ { $match: { deleted_at: null } } ], 
+    //         count: [ 
+    //             { $match: { deleted_at: null } },
+    //             { $count: "total" } 
+    //         ] 
+    //     }}
+    // ]);
 
-    const leads = result[0].data;
-    const count = result[0].count.length > 0 ? result[0].count[0].total : 0;
+    // const leads = result[0].data;
+    // const count = result[0].count.length > 0 ? result[0].count[0].total : 0;
 
-    if (count === 0) {
-        return { message: "No leads found.", count: 0, leads: [] };
+    // if (count === 0) {
+    //     return { message: "No leads found.", count: 0, leads: [] };
+    // }
+
+    // return { count, leads };
+    try {
+        const leads = await Lead.find({ deleted_at: null })
+            .populate({
+                path: 'notes.createdBy', 
+                select: 'firstName lastName email' 
+            });
+        const count = await Lead.countDocuments({ deleted_at: null });
+
+        if (count === 0) {
+            return { message: "No leads found.", count: 0, leads: [] };
+        }
+
+        return { count, leads };
+    } catch (error) {
+        throw new Error("Error fetching leads: " + error.message);
     }
-
-    return { count, leads };
 };
 
 leadService.getLeadById = async (leadId) => {
