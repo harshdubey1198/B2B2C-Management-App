@@ -54,7 +54,7 @@ leadService.createLead = async (body) => {
 leadService.getAllLeads = async () => {
     const result = await Lead.aggregate([
         { $facet: {
-            data: [ { $match: { deleted_at: null } } ], // Fetch all documents (use filters if needed)
+            data: [ { $match: { deleted_at: null } } ], 
             count: [ 
                 { $match: { deleted_at: null } },
                 { $count: "total" } 
@@ -74,9 +74,14 @@ leadService.getAllLeads = async () => {
 
 leadService.getLeadById = async (leadId) => {
     const lead = await Lead.findOne({_id:leadId,deleted_at: null})
+    .populate({
+        path: "notes.createdBy",
+        select: "firstName lastName email"
+    }).lean()
     if(!lead){
         throw new Error("No lead found.")
     }
+    lead.notes = lead.notes.filter((note) => !note.deleted_at)
     return lead;
 }
 
@@ -88,7 +93,7 @@ leadService.updateLead = async (leadId, data) => {
     return updatedLead;
 }
 
-leadService.deleteLead = async (leadId, data) => {
+leadService.deleteLead = async (leadId) => {
     const deletedLead = await Lead.findOneAndUpdate({_id:leadId}, {deleted_at: new Date()}, {new:true})
     if(!deletedLead){
         throw new Error("No lead found, updation failed")
@@ -96,6 +101,65 @@ leadService.deleteLead = async (leadId, data) => {
     return deletedLead;
 }
 
+leadService.addNotesToLead = async (leadId, note) => {
+    const updatedLead = await Lead.findOneAndUpdate(
+        { _id: leadId, deleted_at: null },
+        { $push: { notes: note } }, 
+        { new: true } 
+    );
+    if (!updatedLead) {
+        throw new Error("No lead found to update.");
+    }
 
+    return updatedLead;
+}
+
+leadService.getNotes = async (leadId) => {
+    const lead = await Lead.findOne({_id: leadId}).select('notes')
+    if(!lead){
+        throw new Error("Lead not found")
+    }
+    const activenotes = lead.notes.filter(note => !note.deleted_at)
+    return activenotes
+}
+
+leadService.updateNotesToLead = async (leadId, body) => {
+    const {noteId, message} = body
+    const updatedLead = await Lead.findOneAndUpdate(
+        {_id: leadId, "notes._id": noteId, "notes.deleted_at": null},
+        {
+            $set: {
+                "notes.$.message": message,
+                "notes.$.lastUpdatedAt": new Date()
+            }
+        },
+        {new: true}
+    )
+    
+    if (!updatedLead) {
+        throw new Error("Lead or note not found.");
+    }
+
+    return updatedLead;
+}
+
+leadService.deleteNotesToLead = async (leadId, body) => {
+    const {noteId} = body
+    const updatedLead = await Lead.findOneAndUpdate(
+        {_id: leadId, "notes._id": noteId},
+        {
+            $set: {
+                "notes.$.deleted_at": new Date()
+            }
+        },
+        {new: true}
+    )
+    
+    if (!updatedLead) {
+        throw new Error("Lead or note not found.");
+    }
+
+    return updatedLead;
+}
 
 module.exports = leadService;

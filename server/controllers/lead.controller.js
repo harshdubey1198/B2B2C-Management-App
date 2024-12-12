@@ -53,4 +53,44 @@ leadController.deleteLead = async (req,res) => {
     }
 }
 
+leadController.addNotesToLead = async (req,res) => {
+    try {
+        const addedNotesToLead = await leadService.addNotesToLead(req.params.id, req.body)
+        return res.status(200).json(createResult("notes added to lead Succefully", addedNotesToLead))
+    } catch (error) {
+        console.log("erroro adding notes to lead", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+}
+
+leadController.getNotes = async (req,res) => {
+    try {
+        const getNotes = await leadService.getNotes(req.params.id)
+        return res.status(200).json(createResult("Notes fetched Succefully", getNotes))
+    } catch (error) {
+        console.log("error getting notes", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+}
+
+leadController.updateNotesToLead = async (req,res) => {
+    try {
+        const updatedNotes = await leadService.updateNotesToLead(req.params.id, req.body)
+        return res.status(200).json(createResult("Notes updated Succefully", updatedNotes))
+    } catch (error) {
+        console.log("error updating notes", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+}
+
+leadController.deleteNotesToLead = async (req,res) => {
+    try {
+        const Notes = await leadService.deleteNotesToLead(req.params.id, req.body)
+        return res.status(200).json(createResult("Notes Removed Succefully", Notes))
+    } catch (error) {
+        console.log("error removing notes", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+}
+
 module.exports = leadController

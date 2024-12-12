@@ -66,6 +66,15 @@ const leadSchema = new Schema(
     status: {
       type: String,
     },
+    notes: [
+      {
+        message: { type: String }, 
+        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
+        createdAt: { type: Date, default: Date.now },
+        deleted_at: { type: Date, default: null },
+        lastUpdatedAt: { type: Date, default: null}
+      },
+    ],
     deleted_at: { 
       type: Date, 
       default: null 
