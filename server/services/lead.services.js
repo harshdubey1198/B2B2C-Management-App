@@ -52,41 +52,34 @@ leadService.createLead = async (body) => {
 // }
 
 leadService.getAllLeads = async () => {
-    // const result = await Lead.aggregate([
-    //     { $facet: {
-    //         data: [ { $match: { deleted_at: null } } ], 
-    //         count: [ 
-    //             { $match: { deleted_at: null } },
-    //             { $count: "total" } 
-    //         ] 
-    //     }}
-    // ]);
-
-    // const leads = result[0].data;
-    // const count = result[0].count.length > 0 ? result[0].count[0].total : 0;
-
-    // if (count === 0) {
-    //     return { message: "No leads found.", count: 0, leads: [] };
-    // }
-
-    // return { count, leads };
     try {
         const leads = await Lead.find({ deleted_at: null })
             .populate({
-                path: 'notes.createdBy', 
-                select: 'firstName lastName email' 
+                path: 'notes',
+                populate: {
+                    path: 'createdBy',
+                    select: 'firstName lastName email',
+                },
             });
+
+        // Filter notes with deleted_at null
+        const filteredLeads = leads.map(lead => ({
+            ...lead._doc,
+            notes: lead.notes.filter(note => note.deleted_at === null),
+        }));
+
         const count = await Lead.countDocuments({ deleted_at: null });
 
         if (count === 0) {
             return { message: "No leads found.", count: 0, leads: [] };
         }
 
-        return { count, leads };
+        return { count, leads: filteredLeads };
     } catch (error) {
         throw new Error("Error fetching leads: " + error.message);
     }
 };
+
 
 leadService.getLeadById = async (leadId) => {
     const lead = await Lead.findOne({_id:leadId,deleted_at: null})
