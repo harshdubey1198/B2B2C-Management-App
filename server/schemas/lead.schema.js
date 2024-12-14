@@ -65,6 +65,7 @@ const leadSchema = new Schema(
     },
     status: {
       type: String,
+      // enum : ['Invalid Request' , 'No response ','Budget Issue' , 'not interested' , 'recall'  , 'Contacted', 'False Data', 'Lost', 'Converted'],
     },
     dueDate: {
       type: Date,
