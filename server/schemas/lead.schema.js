@@ -66,6 +66,10 @@ const leadSchema = new Schema(
     status: {
       type: String,
     },
+    dueDate: {
+      type: Date,
+      default: null,
+    },
     notes: [
       {
         message: { type: String }, 
