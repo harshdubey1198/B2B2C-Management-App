@@ -93,4 +93,18 @@ leadController.deleteNotesToLead = async (req,res) => {
     }
 }
 
+
+leadController.filteredLeads = async (req, res) => {
+    try {
+      const { isExpired, statuses } = req.body;
+  
+      const leads = await leadService.getExpiredLeadsWithoutUpdatedStatus({ isExpired, statuses });
+  
+      return res.status(200).json(createResult("Filtered missed leads fetched successfully", leads));
+    } catch (error) {
+      console.error("Error fetching filtered leads:", error.message);
+      return res.status(500).json(createResult(null, null, error.message));
+    }
+  };
+  
 module.exports = leadController

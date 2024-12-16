@@ -171,4 +171,44 @@ leadService.deleteNotesToLead = async (leadId, body) => {
     return updatedLead;
 }
 
+leadService.getExpiredLeadsWithoutUpdatedStatus = async (filterValues) => {
+    try {
+      const query = {
+        deleted_at: null,
+      };
+  
+      if (filterValues) {
+        Object.keys(filterValues).forEach((key) => {
+          if (filterValues[key]) {
+            query[key] = filterValues[key];
+          }
+        });
+      }
+  
+      const leads = await Lead.find(query).populate({
+        path: "notes.createdBy",
+        select: "firstName lastName email",
+      });
+  
+      const today = new Date();
+      const validStatuses = ["contacted", "qualified", "converted","not interested", "False Data", "Closed"]; 
+  
+      const filteredLeads = leads.filter((lead) => {
+        const leadDueDate = lead.dueDate ? new Date(lead.dueDate) : null;
+        const isPastDue = leadDueDate && leadDueDate < today;
+  
+        return isPastDue && !validStatuses.includes(lead.status);
+      }).map((lead) => ({
+        ...lead._doc,
+        notes: lead.notes.filter((note) => !note.deleted_at),
+      }));
+  
+      return filteredLeads;
+    } catch (error) {
+      throw new Error("Error fetching missed leads: " + error.message);
+    }
+  };
+  
+  
+
 module.exports = leadService;
