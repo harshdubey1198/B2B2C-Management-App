@@ -3,4 +3,4 @@ const constant = {
     // appBaseUrl: "https://aamobee.com",
     updateBiodata: false, 
   };
-  export default constant;
+  export default constant; 
