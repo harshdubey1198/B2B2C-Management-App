@@ -182,10 +182,24 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Reports", link: "/reports" },
       ],
     },
+
     // {
-    //   label:"Below-options",
+    //   label:"CRM",
     //   isMainMenu:true,
     // },
+    
+    {
+      label:"CRM Leads",
+      icon:"mdi mdi-account-multiple-outline",
+      subItem: [
+        { sublabel: "All Leads", link: "/crm/all-leads" },
+        { sublabel: "New Lead", link: "/crm/tasks" },
+        { sublabel: "Lead Details", link: "/crm/leads-missed" },
+        { sublabel: "Lead Status", link: "/crm/lead-status" },
+      ]
+    },
+
+
     // {
     //   label: "Authentication",
     //   icon: "mdi mdi-account-circle-outline",

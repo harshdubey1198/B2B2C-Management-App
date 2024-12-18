@@ -76,6 +76,8 @@ import Brands from "../Pages/Inventory-MNG/Brands.jsx";
 import Manufacturers from "../Pages/Inventory-MNG/Manufacturers.jsx";
 import Auth from "../Pages/AuthenticationPages/Auth.js";
 
+// crm routes
+import AllLeads from "../Pages/CRM/AllLeads.jsx"
 
 const authProtectedRoutes = [
   //dashboard
@@ -111,6 +113,9 @@ const authProtectedRoutes = [
   {path:"/firms-setting-uc", component: <ComingSoon />},
   {path:"/create-firm", component: <CreateFirm />},
   {path:"/switch-firm", component: <SwitchFirm/>},
+
+  // CRM
+  {path:"/crm/all-leads", component: <AllLeads />},
 
   //  Coming Soon 
   {path:"/clients-portal" , component: <ComingSoon />},
