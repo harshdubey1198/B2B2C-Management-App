@@ -1,7 +1,7 @@
 import axios from 'axios';
 import constant from './constant';
 
-const token = JSON.parse(localStorage.getItem('authUser')).token;
+const token = JSON.parse(localStorage.getItem('authUser'))?.token;
 
 const axiosInstance = axios.create({
     baseURL: `${constant.appBaseUrl}/api/`,
