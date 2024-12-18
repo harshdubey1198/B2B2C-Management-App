@@ -6,8 +6,8 @@ const token = JSON.parse(localStorage.getItem('authUser')).token;
 const axiosInstance = axios.create({
     baseURL: `${constant.appBaseUrl}/api/`,
     headers: {
-        Authorization: `Bearer ${token}`,
-    },
+        Authorization: token ? `Bearer ${token}` : null,
+     },
     });
 
 
