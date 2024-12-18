@@ -207,7 +207,7 @@ leadService.getExpiredLeadsWithoutUpdatedStatus = async (filterValues) => {
     } catch (error) {
       throw new Error("Error fetching missed leads: " + error.message);
     }
-  };
+};
   
   
 

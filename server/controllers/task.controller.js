@@ -53,4 +53,14 @@ taskController.updateAssignees = async (req, res) => {
     }
 }
 
+taskController.markMissedTasks = async (req, res) => {
+    try {
+        const markMissedTasks = await taskServices.markMissedTasks()
+        return res.status(200).json(createResult("Tasks marked as missed.", markMissedTasks))
+    } catch (error) {
+        console.log("failed to tasks marked as missed.", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+}
+
 module.exports = taskController
