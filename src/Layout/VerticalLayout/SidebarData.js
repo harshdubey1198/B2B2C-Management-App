@@ -193,9 +193,9 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-account-multiple-outline",
       subItem: [
         { sublabel: "All Leads", link: "/crm/all-leads" },
-        { sublabel: "New Lead", link: "/crm/tasks" },
-        { sublabel: "Lead Details", link: "/crm/leads-missed" },
-        { sublabel: "Lead Status", link: "/crm/lead-status" },
+        { sublabel: "New Lead", link: "/crm/create-lead" },
+        { sublabel: "Analytics", link: "/crm/leads-analytics" },
+        // { sublabel: "Lead Status", link: "/crm/lead-status" },
       ]
     },
 

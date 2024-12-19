@@ -52,6 +52,24 @@ leadController.deleteLead = async (req,res) => {
         return res.status(500).json(createResult(null, null, error.message ));
     }
 }
+// In leadController.deleteMultipleLeads
+leadController.deleteMultipleLeads = async (req, res) => {
+    try {
+        // Expecting req.body to directly contain an array of leadIds
+        const leadIds = req.body.leadIds; // Ensure leadIds is an array
+
+        if (!leadIds || !Array.isArray(leadIds)) {
+            return res.status(400).json(createResult(null, null, 'Invalid leadIds format'));
+        }
+
+        // Call the service to delete the leads
+        const deletedLeads = await leadService.deleteMultipleLeads(leadIds);
+        return res.status(200).json(createResult("Leads soft deleted successfully", deletedLeads));
+    } catch (error) {
+        console.log("Error deleting leads:", error.message);
+        return res.status(500).json(createResult(null, null, error.message));
+    }
+}
 
 leadController.addNotesToLead = async (req,res) => {
     try {
