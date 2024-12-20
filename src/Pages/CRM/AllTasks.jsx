@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getAllTasks, updateLeadById, updateTaskOrLead } from '../../apiServices/service';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
+import Breadcrumbs from '../../components/Common/Breadcrumb';
 
 function AllTasks() {
   const [tasks, setTasks] = useState([]);
@@ -112,6 +113,7 @@ const getRandomColor = () => {
   return (
     <React.Fragment>
       <div className='page-content'>
+        <Breadcrumbs title='CRM' breadcrumbItem='All Tasks' />
         <div className='container-fluid'>
           <div className='row'>
             <div className='col-12'>
