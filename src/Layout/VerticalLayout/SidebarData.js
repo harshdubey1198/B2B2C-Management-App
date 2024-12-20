@@ -188,16 +188,7 @@ export const masterAdminSidebarData = () => [
     //   isMainMenu:true,
     // },
     
-    {
-      label:"CRM Leads",
-      icon:"mdi mdi-account-multiple-outline",
-      subItem: [
-        { sublabel: "All Leads", link: "/crm/all-leads" },
-        { sublabel: "New Lead", link: "/crm/create-lead" },
-        { sublabel: "Analytics", link: "/crm/leads-analytics" },
-        // { sublabel: "Lead Status", link: "/crm/lead-status" },
-      ]
-    },
+    
 
 
     // {
@@ -285,7 +276,17 @@ export const masterAdminSidebarData = () => [
     
       ],
     },
-   
+    {
+      label:"CRM Leads",
+      icon:"mdi mdi-account-multiple-outline",
+      subItem: [
+        { sublabel: "All Leads", link: "/crm/all-leads" },
+        { sublabel: "New Lead", link: "/crm/create-lead" },
+        { sublabel: "Analytics", link: "/crm/leads-analytics" },
+        { sublabel: "Users" , link:"/crm/users"},
+        // { sublabel: "Lead Status", link: "/crm/lead-status" },
+      ]
+    },
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",

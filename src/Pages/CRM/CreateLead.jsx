@@ -13,7 +13,6 @@ function CreateLead() {
     email: "",
     phoneNumber: "",
     platform: "",
-    isOrganic: false,
     adName: "",
     adId: "",
     status: "New",
@@ -155,20 +154,6 @@ function CreateLead() {
                       onChange={handleInputChange}
                       required
                     />
-                  </FormGroup>
-                </Col>
-                <Col md={6}>
-                  <FormGroup check className="mt-4">
-                    <Label check>
-                      Is Organic
-                      <Input
-                        type="checkbox"
-                        id="isOrganic"
-                        name="isOrganic"
-                        checked={lead.isOrganic}
-                        onChange={handleCheckboxChange}
-                      />
-                    </Label>
                   </FormGroup>
                 </Col>
                 <Col md={6}>
