@@ -66,6 +66,17 @@ export const deleteLeadById = async (id) => {
         return error;
     }
 };
+// multiple delete leads
+export const deleteMultipleLeads = async (data) => {
+    try {
+        const response = await axiosInstance.delete('/lead/delete-multiple-leads', { data, 
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
 
 
 // to assign lead to employee
@@ -87,6 +98,25 @@ export const getFirmUsers = async () => {
         return error;
     }
 };
+// to get tasks 
+export const getAllTasks = async () => {
+    try {
+        const response = await axiosInstance.get('/task/get-tasks');
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+//to update task
+export const updateTaskOrLead = async (id, updateData) => {
+    try {
+      const response = await axiosInstance.put(`/task/update-task/${id}`, updateData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
 
 
 export default axiosInstance;

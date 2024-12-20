@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const taskSchema = new Schema({
-    leadId: {
+    leadIds: [{
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Lead',
-    },
+    }],
     assignedTo: [
         {
             type: mongoose.Schema.Types.ObjectId,

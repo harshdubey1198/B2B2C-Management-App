@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, FormGroup, Label, Input } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { getAllLeads, getLeadById, assignLeadsToEmployee, updateLeadById, deleteLeadById } from "../../apiServices/service"; // Add updateLeadById API call
+import { getAllLeads, getLeadById, assignLeadsToEmployee, updateLeadById, deleteLeadById, deleteMultipleLeads } from "../../apiServices/service"; // Add updateLeadById API call
 import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
 
@@ -50,8 +50,8 @@ function AllLeads() {
     };
 
     const handleDeleteLeads = async (leadId) => {
-        // Deleting a single lead
         if (leadId) {
+            // Single lead deletion
             try {
                 const result = await deleteLeadById([leadId]);
                 setMessage(result.message);
@@ -60,38 +60,24 @@ function AllLeads() {
                 setMessage(error.message);
             }
         } else {
-            // Bulk deletion of selected leads
+            // Bulk deletion
             if (selectedLeads.length === 0) {
                 setMessage("Please select leads to delete.");
                 return;
             }
             try {
-                const result = await deleteLeadById(selectedLeads);
+                const result = await deleteMultipleLeads({ leadIds: selectedLeads });
                 setMessage(result.message);
                 fetchLeads(); // Refresh leads after deletion
-                setSelectedLeads([]); // Reset selected leads after deletion
+                setSelectedLeads([]); // Reset selected leads
             } catch (error) {
                 setMessage(error.message);
             }
         }
     };
     
-    // Bulk deletion button handler
-    const handlemultipleDelete = async () => {
-        if (selectedLeads.length === 0) {
-            setMessage("Please select leads to delete.");
-            return;
-        }
-        try {
-            const result = await deleteLeadById(selectedLeads);
-            setMessage(result.message);
-            fetchLeads(); // Refresh leads after deletion
-            setSelectedLeads([]); // Reset selected leads after deletion
-        } catch (error) {
-            setMessage(error.message);
-        }
-    };
-    
+
+ 
 
     const handleAssignLeads = async () => {
         if (!employeeId) {
@@ -135,10 +121,10 @@ function AllLeads() {
                     <button className="btn btn-primary" onClick={() => navigate('/crm/create-lead')}>Add Lead</button>
                     <button className="btn btn-primary">Import Leads</button>
                     <button className="btn btn-primary">Export Leads</button>
+                    <button className="btn btn-primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </button>
                 </div>
-                <div className="bulk-action">
-                    <button className="btn btn-primary" onClick={handlemultipleDelete}>Delete</button>
-                </div>
+                {/* <div className="bulk-action">
+                </div> */}
                 <div className="table-responsive">
                     <Table>
                         <thead>
