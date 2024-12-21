@@ -283,7 +283,8 @@ export const masterAdminSidebarData = () => [
         { sublabel: "All Leads", link: "/crm/all-leads" },
         { sublabel: "New Lead", link: "/crm/create-lead" },
         { sublabel: "Analytics", link: "/crm/leads-analytics" },
-        { sublabel: "Users" , link:"/crm/users"},
+        { sublabel: "Users" , link:"/crm/crm-users"},
+        
         // { sublabel: "Lead Status", link: "/crm/lead-status" },
       ]
     },

@@ -102,7 +102,7 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                   <option value="in-progress">In Progress</option>
                   <option value="closed">Closed</option>
                 </Input>
-              </FormGroup>
+              </FormGroup>  
             </Form>
           )}
         </ModalBody>
