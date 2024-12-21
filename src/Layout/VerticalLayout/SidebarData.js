@@ -188,16 +188,7 @@ export const masterAdminSidebarData = () => [
     //   isMainMenu:true,
     // },
     
-    {
-      label:"CRM Leads",
-      icon:"mdi mdi-account-multiple-outline",
-      subItem: [
-        { sublabel: "All Leads", link: "/crm/all-leads" },
-        { sublabel: "New Lead", link: "/crm/tasks" },
-        { sublabel: "Lead Details", link: "/crm/leads-missed" },
-        { sublabel: "Lead Status", link: "/crm/lead-status" },
-      ]
-    },
+    
 
 
     // {
@@ -285,7 +276,17 @@ export const masterAdminSidebarData = () => [
     
       ],
     },
-   
+    {
+      label:"CRM Leads",
+      icon:"mdi mdi-account-multiple-outline",
+      subItem: [
+        { sublabel: "All Leads", link: "/crm/all-leads" },
+        { sublabel: "New Lead", link: "/crm/create-lead" },
+        { sublabel: "Analytics", link: "/crm/leads-analytics" },
+        { sublabel: "Users" , link:"/crm/users"},
+        // { sublabel: "Lead Status", link: "/crm/lead-status" },
+      ]
+    },
     {
         label: "Settings",
         icon: "mdi mdi-cog-outline",
@@ -352,8 +353,35 @@ export const masterAdminSidebarData = () => [
       label: "Settings",
       icon: "mdi mdi-cog-outline",
       url: "/profile-settings",
-    },
+    }
   ];
+ 
+  export const telecallerSidebarData =() =>[
+
+    {
+      label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+    },
+    {
+      label:"CRM Leads",
+      icon:"mdi mdi-account-multiple-outline",
+      subItem: [
+        {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
+        // { sublabel: "All Leads", link: "/crm/all-leads" },
+        // { sublabel: "New Lead", link: "/crm/create-lead" },
+        // { sublabel: "Analytics", link: "/crm/leads-analytics" },
+        // { sublabel: "Lead Status", link: "/crm/lead-status" },
+      ]
+    },
+    {
+      label: "Settings",
+      icon: "mdi mdi-cog-outline",
+      url: "/profile-settings",
+    }
+   
+    
+    ];
   
   export const viewerSidebarData = () => [
   
@@ -404,7 +432,10 @@ export const masterAdminSidebarData = () => [
         return readOnlySidebarData();
       case 'employee':
         return generalEmployeeSidebarData();
-      case 'Viewer':
+      case 'telecaller':
+        return telecallerSidebarData();
+
+        case 'Viewer':
         return viewerSidebarData();
       default:
         return defaultSidebarData();

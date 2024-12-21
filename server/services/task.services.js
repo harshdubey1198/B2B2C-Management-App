@@ -20,7 +20,7 @@ taskServices.updateLeadStatus = async (leadId) => {
 
 taskServices.createTask = async (body) => {
     const {
-        leadId,
+        leadIds,  
         assignedTo = [],
         assignedBy,
         status,
@@ -28,15 +28,15 @@ taskServices.createTask = async (body) => {
         remarks,
     } = body;
 
-    // Validate lead and users
-    // Uncomment this if you want to validate the existence of lead and users
+    // Validate lead and users (optional validation)
     /*
-    const [leadExists, assignedByUser] = await Promise.all([
-        Lead.exists({ _id: leadId }),
-        CRMUser.exists({ _id: assignedBy }),
-    ]);
-
-    if (!leadExists) throw new Error("Invalid Lead ID");
+    const leadExistsArray = await Promise.all(
+        leadIds.map(leadId => Lead.exists({ _id: leadId }))
+    );
+    if (leadExistsArray.includes(false)) {
+        throw new Error("Invalid Lead ID(s)");
+    }
+    const assignedByUser = await CRMUser.exists({ _id: assignedBy });
     if (!assignedByUser) throw new Error("Invalid AssignedBy User ID");
 
     for (const userId of assignedTo) {
@@ -61,9 +61,9 @@ taskServices.createTask = async (body) => {
         }
     }
 
-    // Create the task
+    // Create the task with an array of leadIds
     const newTask = new Task({
-        leadId,
+        leadIds,  
         assignedTo,
         assignedBy,
         status: status || 'Pending',
@@ -79,7 +79,7 @@ taskServices.createTask = async (body) => {
 
 taskServices.getAllTasks = async () => {
     const tasks = await Task.find()
-    .populate('leadId')
+    .populate('leadIds')
     .populate({
         path: 'assignedTo',
         select: 'firstName lastName email role' 

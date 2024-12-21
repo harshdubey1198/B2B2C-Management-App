@@ -109,6 +109,18 @@ leadService.deleteLead = async (leadId) => {
     }
     return deletedLead;
 }
+// multiple leads deletion
+leadService.deleteMultipleLeads = async (leadIds) => {
+    const deletedLeads = await Lead.updateMany(
+        { _id: { $in: leadIds } },
+        { deleted_at: new Date() }
+    );
+    if (!deletedLeads) {
+        throw new Error("No leads found to delete.");
+    }
+
+    return deletedLeads;
+}
 
 leadService.addNotesToLead = async (leadId, note) => {
     const updatedLead = await Lead.findOneAndUpdate(
