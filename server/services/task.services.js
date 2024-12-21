@@ -4,6 +4,20 @@ const User = require("../schemas/user.schema");
 
 const taskServices = {}
 
+taskServices.updateLeadStatus = async (leadId) => {
+    const tasks = await Task.find({ leadId })
+    if (!tasks || tasks.length === 0) {
+        await Lead.findByIdAndUpdate(leadId, { status: "Pending" });
+        return;
+    }
+
+    const allCompleted = tasks.every((task) => task.status === "Completed")
+    const allMissed = tasks.every((task) => task.status === "Missed")
+    const anyInProgress = tasks.some((task) => task.status === "In Progress");
+
+}
+
+
 taskServices.createTask = async (body) => {
     const {
         leadId,
@@ -62,7 +76,6 @@ taskServices.createTask = async (body) => {
     lead.save()
     return savedTask;
 };
-
 
 taskServices.getAllTasks = async () => {
     const tasks = await Task.find()
