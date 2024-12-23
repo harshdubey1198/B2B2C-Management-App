@@ -6,7 +6,7 @@ const crmUserController = require('../controllers/crmuser.controller')
 router.post('/create-crmsuser/:id',tokenVerification, crmUserController.createCrmsUser);
 router.get('/get-crmsuser/:id', crmUserController.getAllCrmsUsers);
 // router.get('/get-crmsuser/:id',tokenVerification, crmUserController.getCrmsUserById);
-// router.put('/update-crmsuser',tokenVerification, crmUserController.updateCrmsUser);
+router.put('/update-crmsuser/:id',tokenVerification, crmUserController.updateCrmsAccount);
 // router.delete('/delete-crmsuser/:id', tokenVerification, crmUserController.deleteCrmsUser);
 
 module.exports = router;

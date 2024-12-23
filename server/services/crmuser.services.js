@@ -79,41 +79,39 @@ crmUserService.getAccount = async (id) => {
 };
 
 // update account
-// crmUserService.updateAccount = async (id, data) => {
-//   try {
-//     if (data.avatar) {
-//       let imageUrl;
-//       if (typeof data.avatar === "string" && data.avatar.startsWith("http")) {
-//         imageUrl = data.avatar;
-//       } else if (
-//         typeof data.avatar === "string" &&
-//         data.avatar.startsWith("data:image")
-//       ) {
-//         const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
-//         const buffer = Buffer.from(base64Data, "base64");
-//         const uploadResponse = await uploadToCloudinary(buffer);
-//         imageUrl = uploadResponse.secure_url;
-//       } else if (Buffer.isBuffer(data.avatar)) {
-//         const uploadResponse = await uploadToCloudinary(data.avatar);
-//         imageUrl = uploadResponse.secure_url;
-//       } else {
-//         throw new Error("Invalid avatar format");
-//       }
+crmUserService.updateCrmsAccount = async (id, data) => {
+  try {
+    if (data.avatar) {
+      let imageUrl;
+      if (typeof data.avatar === "string" && data.avatar.startsWith("http")) {
+        imageUrl = data.avatar;
+      } else if (
+        typeof data.avatar === "string" &&
+        data.avatar.startsWith("data:image")
+      ) {
+        const base64Data = data.avatar.replace(/^data:image\/\w+;base64,/, "");
+        const buffer = Buffer.from(base64Data, "base64");
+        const uploadResponse = await uploadToCloudinary(buffer);
+        imageUrl = uploadResponse.secure_url;
+      } else if (Buffer.isBuffer(data.avatar)) {
+        const uploadResponse = await uploadToCloudinary(data.avatar);
+        imageUrl = uploadResponse.secure_url;
+      } else {
+        throw new Error("Invalid avatar format");
+      }
 
-//       data.avatar = imageUrl;
-//     } else {
-//       console.log("No file uploaded.");
-//     }
+      data.avatar = imageUrl;
+    } else {
+      console.log("No file uploaded.");
+    }
 
-//     const updatedAccount = await CRMUser.findOneAndUpdate({ _id: id }, data, {
-//       new: true,
-//     });
-//     return updatedAccount;
-//   } catch (error) {
-//     console.log("Error in updating account", error);
-//     return Promise.reject("Unable to update account. Try again later!");
-//   }
-// };
+    const updatedAccount = await CRMUser.findOneAndUpdate({ _id: id }, data, {new: true});
+    return updatedAccount;
+  } catch (error) {
+    console.log("Error in updating account", error);
+    return Promise.reject("Unable to update account. Try again later!");
+  }
+};
 
 // UPDATE PASSWORD
 // crmUserService.updatePassword = async (id, data) => {
