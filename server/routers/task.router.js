@@ -8,6 +8,7 @@ router.get('/get-tasks', taskController.getAllTasks);
 router.get('/get-task/:id', taskController.getTaskById);
 router.put('/update-task/:id',tokenVerification, taskController.updateTask);
 router.put('/update-assignee/:id',tokenVerification, taskController.updateAssignees);
+router.post('/mark-missed', taskController.markMissedTasks);
 // router.delete('/delete-task/:id', tokenVerification, taskController.deleteTask);
 
 module.exports = router;

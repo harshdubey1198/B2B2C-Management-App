@@ -1,7 +1,22 @@
+const Lead = require("../schemas/lead.schema");
 const Task = require("../schemas/task.schema");
 const User = require("../schemas/user.schema");
 
 const taskServices = {}
+
+taskServices.updateLeadStatus = async (leadId) => {
+    const tasks = await Task.find({ leadId })
+    if (!tasks || tasks.length === 0) {
+        await Lead.findByIdAndUpdate(leadId, { status: "Pending" });
+        return;
+    }
+
+    const allCompleted = tasks.every((task) => task.status === "Completed")
+    const allMissed = tasks.every((task) => task.status === "Missed")
+    const anyInProgress = tasks.some((task) => task.status === "In Progress");
+
+}
+
 
 taskServices.createTask = async (body) => {
     const {
@@ -29,10 +44,21 @@ taskServices.createTask = async (body) => {
         if (!userExists) throw new Error(`Invalid AssignedTo User ID: ${userId}`);
     }
     */
+   const lead = await Lead.findOne({_id: leadId})
+   if (!lead) throw new Error("Invalid Lead ID or Lead is deleted.");
 
     // Validate dueDate (optional)
     if (dueDate && new Date(dueDate) < new Date()) {
         throw new Error("Due date must be in the future.");
+    }
+    if(dueDate){
+        const taskDueDate = new Date(dueDate)
+        if(lead.dueDate && taskDueDate > lead.dueDate){
+            throw new Error("Task due date cannot be greater than Lead due date");
+        }
+        if(taskDueDate < new Date()){
+            throw new Error("Task due date must be in the future");
+        }
     }
 
     // Create the task with an array of leadIds
@@ -46,10 +72,10 @@ taskServices.createTask = async (body) => {
     });
 
     const savedTask = await newTask.save();
+    lead.status =  "Assigned"
+    lead.save()
     return savedTask;
 };
-
-
 
 taskServices.getAllTasks = async () => {
     const tasks = await Task.find()
@@ -174,7 +200,26 @@ taskServices.updateAssignees = async (taskId, body) => {
     return updatedTask;
 };
 
+taskServices.markMissedTasks = async () => {
+    const missedTasks = await Task.find({
+        status: { $in: ["Pending", "In Progress"]},
+        dueDate: { $lte: new Date() },
+    }).populate("assignedTo", "firstName lastName email")
 
+    const updates = []
+    for (const task of missedTasks){
+        task.remarks.push({
+            message: `Task missed by ${task.assignedTo.map(user => user.firstName + " " + user.lastName).join(", ")}`,
+            createdAt: new Date(),
+            createdBy: null
+        })
+        task.status = "Missed"
+        updates.push(task.save())
+    }
+
+    await Promise.all(updates)
+    return missedTasks
+}
 
 
 module.exports = taskServices
