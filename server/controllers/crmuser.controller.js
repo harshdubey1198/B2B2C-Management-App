@@ -41,4 +41,13 @@ crmUserController.getAllCrmsUsers = async (req, res) => {
   }
 }
 
+crmUserController.updateCrmsAccount = async (req, res) => {
+  try {
+    const response = await crmUserService.updateCrmsAccount(req.params.id, req.body);
+      return res.status(200).json(createResult("Account updated successfully", response));
+  } catch (error) {
+      return res.status(400).json(createResult(null, null, error.message));
+  }
+}
+
 module.exports = crmUserController
