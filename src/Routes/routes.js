@@ -82,6 +82,7 @@ import CreateLead from "../Pages/CRM/CreateLead.jsx";
 import LeadAnalytics from "../Pages/CRM/LeadAnalytics.jsx";
 import AllTasks from "../Pages/CRM/AllTasks.jsx";
 import CrmUser from "../Pages/CRM/CrmUser.jsx";
+import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -124,6 +125,8 @@ const authProtectedRoutes = [
   {path:"/crm/leads-analytics", component:<LeadAnalytics/>},
   {path:"/crm/all-tasks", component:<AllTasks/>},
   {path:"/crm/crm-users", component:<CrmUser/>},
+  {path:"/crm/user-roles", component:<RoleManagement/>},
+
 
   //  Coming Soon 
   {path:"/clients-portal" , component: <ComingSoon />},

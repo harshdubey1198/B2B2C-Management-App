@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import { getRoles, createCrmUser } from '../../apiServices/service';
 
 function CrmUser() {
+  const [roles, setRoles] = useState([]);
   const [users, setUsers] = useState([]);
   const [modal, setModal] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -10,14 +12,42 @@ function CrmUser() {
     lastName: '',
     email: '',
     mobile: '',
-    role: '',
-    firmId: '66ed1a268e88744db860fe52',
+    roleId: '',  
     isActive: true,
   });
 
+  const fetchRoles = async () => {
+    try {
+      const result = await getRoles();
+      setRoles(result || []);
+      if (!result || result.length === 0) {
+        alert('Roles are not defined yet');
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const createCrmUsers = async (user) => {
+    try {
+      const result = await createCrmUser(user);
+      alert(result.message || 'User saved successfully');
+      fetchRoles();
+      toggleModal();
+      const updatedUsers = [...users, { ...user, id: Date.now() }];
+      setUsers(updatedUsers);
+      localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
+    } catch (error) {
+      alert(error.message || 'Failed to save user');
+    }
+  };
+
+  const handleAddUser = () => {
+    createCrmUsers(newUser);
+  };
+
   useEffect(() => {
-    const storedUsers = JSON.parse(localStorage.getItem('crmUsers')) || [];
-    setUsers(storedUsers);
+    fetchRoles();
   }, []);
 
   const toggleModal = () => {
@@ -27,8 +57,7 @@ function CrmUser() {
       lastName: '',
       email: '',
       mobile: '',
-      role: '',
-      firmId: '66ed1a268e88744db860fe52',
+      roleId: '',
       isActive: true,
     });
   };
@@ -38,11 +67,9 @@ function CrmUser() {
     setNewUser({ ...newUser, [name]: value });
   };
 
-  const handleAddUser = () => {
-    const updatedUsers = [...users, { ...newUser, id: Date.now() }];
-    setUsers(updatedUsers);
-    localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
-    toggleModal();
+  const handleEditUser = (user) => {
+    setNewUser({ ...user, roleId: user.role.id });  
+    setModal(true);
   };
 
   const handleDeleteUser = (id) => {
@@ -50,11 +77,7 @@ function CrmUser() {
     setUsers(updatedUsers);
     localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
   };
-  const handleEditUser = (user) => {
-    setNewUser(user);
-    setModal(true);
-  };
-  
+
   const handleUpdateUser = () => {
     const updatedUsers = users.map((user) =>
       user.id === newUser.id ? { ...newUser } : user
@@ -63,7 +86,7 @@ function CrmUser() {
     localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
     toggleModal();
   };
-  
+
   return (
     <React.Fragment>
       <div className='page-content'>
@@ -77,52 +100,51 @@ function CrmUser() {
               Add User
             </Button>
           </div>
-        <div className="table-responsive">
-          <Table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Role</th>
-                {/* <th>Firm ID</th> */}
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr key={user.id}>
-                  <td>{index + 1}</td>
-                  <td>{user.firstName}</td>
-                  <td>{user.lastName}</td>
-                  <td>{user.email}</td>
-                  <td>{user.mobile}</td>
-                  <td>{user.role.toUpperCase()}</td>
-                  <td>
-                    {user.isActive ? 'Active' : 'Inactive'}
-                  </td>
-                  <td className='flex flex-wrap'>
-                    <i className="bx bx-edit"   style={{ fontSize: "22px", fontWeight: "bold",cursor: "pointer",marginLeft: "5px"}} onClick={() => handleEditUser(user)}></i>
-                    <i className="bx bx-trash " style={{ fontSize: "22px", fontWeight: "bold",cursor: "pointer",marginLeft: "5px"}} onClick={() => handleDeleteUser(user.id)}></i>
-                  </td>
-                </tr>
-              ))}
-              {users.length === 0 && (
+          <div className="table-responsive">
+            <Table>
+              <thead>
                 <tr>
-                  <td colSpan="9" className="text-center">
-                    No users available.
-                  </td>
+                  <th>#</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                  <th>Email</th>
+                  <th>Mobile</th>
+                  {/* <th>Role</th> */}
+                  <th>Status</th>
+                  <th>Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </Table>
-        </div>
+              </thead>
+              <tbody>
+                {users.map((user, index) => (
+                  <tr key={user.id}>
+                    <td>{index + 1}</td>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.mobile}</td>
+                    {/* <td>{user.roleName}</td> */}
+                    <td>
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </td>
+                    <td className='flex flex-wrap'>
+                      <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleEditUser(user)}></i>
+                      <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteUser(user.id)}></i>
+                    </td>
+                  </tr>
+                ))}
+                {users.length === 0 && (
+                  <tr>
+                    <td colSpan="9" className="text-center">
+                      No users available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </div>
           <Modal isOpen={modal} toggle={toggleModal}>
-          <ModalHeader toggle={toggleModal}>
-            {newUser.id ? "Update User" : "Add New User"}
+            <ModalHeader toggle={toggleModal}>
+              {newUser.id ? "Update User" : "Add New User"}
             </ModalHeader>
             <ModalBody>
               <input
@@ -158,33 +180,35 @@ function CrmUser() {
                 className="form-control mb-2"
               />
               <select
-                    name="isActive"
-                    value={newUser.isActive}
-                    onChange={(e) =>
-                        setNewUser({ ...newUser, isActive: JSON.parse(e.target.value) })
-                    }
-                    className="form-control mb-2"
-                    >
-                    <option value={true}>Active</option>
-                    <option value={false}>Inactive</option>
-                 </select>
+                name="isActive"
+                value={newUser.isActive}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, isActive: JSON.parse(e.target.value) })
+                }
+                className="form-control mb-2"
+              >
+                <option value={true}>Active</option>
+                <option value={false}>Inactive</option>
+              </select>
 
               <select
-                name="role"
-                value={newUser.role}
+                name="roleId"  
+                value={newUser.roleId}
                 onChange={handleInputChange}
                 className="form-control mb-2"
               >
                 <option value="">Select Role</option>
-                <option value="asm">ASM</option>
-                <option value="sm">SM</option>
-                <option value="telecaller">Telecaller</option>
+                {roles.map((role) => (
+                  <option key={role._id} value={role._id}>
+                    {role.roleName}
+                  </option>
+                ))}
               </select>
             </ModalBody>
             <ModalFooter>
-            <Button color="primary" onClick={newUser.id ? handleUpdateUser : handleAddUser}>
+              <Button color="primary" onClick={newUser.id ? handleUpdateUser : handleAddUser}>
                 {newUser.id ? "Update User" : "Add User"}
-                </Button>
+              </Button>
 
               <Button color="secondary" onClick={toggleModal}>
                 Cancel

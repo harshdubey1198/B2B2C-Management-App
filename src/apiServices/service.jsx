@@ -3,6 +3,8 @@ import constant from './constant';
 
 const token = JSON.parse(localStorage.getItem('authUser'))?.token;
 
+const creatorId = JSON.parse(localStorage.getItem('authUser'))?.response?._id;
+
 const axiosInstance = axios.create({
     baseURL: `${constant.appBaseUrl}/api/`,
     headers: {
@@ -117,6 +119,64 @@ export const updateTaskOrLead = async (id, updateData) => {
       throw error;
     }
   };
+
+//   role management
+export const getRoles = async () => {
+    try {
+        const response = await axiosInstance.get('/role/get-roles');
+        const filteredRoles = response.data.data.filter(role => role.deleted_at === null);
+        // console.log(filteredRoles);
+        return filteredRoles;
+    } catch (error) {
+        return error;
+    }
+};
+
+
+
+// to create role
+export const createRole = async (role) => {
+    try {
+        const response = await axiosInstance.post('/role/create-role', role);
+        return response.data;
+    } catch (error) {
+        if (error.response) {
+            throw new Error(error.response.data.message || 'Failed to create role');
+        }
+        throw new Error('Network error or server not responding');
+    }
+};
+
+// update role
+export const updateRoleById = async (id, role) => {
+    try {
+        const response = await axiosInstance.put(`/role/update-role/${id}`, role);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+
+// to delete role
+export const deleteRoleById = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/role/delete-role/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to create crm users 
+    export const createCrmUser = async (user) => {
+        try {
+            const response = await axiosInstance.post(`/crmuser/create-crmsuser/${creatorId}`, user);
+            return response.data;
+        } catch (error) {
+            return error;
+        }
+    }
 
 
 export default axiosInstance;
