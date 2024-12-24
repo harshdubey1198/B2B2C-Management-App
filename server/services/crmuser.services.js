@@ -84,8 +84,21 @@ crmUserService.loginCrmsUsers = async (body) => {
         if(crmuser.isActive === false){
             throw new Error("Account is not active");
         }
+        const userData = await CRMUser.findOne({ _id: crmuser._id })
+            .select("-password") // Exclude the password field
+            .populate({
+                path: "roleId",
+                select: "roleName" // Select only the roleName field
+            });
+
+        // Extract the roleName and attach it to the response
+        const user = {
+            ...userData.toObject(),
+            roleId: userData.roleId?._id || null, // Include roleId
+            roleName: userData.roleId?.roleName || null // Include roleName
+        };
         // Return user data without password
-        return await CRMUser.findOne({ _id: crmuser._id }).select("-password").populate("roleId");
+        return user;
 
     } catch (error) {
         console.error('Login failed:', error);
