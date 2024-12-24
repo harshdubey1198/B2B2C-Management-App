@@ -81,6 +81,9 @@ crmUserService.loginCrmsUsers = async (body) => {
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
+        if(crmuser.isActive === false){
+            throw new Error("Account is not active");
+        }
         // Return user data without password
         return await CRMUser.findOne({ _id: crmuser._id }).select("-password").populate("roleId");
 
