@@ -81,10 +81,12 @@ function CrmUser() {
   };
 
   const handleEditUser = (user) => {
-    setNewUser({ ...user, roleId: user.role._id });  
+    setNewUser({
+      ...user,
+      roleId: user.role ? user.role._id : '', 
+    });
     setModal(true);
   };
-
   const handleDeleteUser = (_id) => {
     const updatedUsers = users.filter((user) => user._id !== _id);
     setUsers(updatedUsers);

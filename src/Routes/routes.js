@@ -231,6 +231,7 @@ const publicRoutes = [
   { path: "/auth", component: <Auth /> },
   { path: "/logout", component: <Logout /> },
   { path: "/login", component: <Login1 /> },
+  { path: "/crm/login", component: <Login1 /> },
   { path: "/forgot-password", component: <RecoverPassword /> },
   { path: "/recover-password", component: <RecoverPassword /> },
   { path: "/register", component: <Register /> },

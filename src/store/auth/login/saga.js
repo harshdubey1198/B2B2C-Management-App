@@ -31,7 +31,17 @@ function* loginUser({ payload: { user, history } }) {
 }
 
 function fetchLogin(user) {
-  return fetch(`${process.env.REACT_APP_URL}/auth/login`, {
+  let apiUrl = `${process.env.REACT_APP_URL}/auth/login`;
+  const currentPath = window.location.pathname;
+  console.log("Current path:", currentPath);
+
+  if (currentPath === "/crm/login") {
+    apiUrl = `${process.env.REACT_APP_URL}/crm/login`;
+  } else if (currentPath === "/admin/login") {
+    apiUrl = `${process.env.REACT_APP_URL}/auth/admin/login`;
+  }
+
+  return fetch(apiUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
