@@ -101,90 +101,72 @@ const getRandomColor = () => {
 
   return (
     <React.Fragment>
-      <div className='page-content'>
-        <Breadcrumbs title='CRM' breadcrumbItem='All Tasks' />
-        <div className='container-fluid'>
-          <div className='row'>
-            <div className='col-12'>
-              <div className='card'>
-                <div className='card-body'>
-                  <h4 className='card-title'>All Tasks</h4>
-                  {message && <p className='text-danger'>{message}</p>}
-                  <div className='table-responsive'>
-                    <table className='table table-centered table-nowrap table-hover mb-0'>
-                      <thead>
-                        <tr>
-                          <th scope='col'>#</th>
-                          <th scope='col'>Lead Names</th>
-                          <th scope='col'>Assigned By</th>
-                          <th scope='col'>Due Date</th>
-                          <th scope='col'>Status</th>
-                          <th scope='col'>Actions</th>
-                          {/* <th scope='col'>Reassign</th> */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {tasks.map((task, index) =>
-                        task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0
-                            ? task.leadIds.map((lead, leadIndex) => (
-                                <tr
-                                key={`${task._id}-${leadIndex}`}
-                                style={{
-                                    backgroundColor: getLeadColor(task.leadIds),
-                                }}
-                                >
-                                <td>{index + 1}</td>
-                                <td>{lead.firstName} {lead.lastName}</td>
-                                <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
-                                <td>{new Date(task.dueDate).toLocaleString()}</td>
-                                <td>{task.status}</td>
-                                {/* <td>
-                                    <button
-                                    className='btn btn-primary btn-sm'
-                                    onClick={() => handleUpdate(task)}
-                                    >
-                                    Update
-                                    </button>
-                                </td> */}
-                                <td>{task.status !== "Completed" ? <button className='btn btn-primary btn-sm'>Reassign Task</button> : ""}</td>
-                                </tr>
-                            ))
-                            : (
-                                <tr
-                                key={task._id}
-                                style={{
-                                    backgroundColor: getLeadColor(task.leadIds),
-                                }}
-                                >
-                                <td>{index + 1}</td>
-                                <td>
-                                    {task.leadIds?.firstName || ''} {task.leadIds?.lastName || ''}
-                                </td>
-                                <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
-                                <td>{new Date(task.dueDate).toLocaleString()}</td>
-                                <td>{task.status}</td>
-                                {/* <td>
-                                    <button
-                                    className='btn btn-primary btn-sm'
-                                    onClick={() => handleUpdate(task)}
-                                    >
-                                    Update
-                                    </button>
-                                </td> */}
-                                <td>{task.status !== "Completed" ? <button className='btn btn-primary btn-sm'>Reassign Task</button> : ""}</td>
-                                </tr>
-                            )
-                        )}
-                      </tbody>
-                    </table>
-                    {tasks.length === 0 && <p className='text-muted'>No tasks to display.</p>}
-                  </div>
-                </div>
-              </div>
+      <div className="page-content">
+  <Breadcrumbs title="CRM" breadcrumbItem="All Tasks" />
+  <div className="container-fluid">
+    <div className="row">
+      <div className="col-12">
+        <div className="card">
+          <div className="card-body">
+            <h4 className="card-title">All Tasks</h4>
+            {message && <p className="text-danger">{message}</p>}
+            <div className="table-responsive">
+              <table className="table table-centered table-nowrap table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Lead Names</th>
+                    <th scope="col">Assigned By</th>
+                    <th scope="col">Due Date</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tasks.length > 0 ? (
+                    tasks.map((task, index) => (
+                      <tr key={task._id}>
+                        <td>{index + 1}</td>
+                        <td>
+                          {task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0
+                            ? task.leadIds
+                                .slice(0, 2) 
+                                .map((lead) => `${lead.firstName} ${lead.lastName}`)
+                                .join(", ") + (task.leadIds.length > 2 ? "..." : "") 
+                            : "No Leads Assigned"}
+                        </td>
+                        <td>
+                          {task.assignedBy?.firstName} {task.assignedBy?.lastName}
+                        </td>
+                        <td>{new Date(task.dueDate).toLocaleString()}</td>
+                        <td>{task.status}</td>
+                        <td>
+                          <button
+                            className="btn btn-primary btn-sm"
+                            // onClick={() => handleViewTask(task)}
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-muted">
+                        No tasks to display.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
 
       <Modal isOpen={modal} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>Update Lead Details</ModalHeader>
