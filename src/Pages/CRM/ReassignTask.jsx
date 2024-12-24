@@ -26,15 +26,15 @@ function ReassignTask() {
 
   const toggleModal = () => setModal(!modal);
 
-  const handleUpdate = (task) => {
-    if (task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0) {
-      setSelectedLead(task.leadIds[0]);
-      setNewNote('');
-      toggleModal();
-    } else {
-      alert('No lead found for this task');
-    }
-  };
+  // const handleUpdate = (task) => {
+  //   if (task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0) {
+  //     setSelectedLead(task.leadIds[0]);
+  //     setNewNote('');
+  //     toggleModal();
+  //   } else {
+  //     alert('No lead found for this task');
+  //   }
+  // };
   
   const handleNoteSubmit = async () => {
     if (!newNote) {
@@ -120,7 +120,7 @@ const getRandomColor = () => {
                           <th scope='col'>Due Date</th>
                           <th scope='col'>Status</th>
                           <th scope='col'>Actions</th>
-                          <th scope='col'>Reassign</th>
+                          {/* <th scope='col'>Reassign</th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -138,14 +138,14 @@ const getRandomColor = () => {
                                 <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
                                 <td>{new Date(task.dueDate).toLocaleString()}</td>
                                 <td>{task.status}</td>
-                                <td>
+                                {/* <td>
                                     <button
                                     className='btn btn-primary btn-sm'
                                     onClick={() => handleUpdate(task)}
                                     >
                                     Update
                                     </button>
-                                </td>
+                                </td> */}
                                 <td>{task.status !== "Completed" ? <button className='btn btn-primary btn-sm'>Reassign Task</button> : ""}</td>
                                 </tr>
                             ))
@@ -163,14 +163,15 @@ const getRandomColor = () => {
                                 <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
                                 <td>{new Date(task.dueDate).toLocaleString()}</td>
                                 <td>{task.status}</td>
-                                <td>
+                                {/* <td>
                                     <button
                                     className='btn btn-primary btn-sm'
                                     onClick={() => handleUpdate(task)}
                                     >
                                     Update
                                     </button>
-                                </td>
+                                </td> */}
+                                <td>{task.status !== "Completed" ? <button className='btn btn-primary btn-sm'>Reassign Task</button> : ""}</td>
                                 </tr>
                             )
                         )}
