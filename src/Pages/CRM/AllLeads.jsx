@@ -12,11 +12,13 @@ import {
 } from "../../apiServices/service";
 import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
+import LeadImportModal from "../../Modal/crm-modals/leadImportModal";  
 
 function AllLeads() {
     const navigate = useNavigate();
     const [assignModal, setAssignModal] = useState(false);
     const [leads, setLeads] = useState([]);
+    const [importModal, setImportModal] = useState(false); 
     const [message, setMessage] = useState("");
     const [modal, setModal] = useState(false);
     const [selectedLead, setSelectedLead] = useState(null);
@@ -49,6 +51,8 @@ function AllLeads() {
         }
         setModal(!modal);
     };
+    const toggleImportModal = () => setImportModal(!importModal);
+
     const toggleAssignModal = () => setAssignModal(!assignModal);
 
     const handleLeadSelection = (leadId) => {
@@ -88,25 +92,6 @@ function AllLeads() {
         }
     };
 
-    const handleAssignLeads = async () => {
-        if (!employeeId) {
-            setMessage("Please select an employee to assign leads.");
-            return;
-        }
-
-        try {
-            const result = await assignLeadsToEmployee({
-                employeeId,
-                leadIds: selectedLeads,
-            });
-            setMessage(result.message);
-            fetchLeads();
-            setSelectedLeads([]);
-        } catch (error) {
-            setMessage(error.message);
-        }
-    };
-
     const handleUpdateLead = async (updatedLead) => {
         try {
             const result = await updateLeadById(updatedLead._id, updatedLead);
@@ -131,8 +116,8 @@ function AllLeads() {
                     <Button color="primary" onClick={() => navigate("/crm/create-lead")}>
                         Add Lead
                     </Button>
-                    <Button color="primary">Import Leads</Button>
-                    <Button color="primary">Export Leads</Button>
+                    <Button color="primary" onClick={toggleImportModal}>Import Leads</Button>
+                    {/* <Button color="primary">Export Leads</Button> */}
                     <Button color="primary" onClick={() => handleDeleteLeads(null)}>
                         Delete Selected Leads
                     </Button>
@@ -244,6 +229,7 @@ function AllLeads() {
                     selectedLeads={selectedLeads}
                     fetchLeads={fetchLeads}
                 />
+                <LeadImportModal isOpen={importModal} toggle={toggleImportModal} />
             </div>
         </React.Fragment>
     );

@@ -197,5 +197,20 @@ export const getCrmUsers = async () => {
     }
 }; 
 
+// to upload leads by xlsx , csv , json
+export const uploadLeads = async (data) => {
+    try {
+        const response = await axiosInstance.post('/lead/importLead', data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
+
 
 export default axiosInstance;

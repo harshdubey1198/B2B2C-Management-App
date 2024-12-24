@@ -93,7 +93,7 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                 <Input
                   type="select"
                   name="status"
-                  id="status"
+                  // id="status"
                   value={formData.status || ""}
                   onChange={handleChange}
                   disabled={mode === "view"}
