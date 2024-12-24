@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { getRoles, createCrmUser } from '../../apiServices/service';
+import { getRoles, createCrmUser, getCrmUsers } from '../../apiServices/service';
 
 function CrmUser() {
   const [roles, setRoles] = useState([]);
@@ -42,12 +42,25 @@ function CrmUser() {
     }
   };
 
+  const fetchCrmUsers = async () => {
+    try {
+      const result = await getCrmUsers();
+      setUsers(result.data || []);
+
+    }
+    catch (error) {
+      alert(error.message || 'Failed to get users');
+    }
+  };
+
+
   const handleAddUser = () => {
     createCrmUsers(newUser);
   };
 
   useEffect(() => {
     fetchRoles();
+    fetchCrmUsers();
   }, []);
 
   const toggleModal = () => {
@@ -68,19 +81,19 @@ function CrmUser() {
   };
 
   const handleEditUser = (user) => {
-    setNewUser({ ...user, roleId: user.role.id });  
+    setNewUser({ ...user, roleId: user.role._id });  
     setModal(true);
   };
 
-  const handleDeleteUser = (id) => {
-    const updatedUsers = users.filter((user) => user.id !== id);
+  const handleDeleteUser = (_id) => {
+    const updatedUsers = users.filter((user) => user._id !== _id);
     setUsers(updatedUsers);
     localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
   };
 
   const handleUpdateUser = () => {
     const updatedUsers = users.map((user) =>
-      user.id === newUser.id ? { ...newUser } : user
+      user._id === newUser._id ? { ...newUser } : user
     );
     setUsers(updatedUsers);
     localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
@@ -109,6 +122,7 @@ function CrmUser() {
                   <th>Last Name</th>
                   <th>Email</th>
                   <th>Mobile</th>
+                  <th>Role</th>
                   {/* <th>Role</th> */}
                   <th>Status</th>
                   <th>Actions</th>
@@ -116,12 +130,13 @@ function CrmUser() {
               </thead>
               <tbody>
                 {users.map((user, index) => (
-                  <tr key={user.id}>
+                  <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.firstName}</td>
                     <td>{user.lastName}</td>
                     <td>{user.email}</td>
                     <td>{user.mobile}</td>
+                    <td>{user?.roleId?.roleName}</td>
                     {/* <td>{user.roleName}</td> */}
                     <td>
                       {user.isActive ? 'Active' : 'Inactive'}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
+import TaskAssigner from "../../Modal/crm-modals/taskAssigner";
 import {
     getAllLeads,
     getLeadById,
@@ -14,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 function AllLeads() {
     const navigate = useNavigate();
+    const [assignModal, setAssignModal] = useState(false);
     const [leads, setLeads] = useState([]);
     const [message, setMessage] = useState("");
     const [modal, setModal] = useState(false);
@@ -47,6 +49,7 @@ function AllLeads() {
         }
         setModal(!modal);
     };
+    const toggleAssignModal = () => setAssignModal(!assignModal);
 
     const handleLeadSelection = (leadId) => {
         setSelectedLeads((prevSelectedLeads) => {
@@ -132,6 +135,9 @@ function AllLeads() {
                     <Button color="primary">Export Leads</Button>
                     <Button color="primary" onClick={() => handleDeleteLeads(null)}>
                         Delete Selected Leads
+                    </Button>
+                    <Button color="primary" onClick={toggleAssignModal}>
+                        Assign Leads
                     </Button>
                 </div>
                 <div className="table-responsive">
@@ -231,6 +237,12 @@ function AllLeads() {
                     lead={selectedLead}
                     loading={loading}
                     onUpdate={handleUpdateLead}
+                />
+                <TaskAssigner
+                    isOpen={assignModal}
+                    toggle={toggleAssignModal}
+                    selectedLeads={selectedLeads}
+                    fetchLeads={fetchLeads}
                 />
             </div>
         </React.Fragment>
