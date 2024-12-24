@@ -14,5 +14,6 @@ router.get('/getnotes-lead/:id', leadController.getNotes);
 router.put('/updatenotes-lead/:id', tokenVerification, leadController.updateNotesToLead);
 router.delete('/deletenotes-lead/:id', tokenVerification, leadController.deleteNotesToLead);
 router.post('/leads/filter', leadController.filteredLeads);
+router.post('/importLead', leadController.importLeads);
 
 module.exports = router;

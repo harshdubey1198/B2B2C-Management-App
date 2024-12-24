@@ -1,4 +1,6 @@
 const leadService = require("../services/lead.services");
+const { upload } = require("../utils/multer");
+const multer = require("multer");
 const { createResult } = require("../utils/utills");
 
 const leadController = {}
@@ -12,6 +14,44 @@ leadController.createLead = async (req,res) => {
         return res.status(500).json(createResult(null, null, error.message ));
     }
 }
+
+leadController.importLeads = async (req, res) => {
+    upload(req, res, async function (err) {
+      try {
+        if (err instanceof multer.MulterError) {
+          return res
+            .status(400)
+            .json(createResult(null, null, `Multer error: ${err.message}`));
+        } else if (err) {
+          return res
+            .status(400)
+            .json(createResult(null, null, `File upload error: ${err.message}`));
+        }
+  
+        // Validate file existence
+        if (!req.files || !req.files.file || req.files.file.length === 0) {
+          return res
+            .status(400)
+            .json(createResult(null, null, "No file uploaded"));
+        }
+  
+        // Process the CSV file (buffer) in the service
+        const leads = await leadService.importLeads(req.files.file[0].buffer);
+  
+        return res.status(200).json(
+          createResult("Leads imported successfully", {
+            totalLeads: leads.length,
+            leads,
+          })
+        );
+      } catch (error) {
+        console.error("Error importing leads:", error.message);
+        return res
+          .status(500)
+          .json(createResult(null, null, error.message || "Internal Server Error"));
+      }
+    });
+};
 
 leadController.getAllLeads = async (req,res) => {
     try {
@@ -123,6 +163,6 @@ leadController.filteredLeads = async (req, res) => {
       console.error("Error fetching filtered leads:", error.message);
       return res.status(500).json(createResult(null, null, error.message));
     }
-  };
+};
   
 module.exports = leadController

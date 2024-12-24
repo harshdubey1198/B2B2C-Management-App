@@ -1,4 +1,5 @@
 const Lead = require("../schemas/lead.schema");
+const csvtojson = require('csvtojson');
 
 const leadService = {};
 
@@ -41,6 +42,35 @@ leadService.createLead = async (body) => {
 
   await newLead.save();
   return newLead;
+};
+
+leadService.importLeads = async (fileBuffer) => {
+    try {
+      // Parse the CSV buffer into JSON
+      const leads = await csvtojson().fromString(fileBuffer.toString());
+  
+      // Validate and save leads
+    //   const validLeads = leads.filter((lead) => {
+    //     // Add any custom validations if necessary
+    //     return Object.values(lead).every((value) => value && value.trim() !== "");
+    //   });
+  
+    //   if (validLeads.length === 0) {
+    //     throw new Error("No valid leads found in the file.");
+    //   }
+
+    if (leads.length === 0) {
+        throw new Error("No data found in the file.");
+    }
+  
+      // Insert valid leads into the database
+      const savedLeads = await Lead.insertMany(leads);
+  
+      return savedLeads;
+    } catch (error) {
+      console.error("Error processing leads:", error.message);
+      throw new Error(error.message || "Failed to process leads");
+    }
 };
 
 // leadService.getAllLeads = async () => {
