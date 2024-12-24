@@ -95,7 +95,7 @@ crmUserService.loginCrmsUsers = async (body) => {
         const user = {
             ...userData.toObject(),
             roleId: userData.roleId?._id || null, // Include roleId
-            roleName: userData.roleId?.roleName || null // Include roleName
+            role: userData.roleId?.roleName || null // Include roleName
         };
         // Return user data without password
         return user;

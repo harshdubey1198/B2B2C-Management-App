@@ -36,7 +36,7 @@ function fetchLogin(user) {
   console.log("Current path:", currentPath);
 
   if (currentPath === "/crm/login") {
-    apiUrl = `${process.env.REACT_APP_URL}/crm/login`;
+    apiUrl = `${process.env.REACT_APP_URL}/crmuser/login-crmsuser`;
   } else if (currentPath === "/admin/login") {
     apiUrl = `${process.env.REACT_APP_URL}/auth/admin/login`;
   }

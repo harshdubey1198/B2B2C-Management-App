@@ -11,7 +11,7 @@ const Sidebar = (props) => {
   const ref = useRef();
   const metisMenuRef = useRef();
 
-  const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || 'default';
+  const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || JSON.parse(localStorage.getItem('authUser'))?.response?.roleId?.roleName;
   const sidebarItems = userRolesSidebarData(role);
 
   const activateParentDropdown = useCallback((item) => {
@@ -72,10 +72,10 @@ const Sidebar = (props) => {
     return () => metisMenu.dispose();
   }, [activeMenu]);
 
-  useEffect(() => {
-    // Recalculate SimpleBar on route change
-    ref.current.recalculate();
-  }, [props.router.location.pathname]);
+  // useEffect(() => {
+  //   // Recalculate SimpleBar on route change
+  //   ref.current.recalculate();
+  // }, [props.router.location.pathname]);
 
   function scrollElement(item) {
     if (item) {

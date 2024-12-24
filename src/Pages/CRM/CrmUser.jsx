@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { getRoles, createCrmUser, getCrmUsers } from '../../apiServices/service';
+import { getRoles, createCrmUser, getCrmUsers, updateCrmUser } from '../../apiServices/service';
+import { toast } from 'react-toastify';
 
 function CrmUser() {
   const [roles, setRoles] = useState([]);
@@ -31,7 +32,8 @@ function CrmUser() {
   const createCrmUsers = async (user) => {
     try {
       const result = await createCrmUser(user);
-      alert(result.message || 'User saved successfully');
+      // alert(result.message || 'User saved successfully');
+      toast.success(result.message || 'User saved successfully');
       fetchRoles();
       toggleModal();
       const updatedUsers = [...users, { ...user, id: Date.now() }];
@@ -73,7 +75,12 @@ function CrmUser() {
       roleId: '',
       isActive: true,
     });
+    fetchRoles();
+    fetchCrmUsers();
   };
+  // if (!modal){
+  //   fetchCrmUsers();
+  // }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -83,24 +90,32 @@ function CrmUser() {
   const handleEditUser = (user) => {
     setNewUser({
       ...user,
-      roleId: user.role ? user.role._id : '', 
+      roleId: user.role ? user.role._id : '',
     });
     setModal(true);
   };
+  
   const handleDeleteUser = (_id) => {
     const updatedUsers = users.filter((user) => user._id !== _id);
     setUsers(updatedUsers);
     localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
   };
 
-  const handleUpdateUser = () => {
-    const updatedUsers = users.map((user) =>
-      user._id === newUser._id ? { ...newUser } : user
-    );
-    setUsers(updatedUsers);
-    localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
-    toggleModal();
+  const handleUpdateUser = async () => {
+    try {
+      const result = await updateCrmUser(newUser._id, newUser);
+      toast.success(result.message || 'User updated successfully');
+      const updatedUsers = users.map((user) =>
+        user._id === newUser._id ? { ...newUser } : user
+      );
+      setUsers(updatedUsers);
+      localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
+      toggleModal();
+    } catch (error) {
+      alert(error.message || 'Failed to update user');
+    }
   };
+  
 
   return (
     <React.Fragment>
@@ -145,7 +160,7 @@ function CrmUser() {
                     </td>
                     <td className='flex flex-wrap'>
                       <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleEditUser(user)}></i>
-                      <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteUser(user.id)}></i>
+                      {/* <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteUser(user.id)}></i> */}
                     </td>
                   </tr>
                 ))}
@@ -161,7 +176,7 @@ function CrmUser() {
           </div>
           <Modal isOpen={modal} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>
-              {newUser.id ? "Update User" : "Add New User"}
+              {newUser._id ? "Update User" : "Add New User"}
             </ModalHeader>
             <ModalBody>
               <input
@@ -223,8 +238,8 @@ function CrmUser() {
               </select>
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" onClick={newUser.id ? handleUpdateUser : handleAddUser}>
-                {newUser.id ? "Update User" : "Add User"}
+              <Button color="primary" onClick={newUser._id ? handleUpdateUser : handleAddUser}>
+                {newUser._id ? "Update User" : "Add User"}
               </Button>
 
               <Button color="secondary" onClick={toggleModal}>

@@ -358,7 +358,46 @@ export const masterAdminSidebarData = () => [
       url: "/profile-settings",
     }
   ];
- 
+  
+  export const asmSidebarData = () => [
+    {
+      Label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+    },
+    {
+      Label : "CRM Leads",
+      icon : "mdi mdi-account-multiple-outline",
+      subItem : [
+        {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
+        {sublabel:"All Leads",link:"/crm/all-leads"},
+        {sublabel:"New Lead",link:"/crm/create-lead"},
+        {sublabel:"Analytics",link:"/crm/leads-analytics"},
+        {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
+      ]
+    }
+  ];
+
+  export const salesManagerSidebarData = () => [
+    {
+      label: "Dashboard",
+      icon: "mdi mdi-home-variant-outline",
+      url: "/dashboard",
+    },
+    {
+      label : "CRM Leads",
+      icon : "mdi mdi-account-multiple-outline",
+      subItem : [
+        {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
+        {sublabel:"All Leads",link:"/crm/all-leads"},
+        {sublabel:"New Lead",link:"/crm/create-lead"},
+        {sublabel:"Analytics",link:"/crm/leads-analytics"},
+        {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
+
+      ]
+    }
+  ];
+
   export const telecallerSidebarData =() =>[
 
     {
@@ -380,7 +419,7 @@ export const masterAdminSidebarData = () => [
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
-      url: "/profile-settings",
+      url: "/maintenance",
     }
    
     
@@ -435,7 +474,7 @@ export const masterAdminSidebarData = () => [
         return readOnlySidebarData();
       case 'employee':
         return generalEmployeeSidebarData();
-      case 'telecaller':
+      case 'Telecaller':
         return telecallerSidebarData();
 
         case 'Viewer':

@@ -1,19 +1,42 @@
-import React, { useState } from "react";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input, } from "reactstrap";
-import { assignLeadsToEmployee } from "../../apiServices/service";
+import React, { useEffect, useState } from "react";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from "reactstrap";
+import { assignLeadsToEmployee, getCrmUsers } from "../../apiServices/service";
 import { userId } from "../../utils/axiosInstance";
+import { toast } from "react-toastify";
+
 const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
   const [assignedTo, setAssignedTo] = useState("");
+  const [users, setUsers] = useState([]);
   const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleAssign = async () => {
-    if (!assignedTo || !dueDate || selectedLeads.length === 0) {
-      setMessage("All fields are required");
+    // Validate inputs before proceeding with task assignment
+    if (selectedLeads.length === 0) {
+      setMessage("No leads selected");
+      toast.error("No leads selected");
       return;
     }
+
+    // validate due date must be in future
+    const today = new Date();
+    const selectedDate = new Date(dueDate);
+    if (selectedDate < today) {
+      setMessage("Due date must be in future");
+      toast.error("Due date must be in future");
+      return;
+    }
+
+
+    if (!assignedTo || !dueDate || selectedLeads.length === 0) {
+      setMessage("All fields are required");
+      toast.error("All fields are required");
+      return;
+    }
+
+
     setLoading(true);
     try {
       const taskData = {
@@ -30,16 +53,34 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
           },
         ],
       };
+
       const response = await assignLeadsToEmployee(taskData);
       setMessage(response.message);
-      fetchLeads();
-      toggle();
+      fetchLeads(); // Fetch updated leads
+      toast.success(response.message || "Task successfully assigned");
+      toggle(); // Close modal
+      selectedLeads.length = 0; 
     } catch (error) {
       setMessage(error.message || "Error assigning task.");
+      toast.error(error.message || "Error assigning task.");
     } finally {
       setLoading(false);
     }
   };
+
+  const fetchCrmUsers = async () => {
+    try {
+      const result = await getCrmUsers();
+      setUsers(result.data || []);
+      console.log(result.data);
+    } catch (error) {
+      alert(error.message || "Failed to get users");
+    }
+  };
+
+  useEffect(() => {
+    fetchCrmUsers();
+  }, []);
 
   return (
     <Modal isOpen={isOpen} toggle={toggle} centered>
@@ -47,14 +88,7 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
       <ModalBody>
         <Form>
           <FormGroup>
-            <Label for="assignedTo">Assign to Employee </Label>
-            {/* <Input
-              type="text"
-              name="assignedTo"
-              id="assignedTo"
-              value={assignedTo}
-              onChange={(e) => setAssignedTo(e.target.value)}
-            /> */}
+            <Label for="assignedTo">Assign to Employee</Label>
             <Input
               type="select"
               name="assignedTo"
@@ -62,13 +96,15 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.target.value)}
             >
-                <option value="">Select Employee</option>
-                <option value="60f6b5b9d1c3c40015a6a3a1">Employee 1</option>
-                <option value="60f6b5b9d1c3c40015a6a3a2">Employee 2</option>
-                <option value="60f6b5b9d1c3c40015a6a3a3">Employee 3</option>
-                <option value="60f6b5b9d1c3c40015a6a3a4">Employee 4</option>
-                </Input>
+              <option value="">Select Employee</option>
+              {users.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </Input>
           </FormGroup>
+
           <FormGroup>
             <Label for="priority">Priority</Label>
             <Input
@@ -83,6 +119,7 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
               <option>High</option>
             </Input>
           </FormGroup>
+
           <FormGroup>
             <Label for="dueDate">Due Date</Label>
             <Input
@@ -93,8 +130,8 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
               onChange={(e) => setDueDate(e.target.value)}
             />
           </FormGroup>
-          {message && <p className="text-danger">{message}</p>}
         </Form>
+        {/* {message && toast.error(message)} */}
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={handleAssign} disabled={loading}>

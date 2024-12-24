@@ -177,7 +177,16 @@ export const deleteRoleById = async (id) => {
             return error;
         }
     }
-
+// to update crm users
+    export const updateCrmUser = async (userId, user) => {
+        try {
+          const response = await axiosInstance.put(`/crmuser/update-crmsuser/${userId}`, user);
+          return response.data;
+        } catch (error) {
+          return error;
+        }
+      };
+      
 // to get crm users
 export const getCrmUsers = async () => {
     try {
