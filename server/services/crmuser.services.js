@@ -136,22 +136,22 @@ crmUserService.updateCrmsAccount = async (id, data) => {
 };
 
 // UPDATE PASSWORD
-crmUserService.updatePassword = async (id, data) => {
-  const CRMUser = await CRMUser.findById(id);
-  if (!CRMUser) {
-    throw new Error("User not found");
-  }
-  const isPasswordValid = await PasswordService.comparePassword(
-    data.password,
-    CRMUser.password
-  );
-  if (!isPasswordValid) {
-    throw new Error("Current Password Doesn't Match");
-  }
-  const newPassword = await PasswordService.passwordHash(data.newPassword);
-  CRMUser.password = newPassword;
-  await CRMUser.save();
-  return CRMUser;
-};
+// crmUserService.updatePassword = async (id, data) => {
+//   const CRMUser = await CRMUser.findById(id);
+//   if (!CRMUser) {
+//     throw new Error("User not found");
+//   }
+//   const isPasswordValid = await PasswordService.comparePassword(
+//     data.password,
+//     CRMUser.password
+//   );
+//   if (!isPasswordValid) {
+//     throw new Error("Current Password Doesn't Match");
+//   }
+//   const newPassword = await PasswordService.passwordHash(data.newPassword);
+//   CRMUser.password = newPassword;
+//   await CRMUser.save();
+//   return CRMUser;
+// };
 
 module.exports = crmUserService;
