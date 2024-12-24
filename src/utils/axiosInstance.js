@@ -41,3 +41,6 @@ axiosInstance.interceptors.response.use(
 );
 
 export default axiosInstance;
+
+
+export const userId = JSON.parse(localStorage.getItem('authUser'))?.response?._id;

@@ -4,7 +4,7 @@ import constant from './constant';
 const token = JSON.parse(localStorage.getItem('authUser'))?.token;
 
 const creatorId = JSON.parse(localStorage.getItem('authUser'))?.response?._id;
-
+const firmId = JSON.parse(localStorage.getItem('authUser'))?.response?.adminId;
 const axiosInstance = axios.create({
     baseURL: `${constant.appBaseUrl}/api/`,
     headers: {
@@ -177,6 +177,16 @@ export const deleteRoleById = async (id) => {
             return error;
         }
     }
+
+// to get crm users
+export const getCrmUsers = async () => {
+    try {
+        const response = await axiosInstance.get(`/crmuser/get-crmsuser/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}; 
 
 
 export default axiosInstance;
