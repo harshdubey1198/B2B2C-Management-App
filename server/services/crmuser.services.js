@@ -64,9 +64,31 @@ crmUserService.createCrmsUser = async (id, data) => {
   await newCRMUser.save();
 
   // Send credentials email
-  await sendCredentialsEmail(newCRMUser.email, temporaryPassword, 'https://aamobee.com/login');
+  await sendCredentialsEmail(newCRMUser.email, temporaryPassword, 'https://aamobee.com/crm/login');
 
   return newCRMUser;
+};
+
+// LOGIN USER
+crmUserService.loginCrmsUsers = async (body) => {
+    try {
+        const { email, password } = body;
+        const crmuser = await CRMUser.findOne({ email: email });
+        if (!crmuser) {
+            throw new Error('Account Not Found');
+        }
+        console.log(password, crmuser.password , "matching")
+        const passwordMatch = await PasswordService.comparePassword(password, crmuser.password);
+        if (!passwordMatch) {
+            throw new Error("Incorrect Password");
+        }
+        // Return user data without password
+        return await CRMUser.findOne({ _id: crmuser._id }).select("-password");
+
+    } catch (error) {
+        console.error('Login failed:', error);
+        throw new Error(error.message || 'Login failed');
+    }
 };
 
 // GET CRMUser

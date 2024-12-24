@@ -3,6 +3,7 @@ const { createResult } = require('../utils/utills');
 const crmUserService = require('../services/crmuser.services');
 const { upload } = require('../utils/multer');
 const uploadToCloudinary = require('../utils/cloudinary');
+const createSecretToken = require('../utils/secretToken');
 const crmUserController = {};
 
 crmUserController.createCrmsUser = async (req, res) => {
@@ -31,6 +32,17 @@ crmUserController.createCrmsUser = async (req, res) => {
       }
     });
 };
+
+crmUserController.loginCrmsUsers = async (req, res) => {
+  try {
+    const response = await crmUserService.loginCrmsUsers(req.body);
+    const token = createSecretToken(response);
+    return res.status(200).json(createResult("Login Successfully", {response ,token}));
+  } catch (error) {
+    console.log("error login users", error);
+    return res.status(400).json(createResult(null, null, error.message));
+  }
+}
 
 crmUserController.getAllCrmsUsers = async (req, res) => {
   try {

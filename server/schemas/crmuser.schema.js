@@ -9,6 +9,7 @@ const crmUserSchema = new mongoose.Schema({
     type: String,
     default:"https://res.cloudinary.com/harshdubey1198/image/upload/v1721475588/dummy-userImages/bqof59zlzkampcaxpws9.jpg",
   },
+  password: {type: String, required: true},
   isActive: { type: Boolean, default: false },
   roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Role' },
   firmId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
