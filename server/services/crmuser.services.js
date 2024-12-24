@@ -77,13 +77,12 @@ crmUserService.loginCrmsUsers = async (body) => {
         if (!crmuser) {
             throw new Error('Account Not Found');
         }
-        console.log(password, crmuser.password , "matching")
         const passwordMatch = await PasswordService.comparePassword(password, crmuser.password);
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
         // Return user data without password
-        return await CRMUser.findOne({ _id: crmuser._id }).select("-password");
+        return await CRMUser.findOne({ _id: crmuser._id }).select("-password").populate("roleId");
 
     } catch (error) {
         console.error('Login failed:', error);
@@ -136,22 +135,22 @@ crmUserService.updateCrmsAccount = async (id, data) => {
 };
 
 // UPDATE PASSWORD
-// crmUserService.updatePassword = async (id, data) => {
-//   const CRMUser = await CRMUser.findById(id);
-//   if (!CRMUser) {
-//     throw new Error("User not found");
-//   }
-//   const isPasswordValid = await PasswordService.comparePassword(
-//     data.password,
-//     CRMUser.password
-//   );
-//   if (!isPasswordValid) {
-//     throw new Error("Current Password Doesn't Match");
-//   }
-//   const newPassword = await PasswordService.passwordHash(data.newPassword);
-//   CRMUser.password = newPassword;
-//   await CRMUser.save();
-//   return CRMUser;
-// };
+crmUserService.updatePassword = async (id, data) => {
+  const CRMUser = await CRMUser.findById(id);
+  if (!CRMUser) {
+    throw new Error("User not found");
+  }
+  const isPasswordValid = await PasswordService.comparePassword(
+    data.password,
+    CRMUser.password
+  );
+  if (!isPasswordValid) {
+    throw new Error("Current Password Doesn't Match");
+  }
+  const newPassword = await PasswordService.passwordHash(data.newPassword);
+  CRMUser.password = newPassword;
+  await CRMUser.save();
+  return CRMUser;
+};
 
 module.exports = crmUserService;
