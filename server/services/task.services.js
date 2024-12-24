@@ -44,20 +44,31 @@ taskServices.createTask = async (body) => {
         if (!userExists) throw new Error(`Invalid AssignedTo User ID: ${userId}`);
     }
     */
-   const lead = await Lead.findOne({_id: leadId})
-   if (!lead) throw new Error("Invalid Lead ID or Lead is deleted.");
-
-    // Validate dueDate (optional)
-    if (dueDate && new Date(dueDate) < new Date()) {
-        throw new Error("Due date must be in the future.");
+    // Detect and identify duplicate leadIds
+    const duplicateLeadIds = leadIds.filter((id, index, array) => array.indexOf(id) !== index);
+    if (duplicateLeadIds.length > 0) {
+        throw new Error(`Duplicate Lead IDs found: ${[...new Set(duplicateLeadIds)].join(", ")}`);
     }
-    if(dueDate){
-        const taskDueDate = new Date(dueDate)
-        if(lead.dueDate && taskDueDate > lead.dueDate){
-            throw new Error("Task due date cannot be greater than Lead due date");
+
+    // Validate each leadId to ensure it exists in the database
+    for (const leadId of leadIds) {
+        const lead = await Lead.findOne({ _id: leadId });
+        if (!lead) {
+            throw new Error(`Invalid Lead ID or Lead is deleted: ${leadId}`);
         }
-        if(taskDueDate < new Date()){
-            throw new Error("Task due date must be in the future");
+    }
+
+     // Validate dueDate
+     if (dueDate) {
+        const taskDueDate = new Date(dueDate);
+        for (const leadId of leadIds) {
+            const lead = await Lead.findOne({ _id: leadId });
+            if (lead && lead.dueDate && taskDueDate > new Date(lead.dueDate)) {
+                throw new Error(`Task due date cannot be greater than the due date of lead: ${leadId}`);
+            }
+        }
+        if (taskDueDate < new Date()) {
+            throw new Error("Task due date must be in the future.");
         }
     }
 
