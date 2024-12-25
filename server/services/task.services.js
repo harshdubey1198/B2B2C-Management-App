@@ -17,6 +17,77 @@ taskServices.updateLeadStatus = async (leadId) => {
 
 }
 
+
+// taskServices.createTask = async (body) => {
+//     const {
+//         leadIds,  
+//         assignedTo = [],
+//         assignedBy,
+//         status,
+//         dueDate,
+//         remarks,
+//     } = body;
+
+//     // Validate lead and users (optional validation)
+//     /*
+//     const leadExistsArray = await Promise.all(
+//         leadIds.map(leadId => Lead.exists({ _id: leadId }))
+//     );
+//     if (leadExistsArray.includes(false)) {
+//         throw new Error("Invalid Lead ID(s)");
+//     }
+//     const assignedByUser = await CRMUser.exists({ _id: assignedBy });
+//     if (!assignedByUser) throw new Error("Invalid AssignedBy User ID");
+
+//     for (const userId of assignedTo) {
+//         const userExists = await CRMUser.exists({ _id: userId });
+//         if (!userExists) throw new Error(`Invalid AssignedTo User ID: ${userId}`);
+//     }
+//     */
+//     // Detect and identify duplicate leadIds
+//     const duplicateLeadIds = leadIds.filter((id, index, array) => array.indexOf(id) !== index);
+//     if (duplicateLeadIds.length > 0) {
+//         throw new Error(`Duplicate Lead IDs found: ${[...new Set(duplicateLeadIds)].join(", ")}`);
+//     }
+
+//     // Validate each leadId to ensure it exists in the database
+//     for (const leadId of leadIds) {
+//         const lead = await Lead.findOne({ _id: leadId });
+//         if (!lead) {
+//             throw new Error(`Invalid Lead ID or Lead is deleted: ${leadId}`);
+//         }
+//     }
+
+//      // Validate dueDate
+//      if (dueDate) {
+//         const taskDueDate = new Date(dueDate);
+//         for (const leadId of leadIds) {
+//             const lead = await Lead.findOne({ _id: leadId });
+//             if (lead && lead.dueDate && taskDueDate > new Date(lead.dueDate)) {
+//                 throw new Error(`Task due date cannot be greater than the due date of lead: ${leadId}`);
+//             }
+//         }
+//         if (taskDueDate < new Date()) {
+//             throw new Error("Task due date must be in the future.");
+//         }
+//     }
+
+//     // Create the task with an array of leadIds
+//     const newTask = new Task({
+//         leadIds,  
+//         assignedTo,
+//         assignedBy,
+//         status: status || 'Pending',
+//         dueDate: dueDate || null,
+//         remarks: remarks || [],
+//     });
+
+//     const savedTask = await newTask.save();
+//     lead.status =  "Assigned"
+//     lead.save()
+//     return savedTask;
+// };
+
 taskServices.createTask = async (body) => {
     const {
         leadIds,
@@ -74,7 +145,6 @@ taskServices.createTask = async (body) => {
 
     return savedTask;
 };
-
 taskServices.getAllTasks = async () => {
     const tasks = await Task.find()
     .populate('leadIds')
