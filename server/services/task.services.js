@@ -17,10 +17,9 @@ taskServices.updateLeadStatus = async (leadId) => {
 
 }
 
-
 taskServices.createTask = async (body) => {
     const {
-        leadIds,  
+        leadIds,
         assignedTo = [],
         assignedBy,
         status,
@@ -28,43 +27,26 @@ taskServices.createTask = async (body) => {
         remarks,
     } = body;
 
-    // Validate lead and users (optional validation)
-    /*
-    const leadExistsArray = await Promise.all(
-        leadIds.map(leadId => Lead.exists({ _id: leadId }))
-    );
-    if (leadExistsArray.includes(false)) {
-        throw new Error("Invalid Lead ID(s)");
-    }
-    const assignedByUser = await CRMUser.exists({ _id: assignedBy });
-    if (!assignedByUser) throw new Error("Invalid AssignedBy User ID");
-
-    for (const userId of assignedTo) {
-        const userExists = await CRMUser.exists({ _id: userId });
-        if (!userExists) throw new Error(`Invalid AssignedTo User ID: ${userId}`);
-    }
-    */
-    // Detect and identify duplicate leadIds
     const duplicateLeadIds = leadIds.filter((id, index, array) => array.indexOf(id) !== index);
     if (duplicateLeadIds.length > 0) {
         throw new Error(`Duplicate Lead IDs found: ${[...new Set(duplicateLeadIds)].join(", ")}`);
     }
 
-    // Validate each leadId to ensure it exists in the database
-    for (const leadId of leadIds) {
-        const lead = await Lead.findOne({ _id: leadId });
-        if (!lead) {
-            throw new Error(`Invalid Lead ID or Lead is deleted: ${leadId}`);
-        }
-    }
-
-     // Validate dueDate
-     if (dueDate) {
-        const taskDueDate = new Date(dueDate);
-        for (const leadId of leadIds) {
+    const leads = await Promise.all(
+        leadIds.map(async (leadId) => {
             const lead = await Lead.findOne({ _id: leadId });
-            if (lead && lead.dueDate && taskDueDate > new Date(lead.dueDate)) {
-                throw new Error(`Task due date cannot be greater than the due date of lead: ${leadId}`);
+            if (!lead) {
+                throw new Error(`Invalid Lead ID or Lead is deleted: ${leadId}`);
+            }
+            return lead; 
+        })
+    );
+
+    if (dueDate) {
+        const taskDueDate = new Date(dueDate);
+        for (const lead of leads) {
+            if (lead.dueDate && taskDueDate > new Date(lead.dueDate)) {
+                throw new Error(`Task due date cannot be greater than the due date of lead: ${lead._id}`);
             }
         }
         if (taskDueDate < new Date()) {
@@ -72,19 +54,24 @@ taskServices.createTask = async (body) => {
         }
     }
 
-    // Create the task with an array of leadIds
     const newTask = new Task({
-        leadIds,  
+        leadIds,
         assignedTo,
         assignedBy,
-        status: status || 'Pending',
+        status: status || "Pending",
         dueDate: dueDate || null,
         remarks: remarks || [],
     });
 
-    const savedTask = await newTask.save();
-    lead.status =  "Assigned"
-    lead.save()
+    const savedTask = await newTask.save(); 
+    await Promise.all(
+        leadIds.map(async (leadId) => {
+            const lead = await Lead.findById(leadId);
+            lead.status = "Assigned";
+            await lead.save();
+        })
+    );
+
     return savedTask;
 };
 

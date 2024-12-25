@@ -49,6 +49,10 @@ leadService.importLeads = async (fileBuffer) => {
       // Parse the CSV buffer into JSON
       const leads = await csvtojson().fromString(fileBuffer.toString());
   
+      const processedLeads = leads.map(lead => ({
+        ...lead,
+        isOrganic: lead.isOrganic === "TRUE",  // Convert "TRUE" to true and "FALSE" to false
+          }));
       // Validate and save leads
     //   const validLeads = leads.filter((lead) => {
     //     // Add any custom validations if necessary
