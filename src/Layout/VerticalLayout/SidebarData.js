@@ -285,7 +285,7 @@ export const masterAdminSidebarData = () => [
         { sublabel: "Analytics", link: "/crm/leads-analytics" },
         { sublabel: "Users" , link:"/crm/crm-users"},
         { sublabel: "Role Management" , link:"/crm/user-roles"},
-        { sublabel: "Reassign Tasks" , link:"/crm/reassign-tasks"},
+        // { sublabel: "Reassign Tasks" , link:"/crm/reassign-tasks"},
         
         // { sublabel: "Lead Status", link: "/crm/lead-status" },
       ]
@@ -373,7 +373,7 @@ export const masterAdminSidebarData = () => [
         {sublabel:"All Leads",link:"/crm/all-leads"},
         {sublabel:"New Lead",link:"/crm/create-lead"},
         {sublabel:"Analytics",link:"/crm/leads-analytics"},
-        {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
+        // {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
       ]
     }
   ];
@@ -392,7 +392,7 @@ export const masterAdminSidebarData = () => [
         {sublabel:"All Leads",link:"/crm/all-leads"},
         {sublabel:"New Lead",link:"/crm/create-lead"},
         {sublabel:"Analytics",link:"/crm/leads-analytics"},
-        {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
+        // {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
 
       ]
     }
