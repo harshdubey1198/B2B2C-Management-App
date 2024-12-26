@@ -53,6 +53,18 @@ leadController.importLeads = async (req, res) => {
     });
 };
 
+leadController.exportLeads = async (req, res) => {
+    try {
+        const getLeads = await leadService.exportLeads(req.body)
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', 'attachment; filename="selected_leads.csv"')
+        return res.status(200).send(getLeads)
+    } catch (error) {
+        console.log("error exporting leads", error.message)
+        return res.status(500).json(createResult(null, null, error.message ));
+    }
+};
+
 leadController.getAllLeads = async (req,res) => {
     try {
         const getLeads = await leadService.getAllLeads()

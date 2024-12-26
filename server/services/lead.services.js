@@ -1,5 +1,6 @@
 const Lead = require("../schemas/lead.schema");
 const csvtojson = require('csvtojson');
+const { Parser } = require('json2csv');
 
 const leadService = {};
 
@@ -52,17 +53,8 @@ leadService.importLeads = async (fileBuffer) => {
       const processedLeads = leads.map(lead => ({
         ...lead,
         isOrganic: lead.isOrganic === "TRUE",  // Convert "TRUE" to true and "FALSE" to false
-          }));
-      // Validate and save leads
-    //   const validLeads = leads.filter((lead) => {
-    //     // Add any custom validations if necessary
-    //     return Object.values(lead).every((value) => value && value.trim() !== "");
-    //   });
-  
-    //   if (validLeads.length === 0) {
-    //     throw new Error("No valid leads found in the file.");
-    //   }
-
+      }));
+     
     if (leads.length === 0) {
         throw new Error("No data found in the file.");
     }
@@ -77,13 +69,35 @@ leadService.importLeads = async (fileBuffer) => {
     }
 };
 
-// leadService.getAllLeads = async () => {
-//     const leads = await Lead.find()
-//     if(leads.length === 0){
-//         return {message: "No leads found."}
-//     }
-//     return leads;
-// }
+leadService.exportLeads = async (body) => {
+    const { leadIds } = body;
+
+    // Validate lead IDs
+    if (!leadIds || leadIds.length === 0) {
+        throw new Error("No leads selected for exporting.");
+    }
+
+    // Fetch leads from the database
+    const leads = await Lead.find({ _id: { $in: leadIds } });
+
+    if (!leads || leads.length === 0) {
+        throw new Error("No leads found for the provided IDs.");
+    }
+
+    // Dynamically extract all unique fields from the leads
+    const allFields = new Set();
+    leads.forEach((lead) => {
+        Object.keys(lead.toObject()).forEach((field) => allFields.add(field));
+    });
+
+    // Convert the leads to CSV format
+    const fields = Array.from(allFields);
+    const parser = new Parser({ fields });
+    const csv = parser.parse(leads);
+
+    return csv;
+}
+
 
 leadService.getAllLeads = async () => {
     try {
@@ -113,7 +127,6 @@ leadService.getAllLeads = async () => {
         throw new Error("Error fetching leads: " + error.message);
     }
 };
-
 
 leadService.getLeadById = async (leadId) => {
     const lead = await Lead.findOne({_id:leadId,deleted_at: null})
@@ -254,7 +267,5 @@ leadService.getExpiredLeadsWithoutUpdatedStatus = async (filterValues) => {
       throw new Error("Error fetching missed leads: " + error.message);
     }
 };
-  
-  
 
 module.exports = leadService;
