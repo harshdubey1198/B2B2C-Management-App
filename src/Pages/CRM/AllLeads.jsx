@@ -9,6 +9,7 @@ import {
     updateLeadById,
     deleteLeadById,
     deleteMultipleLeads,
+    exportLeads,
 } from "../../apiServices/service";
 import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
@@ -104,6 +105,34 @@ function AllLeads() {
     };
     // console.log(selectedLeads, "seletecdleads")
 
+    const handleExportLeads = async () => {
+        if (selectedLeads.length === 0) {
+            setMessage("Please select leads to export.");
+            return;
+        }
+        try {
+            const result = await exportLeads({ leadIds: selectedLeads });
+            
+            if (result && result.file) {
+                const blob = new Blob([result.file], { type: 'application/octet-stream' });
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'leads_export.csv');
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+                setMessage("Leads exported successfully.");
+            } else {
+                throw new Error("Export failed. No file received.");
+            }
+        } catch (error) {
+            setMessage(error?.message || "An error occurred during export.");
+        }
+    };
+    
+
+
     useEffect(() => {
         fetchLeads();
     }, []);
@@ -117,13 +146,9 @@ function AllLeads() {
                         Add Lead
                     </Button>
                     <Button color="primary" onClick={toggleImportModal}>Import Leads</Button>
-                    {/* <Button color="primary">Export Leads</Button> */}
-                    <Button color="primary" onClick={() => handleDeleteLeads(null)}>
-                        Delete Selected Leads
-                    </Button>
-                    <Button color="primary" onClick={toggleAssignModal}>
-                        Assign Leads
-                    </Button>
+                    <Button color="primary" onClick={handleExportLeads}> Export Leads </Button>
+                    <Button color="primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </Button>
+                    <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
                 </div>
                 <div className="table-responsive">
                     <Table>

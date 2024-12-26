@@ -57,7 +57,7 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                         <Input
                           type={key.toLowerCase().includes("email") ? "email" : "text"}
                           name={key}
-                          id={key}
+                          // id={key}
                           value={value || ""}
                           onChange={handleChange}
                           readOnly={mode === "view"}

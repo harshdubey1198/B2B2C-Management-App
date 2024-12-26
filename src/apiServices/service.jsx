@@ -211,6 +211,20 @@ export const uploadLeads = async (data) => {
     }
 };
 
+//  to export leads
+export const exportLeads = async (data) => {
+    try {
+        const response = await axiosInstance.post('/lead/exportLead', data, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || error.message;
+    }
+};
+
 
 
 export default axiosInstance;
