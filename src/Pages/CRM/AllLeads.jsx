@@ -121,7 +121,7 @@ function AllLeads() {
                 link.setAttribute('download', 'leads_export.csv');
                 document.body.appendChild(link);
                 link.click();
-                link.parentNode.removeChild(link);
+                link.parentNode.removeChild(link); 
                 setMessage("Leads exported successfully.");
             } else {
                 throw new Error("Export failed. No file received.");
