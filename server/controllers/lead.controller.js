@@ -116,7 +116,7 @@ leadController.deleteMultipleLeads = async (req, res) => {
 
         // Call the service to delete the leads
         const deletedLeads = await leadService.deleteMultipleLeads(leadIds);
-        return res.status(200).json(createResult("Leads soft deleted successfully", deletedLeads));
+        return res.status(200).json(createResult("Leads deleted successfully", deletedLeads));
     } catch (error) {
         console.log("Error deleting leads:", error.message);
         return res.status(500).json(createResult(null, null, error.message));
