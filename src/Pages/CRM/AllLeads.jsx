@@ -111,9 +111,14 @@ function AllLeads() {
         }
         try {
             const result = await exportLeads({ leadIds: selectedLeads });
-            console.log(result);
             const blob = new Blob([result], { type: "text/csv" });
-            saveAs(blob, "exported_leads.csv");
+            
+            const now = new Date();
+            const formattedDate = `${now.getDate().toString().padStart(2, '0')}-${(now.getMonth() + 1).toString().padStart(2, '0')}-${now.getFullYear()}`;
+            const formattedTime = `${now.getHours().toString().padStart(2, '0')}-${now.getMinutes().toString().padStart(2, '0')}`;
+            const filename = `Lead-data_${formattedDate}_${formattedTime}.csv`;
+            
+            saveAs(blob, filename);
             setMessage("Leads exported successfully.");
             toast.success("Leads exported successfully.");
         } catch (error) {
@@ -121,6 +126,7 @@ function AllLeads() {
             toast.error(error);
         }
     };
+    
     useEffect(() => {
         fetchLeads(); 
     }, []);
