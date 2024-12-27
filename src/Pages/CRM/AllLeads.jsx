@@ -3,7 +3,7 @@ import { Table, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { saveAs } from "file-saver";
 import TaskAssigner from "../../Modal/crm-modals/taskAssigner";
-import { getAllLeads, getLeadById, assignLeadsToEmployee, updateLeadById, deleteLeadById, deleteMultipleLeads, exportLeads } from "../../apiServices/service";
+import { getAllLeads, getLeadById, updateLeadById, deleteLeadById, deleteMultipleLeads, exportLeads } from "../../apiServices/service";
 import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
 import LeadImportModal from "../../Modal/crm-modals/leadImportModal";  
@@ -13,14 +13,18 @@ function AllLeads() {
     const navigate = useNavigate();
     const [assignModal, setAssignModal] = useState(false);
     const [leads, setLeads] = useState([]);
-    const [importModal, setImportModal] = useState(false); 
+    const [importModal, setImportModal] = useState(false);
+    const [filteredLeads, setFilteredLeads] = useState(false);
     const [message, setMessage] = useState("");
     const [modal, setModal] = useState(false);
     const [selectedLead, setSelectedLead] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedLeads, setSelectedLeads] = useState([]);
     const [employeeId, setEmployeeId] = useState("");
-
+    const [filterOptions, setFilterOptions] = useState({
+        sortBy: "name",
+        order: "asc",
+    });
     const fetchLeads = async () => {
         try {
             const result = await getAllLeads();
@@ -130,6 +134,37 @@ function AllLeads() {
     useEffect(() => {
         fetchLeads(); 
     }, []);
+    const handleFilterChange = (field, value) => {
+        setFilterOptions((prev) => ({ ...prev, [field]: value }));
+    };
+    const applyFilters = () => {
+        let sortedLeads = [...leads];
+        if (filterOptions.sortBy === "name") {
+            sortedLeads.sort((a, b) => {
+                const nameA = a.firstName.toLowerCase();
+                const nameB = b.firstName.toLowerCase();
+                return filterOptions.order === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+            });
+        } else if (filterOptions.sortBy === "date") {
+            sortedLeads.sort((a, b) => {
+                const dateA = new Date(a.createdAt);
+                const dateB = new Date(b.createdAt);
+                return filterOptions.order === "asc" ? dateA - dateB : dateB - dateA;
+            });
+        } else if (filterOptions.sortBy === "status") {
+            sortedLeads.sort((a, b) => {
+                const statusA = a.status.toLowerCase();
+                const statusB = b.status.toLowerCase();
+                return filterOptions.order === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
+            });
+        }
+        setFilteredLeads(sortedLeads);
+    };
+    useEffect(() => {
+        applyFilters();
+    }, [filterOptions, leads]);
+    const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+    const toggleFilterDropdown = () => setShowFilterDropdown(!showFilterDropdown);
 
     return (
         <React.Fragment>
@@ -144,6 +179,54 @@ function AllLeads() {
                         Assign Leads
                     </Button>
                 </div>
+                <div className="filter-panel" style={{ float: "right", marginTop: "-50px", position: "relative" }}>
+                    <i
+                        className="mdi mdi-filter"
+                        style={{
+                            fontSize: "28px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                            padding: "5px 7px",
+                            border: "1px solid #ccc",
+                        }}
+                        onClick={toggleFilterDropdown}
+                    ></i>
+                    {showFilterDropdown && (
+                        <div
+                            className="dropdown-menu show"
+                            style={{
+                                position: "absolute",
+                                right: "0",
+                                top: "40px",
+                                zIndex: 1050,
+                                display: "block",
+                            }}
+                        >
+                            <div className="p-3">
+                                <label>Sort By:</label>
+                                <select
+                                    value={filterOptions.sortBy}
+                                    onChange={(e) => handleFilterChange("sortBy", e.target.value)}
+                                    className="form-control"
+                                >
+                                    <option value="name">Name</option>
+                                    <option value="date">Date</option>
+                                    <option value="status">Status</option>
+                                </select>
+                                <label className="mt-2">Order:</label>
+                                <select
+                                    value={filterOptions.order}
+                                    onChange={(e) => handleFilterChange("order", e.target.value)}
+                                    className="form-control"
+                                >
+                                    <option value="asc">Ascending</option>
+                                    <option value="desc">Descending</option>
+                                </select>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 <div className="table-responsive">
                     <Table>
                         <thead>
@@ -173,63 +256,71 @@ function AllLeads() {
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {leads.map((lead) => (
-                                <tr key={lead._id}>
-                                    <td>
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedLeads.includes(lead._id)}
-                                            onClick={() => handleLeadSelection(lead._id)}
-                                        />
-                                    </td>
-                                    <td>{lead.firstName + " " + lead.lastName}</td>
-                                    <td>{lead.email}</td>
-                                    <td>{lead.phoneNumber}</td>
-                                    <td>{lead.platform}</td>
-                                    <td>{lead.isOrganic ? "yes" : "no"}</td>
-                                    <td>{lead.adId}<br />{lead.adName}</td>
-                                    <td>
-                                        {new Date(lead.createdAt).toLocaleString("en-IN", {
-                                            timeZone: "Asia/Kolkata",
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                        })}
-                                        <br />
-                                        {new Date(lead.updatedAt).toLocaleString("en-IN", {
-                                            timeZone: "Asia/Kolkata",
-                                            day: "2-digit",
-                                            month: "2-digit",
-                                            year: "numeric",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                            hour12: true,
-                                        })}
-                                    </td>
-                                    <td>{lead.status}</td>
-                                    <td>
-                                        <i
-                                            className="bx bx-show"
-                                            style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                            onClick={() => toggleModal(lead._id, "view")}
-                                        ></i>
-                                        <i
-                                            className="bx bx-edit"
-                                            style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                            onClick={() => toggleModal(lead._id, "edit")}
-                                        ></i>
-                                        <i
-                                            className="bx bx-trash"
-                                            style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                            onClick={() => handleDeleteLeads(lead._id)}
-                                        ></i>
+                       <tbody>
+                            {Array.isArray(filteredLeads) && filteredLeads.length > 0 ? (
+                                filteredLeads.map((lead) => (
+                                    <tr key={lead._id}>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedLeads.includes(lead._id)}
+                                                onClick={() => handleLeadSelection(lead._id)}
+                                            />
+                                        </td>
+                                        <td>{lead.firstName + " " + lead.lastName}</td>
+                                        <td>{lead.email}</td>
+                                        <td>{lead.phoneNumber}</td>
+                                        <td>{lead.platform}</td>
+                                        <td>{lead.isOrganic ? "yes" : "no"}</td>
+                                        <td>{lead.adId}<br />{lead.adName}</td>
+                                        <td>
+                                            {new Date(lead.createdAt).toLocaleString("en-IN", {
+                                                timeZone: "Asia/Kolkata",
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: true,
+                                            })}
+                                            <br />
+                                            {new Date(lead.updatedAt).toLocaleString("en-IN", {
+                                                timeZone: "Asia/Kolkata",
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: true,
+                                            })}
+                                        </td>
+                                        <td>{lead.status}</td>
+                                        <td>
+                                            <i
+                                                className="bx bx-show"
+                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                                                onClick={() => toggleModal(lead._id, "view")}
+                                            ></i>
+                                            <i
+                                                className="bx bx-edit"
+                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                                                onClick={() => toggleModal(lead._id, "edit")}
+                                            ></i>
+                                            <i
+                                                className="bx bx-trash"
+                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                                                onClick={() => handleDeleteLeads(lead._id)}
+                                            ></i>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="10" className="text-center">
+                                        No leads found.
                                     </td>
                                 </tr>
-                            ))}
+                            )}
                         </tbody>
                     </Table>
                 </div>
