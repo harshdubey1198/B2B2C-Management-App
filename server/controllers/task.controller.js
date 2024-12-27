@@ -63,4 +63,14 @@ taskController.markMissedTasks = async (req, res) => {
     }
 }
 
+taskController.getTasksByAssignee = async (req, res) => {
+    try {
+        const tasks = await taskServices.getTasksByAssignee(req.params.id);
+        return res.status(200).json(createResult("Tasks fetched successfully", tasks));
+    } catch (error) {
+        console.log("Error fetching tasks by assignee", error.message);
+        return res.status(500).json(createResult(null, null, error.message));
+    }
+}
+
 module.exports = taskController

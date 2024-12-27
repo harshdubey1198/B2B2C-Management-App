@@ -288,6 +288,29 @@ taskServices.markMissedTasks = async () => {
     await Promise.all(updates)
     return missedTasks
 }
+taskServices.getTasksByAssignee = async (userId) => {
+    const tasks = await Task.find({ assignedTo: userId })
+        .populate('leadIds')
+        .populate({
+            path: 'assignedTo',
+            select: 'firstName lastName email role'
+        })
+        .populate({
+            path: 'assignedBy',
+            select: 'firstName lastName email role'
+        })
+        .populate({
+            path: 'remarks.createdBy',
+            select: 'firstName lastName email role'
+        });
+
+    if (tasks.length === 0) {
+        throw new Error("No tasks assigned to this user");
+    }
+
+    return tasks;
+}
+
 
 
 module.exports = taskServices
