@@ -53,6 +53,7 @@ leadService.importLeads = async (fileBuffer) => {
       const processedLeads = leads.map(lead => ({
         ...lead,
         isOrganic: lead.isOrganic === "TRUE",  // Convert "TRUE" to true and "FALSE" to false
+        status: 'new',
       }));
      
     if (leads.length === 0) {

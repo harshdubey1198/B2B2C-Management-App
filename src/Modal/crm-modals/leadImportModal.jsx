@@ -28,7 +28,8 @@ const LeadImportModal = ({ isOpen, toggle }) => {
         toast.success("Leads imported successfully!");
         toggle();
       } else {
-        throw new Error(response.message || "Failed to import leads");
+        // throw new Error(response.message || "Failed to import leads");
+        toast.success(response.message || "Failed to import leads");
       }
     } catch (error) {
       toast.error(error.message || "Error importing leads.");

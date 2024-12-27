@@ -474,6 +474,10 @@ export const masterAdminSidebarData = () => [
         return readOnlySidebarData();
       case 'employee':
         return generalEmployeeSidebarData();
+      case 'ASM':
+        return asmSidebarData();
+      case 'SM':
+        return salesManagerSidebarData();
       case 'Telecaller':
         return telecallerSidebarData();
 
@@ -483,4 +487,3 @@ export const masterAdminSidebarData = () => [
         return defaultSidebarData();
     }
   };
-  
