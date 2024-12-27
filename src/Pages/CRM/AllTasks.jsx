@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks, updateLeadById, updateTaskOrLead } from '../../apiServices/service';
+import { getAllTasks, getTasksByAssignee, updateLeadById, updateTaskOrLead } from '../../apiServices/service';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import { toast } from 'react-toastify';
 
 function AllTasks() {
   const [tasks, setTasks] = useState([]);
@@ -13,27 +14,39 @@ function AllTasks() {
   const userId = authUser?.response?._id;
   const role = authUser?.response?.role;
 
+  // const fetchTasks = async () => {
+  //   try {
+  //     const result = await getAllTasks();
+  //     const allTasks = result?.data || [];
+
+  //     let filteredTasks = [];
+  //     if (role === 'telecaller') {
+  //       filteredTasks = allTasks.filter((task) =>
+  //         task.assignedTo.some(
+  //           (assignee) => assignee._id === userId && assignee.role === 'telecaller'
+  //         )
+  //       );
+  //     } else if (role === 'client_admin') {
+  //       filteredTasks = allTasks;
+  //     }
+  //     setTasks(filteredTasks);
+  //     console.log(filteredTasks);
+  //   } catch (error) {
+  //     setMessage(error.message);
+  //   }
+  // };
+
   const fetchTasks = async () => {
     try {
-      const result = await getAllTasks();
+      const result = await getTasksByAssignee(userId);
       const allTasks = result?.data || [];
-
-      let filteredTasks = [];
-      if (role === 'telecaller') {
-        filteredTasks = allTasks.filter((task) =>
-          task.assignedTo.some(
-            (assignee) => assignee._id === userId && assignee.role === 'telecaller'
-          )
-        );
-      } else if (role === 'client_admin') {
-        filteredTasks = allTasks;
-      }
-      setTasks(filteredTasks);
-      console.log(filteredTasks);
+      setTasks(allTasks);
     } catch (error) {
       setMessage(error.message);
     }
   };
+
+
 
   const toggleModal = () => setModal(!modal);
 
@@ -75,15 +88,19 @@ function AllTasks() {
   
       const result = await updateLeadById(selectedLead._id, updatedLead);
       if (result.success) {
-        alert('Note and status updated successfully!');
+        // alert('Note and status updated successfully!');
         fetchTasks(); 
         toggleModal();
+        setModal(false);  
+        toast.success('Note and status updated successfully!');
       } else {
-        alert(result.message || 'Failed to update lead');
+        // alert(result.message || 'Failed to update lead');
+        toast.success(result.message || 'Failed to update lead');
       }
     } catch (error) {
       console.error('Failed to update lead:', error);
-      alert('Failed to update lead');
+      // alert('Failed to update lead');
+      toast.error('Failed to update lead');
     }
   };
   
@@ -147,7 +164,7 @@ const getRandomColor = () => {
                                 <td>{lead.firstName} {lead.lastName}</td>
                                 <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
                                 <td>{new Date(task.dueDate).toLocaleString()}</td>
-                                <td>{task.status}</td>
+                                <td>{lead.status}</td>
                                 <td>
                                     <button
                                     className='btn btn-primary btn-sm'
@@ -219,6 +236,12 @@ const getRandomColor = () => {
                     >
                     <option value="pending">Pending</option>
                     <option value="in-progress">In Progress</option>
+                    <option value="follow-up">Follow-Up</option>
+                    <option vlaue="invalid">Invalid</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="not-interested">Not Interested</option>
+                    <option value="converted">Converted</option>
+                    <option value="lost">Lost</option>
                     <option value="completed">Completed</option>
                     {/* Add more status options as needed */}
                     </Input>

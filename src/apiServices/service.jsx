@@ -120,6 +120,18 @@ export const updateTaskOrLead = async (id, updateData) => {
     }
   };
 
+// get tasks by assignee id 
+export const getTasksByAssignee = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/task/assignedto/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        return error;
+    }
+};
+ 
+
 //   role management
 export const getRoles = async () => {
     try {

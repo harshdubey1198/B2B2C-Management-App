@@ -74,7 +74,7 @@ const leadSchema = new Schema(
     notes: [
       {
         message: { type: String }, 
-        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, 
+        createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'CRMUser' }, 
         createdAt: { type: Date, default: Date.now },
         deleted_at: { type: Date, default: null },
         lastUpdatedAt: { type: Date, default: null}

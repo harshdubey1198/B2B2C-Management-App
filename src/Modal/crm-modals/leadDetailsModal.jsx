@@ -10,7 +10,7 @@ import {
   ModalFooter,
   ModalHeader,
   Row,
-  Col,
+  Col
 } from "reactstrap";
 
 function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
@@ -47,6 +47,10 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
           <Form>
             <Row>
                 {Object.entries(formData)
+                  .filter(([key]) => key !== "notes")
+                  // isOrganic false hide
+                  .filter(([key, value]) => key !== "isOrganic" || value === true)
+                  .filter(([key]) => key !== "mode" && key !== "_id" && key !== "createdAt" && key !== "updatedAt" && key !== "createdBy" && key !== "updatedBy" && key !== "firmId" && key !== "deletedAt" && key !== "deletedBy" && key !== "__v"  && key !== "remarks" && key !== "leadIds" && key !== "assignedTo" && key !== "assignedBy" && key !== "notes")
                   .filter(([_, value]) => value !== null)  
                   .map(([key, value]) => (
                     <Col xs="12" md="6" key={key}>
@@ -57,7 +61,6 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                         <Input
                           type={key.toLowerCase().includes("email") ? "email" : "text"}
                           name={key}
-                          // id={key}
                           value={value || ""}
                           onChange={handleChange}
                           readOnly={mode === "view"}
@@ -66,7 +69,33 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                     </Col>
                   ))}
               </Row>
-
+              <Row>
+                <Col xs="12">
+                  <FormGroup>
+                    <Label for="notes">Notes</Label>
+                    <div style={{ maxHeight: "200px", overflowY: "auto", border: "1px solid #ddd", padding: "10px", borderRadius: "5px" }}>
+                      {formData.notes && formData.notes.length > 0 ? (
+                        formData.notes.map((note) => (
+                          <div key={note._id} style={{ marginBottom: "10px" }}>
+                            <div className="d-flex justify-content-between">
+                            <strong>{note.message}</strong>
+                            <strong style={{color: '1c7f9b'}}>
+                             - {note.createdBy.firstName} {note.createdBy.lastName}
+                            </strong>
+                            </div>  
+                            <p style={{ fontSize: '12px', color: '#666' }}>
+                              {new Date(note.createdAt).toLocaleString()}
+                            </p>
+                            <hr />
+                          </div>
+                        ))
+                      ) : (
+                        <p>No Notes Available</p>
+                      )}
+                    </div>
+                  </FormGroup>
+                </Col>
+              </Row>
           </Form>
         )}
       </ModalBody>

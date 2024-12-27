@@ -289,6 +289,8 @@ taskServices.markMissedTasks = async () => {
     return missedTasks
 }
 taskServices.getTasksByAssignee = async (userId) => {
+
+
     const tasks = await Task.find({ assignedTo: userId })
         .populate('leadIds')
         .populate({
@@ -303,6 +305,10 @@ taskServices.getTasksByAssignee = async (userId) => {
             path: 'remarks.createdBy',
             select: 'firstName lastName email role'
         });
+    // count the number of tasks assigned to the user & leads 
+    const taskCount = await Task.countDocuments({ assignedTo: userId });
+    const leadCount = await Lead.countDocuments({ assignedTo: userId });
+
 
     if (tasks.length === 0) {
         throw new Error("No tasks assigned to this user");
