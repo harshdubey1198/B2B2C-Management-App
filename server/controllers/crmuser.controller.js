@@ -62,4 +62,36 @@ crmUserController.updateCrmsAccount = async (req, res) => {
   }
 }
 
+// Forget Password Controller
+crmUserController.CRMUserForgetPassword = async (req, res) => {
+  try {
+    const response = await crmUserService.CRMUserForgetPassword(req.body);
+    return res.status(200).json(createResult("Password updated successfully", response));
+  } catch (error) {
+    console.log("error forget-password users", error);
+    return res.status(400).json(createResult(null, null, error.message));
+  }
+};
+
+// RESET Password Controller
+crmUserController.resetCRMUserPassword = async (req, res) => {
+  try {
+    const response = await crmUserService.resetCRMUserPassword(req.body);
+    return res.status(200).json(createResult("Password updated successfully", response));
+  } catch (error) {
+    console.log("error forget-password users", error);
+    return res.status(400).json(createResult(null, null, error.message));
+  }
+};
+
+crmUserController.UpdatepasswordCrmsUsers = async (req, res) => {
+  try {
+    const response = await crmUserService.UpdatepasswordCrmsUsers(req.params.id, req.body);
+      return res.status(200).json(createResult("Password updated successfully", response));
+  } catch (error) {
+      console.log("error updating-password users", error);
+      return res.status(400).json(createResult(null, null, error.message));
+  }
+}
+
 module.exports = crmUserController
