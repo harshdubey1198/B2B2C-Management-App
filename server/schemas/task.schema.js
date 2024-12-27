@@ -9,12 +9,12 @@ const taskSchema = new Schema({
     assignedTo: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
+            ref: 'CRMUser',
         },
     ],
     assignedBy: {
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User',
+        ref: 'CRMUser',
     },
     assignDate: {
         type: Date,
@@ -24,7 +24,7 @@ const taskSchema = new Schema({
         {
             message: String,
             createdAt: { type: Date, default: Date.now },
-            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+            createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'CRMUser' },
         },
     ],
     status: {

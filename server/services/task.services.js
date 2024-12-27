@@ -1,3 +1,4 @@
+const CRMUser = require("../schemas/crmuser.schema");
 const Lead = require("../schemas/lead.schema");
 const Task = require("../schemas/task.schema");
 const User = require("../schemas/user.schema");
@@ -230,7 +231,7 @@ taskServices.updateAssignees = async (taskId, body) => {
 
     // Combine addAssignees and removeAssignees into a single database query
     const uniqueUserIds = [...new Set([...addAssignees, ...removeAssignees])];
-    const users = await User.find({ _id: { $in: uniqueUserIds } }).select('firstName lastName');
+    const users = await CRMUser.find({ _id: { $in: uniqueUserIds } }).select('firstName lastName');
 
     // Map user IDs to names for efficient lookup
     const userIdToNameMap = users.reduce((map, user) => {
