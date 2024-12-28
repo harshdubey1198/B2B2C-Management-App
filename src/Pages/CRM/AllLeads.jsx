@@ -21,6 +21,7 @@ function AllLeads() {
     const [selectedLead, setSelectedLead] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedLeads, setSelectedLeads] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [employeeId, setEmployeeId] = useState("");
     const [filterOptions, setFilterOptions] = useState({
         sortBy: "name",
@@ -142,31 +143,78 @@ function AllLeads() {
         setFilterOptions((prev) => ({ ...prev, [field]: value }));
     };
     const applyFilters = () => {
-        let sortedLeads = [...leads];
+        let filteredLeads = [...leads];
+    
+        // Apply Search Filter
+        if (searchTerm.trim()) {
+            const term = searchTerm.toLowerCase();
+            filteredLeads = filteredLeads.filter((lead) => {
+                const name = `${lead.firstName} ${lead.lastName}`.toLowerCase();
+                const email = lead.email?.toLowerCase();
+                const status = lead.status?.toLowerCase();
+    
+                return (
+                    name.includes(term) ||
+                    email?.includes(term) ||
+                    status?.includes(term)
+                );
+            });
+        }
+    
+        // Sorting Logic (unchanged)
         if (filterOptions.sortBy === "name") {
-            sortedLeads.sort((a, b) => {
+            filteredLeads.sort((a, b) => {
                 const nameA = a.firstName.toLowerCase();
                 const nameB = b.firstName.toLowerCase();
                 return filterOptions.order === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
             });
         } else if (filterOptions.sortBy === "date") {
-            sortedLeads.sort((a, b) => {
+            filteredLeads.sort((a, b) => {
                 const dateA = new Date(a.createdAt);
                 const dateB = new Date(b.createdAt);
                 return filterOptions.order === "asc" ? dateA - dateB : dateB - dateA;
             });
         } else if (filterOptions.sortBy === "status") {
-            sortedLeads.sort((a, b) => {
+            filteredLeads.sort((a, b) => {
                 const statusA = a.status.toLowerCase();
                 const statusB = b.status.toLowerCase();
                 return filterOptions.order === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
             });
         }
-        setFilteredLeads(sortedLeads);
+    
+        setFilteredLeads(filteredLeads);
     };
+    
+    // const applyFilters = () => {
+    //     let sortedLeads = [...leads];
+    //     if (filterOptions.sortBy === "name") {
+    //         sortedLeads.sort((a, b) => {
+    //             const nameA = a.firstName.toLowerCase();
+    //             const nameB = b.firstName.toLowerCase();
+    //             return filterOptions.order === "asc" ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
+    //         });
+    //     } else if (filterOptions.sortBy === "date") {
+    //         sortedLeads.sort((a, b) => {
+    //             const dateA = new Date(a.createdAt);
+    //             const dateB = new Date(b.createdAt);
+    //             return filterOptions.order === "asc" ? dateA - dateB : dateB - dateA;
+    //         });
+    //     } else if (filterOptions.sortBy === "status") {
+    //         sortedLeads.sort((a, b) => {
+    //             const statusA = a.status.toLowerCase();
+    //             const statusB = b.status.toLowerCase();
+    //             return filterOptions.order === "asc" ? statusA.localeCompare(statusB) : statusB.localeCompare(statusA);
+    //         });
+    //     }
+    //     setFilteredLeads(sortedLeads);
+    // };
+    // useEffect(() => {
+    //     applyFilters();
+    // }, [filterOptions, leads]);
     useEffect(() => {
         applyFilters();
-    }, [filterOptions, leads]);
+    }, [searchTerm, filterOptions, leads]);
+    
     const [showFilterDropdown, setShowFilterDropdown] = useState(false);
     const toggleFilterDropdown = () => setShowFilterDropdown(!showFilterDropdown);
 
@@ -183,6 +231,17 @@ function AllLeads() {
                     <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
 
                 </div>
+                <div className="search-bar mb-3">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by Name, Email, or Status..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ width: "300px", display: "inline-block", marginRight: "10px" }}
+                    />
+                </div>
+
                 <div className="filter-panel" style={{ float: "right", marginTop: "-50px", position: "relative" }}>
                     <i
                         className="mdi mdi-filter"
