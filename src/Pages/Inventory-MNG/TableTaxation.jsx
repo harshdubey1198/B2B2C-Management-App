@@ -24,7 +24,7 @@ function TaxationTable() {
   const fetchTaxes = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:7200/api/tax/get-taxes/${firmId}`,
+        `${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`,
         config
       );
       setTaxes(response.data);
@@ -53,7 +53,7 @@ function TaxationTable() {
 
     try {
       const response = await axios.delete(
-        `http://localhost:7200/api/tax/delete-tax/${taxId}`,
+        `${process.env.REACT_APP_URL}/tax/delete-tax/${taxId}`,
         config
       );
       setTaxes(taxes.filter(t => t._id !== taxId));
