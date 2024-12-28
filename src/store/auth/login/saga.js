@@ -33,7 +33,7 @@ function* loginUser({ payload: { user, history } }) {
 function fetchLogin(user) {
   let apiUrl = `${process.env.REACT_APP_URL}/auth/login`;
   const currentPath = window.location.pathname;
-  console.log("Current path:", currentPath);
+  // console.log("Current path:", currentPath);
 
   if (currentPath === "/crm/login") {
     apiUrl = `${process.env.REACT_APP_URL}/crmuser/login-crmsuser`;

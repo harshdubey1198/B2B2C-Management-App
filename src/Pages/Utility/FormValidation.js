@@ -11,10 +11,10 @@ export function validateEmail(email) {
     const validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     console.log("Validating email:", email); 
     if (validRegex.test(email)) {
-        console.log("Email is valid"); 
+        // console.log("Email is valid"); 
         return true;
     } else {
-        console.log("Email is invalid"); 
+        // console.log("Email is invalid"); 
         return false;
     }
 }
