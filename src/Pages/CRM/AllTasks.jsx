@@ -50,11 +50,21 @@ function AllTasks() {
 
   const toggleModal = () => setModal(!modal);
 
-  const handleUpdate = (task) => {
-    if (task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0) {
-      setSelectedLead(task.leadIds[0]);
-      setNewNote('');
-      toggleModal();
+  // const handleUpdate = (task, lead) => {
+  //   if (task.leadIds && Array.isArray(task.leadIds) && task.leadIds.length > 0) {
+  //     setSelectedLead(task.leadIds[0]);
+  //     setNewNote('');
+  //     toggleModal();
+  //   } else {
+  //     alert('No lead found for this task');
+  //   }
+  // };
+
+  const handleUpdate = (task, lead) => {
+    if (lead) {
+      setSelectedLead(lead); // Set the correct lead
+      setNewNote(''); // Clear the note field for each lead
+      toggleModal(); // Open the modal
     } else {
       alert('No lead found for this task');
     }
@@ -168,7 +178,7 @@ const getRandomColor = () => {
                                 <td>
                                     <button
                                     className='btn btn-primary btn-sm'
-                                    onClick={() => handleUpdate(task)}
+                                    onClick={() => handleUpdate(task, lead)}
                                     >
                                     Update
                                     </button>
