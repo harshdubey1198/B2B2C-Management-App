@@ -16,6 +16,11 @@ const taskSchema = new Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'CRMUser',
     },
+    priority: {
+        type: String,
+        enum: ['Low', 'Medium', 'High', 'Critical'],
+        default: 'Medium',
+    },
     assignDate: {
         type: Date,
         default: Date.now, 

@@ -8,6 +8,7 @@ import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
 import LeadImportModal from "../../Modal/crm-modals/leadImportModal";  
 import { toast } from "react-toastify";
+import { getRole } from "../../utils/roleUtils";
 
 function AllLeads() {
     const navigate = useNavigate();
@@ -25,6 +26,9 @@ function AllLeads() {
         sortBy: "name",
         order: "asc",
     });
+    const role = getRole();
+
+
     const fetchLeads = async () => {
         try {
             const result = await getAllLeads();
@@ -175,9 +179,9 @@ function AllLeads() {
                     <Button color="primary" onClick={toggleImportModal}>Import Leads</Button>
                     <Button color="primary" onClick={handleExportLeads}> Export Leads </Button>                    
                     <Button color="primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </Button>
-                    <Button color="primary" onClick={toggleAssignModal}>
-                        Assign Leads
-                    </Button>
+
+                    <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
+
                 </div>
                 <div className="filter-panel" style={{ float: "right", marginTop: "-50px", position: "relative" }}>
                     <i

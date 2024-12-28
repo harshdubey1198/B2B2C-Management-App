@@ -84,6 +84,7 @@ import AllTasks from "../Pages/CRM/AllTasks.jsx";
 import CrmUser from "../Pages/CRM/CrmUser.jsx";
 import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 import ReassignTask from "../Pages/CRM/ReassignTask.jsx";
+import TaskManagement from "../Pages/CRM/TaskManagement.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -128,6 +129,7 @@ const authProtectedRoutes = [
   {path:"/crm/crm-users", component:<CrmUser/>},
   {path:"/crm/user-roles", component:<RoleManagement/>},
   {path:"/crm/reassign-tasks", component:<ReassignTask />},
+  {path:"/crm/task-management", component:<TaskManagement />},
 
   //  Coming Soon 
   {path:"/clients-portal" , component: <ComingSoon />},

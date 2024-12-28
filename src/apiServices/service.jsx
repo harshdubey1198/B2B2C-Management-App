@@ -5,6 +5,7 @@ const token = JSON.parse(localStorage.getItem('authUser'))?.token;
 
 const creatorId = JSON.parse(localStorage.getItem('authUser'))?.response?._id;
 const firmId = JSON.parse(localStorage.getItem('authUser'))?.response?.adminId;
+const Role = JSON.parse(localStorage.getItem('authUser'))?.response?.role;
 const axiosInstance = axios.create({
     baseURL: `${constant.appBaseUrl}/api/`,
     headers: {
@@ -21,6 +22,9 @@ axiosInstance.interceptors.response.use(
         )
     );
       
+
+
+    
 // to get all leads 
 export const getAllLeads = async () => {
     try {
@@ -109,6 +113,16 @@ export const getAllTasks = async () => {
         return error;
     }
 };
+// to update the task
+export const updateTask = async (id, task) => {
+    try {
+        const response = await axiosInstance.put(`/task/update-task/${id}`, task);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 
 //to update task
 export const updateTaskOrLead = async (id, updateData) => {
