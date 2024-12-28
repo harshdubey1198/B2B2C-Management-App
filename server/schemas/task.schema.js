@@ -34,7 +34,7 @@ const taskSchema = new Schema({
     ],
     status: {
         type: String,
-        enum: ['Pending', 'Completed', 'In Progress', 'Missed', 'Overdue'],
+        enum: ['pending', 'completed', 'inProgress', 'missed', 'overdue','failed'],
         default: 'Pending', 
     },
     // priority: {

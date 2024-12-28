@@ -4,11 +4,10 @@ import { Container, Row, Col, Form, FormGroup, Label, Input, Button, Card, CardB
 // import axios from 'axios';
 import axiosInstance from '../../utils/axiosInstance';
 import ChangePasswordModal from '../../Modal/ChangePasswordModal';
-
-
+import { getRole } from '../../utils/roleUtils';
+import { getCrmUserById } from '../../apiServices/service';
 const ProfileSettings = () => {
   const [isModalOpen, setModalOpen] = useState(false);
-
   const toggleModal = () => {
     setModalOpen(!isModalOpen);
   };
@@ -30,31 +29,52 @@ const ProfileSettings = () => {
   const [preview, setPreview] = useState(null);
 
   const authUser = JSON.parse(localStorage.getItem('authUser'));
-  // const token = authUser.token;
-
+  const role = getRole();
+  const mainUsers = ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'];
+  const crmUsers = ['ASM', 'Telecaller', 'SM'];
+// if role is of main user then hit ${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}
+//  else hit getCrmUserById 
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,
-        );
-        const userData = response;
-        setFormData({
-          ...formData,
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          mobile: userData.mobile,
-          avatar: userData.avatar,
-        });
-        setPreview(userData.avatar);
+        if (mainUsers.includes(role)) {
+          const response = await axiosInstance.get(
+            `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,
+          );
+          const userData = response;
+          setFormData({
+            ...formData,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            mobile: userData.mobile,
+            avatar: userData.avatar,
+          });
+          setPreview(userData.avatar);
+        } else if (crmUsers.includes(role)) {
+          const response = await getCrmUserById();
+          const userData = response.data;  
+          console.log(userData);
+          setFormData({
+            ...formData,
+            firstName: userData.firstName,
+            lastName: userData.lastName,
+            email: userData.email,
+            mobile: userData.mobile,
+            avatar: userData.avatar,
+          });
+          setPreview(userData.avatar);
+        }
       } catch (error) {
         toast.error('Failed to load user data');
       }
     };
     fetchUserData();
   }, []);
+
+            
+      
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,27 +97,48 @@ const ProfileSettings = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedData = new FormData();
-    updatedData.append('firstName', formData.firstName);
-    updatedData.append('lastName', formData.lastName);
-    updatedData.append('email', formData.email);
-    updatedData.append('mobile', formData.mobile);
-
-    if (formData.avatar instanceof File) {
-      updatedData.append('avatar', formData.avatar);
+  
+    const updatedData = {};
+  
+    if (crmUsers.includes(role)) {
+      if (formData.firstName) updatedData.firstName = formData.firstName;
+      if (formData.lastName) updatedData.lastName = formData.lastName;
+      if (formData.email) updatedData.email = formData.email;
+      if (formData.mobile) updatedData.mobile = formData.mobile;
+    } else {
+      updatedData.firstName = formData.firstName;
+      updatedData.lastName = formData.lastName;
+      updatedData.email = formData.email;
+      updatedData.mobile = formData.mobile;
     }
-
+  
+    if (formData.avatar instanceof File) {
+      updatedData.avatar = formData.avatar;
+    }
+  
     try {
-      const response = await axiosInstance.put(
-        `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
-        updatedData
-      );
+      let response;
+      if (mainUsers.includes(role)) {
+        response = await axiosInstance.put(
+          `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
+          updatedData
+        );
+      } else if (crmUsers.includes(role)) {
+        response = await axiosInstance.put(
+          `/crmuser/update-crmsuser/${authUser?.response._id}`,
+          updatedData
+        );
+      }
+  
       toast.success('Profile updated successfully!');
-      setPreview(response.avatar); 
+      setPreview(response.data.avatar);
     } catch (error) {
-      toast.error('Failed to update profile');
+      console.error('Failed to update profile:', error);
+      // toast.error('Failed to update profile');
     }
   };
+  
+  
 
   const toggleEditMode = (field) => {
     setEditMode({
@@ -149,14 +190,7 @@ const ProfileSettings = () => {
                       <Label for="lastName">Last Name</Label>
                       {editMode.lastName ? (
                         <div className='d-flex align-items-center'>
-                          <Input
-                            type="text"
-                            name="lastName"
-                            id="lastName"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            placeholder="Enter your last name"
-                            className='flex-grow-1'
+                          <Input type="text" name="lastName" id="lastName" value={formData.lastName} onChange={handleChange} placeholder="Enter your last name" className='flex-grow-1'
                           />
                           <Button color="info" onClick={() => toggleEditMode('lastName')} className='ml-2'>
                             Save
@@ -177,14 +211,7 @@ const ProfileSettings = () => {
                       <Label for="email">Email</Label>
                       {editMode.email ? (
                         <div className='d-flex align-items-center'>
-                          <Input
-                            type="email"
-                            name="email"
-                            id="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Enter your email"
-                            className='flex-grow-1'
+                          <Input type="email" name="email" id="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" className='flex-grow-1'
                           />
                           <Button color="info" onClick={() => toggleEditMode('email')} className='ml-2'>
                             Save
@@ -262,30 +289,12 @@ const ProfileSettings = () => {
                 </CardBody>
               </Card>
             </Col>
-            
-            {/* modal for password reset using the otp verification , password and confirm password , email from authuser.email  */}
-            {/* <Col xs={12} sm={6} md={6} lg={6}>
-              <Card>
-              <h2 class="card-title-heading">Change Password</h2>
-                <CardBody>
-                  <Form>
-                    <FormGroup>
-                      <Label for="password">Password</Label>
-                      <Input type="password" name="password" id="password" placeholder="Enter your new password" />
-                    </FormGroup>
-                    <FormGroup>
-                      <Label for="confirmPassword">Confirm Password</Label>
-                      <Input type="password" name="confirmPassword" id="confirmPassword" placeholder="Confirm your new password" />
-                    </FormGroup>
-                    <Button color="primary">Change Password</Button>
-                  </Form>
-                </CardBody> 
-              </Card>
-            </Col> */}
-
-          </Row>
+        </Row>
         </Container>
         <ChangePasswordModal 
+            role={role}
+            mainUsers={mainUsers}
+            crmUsers={crmUsers}
             isOpen={isModalOpen} 
             toggle={toggleModal} 
             authUser={authUser}

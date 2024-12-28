@@ -376,6 +376,11 @@ export const masterAdminSidebarData = () => [
         {sublabel:"Analytics",link:"/crm/leads-analytics"},
         // {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
       ]
+    },
+    {
+      label: "Settings",
+      icon: "mdi mdi-cog-outline",
+      url: "/profile-settings",
     }
   ];
 
@@ -396,6 +401,11 @@ export const masterAdminSidebarData = () => [
         // {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
 
       ]
+    },
+    {
+      label: "Settings",
+      icon: "mdi mdi-cog-outline",
+      url: "/profile-settings",
     }
   ];
 
@@ -420,7 +430,7 @@ export const masterAdminSidebarData = () => [
     {
       label: "Settings",
       icon: "mdi mdi-cog-outline",
-      url: "/maintenance",
+      url: "/profile-settings",
     }
    
     

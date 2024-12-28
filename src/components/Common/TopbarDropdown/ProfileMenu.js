@@ -1,11 +1,6 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from 'prop-types';
-import {
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from "reactstrap";
+import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem, } from "reactstrap";
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -24,7 +19,7 @@ const ProfileMenu = props => {
 
   const [username, setusername] = useState("Admin");
   const [userImage, setuserImage] = useState(user1);
-
+  
   // const [role, setrole] = useState("");
   useEffect(() => {
     if (localStorage.getItem("authUser")) {

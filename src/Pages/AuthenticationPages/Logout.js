@@ -5,32 +5,42 @@ import withRouter from "../../components/Common/withRouter";
 
 import { logoutUser } from "../../store/actions";
 
-//redux
+// redux
 import { useSelector, useDispatch } from "react-redux";
-
 import { createSelector } from 'reselect';
+import { getRole } from "../../utils/roleUtils";
+
+const mainUsers = ['super_admin', 'client_admin', 'firm_admin', 'accountant', 'employee'];
+const crmUsers = ['ASM', 'Telecaller', 'SM'];
 
 const Logout = () => {
   const dispatch = useDispatch();
-
+  const role = getRole(); 
+  console.log(role);
   const logoutpage = createSelector(
-    (state ) => state.login,
+    (state) => state.login,
     (state) => ({
-        isUserLogout: state.isUserLogout,
+      isUserLogout: state.isUserLogout,
     })
   );
-// Inside your component
-const { isUserLogout } = useSelector(logoutpage);
+
+  const { isUserLogout } = useSelector(logoutpage);
 
   useEffect(() => {
     dispatch(logoutUser());
   }, [dispatch]);
 
   if (isUserLogout) {
-    return <Navigate to="/login" />;
+    if (crmUsers.includes(role)) {
+      return <Navigate to="/crm/login" />;
+    } else if (mainUsers.includes(role)) {
+      return <Navigate to="/login" />;
+    } else {
+      return <Navigate to="/login" />;
+    }
   }
 
-  return <></>;
+  return null;
 };
 
 Logout.propTypes = {

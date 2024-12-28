@@ -2,7 +2,7 @@ import axios from 'axios';
 import constant from './constant';
 
 const token = JSON.parse(localStorage.getItem('authUser'))?.token;
-
+const id = JSON.parse(localStorage.getItem('authUser'))?.response?._id;
 const creatorId = JSON.parse(localStorage.getItem('authUser'))?.response?._id;
 const firmId = JSON.parse(localStorage.getItem('authUser'))?.response?.adminId;
 const Role = JSON.parse(localStorage.getItem('authUser'))?.response?.role;
@@ -104,6 +104,17 @@ export const getFirmUsers = async () => {
         return error;
     }
 };
+
+// to get user id data using crmuser id 
+export const getCrmUserById = async () => {
+    try {
+        const response = await axiosInstance.get(`crmuser/crmsuser-account/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 // to get tasks 
 export const getAllTasks = async () => {
     try {
@@ -212,7 +223,18 @@ export const deleteRoleById = async (id) => {
           return error;
         }
       };
-      
+  
+// update crm user password 
+export const updateCrmUserPassword = async (passwordData) => {
+    try {
+      const response = await axiosInstance.post(`/crmuser/update-crmpassword/${id}`, passwordData);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating CRM user password:', error);
+      throw error.response?.data || error;
+    }
+  };
+
 // to get crm users
 export const getCrmUsers = async () => {
     try {
@@ -250,6 +272,8 @@ export const exportLeads = async (data) => {
         throw error.response?.data || error.message;
     }
 };
+
+
 
 
 
