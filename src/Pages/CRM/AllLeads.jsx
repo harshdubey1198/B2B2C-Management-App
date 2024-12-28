@@ -223,12 +223,22 @@ function AllLeads() {
             <div className="page-content">
                 <Breadcrumbs title="CRM" breadcrumbItem="All Leads" />
                 <div className="button-panel">
-                    <Button color="primary" onClick={() => navigate("/crm/create-lead")}> Add Lead </Button>
-                    <Button color="primary" onClick={toggleImportModal}>Import Leads</Button>
-                    <Button color="primary" onClick={handleExportLeads}> Export Leads </Button>                    
-                    <Button color="primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </Button>
 
-                    <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
+                    { (role === "firm_admin" || role === "ASM") && (
+                        <>
+                            <Button color="primary" onClick={() => navigate("/crm/create-lead")}> Add Lead </Button>
+                            <Button color="primary" onClick={toggleImportModal}> Import Leads </Button>
+                            <Button color="primary" onClick={handleExportLeads}> Export Leads </Button>
+                        </>
+                      )}
+                    { (role === "firm_admin") && (
+                        <Button color="primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </Button>
+                       )
+                      }
+                    { (role === "firm_admin" || role === "ASM" || role === "SM" ) && (
+                        <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
+                       )    
+                      }
 
                 </div>
                 <div className="search-bar mb-3">

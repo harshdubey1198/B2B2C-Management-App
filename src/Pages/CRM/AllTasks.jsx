@@ -104,7 +104,7 @@ function AllTasks() {
         setTaskModal(false); // Close the modal
         toast.success('Task updated successfully!');
       } else {
-        toast.error(result.message || 'Failed to update task');
+        toast.success(result.message);
       }
     } catch (error) {
       console.error('Error updating task:', error);

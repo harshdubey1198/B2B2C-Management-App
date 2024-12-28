@@ -396,7 +396,7 @@ export const masterAdminSidebarData = () => [
       subItem : [
         {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
         {sublabel:"All Leads",link:"/crm/all-leads"},
-        {sublabel:"New Lead",link:"/crm/create-lead"},
+        // {sublabel:"New Lead",link:"/crm/create-lead"},
         {sublabel:"Analytics",link:"/crm/leads-analytics"},
         // {sublabel:"Reassign Tasks",link:"/crm/reassign-tasks"},
 
