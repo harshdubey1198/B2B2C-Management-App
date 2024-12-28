@@ -12,6 +12,10 @@ function AllTasks() {
   const [newNote, setNewNote] = useState('');
   const authUser = JSON.parse(localStorage.getItem('authUser'));
   const userId = authUser?.response?._id;
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [taskStatus, setTaskStatus] = useState(''); 
+  const [taskRemark, setTaskRemark] = useState(''); 
+  const [taskModal, setTaskModal] = useState(false)
   const role = authUser?.response?.role;
 
   // const fetchTasks = async () => {
@@ -69,6 +73,48 @@ function AllTasks() {
       alert('No lead found for this task');
     }
   };
+
+  const handleUpdateTask = (task) => {
+    setSelectedTask(task); 
+    setTaskStatus(task.status || ''); 
+    setTaskRemark(''); 
+    setTaskModal(true); 
+  };
+
+  const handleTaskUpdateSubmit = async () => {
+    if (!taskStatus || !taskRemark) {
+      alert('Please fill out both status and remark');
+      return;
+    }
+  
+    try {
+      const updatedTask = {
+        ...selectedTask,
+        status: taskStatus,
+        remarks: [
+          ...(selectedTask.remarks || []),
+          {
+            message: taskRemark,
+            createdBy: userId,
+          },
+        ],
+      };
+  
+      const result = await updateTaskOrLead(selectedTask._id, updatedTask); // Update API
+      if (result.success) {
+        fetchTasks(); // Refresh the task list
+        setTaskModal(false); // Close the modal
+        toast.success('Task updated successfully!');
+      } else {
+        toast.error(result.message || 'Failed to update task');
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+      toast.error('Failed to update task');
+    }
+  };
+  
+  
   
   const handleNoteSubmit = async () => {
     if (!newNote) {
@@ -158,6 +204,7 @@ const getRandomColor = () => {
                           <th scope='col'>Due Date</th>
                           <th scope='col'>Status</th>
                           <th scope='col'>Actions</th>
+                          <th scope='col'>Update Task</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -183,6 +230,14 @@ const getRandomColor = () => {
                                     Update
                                     </button>
                                 </td>
+                                <td>
+                                <button
+                                    className="btn btn-secondary btn-sm ml-2"
+                                    onClick={() => handleUpdateTask(task)}
+                                  >
+                                    Update
+                                  </button>
+                                </td>
                                 </tr>
                             ))
                             : (
@@ -206,6 +261,14 @@ const getRandomColor = () => {
                                     >
                                     Update
                                     </button>
+                                </td>
+                                <td>
+                                <button
+                                    className="btn btn-secondary btn-sm ml-2"
+                                    onClick={() => handleUpdateTask(task)}
+                                  >
+                                    Update Task
+                                  </button>
                                 </td>
                                 </tr>
                             )
@@ -270,6 +333,37 @@ const getRandomColor = () => {
                 </Button>
             </ModalFooter>
         </Modal>
+
+        <Modal isOpen={taskModal} toggle={() => setTaskModal(!taskModal)}>
+  <ModalHeader toggle={() => setTaskModal(!taskModal)}>Update Task</ModalHeader>
+  <ModalBody>
+    <div>
+      <label>Status</label>
+      <Input
+        type="select"
+        value={taskStatus}
+        onChange={(e) => setTaskStatus(e.target.value)}
+      >
+        <option value="pending">Pending</option>
+        <option value="in-progress">In Progress</option>
+        <option value="completed">Completed</option>
+      </Input>
+    </div>
+    <div className="mt-3">
+      <label>Remark</label>
+      <Input
+        type="textarea"
+        value={taskRemark}
+        onChange={(e) => setTaskRemark(e.target.value)}
+        placeholder="Add a remark..."
+      />
+    </div>
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" onClick={() => setTaskModal(!taskModal)}>Cancel</Button>
+    <Button color="primary" onClick={handleTaskUpdateSubmit}>Update Task</Button>
+  </ModalFooter>
+</Modal>
 
     </React.Fragment>
   );
