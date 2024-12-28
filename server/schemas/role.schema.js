@@ -10,10 +10,6 @@ const roleSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
-    // permissions: {
-    //   type: [String],
-    //   default: [],
-    // },
     deleted_at: { 
       type: Date, 
       default: null 

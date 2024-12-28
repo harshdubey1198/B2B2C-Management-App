@@ -117,6 +117,14 @@ crmUserService.getAllCrmsUsers = async (id) => {
   return data;
 };
 
+crmUserService.getCrmsUsersAccount = async (id) => {
+  const data = CRMUser.findOne({ _id: id }).select("-password").populate("roleId");
+  if (!data) {
+    throw new Error("Error occured during fetching the CRMUser data.");
+  }
+  return data;
+};
+
 // update account
 crmUserService.updateCrmsAccount = async (id, data) => {
   try {
