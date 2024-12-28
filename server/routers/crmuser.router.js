@@ -7,6 +7,7 @@ router.post('/create-crmsuser/:id',tokenVerification, crmUserController.createCr
 router.get('/get-crmsuser/:id', crmUserController.getAllCrmsUsers);
 router.post('/login-crmsuser', crmUserController.loginCrmsUsers);
 router.post('/login-crmsuser', crmUserController.loginCrmsUsers);
+router.get('/crmsuser-account/:id', crmUserController.getCrmsUsersAccount);
 router.post('/update-crmpassword/:id', crmUserController.UpdatepasswordCrmsUsers);
 router.post('/forgot-crmpassword', crmUserController.CRMUserForgetPassword);
 router.post('/reset-crmpassword', crmUserController.resetCRMUserPassword);

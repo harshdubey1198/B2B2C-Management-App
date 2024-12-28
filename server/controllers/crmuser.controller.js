@@ -47,6 +47,15 @@ crmUserController.loginCrmsUsers = async (req, res) => {
 crmUserController.getAllCrmsUsers = async (req, res) => {
   try {
     const response = await crmUserService.getAllCrmsUsers(req.params.id);
+      return res.status(200).json(createResult("Accounts fetched for firms successfully", response));
+  } catch (error) {
+      return res.status(400).json(createResult(null, null, error.message));
+  }
+}
+
+crmUserController.getCrmsUsersAccount = async (req, res) => {
+  try {
+    const response = await crmUserService.getCrmsUsersAccount(req.params.id);
       return res.status(200).json(createResult("Account fetched successfully", response));
   } catch (error) {
       return res.status(400).json(createResult(null, null, error.message));
