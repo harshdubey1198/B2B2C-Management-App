@@ -66,9 +66,9 @@ function AllTasks() {
 
   const handleUpdate = (task, lead) => {
     if (lead) {
-      setSelectedLead(lead); // Set the correct lead
-      setNewNote(''); // Clear the note field for each lead
-      toggleModal(); // Open the modal
+      setSelectedLead(lead); 
+      setNewNote(''); 
+      toggleModal();
     } else {
       alert('No lead found for this task');
     }
@@ -117,13 +117,13 @@ function AllTasks() {
   
   const handleNoteSubmit = async () => {
     if (!newNote) {
-      alert('Please enter a note');
+      toast.error('Please enter a note');
       return;
     }
   
     try {
       if (!selectedLead || !selectedLead._id) {
-        alert('No lead selected');
+        toast.error('No lead selected');
         return;
       }
   
@@ -139,10 +139,11 @@ function AllTasks() {
         status: selectedLead.status,
       };
   
-      console.log("Updated Lead Data:", updatedLead); 
+      // console.log("Updated Lead Data:", updatedLead); 
   
       const result = await updateLeadById(selectedLead._id, updatedLead);
-      if (result.success) {
+      console.log(result, "result")
+      if (result) {
         // alert('Note and status updated successfully!');
         fetchTasks(); 
         toggleModal();
@@ -159,8 +160,7 @@ function AllTasks() {
     }
   };
   
-  
-  useEffect(() => {
+  useEffect(() => { 
     fetchTasks();
   }, []);
 
