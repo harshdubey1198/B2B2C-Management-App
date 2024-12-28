@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks, getTasksByAssignee, updateLeadById, updateTaskOrLead } from '../../apiServices/service';
+import { getAllTasks, getTasksByAssignee, updateLeadById, updateTask, updateTaskOrLead } from '../../apiServices/service';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { toast } from 'react-toastify';
@@ -89,18 +89,16 @@ function AllTasks() {
   
     try {
       const updatedTask = {
-        ...selectedTask,
         status: taskStatus,
-        remarks: [
-          ...(selectedTask.remarks || []),
-          {
-            message: taskRemark,
-            createdBy: userId,
-          },
-        ],
+        dueDate: selectedTask.dueDate, 
+        remarks: {
+          message: taskRemark,
+          createdBy: userId, 
+        },
       };
   
-      const result = await updateTaskOrLead(selectedTask._id, updatedTask); // Update API
+      const result = await updateTask(selectedTask._id, updatedTask); 
+  
       if (result.success) {
         fetchTasks(); // Refresh the task list
         setTaskModal(false); // Close the modal
@@ -113,6 +111,7 @@ function AllTasks() {
       toast.error('Failed to update task');
     }
   };
+  
   
   
   
@@ -344,9 +343,10 @@ const getRandomColor = () => {
         value={taskStatus}
         onChange={(e) => setTaskStatus(e.target.value)}
       >
-        <option value="pending">Pending</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
+        <option value="Pending">Pending</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Overdue">Overdue</option>
       </Input>
     </div>
     <div className="mt-3">
