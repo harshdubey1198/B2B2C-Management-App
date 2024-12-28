@@ -1,19 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table } from 'reactstrap';
-import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { getRoles, createCrmUser, getCrmUsers, updateCrmUser } from '../../apiServices/service';
-import { toast } from 'react-toastify';
+import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  Table,
+} from "reactstrap";
+import Breadcrumbs from "../../components/Common/Breadcrumb";
+import {
+  getRoles,
+  createCrmUser,
+  getCrmUsers,
+  updateCrmUser,
+} from "../../apiServices/service";
+import { toast } from "react-toastify";
 
 function CrmUser() {
   const [roles, setRoles] = useState([]);
   const [users, setUsers] = useState([]);
   const [modal, setModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const [newUser, setNewUser] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
-    roleId: '',  
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    roleId: "",
     isActive: true,
   });
 
@@ -22,25 +35,37 @@ function CrmUser() {
       const result = await getRoles();
       setRoles(result || []);
       if (!result || result.length === 0) {
-        alert('Roles are not defined yet');
+        alert("Roles are not defined yet");
       }
     } catch (error) {
       alert(error.message);
     }
   };
 
+  const filteredUsers = users.filter((user) => {
+    const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
+    const email = user.email?.toLowerCase() || "";
+    const roleName = user?.roleId?.roleName?.toLowerCase() || "";
+
+    return (
+      fullName.includes(searchTerm.toLowerCase()) ||
+      email.includes(searchTerm.toLowerCase()) ||
+      roleName.includes(searchTerm.toLowerCase())
+    );
+  });
+
   const createCrmUsers = async (user) => {
     try {
       const result = await createCrmUser(user);
       // alert(result.message || 'User saved successfully');
-      toast.success(result.message || 'User saved successfully');
+      toast.success(result.message || "User saved successfully");
       fetchRoles();
       toggleModal();
       const updatedUsers = [...users, { ...user, id: Date.now() }];
       setUsers(updatedUsers);
-      localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
+      localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
     } catch (error) {
-      alert(error.message || 'Failed to save user');
+      alert(error.message || "Failed to save user");
     }
   };
 
@@ -48,13 +73,10 @@ function CrmUser() {
     try {
       const result = await getCrmUsers();
       setUsers(result.data || []);
-
-    }
-    catch (error) {
-      alert(error.message || 'Failed to get users');
+    } catch (error) {
+      alert(error.message || "Failed to get users");
     }
   };
-
 
   const handleAddUser = () => {
     createCrmUsers(newUser);
@@ -68,11 +90,11 @@ function CrmUser() {
   const toggleModal = () => {
     setModal(!modal);
     setNewUser({
-      firstName: '',
-      lastName: '',
-      email: '',
-      mobile: '',
-      roleId: '',
+      firstName: "",
+      lastName: "",
+      email: "",
+      mobile: "",
+      roleId: "",
       isActive: true,
     });
     fetchRoles();
@@ -90,37 +112,45 @@ function CrmUser() {
   const handleEditUser = (user) => {
     setNewUser({
       ...user,
-      roleId: user.role ? user.role._id : '',
+      roleId: user.role ? user.role._id : "",
     });
     setModal(true);
   };
-  
+
   const handleDeleteUser = (_id) => {
     const updatedUsers = users.filter((user) => user._id !== _id);
     setUsers(updatedUsers);
-    localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
+    localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
   };
 
   const handleUpdateUser = async () => {
     try {
       const result = await updateCrmUser(newUser._id, newUser);
-      toast.success(result.message || 'User updated successfully');
+      toast.success(result.message || "User updated successfully");
       const updatedUsers = users.map((user) =>
         user._id === newUser._id ? { ...newUser } : user
       );
       setUsers(updatedUsers);
-      localStorage.setItem('crmUsers', JSON.stringify(updatedUsers));
+      localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
       toggleModal();
     } catch (error) {
-      alert(error.message || 'Failed to update user');
+      alert(error.message || "Failed to update user");
     }
   };
-  
 
   return (
     <React.Fragment>
-      <div className='page-content'>
+      <div className="page-content">
         <Breadcrumbs title="CRM" breadcrumbItem="CRM Users" />
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search by name, email, or role..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         <div className="container">
           <div className="d-flex justify-content-between mb-4">
             <p className="mm-active">
@@ -145,7 +175,7 @@ function CrmUser() {
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody>
+              {/* <tbody>
                 {users.map((user, index) => (
                   <tr key={user._id}>
                     <td>{index + 1}</td>
@@ -154,13 +184,11 @@ function CrmUser() {
                     <td>{user.email}</td>
                     <td>{user.mobile}</td>
                     <td>{user?.roleId?.roleName}</td>
-                    {/* <td>{user.roleName}</td> */}
                     <td>
                       {user.isActive ? 'Active' : 'Inactive'}
                     </td>
                     <td className='flex flex-wrap'>
                       <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleEditUser(user)}></i>
-                      {/* <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteUser(user.id)}></i> */}
                     </td>
                   </tr>
                 ))}
@@ -168,6 +196,38 @@ function CrmUser() {
                   <tr>
                     <td colSpan="9" className="text-center">
                       No users available.
+                    </td>
+                  </tr>
+                )}
+              </tbody> */}
+              <tbody>
+                {filteredUsers.map((user, index) => (
+                  <tr key={user._id}>
+                    <td>{index + 1}</td>
+                    <td>{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td>{user.email}</td>
+                    <td>{user.mobile}</td>
+                    <td>{user?.roleId?.roleName}</td>
+                    <td>{user.isActive ? "Active" : "Inactive"}</td>
+                    <td className="flex flex-wrap">
+                      <i
+                        className="bx bx-edit"
+                        style={{
+                          fontSize: "22px",
+                          fontWeight: "bold",
+                          cursor: "pointer",
+                          marginLeft: "5px",
+                        }}
+                        onClick={() => handleEditUser(user)}
+                      ></i>
+                    </td>
+                  </tr>
+                ))}
+                {filteredUsers.length === 0 && (
+                  <tr>
+                    <td colSpan="8" className="text-center">
+                      No users found.
                     </td>
                   </tr>
                 )}
@@ -215,7 +275,10 @@ function CrmUser() {
                 name="isActive"
                 value={newUser.isActive}
                 onChange={(e) =>
-                  setNewUser({ ...newUser, isActive: JSON.parse(e.target.value) })
+                  setNewUser({
+                    ...newUser,
+                    isActive: JSON.parse(e.target.value),
+                  })
                 }
                 className="form-control mb-2"
               >
@@ -224,7 +287,7 @@ function CrmUser() {
               </select>
 
               <select
-                name="roleId"  
+                name="roleId"
                 value={newUser.roleId}
                 onChange={handleInputChange}
                 className="form-control mb-2"
@@ -238,7 +301,10 @@ function CrmUser() {
               </select>
             </ModalBody>
             <ModalFooter>
-              <Button color="primary" onClick={newUser._id ? handleUpdateUser : handleAddUser}>
+              <Button
+                color="primary"
+                onClick={newUser._id ? handleUpdateUser : handleAddUser}
+              >
                 {newUser._id ? "Update User" : "Add User"}
               </Button>
 
