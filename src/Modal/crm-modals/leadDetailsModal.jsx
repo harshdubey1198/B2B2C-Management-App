@@ -1,17 +1,5 @@
 import React, { useState } from "react";
-import {
-  Button,
-  Form,
-  FormGroup,
-  Input,
-  Label,
-  Modal,
-  ModalBody,
-  ModalFooter,
-  ModalHeader,
-  Row,
-  Col
-} from "reactstrap";
+import { Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row, Col } from "reactstrap";
 
 function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
   const [formData, setFormData] = useState(lead || {});
@@ -50,10 +38,10 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                   .filter(([key]) => key !== "notes")
                   // isOrganic false hide
                   .filter(([key, value]) => key !== "isOrganic" || value === true)
-                  .filter(([key]) => key !== "mode" && key !== "_id" && key !== "createdAt" && key !== "updatedAt" && key !== "createdBy" && key !== "updatedBy" && key !== "firmId" && key !== "deletedAt" && key !== "deletedBy" && key !== "__v"  && key !== "remarks" && key !== "leadIds" && key !== "assignedTo" && key !== "assignedBy" && key !== "notes")
+                  .filter(([key]) => key !== "mode" && key !== "_id" && key !== "createdAt" && key !== "status" && key !== "updatedAt" && key !== "createdBy" && key !== "updatedBy" && key !== "firmId" && key !== "deletedAt" && key !== "deletedBy" && key !== "__v"  && key !== "remarks" && key !== "leadIds" && key !== "assignedTo" && key !== "assignedBy" && key !== "notes")
                   .filter(([_, value]) => value !== null)  
                   .map(([key, value]) => (
-                    <Col xs="12" md="6" key={key}>
+                    <Col xs="12" md="4" key={key}>
                       <FormGroup>
                         <Label for={key}>
                           {key.replace(/([A-Z])/g, " $1").trim()}
@@ -67,7 +55,33 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                         />
                       </FormGroup>
                     </Col>
+                    
                   ))}
+              </Row>
+              <Row>
+                <Col xs="12" md="4">
+                  <FormGroup>
+                    <Label for="status">Status</Label>
+                    <Input
+                      type="select"
+                      name="status"
+                      value={formData.status || ""}
+                      onChange={handleChange}
+                      readOnly={mode !== "edit"} 
+                   >
+                      <option value="">Select Status</option>
+                      <option value="invalidRequest">Invalid Request</option>
+                      <option value="noResponse">No Response</option>
+                      <option value="budgetIssue">Budget Issue</option>
+                      <option value="notInterested">Not Interested</option>
+                      <option value="recall">Recall</option>
+                      <option value="contacted">Contacted</option>
+                      <option value="falseData">False Data</option>
+                      <option value="lost">Lost</option>
+                      <option value="converted">Converted</option>
+                    </Input>
+                  </FormGroup>
+                </Col>
               </Row>
               <Row>
                 <Col xs="12">

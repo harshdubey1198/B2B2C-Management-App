@@ -43,7 +43,7 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
         leadIds: selectedLeads,
         assignedTo: [assignedTo],
         assignedBy: userId,
-        status: "Pending",
+        status: "pending",
         priority,
         dueDate,
         remarks: [
