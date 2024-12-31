@@ -1,7 +1,6 @@
 const CRMUser = require("../schemas/crmuser.schema");
 const Lead = require("../schemas/lead.schema");
 const Task = require("../schemas/task.schema");
-const User = require("../schemas/user.schema");
 
 const taskServices = {}
 
@@ -306,9 +305,6 @@ taskServices.getTasksByAssignee = async (userId) => {
             path: 'remarks.createdBy',
             select: 'firstName lastName email role '
         });
-    // count the number of tasks assigned to the user & leads 
-    const taskCount = await Task.countDocuments({ assignedTo: userId });
-    const leadCount = await Lead.countDocuments({ assignedTo: userId });
 
 
     if (tasks.length === 0) {

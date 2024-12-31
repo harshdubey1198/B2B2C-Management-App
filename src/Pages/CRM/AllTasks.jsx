@@ -28,7 +28,21 @@ function AllTasks() {
     try {
       const result = await getTasksByAssignee(userId);
       const allTasks = result?.data || [];
-      setTasks(allTasks);
+
+      // filter out the tasks that are having due date in the future 
+      // and status is not completed
+      const filteredTasks = allTasks.filter((task) => {
+        const dueDate = new Date(task.dueDate);
+        // console.log("Due Date:", dueDate);
+        const currentDate = new Date();
+        // console.log("Current Date:", currentDate);
+        // return dueDate < currentDate && task.status !== 'completed'; // not like this 
+        return dueDate > currentDate ;
+      });
+
+
+
+      setTasks(filteredTasks);
     } catch (error) {
       setMessage(error.message);
     }
@@ -326,7 +340,15 @@ const getRandomColor = () => {
                                 <td>{index + 1}</td>
                                 <td>{lead.firstName} {lead.lastName}</td>
                                 <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName} </td>
-                                <td>{new Date(task.dueDate).toLocaleString()}</td>
+                                <td>{new Date(task.dueDate).toLocaleString("en-IN", {
+                                                timeZone: "Asia/Kolkata",
+                                                day: "2-digit",
+                                                month: "2-digit",
+                                                year: "numeric",
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                                hour12: true,
+                                            })}</td>
                                 <td>{lead.status}</td>
                                 <td>
                                     <button
