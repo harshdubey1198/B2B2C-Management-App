@@ -362,12 +362,12 @@ export const masterAdminSidebarData = () => [
   
   export const asmSidebarData = () => [
     {
-      Label: "Dashboard",
+      label: "Dashboard",
       icon: "mdi mdi-home-variant-outline",
       url: "/dashboard",
     },
     {
-      Label : "CRM Leads",
+      label : "CRM Leads",
       icon : "mdi mdi-account-multiple-outline",
       subItem : [
         {sublabel:"Daily Tasks",link:"/crm/all-tasks"},

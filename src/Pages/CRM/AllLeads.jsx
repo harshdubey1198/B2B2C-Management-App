@@ -27,8 +27,11 @@ function AllLeads() {
         sortBy: "name",
         order: "asc",
     });
-    const role = getRole();
-
+    const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role;
+    // console.log(role, "role")
+    useEffect(() => {
+        getRole();
+    }, []);
 
     const fetchLeads = async () => {
         try {
@@ -237,9 +240,12 @@ function AllLeads() {
                       }
                     { (role === "firm_admin" || role === "ASM" || role === "SM" ) && (
                         <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
-                       )    
-                      }
+            )    
+                }
 
+                {/* { role ==="ASM" && (
+                    <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button> 
+                )} */}
                 </div>
                 <div className="search-bar mb-3">
                     <input

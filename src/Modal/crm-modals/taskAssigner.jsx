@@ -3,15 +3,18 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, La
 import { assignLeadsToEmployee, getCrmUsers } from "../../apiServices/service";
 import { userId } from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
+import { getRole} from "../../utils/roleUtils";
 
 const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
   const [assignedTo, setAssignedTo] = useState("");
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
   const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role;
+  // console.log("Role : ",role);
   const handleAssign = async () => {
     // Validate inputs before proceeding with task assignment
     if (selectedLeads.length === 0) {
@@ -72,14 +75,34 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
     try {
       const result = await getCrmUsers();
       setUsers(result.data || []);
-      console.log(result.data);
+      // console.log(result.data);
     } catch (error) {
       alert(error.message || "Failed to get users");
     }
   };
 
+  // if role === ASM then show only him the SM 
+  // if role === SM then show only him the Telecaller only
+
+
+  const filterUsers = () => {
+    if (role === "ASM") {
+      const filtered = users.filter((user) => user.roleId.roleName === "SM");
+      setFilteredUsers(filtered);
+      console.log("asm lower employees : ",filtered);
+    } else if (role === "SM") {
+      const filtered = users.filter((user) => user.roleId.roleName === "Telecaller");
+      setFilteredUsers(filtered);
+    } else {
+      setFilteredUsers(users);
+    }
+  };
+
+  // console.log("FilteredUsers : ",filteredUsers);
+
   useEffect(() => {
     fetchCrmUsers();
+    filterUsers(); 
   }, []);
 
   return (
@@ -97,9 +120,9 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
               onChange={(e) => setAssignedTo(e.target.value)}
             >
               <option value="">Select Employee</option>
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <option key={user._id} value={user._id}>
-                  {user.firstName} {user.lastName}
+                  {user.firstName} {user.lastName} - {user.roleId.roleName}
                 </option>
               ))}
             </Input>

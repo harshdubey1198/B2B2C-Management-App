@@ -196,7 +196,7 @@ taskServices.updateTask = async (taskId, updates) => {
 
     // Update status
     if (status) {
-        if (!['Pending', 'Completed', 'In Progress', 'Overdue'].includes(status)) {
+        if (!['pending', 'completed', 'inProgress', 'missed', 'overdue','failed'].includes(status)) {
             throw new Error("Invalid status value");
         }
         task.status = status;
@@ -300,11 +300,11 @@ taskServices.getTasksByAssignee = async (userId) => {
         })
         .populate({
             path: 'assignedBy',
-            select: 'firstName lastName email role'
+            select: 'firstName lastName email roleId'
         })
         .populate({
             path: 'remarks.createdBy',
-            select: 'firstName lastName email role'
+            select: 'firstName lastName email role '
         });
     // count the number of tasks assigned to the user & leads 
     const taskCount = await Task.countDocuments({ assignedTo: userId });

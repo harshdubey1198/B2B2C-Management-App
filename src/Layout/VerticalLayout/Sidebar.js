@@ -11,7 +11,7 @@ const Sidebar = (props) => {
   const ref = useRef();
   const metisMenuRef = useRef();
 
-  const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role || JSON.parse(localStorage.getItem('authUser'))?.response?.roleId?.roleName;
+  const role = JSON.parse(localStorage.getItem('authUser'))?.response?.role;
   const sidebarItems = userRolesSidebarData(role);
 
   const activateParentDropdown = useCallback((item) => {

@@ -18,6 +18,7 @@ function AllTasks() {
   const [taskRemark, setTaskRemark] = useState(''); 
   const [taskModal, setTaskModal] = useState(false)
   const [filteredUsers, setFilteredUsers] = useState([]);
+  const [leadsForwarding, setLeadsForwarding] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [LowerRoleUsers, setLowerRoleUsers] = useState([]);
   const [lowerUserTaskModal, setLowerUserTaskModal] = useState(false);
@@ -70,11 +71,11 @@ function AllTasks() {
       };
   
       const result = await updateTask(selectedTask._id, updatedTask); 
-  
-      if (result.success) {
+      // console.log(result, "result")
+      if (result.message ==="Task updated Succefully") {
         fetchTasks();
-        setTaskModal(false);
-        toast.success('Task updated successfully!');
+        setTaskModal();
+        toast.success(result.message);
       } else {
         toast.success(result.message);
       }
@@ -111,7 +112,7 @@ function AllTasks() {
       // console.log("Updated Lead Data:", updatedLead); 
   
       const result = await updateLeadById(selectedLead._id, updatedLead);
-      console.log(result, "result")
+      // console.log(result, "result")
       if (result) {
         // alert('Note and status updated successfully!');
         fetchTasks(); 
@@ -154,7 +155,7 @@ const getRandomColor = () => {
     try {
       const result = await getCrmUsers();
       setLowerRoleUsers(result.data || []);
-      console.log("Lower role users:", result.data);
+      // console.log("Lower role users:", result.data);
     } catch (error) {
       console.error('Failed to get lower role users:', error);
     }
@@ -165,17 +166,28 @@ const getRandomColor = () => {
     
     if (role === 'ASM') {
       filteredUsers = LowerRoleUsers.filter(user => user.roleId.roleName === 'SM');
-      console.log("ASM filtered users:", filteredUsers);
+      // console.log("ASM filtered users:", filteredUsers);
     } else if (role === 'SM') {
       filteredUsers = LowerRoleUsers.filter(user => user.roleId.roleName === 'Telecaller');
-      console.log("SM filtered users:", filteredUsers);
+      // console.log("SM filtered users:", filteredUsers);
     }
     
     setFilteredUsers(filteredUsers);
+    // console.log("Filtered users:", filteredUsers);
   };
   
-  
-  
+  const handleLeadSelection = (leadId) => {
+    setSelectedLeads((prevSelectedLeads) => {
+        if (prevSelectedLeads.includes(leadId)) {
+            console.log("Unchecking lead:", leadId);
+            return prevSelectedLeads.filter((id) => id !== leadId);
+        } else {
+            console.log("Checking lead:", leadId);
+            return [...prevSelectedLeads, leadId];
+        }
+    });
+};
+  // console.log("Selected leads:", selectedLeads);
   // const handleAssignTask = async () => {
   //   if (!selectedLeads.length) {
   //     alert('Please select at least one lead');
@@ -254,6 +266,33 @@ const getRandomColor = () => {
                     <table className='table table-centered table-nowrap table-hover mb-0'>
                       <thead>
                         <tr>
+                          { (role !== "Telecaller") && (
+                            <th>
+                            <input
+                              type="checkbox"
+                              onChange={(e) => {
+                                if (e.target.checked) {
+                                  // Select all leads
+                                  const allLeadIds = tasks
+                                    .flatMap((task) => task.leadIds)
+                                    .filter(Boolean)
+                                    .map((lead) => lead._id);
+                                  setSelectedLeads(allLeadIds);
+                                } else {
+                                  // Deselect all leads
+                                  setSelectedLeads([]);
+                                }
+                              }}
+                              checked={
+                                tasks
+                                  .flatMap((task) => task.leadIds)
+                                  .filter(Boolean)
+                                  .length === selectedLeads.length
+                              }
+                            />
+                          </th>
+                          )
+                          }
                           <th scope='col'>#</th>
                           <th scope='col'>Lead Names</th>
                           <th scope='col'>Assigned By</th>
@@ -273,9 +312,20 @@ const getRandomColor = () => {
                                     backgroundColor: getLeadColor(task.leadIds),
                                 }}
                                 >
+                                  { (role !== "Telecaller") && (
+                                    <td>
+                                    <input
+                                      type="checkbox"
+                                      value={lead._id}
+                                      checked={selectedLeads.includes(lead._id)}
+                                      onChange={() => handleLeadSelection(lead._id)}
+                                      />
+                                    </td>
+                                    )
+                                  }
                                 <td>{index + 1}</td>
                                 <td>{lead.firstName} {lead.lastName}</td>
-                                <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName}</td>
+                                <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName} </td>
                                 <td>{new Date(task.dueDate).toLocaleString()}</td>
                                 <td>{lead.status}</td>
                                 <td>
@@ -371,7 +421,7 @@ const getRandomColor = () => {
                     <option value="not-interested">Not Interested</option>
                     <option value="converted">Converted</option>
                     <option value="lost">Lost</option>
-                    <option value="completed">Completed</option>
+                    <option value="Completed">Completed</option>
                     {/* Add more status options as needed */}
                     </Input>
                 </div>
