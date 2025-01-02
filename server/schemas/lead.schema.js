@@ -80,6 +80,11 @@ const leadSchema = new Schema(
         lastUpdatedAt: { type: Date, default: null}
       },
     ],
+    assignmentHistory: [{
+      assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'CRMUser' },  // Who assigned
+      assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'CRMUser' },  // Who is assigned to
+      assignedAt: { type: Date, default: Date.now },  // When it was assigned
+    }],
     deleted_at: { 
       type: Date, 
       default: null 

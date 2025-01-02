@@ -60,7 +60,7 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
       const response = await assignLeadsToEmployee(taskData);
       setMessage(response.message);
       fetchLeads(); // Fetch updated leads
-      toast.success(response.message || "Task successfully assigned");
+      toast.success(response.message);
       toggle(); // Close modal
       selectedLeads.length = 0; 
     } catch (error) {
@@ -98,12 +98,14 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
     }
   };
 
-  // console.log("FilteredUsers : ",filteredUsers);
+  console.log("FilteredUsers : ",filteredUsers);
 
   useEffect(() => {
-    fetchCrmUsers();
-    filterUsers(); 
-  }, []);
+    if (isOpen) {
+      fetchCrmUsers().then(filterUsers);
+      console.log(isOpen, "fetching users");
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} toggle={toggle} centered>

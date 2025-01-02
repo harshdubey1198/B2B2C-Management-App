@@ -4,46 +4,64 @@ const { Parser } = require('json2csv');
 
 const leadService = {};
 
+// leadService.createLead = async (body) => {
+//   const {firstName, lastName, email, mobileNumber, adId, adName, adSetId, campaignId, formId, formName, isOrganic, platform, phoneNumber, lastQualification, yearOfPassout, status,} = body;
+
+//   // Validate required fields manually
+// //   if (!firstName || !lastName || !email || !mobileNumber) {
+// //     throw new Error(
+// //       "Missing required fields: firstName, lastName, email, or mobileNumber."
+// //     );
+// //   }
+
+// //   // Check for duplicate leads by email
+// //   const existingLead = await Lead.findOne({ email: email });
+// //   if (existingLead) {
+// //     throw new Error("Lead with this email already exists.");
+// //   }
+
+//   // Create and save a new lead
+//   const newLead = new Lead(
+//     // firstName,
+//     // lastName,
+//     // email,
+//     // mobileNumber,
+//     // adId,
+//     // adName,
+//     // adSetId,
+//     // campaignId,
+//     // formId,
+//     // formName,
+//     // isOrganic,
+//     // platform,
+//     // phoneNumber,
+//     // lastQualification,
+//     // yearOfPassout,
+//     // status,
+//     body,
+//   );
+
+//   await newLead.save();
+//   return newLead;
+// };
+
+
 leadService.createLead = async (body) => {
-  const {firstName, lastName, email, mobileNumber, adId, adName, adSetId, campaignId, formId, formName, isOrganic, platform, phoneNumber, lastQualification, yearOfPassout, status,} = body;
+    const { firstName, lastName, email, mobileNumber, adId, adName, adSetId, campaignId, formId, formName, isOrganic, platform, phoneNumber, lastQualification, yearOfPassout, status } = body;
+  
+    // Ensure the status is set to 'new' if it's not provided
+    const leadStatus = 'new';
+  
+    // Create and save a new lead, setting the status to 'new' explicitly
+    const newLead = new Lead({
+      ...body, // Spread the properties from the body
+      status: leadStatus // Override or set the status to 'new'
+    });
+  
+    await newLead.save();
+    return newLead;
+  };
 
-  // Validate required fields manually
-//   if (!firstName || !lastName || !email || !mobileNumber) {
-//     throw new Error(
-//       "Missing required fields: firstName, lastName, email, or mobileNumber."
-//     );
-//   }
-
-//   // Check for duplicate leads by email
-//   const existingLead = await Lead.findOne({ email: email });
-//   if (existingLead) {
-//     throw new Error("Lead with this email already exists.");
-//   }
-
-  // Create and save a new lead
-  const newLead = new Lead(
-    // firstName,
-    // lastName,
-    // email,
-    // mobileNumber,
-    // adId,
-    // adName,
-    // adSetId,
-    // campaignId,
-    // formId,
-    // formName,
-    // isOrganic,
-    // platform,
-    // phoneNumber,
-    // lastQualification,
-    // yearOfPassout,
-    // status,
-    body
-  );
-
-  await newLead.save();
-  return newLead;
-};
 
 leadService.importLeads = async (fileBuffer) => {
     try {

@@ -4,6 +4,16 @@ const Task = require("../schemas/task.schema");
 
 const taskServices = {}
 
+const isSM = async (userId) => {
+    const user = await CRMUser.findById(userId).populate('roleId');
+    return user && user.roleId && user.roleId.roleName === 'SM';
+};
+
+const isTelecaller = async (userId) => {
+    const user = await CRMUser.findById(userId).populate('roleId');
+    return user && user.roleId && user.roleId.roleName === 'Telecaller';
+};
+
 taskServices.updateLeadStatus = async (leadId) => {
     const tasks = await Task.find({ leadId })
     if (!tasks || tasks.length === 0) {
@@ -89,14 +99,32 @@ taskServices.updateLeadStatus = async (leadId) => {
 // };
 
 taskServices.createTask = async (body) => {
-    const {
-        leadIds,
-        assignedTo = [],
-        assignedBy,
-        status,
-        dueDate,
-        remarks,
-    } = body;
+    const { leadIds, assignedTo = [], assignedBy, status, dueDate, remarks } = body;
+
+    const assignedByUser = await CRMUser.findById(assignedBy).populate('roleId');
+    if (!assignedByUser || !assignedByUser.roleId) {
+        throw new Error("AssignedBy user not found or missing role.");
+    }
+
+    const userRole = assignedByUser.roleId.roleName;
+    console.log(userRole)
+    if (userRole === 'ASM') {
+        // ASM can assign tasks to SMs
+        for (const userId of assignedTo) {
+            if (!(await isSM(userId))) {
+                throw new Error('ASM can only assign tasks to SMs.');
+            }
+        }
+    } else if (userRole === 'SM') {
+        // SM can assign tasks to Telecallers
+        for (const userId of assignedTo) {
+            if (!(await isTelecaller(userId))) {
+                throw new Error('SM can only assign tasks to Telecallers.');
+            }
+        }
+    } else {
+        throw new Error('Only ASM or SM can assign tasks.');
+    }
 
     const duplicateLeadIds = leadIds.filter((id, index, array) => array.indexOf(id) !== index);
     if (duplicateLeadIds.length > 0) {
@@ -109,7 +137,7 @@ taskServices.createTask = async (body) => {
             if (!lead) {
                 throw new Error(`Invalid Lead ID or Lead is deleted: ${leadId}`);
             }
-            return lead; 
+            return lead;
         })
     );
 
@@ -134,17 +162,30 @@ taskServices.createTask = async (body) => {
         remarks: remarks || [],
     });
 
-    const savedTask = await newTask.save(); 
+    const savedTask = await newTask.save();
+
     await Promise.all(
         leadIds.map(async (leadId) => {
             const lead = await Lead.findById(leadId);
             lead.status = "Assigned";
+            // Add assignment history to the lead
+            lead.assignmentHistory.push({
+                assignedBy: assignedBy,
+                assignedTo: assignedTo,
+                assignedAt: new Date(),
+            });
             await lead.save();
         })
     );
 
     return savedTask;
 };
+
+
+
+
+
+
 taskServices.getAllTasks = async () => {
     const tasks = await Task.find()
     .populate('leadIds')

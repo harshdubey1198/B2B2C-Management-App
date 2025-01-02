@@ -238,7 +238,7 @@ function AllLeads() {
                         <Button color="primary" onClick={() => handleDeleteLeads(null)}> Delete Selected Leads </Button>
                        )
                       }
-                    { (role === "firm_admin" || role === "ASM" || role === "SM" ) && (
+                    { (role === "ASM" || role === "SM" ) && (
                         <Button color="primary" onClick={toggleAssignModal}> Assign Leads </Button>
             )    
                 }

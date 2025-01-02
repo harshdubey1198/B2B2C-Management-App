@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks, getCrmUsers, getTasksByAssignee, updateLeadById, updateTask, updateTaskOrLead } from '../../apiServices/service';
+import { assignLeadsToEmployee, getAllTasks, getCrmUsers, getTasksByAssignee, updateLeadById, updateTask, updateTaskOrLead } from '../../apiServices/service';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { toast } from 'react-toastify';
 import { getRole } from '../../utils/roleUtils';
 
+
 function AllTasks() {
   const [tasks, setTasks] = useState([]);
   const [message, setMessage] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+  const [dueDate, setDueDate] = useState("");
+  const [priority, setPriority] = useState('Medium');
+  const [remark, setRemark] = useState('');
   const [modal, setModal] = useState(false);
   const [selectedLead, setSelectedLead] = useState(null);
   const [newNote, setNewNote] = useState('');
@@ -187,7 +192,7 @@ const getRandomColor = () => {
     }
     
     setFilteredUsers(filteredUsers);
-    // console.log("Filtered users:", filteredUsers);
+    console.log("Filtered users:", filteredUsers);
   };
   
   const handleLeadSelection = (leadId) => {
@@ -201,57 +206,56 @@ const getRandomColor = () => {
         }
     });
 };
-  // console.log("Selected leads:", selectedLeads);
-  // const handleAssignTask = async () => {
-  //   if (!selectedLeads.length) {
-  //     alert('Please select at least one lead');
-  //     return;
-  //   }
 
-  //   if (!assignedTo) {
-  //     alert('Please select an employee to assign the task to');
-  //     return;
-  //   }
+console.log("Selected Leads:", selectedLeads);
+  
+const handleAssignTask = async () => {
+  if (selectedLeads.length === 0) {
+    alert('Please select at least one lead to assign');
+    return;
+  }
+  try {
+    const task = {
+      leadIds: selectedLeads,
+      assignedTo: [assignedTo],
+      assignedBy: userId,
+      status: 'pending',
+      priority: priority,
+      dueDate: dueDate,
+      remarks: [
+        {
+          message: remark,
+          createdBy: userId,
+        },
+      ],
+    };
+    const result = await assignLeadsToEmployee(task);
+    if (result) {
+      setLowerUserTaskModal(false);
+      toast.success('Task assigned successfully');
+    } else {
+      toast.error('Failed to assign task');
+    }
+  } catch (error) {
+    console.error('Failed to assign task:', error);
+    toast.error('Failed to assign task');
+  }
+};
 
-  //   if (!priority) {
-  //     alert('Please select a priority level');
 
-  //     return;
-  //   }
 
-  //   try {
-  //     setLoading(true);
-  //     const result = await assignTask({
-  //       assignedTo,
-        
-  //       priority,
-  //       leadIds: selectedLeads.map((lead) => lead._id),
-  //     });
 
-  //     if (result.success) {
-  //       setMessage(result.message);
-  //       fetchTasks();
-  //       toggle();
-  //       toast.success(result.message);
-  //     } else {
-  //       setMessage(result.message);
-  //       toast.error(result.message);
-  //     }
-  //   } catch (error) {
-  //     setMessage(error.message || 'Error assigning task');
-  //     toast.error(error.message || 'Error assigning task');
-
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
+  // useEffect(() => {
+  //   fetchLowerRoleUsers();
+  //   handleAssignUserSelect();
+  // }
+  // , []);
   
   useEffect(() => {
-    fetchLowerRoleUsers();
-    handleAssignUserSelect();
-  }
-  , []);
+    if (lowerUserTaskModal) {
+      fetchLowerRoleUsers().then(handleAssignUserSelect);
+    }
+  }, [lowerUserTaskModal]);
   
   return (
     <React.Fragment>
@@ -497,32 +501,66 @@ const getRandomColor = () => {
         </Modal>
 
         <Modal isOpen={lowerUserTaskModal} toggle={toggleLowerUserTaskModal}>
-          <ModalHeader toggle={toggleLowerUserTaskModal}>Assign Task</ModalHeader>
+  <ModalHeader toggle={toggleLowerUserTaskModal}>Assign Task</ModalHeader>
 
-          <ModalBody>
-                <div>
-                  <h5>Leads Forwarding</h5>
-                  <div>
-                    <label>Assign to Employee</label>
-                    <Input
-                      type="select"
-                      onChange={handleAssignUserSelect}
-                    >
-                      <option value="">Select Employee</option>
-                      {filteredUsers.map((user) => (
-                        <option key={user._id} value={user._id}>
-                          {user.firstName} {user.lastName} - {user.roleId.roleName} 
-                        </option>
-                      ))}
-                    </Input>
-                </div>
-                  </div>    
-          </ModalBody>
-          <ModalFooter>
-            <Button color="secondary" onClick={toggleLowerUserTaskModal}>Cancel</Button>
-            {/* <Button color="primary" onClick={handleAssignTask}>Assign Task</Button> */}
-          </ModalFooter>
-         </Modal>
+  <ModalBody>
+    <div>
+      <h5>Leads Forwarding</h5>
+      <div>
+        <label>Assign to Employee</label>
+        <Input
+          type="select"
+          onChange={(e) => setAssignedTo(e.target.value)}
+        >
+          <option value="">Select Employee</option>
+          {filteredUsers.map((user) => (
+            <option key={user._id} value={user._id}>
+              {user.firstName} {user.lastName} - {user.roleId.roleName}
+            </option>
+          ))}
+        </Input>
+
+        <label>Priority</label>
+        <Input
+          type="select"
+          name="priority"
+          id="priority"
+          onChange={(e) => setPriority(e.target.value)}
+        >
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </Input>
+
+        <label>Remark</label>
+        <Input
+          type="textarea"
+          name="remark"
+          id="remark"
+          placeholder="Add a remark..."
+          onChange={(e) => setRemark(e.target.value)}
+        />
+        <label for="dueDate">Due Date</label>
+        <Input
+          type="date"
+          name="dueDate"
+          id="dueDate"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+      </div>
+    </div>
+  </ModalBody>
+
+  <ModalFooter>
+    <Button color="secondary" onClick={toggleLowerUserTaskModal}>
+      Cancel
+    </Button>
+    <Button color="primary" onClick={handleAssignTask}>
+      Assign Task
+    </Button>
+  </ModalFooter>
+</Modal>
 
     </React.Fragment>
   );
