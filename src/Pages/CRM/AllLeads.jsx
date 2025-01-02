@@ -73,6 +73,17 @@ function AllLeads() {
             }
         });
     };
+    const handleSelectAll = () => {
+        const unassignedLeads = leads.filter((lead) => lead.status !== "Assigned");
+        if (selectedLeads.length === unassignedLeads.length) {
+            // console.log("Deselecting all unassigned leads");
+            setSelectedLeads([]);
+        } else {
+            const updatedLeads = unassignedLeads.map((lead) => lead._id);
+            setSelectedLeads(updatedLeads);
+            // console.log("Selected Leads:", updatedLeads);
+        }
+    };
 
     const handleDeleteLeads = async (leadId) => {
         if (leadId) {
@@ -311,17 +322,23 @@ function AllLeads() {
                         <thead>
                             <tr>
                                 <th>
+                                {/* <input
+                                    type="checkbox"
+                                    onClick={() => {
+                                        const unassignedLeads = leads.filter((lead) => lead.status !== "Assigned");
+                                        if (selectedLeads.length === unassignedLeads.length) {
+                                        console.log("Deselecting all unassigned leads");
+                                        setSelectedLeads([]);
+                                    } else {
+                                        console.log("Selecting all unassigned leads");
+                                        setSelectedLeads(unassignedLeads.map((lead) => lead._id));
+                                        console.log(selectedLeads);
+                                        }
+                                    }}
+                                    /> */}
                                     <input
                                         type="checkbox"
-                                        onClick={() => {
-                                            if (selectedLeads.length === leads.length) {
-                                                console.log("Deselecting all leads");
-                                                setSelectedLeads([]);
-                                            } else {
-                                                console.log("Selecting all leads");
-                                                setSelectedLeads(leads.map((lead) => lead._id));
-                                            }
-                                        }}
+                                        onClick={handleSelectAll}
                                     />
                                 </th>
                                 <th>Name</th>
@@ -340,11 +357,13 @@ function AllLeads() {
                                 filteredLeads.map((lead) => (
                                     <tr key={lead._id}>
                                         <td>
-                                            <input
-                                                type="checkbox"
-                                                checked={selectedLeads.includes(lead._id)}
-                                                onClick={() => handleLeadSelection(lead._id)}
-                                            />
+                                            {lead.status !== "Assigned" && (
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedLeads.includes(lead._id)}
+                                                    onClick={() => handleLeadSelection(lead._id)}
+                                                />
+                                            )}
                                         </td>
                                         <td>{lead.firstName + " " + lead.lastName}</td>
                                         <td>{lead.email}</td>
