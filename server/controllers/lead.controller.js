@@ -228,5 +228,19 @@ leadController.filteredLeads = async (req, res) => {
     return res.status(500).json(createResult(null, null, error.message));
   }
 };
+leadController.updateLeadStatus = async (req, res) => {
+  try {
+    const updatedLead = await leadService.updateLeadStatus(
+      req.params.id,
+      req.body
+    );
+    return res
+      .status(200)
+      .json(createResult("lead status updated Succefully", updatedLead));
+  } catch (error) {
+    console.log("error updating lead status", error.message);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
 
 module.exports = leadController;
