@@ -1,6 +1,7 @@
 const Lead = require("../schemas/lead.schema");
 const csvtojson = require('csvtojson');
 const { Parser } = require('json2csv');
+const mongoose = require('mongoose');
 
 const leadService = {};
 
@@ -286,5 +287,37 @@ leadService.getExpiredLeadsWithoutUpdatedStatus = async (filterValues) => {
       throw new Error("Error fetching missed leads: " + error.message);
     }
 };
+leadService.updateLeadStatus = async (leadId, data) => {
+    const { status, noteMessage, userId } = data;
+  
+    if (!status || !noteMessage || !userId) {
+      throw new Error("Status, noteMessage, and userId are required.");
+    }
+  
+    const lead = await Lead.findById(leadId);
+    if (!lead) {
+      throw new Error("Lead not found.");
+    }
+  
+    const oldStatus = lead.status;
+    lead.status = status;
+    const statusChangeMessage = `Status updated from "${oldStatus}" to "${status}"`;
+    const fullNoteMessage = `${statusChangeMessage}. ${noteMessage}`;
+  
+    const newNote = {
+      message: fullNoteMessage,
+      createdBy: new mongoose.Types.ObjectId(userId),
+      createdAt: new Date(),
+    };
+  
+    lead.notes.push(newNote);
+  
+    const updatedLead = await lead.save();
+    if (!updatedLead) {
+      throw new Error("Failed to update lead.");
+    }
+    return updatedLead;
+  };
+  
 
 module.exports = leadService;
