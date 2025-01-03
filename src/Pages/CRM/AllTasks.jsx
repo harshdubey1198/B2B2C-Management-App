@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { assignLeadsToEmployee, getAllTasks, getCrmUsers, getTasksByAssignee, updateLeadById, updateTask, updateTaskOrLead } from '../../apiServices/service';
+import { assignLeadsToEmployee, getAllTasks, getCrmUsers, getTasksByAssignee, updateLeadStatus, updateTask } from '../../apiServices/service';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { toast } from 'react-toastify';
@@ -106,48 +106,38 @@ function AllTasks() {
  
   const handleNoteSubmit = async () => {
     if (!newNote) {
-      toast.error('Please enter a note');
-      return;
-    }
-  
-    try {
-      if (!selectedLead || !selectedLead._id) {
-        toast.error('No lead selected');
+        toast.error('Please enter a note');
         return;
-      }
-  
-      const updatedLead = {
-        ...selectedLead,
-        notes: [
-          ...selectedLead.notes,
-          {
-            message: newNote,
-            createdBy: userId,
-          },
-        ],
-        status: selectedLead.status,
-      };
-  
-      // console.log("Updated Lead Data:", updatedLead); 
-  
-      const result = await updateLeadById(selectedLead._id, updatedLead);
-      // console.log(result, "result")
-      if (result) {
-        // alert('Note and status updated successfully!');
-        fetchTasks(); 
-        toggleModal();
-        setModal(false);  
-        toast.success('Note and status updated successfully!');
-      } else {
-        // alert(result.message || 'Failed to update lead');
-        toast.success(result.message || 'Failed to update lead');
-      }
-    } catch (error) {
-      console.error('Failed to update lead:', error);
-      // alert('Failed to update lead');
-      toast.error('Failed to update lead');
     }
-  };
+
+    try {
+        if (!selectedLead || !selectedLead._id) {
+            toast.error('No lead selected');
+            return;
+        }
+
+        const updatePayload = {
+            status: selectedLead.status,
+            noteMessage: newNote,
+            userId: userId,
+        };
+
+        const result = await updateLeadStatus(selectedLead._id, updatePayload);
+        
+        if (result && result.data) {
+            fetchTasks();
+            toggleModal();
+            setModal(false);  
+            toast.success('Note and status updated successfully!');
+        } else {
+            toast.error(result.error || 'Failed to update lead');
+        }
+    } catch (error) {
+        console.error('Failed to update lead:', error);
+        toast.error('Failed to update lead');
+    }
+};
+
   
   useEffect(() => { 
     fetchTasks();
@@ -415,7 +405,7 @@ const handleAssignTask = async () => {
           </div>
         </div>
       </div>
-
+{/* note update of lead modal */}
       <Modal isOpen={modal} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>Update Lead Details</ModalHeader>
             <ModalBody>
@@ -466,101 +456,105 @@ const handleAssignTask = async () => {
             </ModalFooter>
         </Modal>
 
+
+{/* for the task update logic */}
         <Modal isOpen={taskModal} toggle={() => setTaskModal(!taskModal)}>
-  <ModalHeader toggle={() => setTaskModal(!taskModal)}>Update Task</ModalHeader>
-  <ModalBody>
-    <div>
-      <label>Status</label>
-      <Input
-        type="select"
-        value={taskStatus}
-        onChange={(e) => setTaskStatus(e.target.value)}
-      >
-        <option value="pending">Pending</option>
-        <option value="inProgress">In Progress</option>
-        <option value="completed">Completed</option>
-        <option value="overdue">Overdue</option>
-        <option value="missed">missed</option>
-        <option value="failed">failed</option>
-      </Input>
-    </div>
-    <div className="mt-3">
-      <label>Remark</label>
-      <Input
-        type="textarea"
-        value={taskRemark}
-        onChange={(e) => setTaskRemark(e.target.value)}
-        placeholder="Add a remark..."
-      />
-    </div>
-  </ModalBody>
-  <ModalFooter>
-    <Button color="secondary" onClick={() => setTaskModal(!taskModal)}>Cancel</Button>
-    <Button color="primary" onClick={handleTaskUpdateSubmit}>Update Task</Button>
-  </ModalFooter>
+              <ModalHeader toggle={() => setTaskModal(!taskModal)}>Update Task</ModalHeader>
+              <ModalBody>
+                <div>
+                  <label>Status</label>
+                  <Input
+                    type="select"
+                    value={taskStatus}
+                    onChange={(e) => setTaskStatus(e.target.value)}
+                  >
+                    <option value="pending">Pending</option>
+                    <option value="inProgress">In Progress</option>
+                    <option value="completed">Completed</option>
+                    <option value="overdue">Overdue</option>
+                    <option value="missed">missed</option>
+                    <option value="failed">failed</option>
+                  </Input>
+                </div>
+                <div className="mt-3">
+                  <label>Remark</label>
+                  <Input
+                    type="textarea"
+                    value={taskRemark}
+                    onChange={(e) => setTaskRemark(e.target.value)}
+                    placeholder="Add a remark..."
+                  />
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="secondary" onClick={() => setTaskModal(!taskModal)}>Cancel</Button>
+                <Button color="primary" onClick={handleTaskUpdateSubmit}>Update Task</Button>
+              </ModalFooter>
         </Modal>
 
+
+{/* for lower user task assignment */}
         <Modal isOpen={lowerUserTaskModal} toggle={toggleLowerUserTaskModal}>
-  <ModalHeader toggle={toggleLowerUserTaskModal}>Assign Task</ModalHeader>
+            <ModalHeader toggle={toggleLowerUserTaskModal}>Assign Task</ModalHeader>
 
-  <ModalBody>
-    <div>
-      <h5>Leads Forwarding</h5>
-      <div>
-        <label>Assign to Employee</label>
-        <Input
-          type="select"
-          onChange={(e) => setAssignedTo(e.target.value)}
-        >
-          <option value="">Select Employee</option>
-          {filteredUsers.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.firstName} {user.lastName} - {user.roleId.roleName}
-            </option>
-          ))}
-        </Input>
+            <ModalBody>
+              <div>
+                <h5>Leads Forwarding</h5>
+                <div>
+                  <label>Assign to Employee</label>
+                  <Input
+                    type="select"
+                    onChange={(e) => setAssignedTo(e.target.value)}
+                  >
+                    <option value="">Select Employee</option>
+                    {filteredUsers.map((user) => (
+                      <option key={user._id} value={user._id}>
+                        {user.firstName} {user.lastName} - {user.roleId.roleName}
+                      </option>
+                    ))}
+                  </Input>
 
-        <label>Priority</label>
-        <Input
-          type="select"
-          name="priority"
-          id="priority"
-          onChange={(e) => setPriority(e.target.value)}
-        >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </Input>
+                  <label>Priority</label>
+                  <Input
+                    type="select"
+                    name="priority"
+                    id="priority"
+                    onChange={(e) => setPriority(e.target.value)}
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </Input>
 
-        <label>Remark</label>
-        <Input
-          type="textarea"
-          name="remark"
-          id="remark"
-          placeholder="Add a remark..."
-          onChange={(e) => setRemark(e.target.value)}
-        />
-        <label for="dueDate">Due Date</label>
-        <Input
-          type="date"
-          name="dueDate"
-          id="dueDate"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
-      </div>
-    </div>
-  </ModalBody>
+                  <label>Remark</label>
+                  <Input
+                    type="textarea"
+                    name="remark"
+                    id="remark"
+                    placeholder="Add a remark..."
+                    onChange={(e) => setRemark(e.target.value)}
+                  />
+                  <label for="dueDate">Due Date</label>
+                  <Input
+                    type="date"
+                    name="dueDate"
+                    id="dueDate"
+                    value={dueDate}
+                    onChange={(e) => setDueDate(e.target.value)}
+                  />
+                </div>
+              </div>
+            </ModalBody>
 
-  <ModalFooter>
-    <Button color="secondary" onClick={toggleLowerUserTaskModal}>
-      Cancel
-    </Button>
-    <Button color="primary" onClick={handleAssignTask}>
-      Assign Task
-    </Button>
-  </ModalFooter>
-</Modal>
+              <ModalFooter>
+                <Button color="secondary" onClick={toggleLowerUserTaskModal}>
+                  Cancel
+                </Button>
+                <Button color="primary" onClick={handleAssignTask}>
+                  Assign Task
+                </Button>
+              </ModalFooter>
+          </Modal>
 
     </React.Fragment>
   );

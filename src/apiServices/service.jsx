@@ -273,6 +273,15 @@ export const exportLeads = async (data) => {
     }
 };
 
+//  update lead status by userId and leadId
+export const updateLeadStatus = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/lead/update-leadstatus/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error.response ? error.response.data : error;
+    }
+};
 
 
 
