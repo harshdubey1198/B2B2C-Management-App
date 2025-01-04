@@ -173,11 +173,19 @@ leadService.getAllLeads = async () => {
       })
       .populate({
         path: "assignmentHistory.assignedBy",  // Populate assignedBy with name details
-        select: "firstName lastName",          // Only firstName and lastName
+        select: "firstName lastName",     
+        populate: {
+          path: "roleId",                    
+          select: "roleName",             
+        },     
       })
       .populate({
         path: "assignmentHistory.assignedTo",  // Populate assignedTo with name details
-        select: "firstName lastName",          // Only firstName and lastName
+        select: "firstName lastName",          
+        populate: {
+          path: "roleId",                       
+          select: "roleName",                
+        },
       });
 
     // Filter notes with deleted_at null
