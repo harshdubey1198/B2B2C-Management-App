@@ -3,7 +3,7 @@ import { Table, Button } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { saveAs } from "file-saver";
 import TaskAssigner from "../../Modal/crm-modals/taskAssigner";
-import { getAllLeads, getLeadById, updateLeadById, deleteLeadById, deleteMultipleLeads, exportLeads } from "../../apiServices/service";
+import { getAllLeads, getLeadById, updateLeadById, deleteLeadById, deleteMultipleLeads, exportLeads, getCrmUsers } from "../../apiServices/service";
 import LeadDetailsModal from "../../Modal/crm-modals/leadDetailsModal";
 import { useNavigate } from "react-router-dom";
 import LeadImportModal from "../../Modal/crm-modals/leadImportModal";  
@@ -18,6 +18,8 @@ function AllLeads() {
     const [filteredLeads, setFilteredLeads] = useState(false);
     const [message, setMessage] = useState("");
     const [modal, setModal] = useState(false);
+    const [users, setUsers] = useState([]);
+    const [filteredUsers, setFilteredUsers] = useState([]);
     const [selectedLead, setSelectedLead] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedLeads, setSelectedLeads] = useState([]);
@@ -41,6 +43,34 @@ function AllLeads() {
             setMessage(error.message);
         }
     };
+
+    const fetchCrmUsers = async () => {
+        try {
+          const result = await getCrmUsers();
+          setUsers(result.data || []);
+          // console.log(result.data);
+        } catch (error) {
+          alert(error.message || "Failed to get users");
+        }
+    };
+    
+    const filterUsers = () => {
+        if (role === "ASM") {
+          const filtered = users.filter((user) => user.roleId.roleName === "SM");
+          setFilteredUsers(filtered);
+          console.log("asm lower employees : ",filtered);
+        } else if (role === "SM") {
+          const filtered = users.filter((user) => user.roleId.roleName === "Telecaller");
+          setFilteredUsers(filtered);
+        } else {
+          setFilteredUsers(users);
+        }
+      };
+
+      useEffect(() => {
+        fetchCrmUsers();
+        filterUsers();
+        }, []);
 
     const toggleModal = async (id, mode = "view") => {
         if (!modal && id) {
@@ -74,7 +104,7 @@ function AllLeads() {
         });
     };
     const handleSelectAll = () => {
-        const unassignedLeads = leads.filter((lead) => lead.status !== "Assigned");
+        const unassignedLeads = leads;
         if (selectedLeads.length === unassignedLeads.length) {
             // console.log("Deselecting all unassigned leads");
             setSelectedLeads([]);
@@ -357,13 +387,11 @@ function AllLeads() {
                                 filteredLeads.map((lead) => (
                                     <tr key={lead._id}>
                                         <td>
-                                            {lead.status !== "Assigned" && (
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedLeads.includes(lead._id)}
                                                     onClick={() => handleLeadSelection(lead._id)}
                                                 />
-                                            )}
                                         </td>
                                         <td>{lead.firstName + " " + lead.lastName}</td>
                                         <td>{lead.email}</td>
@@ -436,6 +464,7 @@ function AllLeads() {
                     toggle={toggleAssignModal}
                     selectedLeads={selectedLeads}
                     fetchLeads={fetchLeads}
+                    filteredUsers={filteredUsers}
                 />
                 <LeadImportModal isOpen={importModal} toggle={toggleImportModal} />
             </div>
