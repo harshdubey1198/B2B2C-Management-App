@@ -72,7 +72,7 @@ const ProfileSettings = () => {
       }
     };
     fetchUserData();
-  }, [authUser, role]);
+  }, []);
 
             
       
