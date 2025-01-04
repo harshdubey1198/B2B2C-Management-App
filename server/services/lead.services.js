@@ -213,6 +213,22 @@ leadService.getLeadById = async (leadId) => {
       path: "notes.createdBy",
       select: "firstName lastName email",
     })
+    .populate({
+      path: "assignmentHistory.assignedBy",  // Populate assignedBy with name details
+      select: "firstName lastName",     
+      populate: {
+        path: "roleId",                    
+        select: "roleName",             
+      },     
+    })
+    .populate({
+      path: "assignmentHistory.assignedTo",  // Populate assignedTo with name details
+      select: "firstName lastName",          
+      populate: {
+        path: "roleId",                       
+        select: "roleName",                
+      },
+    });
     .lean();
   if (!lead) {
     throw new Error("No lead found.");
