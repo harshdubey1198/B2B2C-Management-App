@@ -114,21 +114,21 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                         formData.assignmentHistory.map((assignment) => (
                           <div key={assignment._id} style={{ marginBottom: "10px" }}>
                             <div className="d-flex justify-content-between">
-                              <strong >
+                              <strong  style={{width:"40%", paddingLeft:"30px"}}>
                                 {assignment.assignedBy?.roleId?.roleName} -{" "}
                                 {assignment.assignedBy.firstName}{" "}
                                 {assignment.assignedBy.lastName}
                               </strong>
-                              <span> 
+                              <span style={{width:""}}> 
                                   <i className="fa fa-arrow-right" aria-hidden="true"></i>
                                  </span>
-                              <strong>
+                              <strong style={{width:"40%", paddingLeft:"30px"}}>
                                 {assignment.assignedTo?.roleId?.roleName} -{" "}
                                 {assignment.assignedTo.firstName}{" "}
                                 {assignment.assignedTo.lastName}
                               </strong>
                             </div>
-                            <p style={{ fontSize: "12px", color: "#666" }}>
+                            <p style={{ fontSize: "12px", color: "#666" , paddingLeft:"30px"}}> }}>
                               {new Date(assignment.assignedAt).toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
                                 day: "2-digit",
