@@ -95,26 +95,22 @@ function AllLeads() {
     const handleLeadSelection = (leadId) => {
         setSelectedLeads((prevSelectedLeads) => {
             if (prevSelectedLeads.includes(leadId)) {
-                // console.log("Unchecking lead:", leadId);
                 return prevSelectedLeads.filter((id) => id !== leadId);
             } else {
-                // console.log("Checking lead:", leadId);
                 return [...prevSelectedLeads, leadId];
             }
         });
     };
+    
     const handleSelectAll = () => {
-        const unassignedLeads = leads;
-        if (selectedLeads.length === unassignedLeads.length) {
-            // console.log("Deselecting all unassigned leads");
+        if (selectedLeads.length === leads.length) {
             setSelectedLeads([]);
         } else {
-            const updatedLeads = unassignedLeads.map((lead) => lead._id);
+            const updatedLeads = leads.map((lead) => lead._id);
             setSelectedLeads(updatedLeads);
-            // console.log("Selected Leads:", updatedLeads);
         }
     };
-
+    
     const handleDeleteLeads = async (leadId) => {
         if (leadId) {
             try {
@@ -368,7 +364,15 @@ function AllLeads() {
                                     /> */}
                                     <input
                                         type="checkbox"
-                                        onClick={handleSelectAll}
+                                        onClick={() => {
+                                            if (selectedLeads.length === leads.length) {
+                                                console.log("Deselecting all leads");
+                                                setSelectedLeads([]);
+                                            } else {
+                                                console.log("Selecting all leads");
+                                                setSelectedLeads(leads.map((lead) => lead._id));
+                                            }
+                                        }}
                                     />
                                 </th>
                                 <th>Name</th>
