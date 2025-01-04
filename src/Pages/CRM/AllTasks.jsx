@@ -164,7 +164,7 @@ const getRandomColor = () => {
     try {
       const result = await getCrmUsers();
       setLowerRoleUsers(result.data || []);
-      // console.log("Lower role users:", result.data);
+      console.log("Lower role users:", LowerRoleUsers);
     } catch (error) {
       console.error('Failed to get lower role users:', error);
     }
@@ -184,6 +184,16 @@ const getRandomColor = () => {
     setFilteredUsers(filteredUsers);
     console.log("Filtered users:", filteredUsers);
   };
+
+  useEffect(() => {
+    fetchLowerRoleUsers();
+  }, []); 
+  
+  useEffect(() => {
+    handleAssignUserSelect();
+  }, [LowerRoleUsers]); 
+  
+
   
   const handleLeadSelection = (leadId) => {
     setSelectedLeads((prevSelectedLeads) => {
@@ -241,11 +251,7 @@ const handleAssignTask = async () => {
   // }
   // , []);
   
-  useEffect(() => {
-    if (lowerUserTaskModal) {
-      fetchLowerRoleUsers().then(handleAssignUserSelect);
-    }
-  }, [lowerUserTaskModal]);
+
   
   return (
     <React.Fragment>

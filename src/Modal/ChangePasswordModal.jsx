@@ -34,11 +34,13 @@ const ChangePasswordModal = ({ isOpen, toggle, authUser, role, mainUsers, crmUse
         );
         toast.success(response?.data?.message || 'Password updated successfully');
         resetForm();
+        toggle();
       } else if (crmUsers.includes(role)) {
         const response = await updateCrmUserPassword(passwordData);
         if (response?.status === 200) {
           toast.success(response.message || 'Password updated successfully');
           resetForm();
+          toggle();
         } else {
           toast.success(response.message || 'Failed to update password');
         }

@@ -5,10 +5,8 @@ import { userId } from "../../utils/axiosInstance";
 import { toast } from "react-toastify";
 import { getRole} from "../../utils/roleUtils";
 
-const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
+const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads , filteredUsers }) => {
   const [assignedTo, setAssignedTo] = useState("");
-  const [users, setUsers] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
   const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
   const [message, setMessage] = useState("");
@@ -71,41 +69,7 @@ const TaskAssigner = ({ isOpen, toggle, selectedLeads, fetchLeads }) => {
     }
   };
 
-  const fetchCrmUsers = async () => {
-    try {
-      const result = await getCrmUsers();
-      setUsers(result.data || []);
-      // console.log(result.data);
-    } catch (error) {
-      alert(error.message || "Failed to get users");
-    }
-  };
-
-  // if role === ASM then show only him the SM 
-  // if role === SM then show only him the Telecaller only
-
-
-  const filterUsers = () => {
-    if (role === "ASM") {
-      const filtered = users.filter((user) => user.roleId.roleName === "SM");
-      setFilteredUsers(filtered);
-      console.log("asm lower employees : ",filtered);
-    } else if (role === "SM") {
-      const filtered = users.filter((user) => user.roleId.roleName === "Telecaller");
-      setFilteredUsers(filtered);
-    } else {
-      setFilteredUsers(users);
-    }
-  };
-
-  console.log("FilteredUsers : ",filteredUsers);
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchCrmUsers().then(filterUsers);
-      console.log(isOpen, "fetching users");
-    }
-  }, [isOpen]);
+  console.log("filteredUsers : ",filteredUsers);
 
   return (
     <Modal isOpen={isOpen} toggle={toggle} centered>
