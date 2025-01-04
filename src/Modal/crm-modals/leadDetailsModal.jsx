@@ -128,7 +128,7 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                                 {assignment.assignedTo.lastName}
                               </strong>
                             </div>
-                            <p style={{ fontSize: "12px", color: "#666" , paddingLeft:"30px"}}> }}>
+                            <p style={{ fontSize: "12px", color: "#666" , paddingLeft:"30px"}}>
                               {new Date(assignment.assignedAt).toLocaleString("en-IN", {
                                 timeZone: "Asia/Kolkata",
                                 day: "2-digit",

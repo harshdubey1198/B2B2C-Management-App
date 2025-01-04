@@ -59,6 +59,7 @@ function AllLeads() {
           const filtered = users.filter((user) => user.roleId.roleName === "SM");
           setFilteredUsers(filtered);
           console.log("asm lower employees : ",filtered);
+        //   console.log("asm lower employees : ",filteredUsers);
         } else if (role === "SM") {
           const filtered = users.filter((user) => user.roleId.roleName === "Telecaller");
           setFilteredUsers(filtered);
@@ -69,8 +70,12 @@ function AllLeads() {
 
       useEffect(() => {
         fetchCrmUsers();
-        filterUsers();
         }, []);
+
+        useEffect(() => {   
+            filterUsers();
+        }, [users]);
+
 
     const toggleModal = async (id, mode = "view") => {
         if (!modal && id) {
