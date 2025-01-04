@@ -370,7 +370,7 @@ export const masterAdminSidebarData = () => [
       label : "CRM Leads",
       icon : "mdi mdi-account-multiple-outline",
       subItem : [
-        {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
+        // {sublabel:"Daily Tasks",link:"/crm/all-tasks"},
         {sublabel:"All Leads",link:"/crm/all-leads"},
         {sublabel:"New Lead",link:"/crm/create-lead"},
         {sublabel:"Analytics",link:"/crm/leads-analytics"},

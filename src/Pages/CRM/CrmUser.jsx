@@ -41,7 +41,15 @@ function CrmUser() {
       alert(error.message);
     }
   };
-
+  const fetchCrmUsers = async () => {
+    try {
+      const result = await getCrmUsers();
+      setUsers(result.data || []);
+    } catch (error) {
+      alert(error.message || "Failed to get users");
+    }
+  };
+  
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
     const email = user.email?.toLowerCase() || "";
@@ -69,14 +77,7 @@ function CrmUser() {
     }
   };
 
-  const fetchCrmUsers = async () => {
-    try {
-      const result = await getCrmUsers();
-      setUsers(result.data || []);
-    } catch (error) {
-      alert(error.message || "Failed to get users");
-    }
-  };
+  
 
   const handleAddUser = () => {
     createCrmUsers(newUser);
