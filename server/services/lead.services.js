@@ -228,7 +228,7 @@ leadService.getLeadById = async (leadId) => {
         path: "roleId",                       
         select: "roleName",                
       },
-    });
+    })
     .lean();
   if (!lead) {
     throw new Error("No lead found.");

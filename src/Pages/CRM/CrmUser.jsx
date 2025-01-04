@@ -49,7 +49,7 @@ function CrmUser() {
       alert(error.message || "Failed to get users");
     }
   };
-  
+
   const filteredUsers = users.filter((user) => {
     const fullName = `${user.firstName} ${user.lastName}`.toLowerCase();
     const email = user.email?.toLowerCase() || "";
@@ -69,6 +69,7 @@ function CrmUser() {
       toast.success(result.message || "User saved successfully");
       fetchRoles();
       toggleModal();
+      fetchCrmUsers();
       const updatedUsers = [...users, { ...user, id: Date.now() }];
       setUsers(updatedUsers);
       localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
@@ -78,15 +79,15 @@ function CrmUser() {
   };
 
   
+  useEffect(() => {
+    fetchRoles();
+    fetchCrmUsers();
+  }, []);
 
   const handleAddUser = () => {
     createCrmUsers(newUser);
   };
 
-  useEffect(() => {
-    fetchRoles();
-    fetchCrmUsers();
-  }, []);
 
   const toggleModal = () => {
     setModal(!modal);
@@ -261,7 +262,9 @@ function CrmUser() {
                 name="email"
                 placeholder="Email"
                 value={newUser.email}
-                onChange={handleInputChange}
+                onChange={(e) =>
+                  setNewUser({ ...newUser, email: e.target.value })
+                }
                 className="form-control mb-2"
               />
               <input
@@ -301,6 +304,7 @@ function CrmUser() {
                 ))}
               </select>
             </ModalBody>
+
             <ModalFooter>
               <Button
                 color="primary"
