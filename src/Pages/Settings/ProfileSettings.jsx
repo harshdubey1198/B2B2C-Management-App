@@ -38,6 +38,7 @@ const ProfileSettings = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        if (!authUser || !role) return; 
         if (mainUsers.includes(role)) {
           const response = await axiosInstance.get(
             `${process.env.REACT_APP_URL}/auth/getAccount/${authUser?.response._id}`,
@@ -71,7 +72,7 @@ const ProfileSettings = () => {
       }
     };
     fetchUserData();
-  }, []);
+  }, [authUser, role]);
 
             
       
