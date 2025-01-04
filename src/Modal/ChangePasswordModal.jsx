@@ -47,6 +47,8 @@ const ChangePasswordModal = ({ isOpen, toggle, authUser, role, mainUsers, crmUse
       } else {
         toast.error('Unauthorized to update password');
       }
+
+      resetForm()
     } catch (error) {
       toast.error(error.response?.data?.message || 'Failed to change password.');
     }
