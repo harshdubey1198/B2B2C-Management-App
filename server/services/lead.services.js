@@ -133,15 +133,52 @@ leadService.exportLeads = async (body) => {
   return csv;
 };
 
+// leadService.getAllLeads = async () => {
+//   try {
+//     const leads = await Lead.find({ deleted_at: null }).populate({
+//       path: "notes",
+//       populate: {
+//         path: "createdBy",
+//         select: "firstName lastName email",
+//       },
+//     });
+
+//     // Filter notes with deleted_at null
+//     const filteredLeads = leads.map((lead) => ({
+//       ...lead._doc,
+//       notes: lead.notes.filter((note) => note.deleted_at === null),
+//     }));
+
+//     const count = await Lead.countDocuments({ deleted_at: null });
+
+//     if (count === 0) {
+//       return { message: "No leads found.", count: 0, leads: [] };
+//     }
+
+//     return { count, leads: filteredLeads };
+//   } catch (error) {
+//     throw new Error("Error fetching leads: " + error.message);
+//   }
+// };
+
 leadService.getAllLeads = async () => {
   try {
-    const leads = await Lead.find({ deleted_at: null }).populate({
-      path: "notes",
-      populate: {
-        path: "createdBy",
-        select: "firstName lastName email",
-      },
-    });
+    const leads = await Lead.find({ deleted_at: null })
+      .populate({
+        path: "notes",
+        populate: {
+          path: "createdBy",
+          select: "firstName lastName email",
+        },
+      })
+      .populate({
+        path: "assignmentHistory.assignedBy",  // Populate assignedBy with name details
+        select: "firstName lastName",          // Only firstName and lastName
+      })
+      .populate({
+        path: "assignmentHistory.assignedTo",  // Populate assignedTo with name details
+        select: "firstName lastName",          // Only firstName and lastName
+      });
 
     // Filter notes with deleted_at null
     const filteredLeads = leads.map((lead) => ({
@@ -160,6 +197,7 @@ leadService.getAllLeads = async () => {
     throw new Error("Error fetching leads: " + error.message);
   }
 };
+
 
 leadService.getLeadById = async (leadId) => {
   const lead = await Lead.findOne({ _id: leadId, deleted_at: null })
