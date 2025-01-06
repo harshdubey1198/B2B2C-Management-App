@@ -283,7 +283,15 @@ export const updateLeadStatus = async (id, data) => {
     }
 };
 
-
+//  get firm data using id 
+export const getFirmById = async () => {
+    try {
+        const response = await axiosInstance.get(`/auth/getfirm/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
 
 
 export default axiosInstance;
