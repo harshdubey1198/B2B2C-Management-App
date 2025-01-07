@@ -22,6 +22,7 @@ function CreateFirm() {
     password: "Admin@123",
     incorporationDate: "",
     firmType: "",
+    firmSpecified:"",
   });
   
   const [firmType, setFirmType] = useState('');
@@ -95,6 +96,7 @@ function CreateFirm() {
     formData.append("password", formValues.password);
     formData.append("incorporationDate", formValues.incorporationDate);
     formData.append("firmType", firmType);
+    formData.append("firmSpecified", formValues.firmSpecified);
 
     if (formValues.avatar) {
       formData.append("avatar", formValues.avatar);
@@ -121,6 +123,8 @@ function CreateFirm() {
         // confirmPassword: "",
         avatar: null,
         incorporationDate: "",
+        firmType: "",
+        firmSpecified:[],
       });
       navigate('/firms');
     } catch (error) {
@@ -198,6 +202,23 @@ function CreateFirm() {
                           />
                         </FormGroup>
                       </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="firmSpecified">Specified Sales</Label>
+                          <select 
+                            id="firmSpecified"
+                            name="firmSpecified"
+                            className="form-select"
+                            value={formValues.firmSpecified}
+                            onChange={handleChange}
+                          >
+                            <option value="">Select Firm Specified</option>
+                            <option value="Invoice-Trader">Invoice Trader</option>
+                            <option value="Direct-Sales">Direct Sales</option>
+                          </select>
+                        </FormGroup>
+                      </Col>
+
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="incorporationDate">Incorporation Date</Label>
