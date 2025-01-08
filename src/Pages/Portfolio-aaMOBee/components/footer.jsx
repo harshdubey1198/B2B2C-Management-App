@@ -7,7 +7,7 @@ function Footer() {
       <div className="head-signup">
         <span className="footer-heading">Ready to do your best work?</span>
         <span className="footer-subheading">Let's get you started.</span>
-        <a href="#register" className="footer-signup-btn">
+        <a href="/register" className="footer-signup-btn">
           Sign Up Now <i className="fa fa-angle-right"></i>
         </a>
       </div>
