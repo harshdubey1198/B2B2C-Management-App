@@ -381,7 +381,6 @@ authService.getCompany  = async (id) => {
                 return user;
             })
         );
-
         return populatedData;
     } catch (error) {
         console.error(error);
