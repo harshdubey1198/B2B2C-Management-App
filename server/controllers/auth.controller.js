@@ -159,6 +159,17 @@ authController.userInactive = async (req, res) => {
   }
 }
 
+// Approved client admin
+authController.approveClientAdmin = async (req, res) => {
+  try {
+    const response = await authService.approveClientAdmin(req.params.id, req.body);
+    return res.status(200).json(createResult("Approved Client Successfully", response, false));
+  } catch (error) {
+    console.log("Error Approving client", error);
+    return res.status(400).json(createResult(error.message, null, true));
+  }
+}
+
 // GET ACCOUNT
 authController.getAccount = async (req, res) => {
   try {

@@ -20,6 +20,10 @@ const planSchema = new mongoose.Schema({
     maxUsers: { type: Number },
     maxFirms: { type: Number },
     features: [{ type: String }],
+    days: {  
+        type: Number,
+        required: true,  
+    },
     deleted_at: { 
         type: Date, 
         default: null 

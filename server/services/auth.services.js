@@ -7,6 +7,7 @@ const uploadToCloudinary = require("../utils/cloudinary");
 const Plan = require("../schemas/plans.schema");
 const crypto = require("crypto");
 const { sendCredentialsEmail, generateOtp } = require("../utils/mailer");
+const Payment = require("../schemas/payment.schema");
 
 const authService = {};
 
@@ -117,6 +118,15 @@ authService.userLogin = async (body) => {
             }
             if (user.isActive === false) {
                 throw new Error("Your account is pending approval. Please contact the administrator or wait until its approved.");
+            }
+            const latestPayment = await Payment.findOne({ userId: user._id, status: 'completed' }).sort({ paymentDate: -1 });
+            if (!latestPayment) {
+                throw new Error("No active subscription found. Please purchase a plan to continue.");
+            }
+            if (new Date() > new Date(latestPayment.expirationDate)) {
+                user.isActive = false;
+                await user.save();
+                throw new Error("Your subscription has expired. Please renew your plan.");
             }
         }
         if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
@@ -356,6 +366,42 @@ authService.updatePassword = async (id, data) => {
     await user.save()
     return user
 }
+
+// Approved ClientAdmin through SuperAdmin 
+authService.approveClientAdmin = async (userId, body) => {
+    const { status } = body
+    const user = await User.findById(userId).populate('planId');
+    if (!user) {
+        throw new Error("User not found.");
+    }
+
+    if (user.role !== 'client_admin') {
+        throw new Error("Only client admin accounts can be approved.");
+    }
+
+    // Check if already active
+    if (user.isActive) {
+        throw new Error("Account is already active.");
+    }
+
+    // Calculate expiration date based on plan
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + user.planId.days); // Add plan duration
+    
+    const payment = new Payment({
+        userId: user._id,
+        planId: user.planId._id,
+        amount: user.planId.price,
+        status: 'completed',
+        expirationDate: expirationDate,
+    });
+    await payment.save();
+    user.isActive = status;
+    await user.save();
+
+    return user;
+};
+
   
 // USER INACTIVE
 authService.userInactive = async (id, body) => {
