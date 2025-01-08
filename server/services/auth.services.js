@@ -115,6 +115,9 @@ authService.userLogin = async (body) => {
             if(user.isVerified === false){
                 throw new Error("Please verify your account");
             }
+            if (user.isActive === false) {
+                throw new Error("Your account is pending approval. Please contact the administrator or wait until its approved.");
+            }
         }
         if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
             if(user.isActive === false){
