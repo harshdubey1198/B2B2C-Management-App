@@ -241,6 +241,7 @@ const publicRoutes = [
   {path:"/reset-password/:token", component: <ResetPassword />},
   {path:"/reset-password", component: <Navigate to ="/login" />},
   {path:"/verify-email", component: <VerifyOtp/>},
+  {path:"/", component:<Portfolio/>},
   {path:"/portfolio", component:<Portfolio/>},
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
