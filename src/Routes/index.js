@@ -15,6 +15,7 @@ import AuthProtected from "./AuthProtected";
 import { authProtectedRoutes, publicRoutes } from "./routes";
 
 import { createSelector } from 'reselect';
+import FeedbackModal from "../Modal/FeedbackModal";
 
 const getLayout = (layoutType) => {
   let Layout = VerticalLayout;
@@ -58,8 +59,8 @@ const Index = () => {
           }
           key={idx}
           exact={true}
-        />
-      ))}
+          />
+        ))}
 
       {/* Auth Protected Routes */}
       {authProtectedRoutes.map((route, idx) => (
@@ -67,6 +68,7 @@ const Index = () => {
           path={route.path}
           element={
             <AuthProtected>
+              <FeedbackModal/>
               <Layout>{route.component}</Layout>
             </AuthProtected>
           }
