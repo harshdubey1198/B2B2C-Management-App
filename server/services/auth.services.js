@@ -369,8 +369,20 @@ authService.userInactive = async (id, body) => {
 // GET FIRMS  
 authService.getCompany  = async (id) => {
     try {
-        const data = User.find({adminId: id}).select("-password").populate('adminId')
-        return data
+        const data = await User.find({ adminId: id }).select("-password").populate("adminId");
+        const populatedData = await Promise.all(
+            data.map(async (user) => {
+                if (user.role === "client_admin") {
+                    return await User.findById(user._id)
+                        .select("-password")
+                        .populate("adminId")
+                        .populate("planId")
+                }
+                return user;
+            })
+        );
+
+        return populatedData;
     } catch (error) {
         console.error(error);
         return Promise.reject('Error occured during fetching the company data.');
