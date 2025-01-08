@@ -17,6 +17,13 @@ authService.Registration = async (body) => {
         if (existingUser) {
             return Promise.reject("Account already exists!");
         }
+        if (!body.planId) {
+            return Promise.reject("Plan ID is required.");
+        }
+        const plan = await Plan.findById(body.planId);
+        if (!plan) {
+            return Promise.reject("Invalid Plan ID. Please select a valid plan.");
+        }
 
         const hashedPassword = await PasswordService.passwordHash(body.password);
         body.password = hashedPassword;
