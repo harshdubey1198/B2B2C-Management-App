@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 
 //Dashboard
 import Dashboard from "../Pages/Dashboard";
+import Portfolio from "../Pages/Portfolio-aaMOBee/index.jsx";
 // Invoicing routes
 import CreateInvoice from "../Pages/Invoicing/index";
 import ViewInvoice from "../Pages/Invoicing/view.jsx";
@@ -240,7 +241,7 @@ const publicRoutes = [
   {path:"/reset-password/:token", component: <ResetPassword />},
   {path:"/reset-password", component: <Navigate to ="/login" />},
   {path:"/verify-email", component: <VerifyOtp/>},
-
+  {path:"/portfolio", component:<Portfolio/>},
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
   // { path: "/auth-register", component: <Register /> },
