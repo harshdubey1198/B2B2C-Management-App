@@ -112,7 +112,7 @@ if ( role !== "firm_admin") {
                     <h4 className="text-success">Your Current Plan</h4>
                     <h5 className="font-size-16">{selectedPlanDetails.title}</h5>
                     <p className="text-muted">{selectedPlanDetails.caption}</p>
-                    <p className="text-muted">Price: ₹{selectedPlanDetails.price}/month</p>
+                    <p className="text-muted">Price: ₹{selectedPlanDetails.price} - {selectedPlanDetails.days} Days</p>
                     <div className="plan-features mt-4 d-flex flex-column">
                       <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
                       {selectedPlanDetails.features.map((feature, index) => (
@@ -198,8 +198,9 @@ if ( role !== "firm_admin") {
                           </div>
                         </div>
                         <div className="py-2">
-                          <span className="h2">₹{plan.price}</span>
-                          <span className="font-size-16">/month</span>
+                          <span className="h2">₹{plan.price} - </span>
+                          {/* <span className="font-size-16"></span> */}
+                          <span className="h3">{plan.days} Days</span>
                         </div>
                         <div className="plan-features mt-4">
                           <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>

@@ -86,6 +86,7 @@ import CrmUser from "../Pages/CRM/CrmUser.jsx";
 import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 import ReassignTask from "../Pages/CRM/ReassignTask.jsx";
 import TaskManagement from "../Pages/CRM/TaskManagement.jsx";
+import Redirectors from "../Pages/Portfolio-aaMOBee/components/redirectors.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -243,6 +244,7 @@ const publicRoutes = [
   {path:"/verify-email", component: <VerifyOtp/>},
   {path:"/", component:<Portfolio/>},
   {path:"/portfolio", component:<Portfolio/>},
+  {path:"/login-forwarding" , component:<Redirectors />},
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
   // { path: "/auth-register", component: <Register /> },
