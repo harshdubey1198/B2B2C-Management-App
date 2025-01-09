@@ -40,6 +40,7 @@ const Register = (props) => {
     // address: "",
     role: defaultRole,
     status: "Requested",
+    planId: "",
   });
 
   const [show, setShow] = useState({
@@ -51,6 +52,30 @@ const Register = (props) => {
 
   // const BASE_URL = process.env.REACT_APP_API_URL || "http://13.127.103.135/";
 
+  useEffect(() => {
+    const storedPlanId = localStorage.getItem("planId");
+    if (storedPlanId) {
+      setFormInput((prevState) => ({
+        ...prevState,
+        planId: storedPlanId,
+        
+      }));
+    }
+  }, []);
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem("emailForRegister");
+    if (storedEmail) {
+      setFormInput((prevState) => ({
+        ...prevState,
+        email: storedEmail,
+      }));
+    }
+  }, []);
+  
+
+
+// console.log("Form Input:", formInput);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

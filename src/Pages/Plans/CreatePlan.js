@@ -27,6 +27,7 @@ function CreatePlan() {
     caption: "",
     icon: "",
     price: "",
+    days:"",
     features: [],
     maxFirms: "",
   });
@@ -83,6 +84,7 @@ function CreatePlan() {
       !formValues.caption ||
       !formValues.icon ||
       !formValues.price ||
+      !formValues.days ||
       formValues.features.length === 0 ||
       !formValues.maxFirms
     ) {
@@ -103,6 +105,7 @@ function CreatePlan() {
           caption: "",
           icon: "",
           price: "",
+          days:"",
           features: [],
           maxFirms: "",
         });
@@ -208,7 +211,7 @@ function CreatePlan() {
                     </FormGroup>
 
                     <FormGroup>
-                      <Label htmlFor="price">Price per 3 Months</Label>
+                      <Label htmlFor="price">Price</Label>
                       <Input
                         type="number"
                         id="price"
@@ -218,6 +221,19 @@ function CreatePlan() {
                         onChange={handleChange}
                       />
                     </FormGroup>
+
+                    <FormGroup>
+                      <Label htmlFor="days">Days</Label>
+                      <Input
+                        type="number"
+                        id="days"
+                        name="days"
+                        placeholder="Enter number of days"
+                        value={formValues.days}
+                        onChange={handleChange}
+                      />
+                    </FormGroup>
+
                     <FormGroup>
                       <Label htmlFor="features">Features</Label>
                       <Input

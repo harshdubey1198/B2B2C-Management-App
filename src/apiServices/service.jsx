@@ -293,5 +293,15 @@ export const getFirmById = async () => {
     }
 };
 
+// get all plans 
+export const getAllPlans = async () => {
+    try {
+        const response = await axiosInstance.get('/plan/all');
+        return response.data.response;
+    } catch (error) {
+        return error;
+    }
+};
+
 
 export default axiosInstance;

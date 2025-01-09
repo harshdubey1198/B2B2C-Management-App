@@ -115,6 +115,7 @@ function ManagePlan() {
                       <th>Caption</th>
                       <th>Firms</th>
                       <th>Icon</th>
+                      <th>Days</th>
                       <th>Price</th>
                       <th>Features</th>
                       <th>Actions</th>
@@ -133,6 +134,7 @@ function ManagePlan() {
                             </span>
                           </div>
                         </td>
+                        <td>{plan.days}</td>
                         <td>{plan.price}</td>
                         <td>
                           <ul>
@@ -256,27 +258,38 @@ function ManagePlan() {
             />
           </FormGroup>
           <FormGroup>
-  <Label for="features">Features</Label>
-  <ul>
-    {selectedPlan.features.map((feature, index) => (
-      <li key={index}>
-        <Input
-          type="text"
-          name={`feature-${index}`} 
-          value={feature}
-          onChange={(e) =>
-            handleChange({
-              target: {
-                name: 'features',
-                value: selectedPlan.features.map((f, i) =>
-                  i === index ? e.target.value : f
-                ),
-              },
-            })
-          }
-        />
-      </li>
-    ))}
+            <Label for="days">Days</Label>
+            <Input
+              type="number"
+              name="days"
+              id="days"
+              value={selectedPlan.days}
+              onChange={handleChange}
+            />
+          </FormGroup>
+          
+          <FormGroup>
+          <Label for="features">Features</Label>
+          <ul>
+            {selectedPlan.features.map((feature, index) => (
+              <li key={index}>
+                <Input
+                  type="text"
+                  name={`feature-${index}`} 
+                  value={feature}
+                  onChange={(e) =>
+                    handleChange({
+                      target: {
+                        name: 'features',
+                        value: selectedPlan.features.map((f, i) =>
+                          i === index ? e.target.value : f
+                        ),
+                      },
+                    })
+                  }
+                />
+              </li>
+            ))}
     {/* <li>
       <Input
         type="text"

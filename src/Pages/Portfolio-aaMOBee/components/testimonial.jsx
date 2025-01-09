@@ -44,7 +44,7 @@ function Testimonial() {
         <span className="col-1-description">
           Simplified IT is designed to help make sure you and your<br /> data is protected and your computer runs its best. The <br />network Access provides is valuable.
         </span>
-        <a href="view-more" className="vm-btn">View More <i className="fa fa-angle-right"></i></a>
+        <a href="/" className="vm-btn">View More <i className="fa fa-angle-right"></i></a>
       </div>
 
       <div className="col-md-6 testimonial-idiv">
