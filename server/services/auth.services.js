@@ -99,6 +99,50 @@ authService.resendOtp = async (body) => {
 };
 
 // LOGIN USER
+// authService.userLogin = async (body) => {
+//     try {
+//         const { email, password } = body;
+//         const user = await User.findOne({ email: email });
+//         if (!user) {
+//             throw new Error('Account Not Found');
+//         }
+        
+//         const passwordMatch = await PasswordService.comparePassword(password, user.password);
+//         if (!passwordMatch) {
+//             throw new Error("Incorrect Password");
+//         }
+        
+//         if (user.role === "client_admin"){
+//             if(user.isVerified === false){
+//                 throw new Error("Please verify your account");
+//             }
+//             if (user.isActive === false) {
+//                 throw new Error("Your account is pending approval. Please contact the administrator or wait until its approved.");
+//             }
+//             const latestPayment = await Payment.findOne({ userId: user._id, status: 'completed' }).sort({ paymentDate: -1 });
+//             if (!latestPayment) {
+//                 throw new Error("No active subscription found. Please purchase a plan to continue.");
+//             }
+//             if (new Date() > new Date(latestPayment.expirationDate)) {
+//                 user.isActive = false;
+//                 await user.save();
+//                 throw new Error("Your subscription has expired. Please renew your plan.");
+//             }
+//         }
+//         if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
+//             if(user.isActive === false){
+//                 throw new Error("Your account is inactive");
+//             }
+//         }
+//         // Return user data without password
+//         return await User.findOne({ _id: user._id }).select("-password");
+
+//     } catch (error) {
+//         console.error('Login failed:', error);
+//         throw new Error(error.message || 'Login failed');
+//     }
+// };
+
 authService.userLogin = async (body) => {
     try {
         const { email, password } = body;
@@ -111,38 +155,55 @@ authService.userLogin = async (body) => {
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
-        
-        if (user.role === "client_admin"){
-            if(user.isVerified === false){
+
+        let clientAdmin;
+        if (user.role === 'firm_admin' || user.role === 'employee' || user.role === 'accountant') {
+            const firm = await User.findOne({ _id: user.adminId });
+            if (!firm) {
+                throw new Error('Firm not found for the user');
+            }
+            // Find the client admin using the firm's adminId
+            clientAdmin = await User.findOne({ _id: firm.adminId, role: 'client_admin' });
+            if (!clientAdmin) {
+                throw new Error('Client Admin not found for the firm');
+            }
+        } else if (user.role === 'client_admin') {
+            clientAdmin = user;
+        }
+
+        if (!clientAdmin) {
+            throw new Error('Associated Client Admin not found');
+        }
+
+        const latestPayment = await Payment.findOne({ userId: clientAdmin._id, status: 'completed' }).sort({ paymentDate: -1 });
+        if (!latestPayment) {
+            throw new Error("No active subscription found for the Client Admin. Please purchase a plan to continue.");
+        }
+        console.log(latestPayment);
+        if (new Date() > new Date(latestPayment.expirationDate)) {
+            clientAdmin.isActive = false;
+            latestPayment.status = "expired"
+            await Promise.all([clientAdmin.save(), latestPayment.save()]);
+            throw new Error("Your subscription has expired. No associated users can log in.");
+        }
+        if (user.role === "client_admin") {
+            if (!user.isVerified) {
                 throw new Error("Please verify your account");
             }
-            if (user.isActive === false) {
-                throw new Error("Your account is pending approval. Please contact the administrator or wait until its approved.");
+            if (!user.isActive) {
+                throw new Error("Your account is pending approval. Please contact the administrator.");
             }
-            const latestPayment = await Payment.findOne({ userId: user._id, status: 'completed' }).sort({ paymentDate: -1 });
-            if (!latestPayment) {
-                throw new Error("No active subscription found. Please purchase a plan to continue.");
-            }
-            if (new Date() > new Date(latestPayment.expirationDate)) {
-                user.isActive = false;
-                await user.save();
-                throw new Error("Your subscription has expired. Please renew your plan.");
-            }
-        }
-        if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
-            if(user.isActive === false){
+        } else if (user.role === "firm_admin" || user.role === "accountant" || user.role === "employee") {
+            if (!user.isActive) {
                 throw new Error("Your account is inactive");
             }
         }
-        // Return user data without password
         return await User.findOne({ _id: user._id }).select("-password");
-
-    } catch (error) {
+        } catch (error) {
         console.error('Login failed:', error);
         throw new Error(error.message || 'Login failed');
     }
-};
-
+}
 
 authService.UserForgetPassword = async (body) => {
     const { email } = body;
@@ -386,7 +447,7 @@ authService.approveClientAdmin = async (userId, body) => {
 
     // Calculate expiration date based on plan
     const expirationDate = new Date();
-    expirationDate.setDate(expirationDate.getDate() + user.planId.days); // Add plan duration
+    expirationDate.setDate(expirationDate.getDate() + user.planId.days);
     
     const payment = new Payment({
         userId: user._id,

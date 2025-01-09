@@ -7,29 +7,26 @@ const CRMUser = require("../schemas/crmuser.schema");
 const Role = require("../schemas/role.schema");
 const User = require("../schemas/user.schema");
 const generateTemporaryPassword = require("../utils/tempPassword");
+const Payment = require("../schemas/payment.schema");
 
 const crmUserService = {};
 
 // CREATE CRMUser
 crmUserService.createCrmsUser = async (id, data) => {
-  // Validate the parent user
   const parentUser = await User.findById(id);
   if (!parentUser) {
       throw new Error("Parent user does not exist!");
   }
 
-  // Validate the admin user
   if (!parentUser.adminId) {
       throw new Error("Admin user not associated with the parent user!");
   }
 
-  // Validate the role ID
   const roleExists = await Role.findById(data.roleId);
   if (!roleExists) {
       throw new Error("Invalid role ID!");
   }
 
-  // Check if the CRMUser already exists
   const existingCRMUser = await CRMUser.findOne({ email: data.email });
   if (existingCRMUser) {
       throw new Error("Account already exists!");
@@ -49,14 +46,9 @@ crmUserService.createCrmsUser = async (id, data) => {
       throw new Error("Invalid avatar format");
   }
 
-  // Generate temporary password
   const temporaryPassword = crypto.randomBytes(6).toString('hex');
-
-  // Encrypt the password
   const encryptedPassword = await PasswordService.passwordHash(temporaryPassword);
   data.password = encryptedPassword;
-
-  // Set additional fields
   data.isActive = true;
   data.parentId = id;
   data.firmId = parentUser.adminId;
@@ -64,8 +56,6 @@ crmUserService.createCrmsUser = async (id, data) => {
   // Save the new CRM user
   const newCRMUser = new CRMUser(data);
   await newCRMUser.save();
-
-  // Send credentials email
   await sendCredentialsEmail(newCRMUser.email, temporaryPassword, 'https://aamobee.com/crm/login');
 
   return newCRMUser;
@@ -83,23 +73,41 @@ crmUserService.loginCrmsUsers = async (body) => {
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
+        const firm = await User.findOne({_id: crmuser.firmId})
+        if(!firm){
+          throw new Error('Firm not found for the user');
+        }
+        const clientAdmin = await User.findOne({_id: firm.adminId})
+        if(!clientAdmin){
+          throw new Error('Client admin not found for the firm');
+        }
+        const latestPayment = await Payment.findOne({ userId: clientAdmin._id, status: 'completed' }).sort({ paymentDate: -1 });
+        if (!latestPayment) {
+            throw new Error("No active subscription found for the Client Admin. Please purchase a plan to continue.");
+        }
+        if (new Date() > new Date(latestPayment.expirationDate)) {
+            clientAdmin.isActive = false;
+            latestPayment.status = 'expired';
+            await Promise.all([clientAdmin.save(), latestPayment.save()]);
+            throw new Error("Unable to log in. Your subscription has expired, Please contact your administrator.");
+        }
+        console.log(latestPayment, "latest")
         if(crmuser.isActive === false){
             throw new Error("Account is not active");
         }
         const userData = await CRMUser.findOne({ _id: crmuser._id })
-            .select("-password") // Exclude the password field
+            .select("-password") 
             .populate({
                 path: "roleId",
-                select: "roleName" // Select only the roleName field
+                select: "roleName" 
             });
 
         // Extract the roleName and attach it to the response
         const user = {
             ...userData.toObject(),
-            roleId: userData.roleId?._id || null, // Include roleId
-            role: userData.roleId?.roleName || null // Include roleName
+            roleId: userData.roleId?._id || null,
+            role: userData.roleId?.roleName || null 
         };
-        // Return user data without password
         return user;
 
     } catch (error) {
