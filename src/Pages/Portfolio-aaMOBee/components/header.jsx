@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import LogoBig from "../assets/Logo-big.png";
 import LogoSmall from "../assets/small-logo.png";
 
 function Header() {
+  useEffect(() => {
+    const handleClick = (event) => {
+      const dropdowns = document.querySelectorAll('.dropdown-content');
+      const isDropdownBtn = event.target.classList.contains('dropdown-btn');
+      
+      dropdowns.forEach((dropdown) => {
+        if (!dropdown.parentElement.contains(event.target)) {
+          dropdown.style.display = 'none'; 
+        }
+      });
+    
+      if (isDropdownBtn) {
+        const targetDropdown = event.target.nextElementSibling;
+        targetDropdown.style.display = targetDropdown.style.display === 'block' ? 'none' : 'block';
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+
+    // Cleanup the event listener when the component is unmounted
+    return () => {
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
       <div className="container-fluid">
@@ -39,13 +65,13 @@ function Header() {
 
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav ms-auto">
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
                 id="featuresDropdown"
                 role="button"
-                data-bs-toggle="dropdown"
+                data-bs-toggle="dropdown1"
                 aria-expanded="false"
               >
                 Features
@@ -69,13 +95,13 @@ function Header() {
               </ul>
             </li>
 
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
                 id="pricingDropdown"
                 role="button"
-                data-bs-toggle="dropdown"
+                data-bs-toggle="dropdown1"
                 aria-expanded="false"
               >
                 Pricing
@@ -99,7 +125,7 @@ function Header() {
               </ul>
             </li>
 
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
@@ -127,7 +153,7 @@ function Header() {
               </ul>
             </li>
 
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
@@ -136,7 +162,7 @@ function Header() {
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                For Accountants & Bookkeepers
+                For Accountants
               </a>
               <ul
                 className="dropdown-menu"
@@ -155,7 +181,7 @@ function Header() {
               </ul>
             </li>
 
-            <li className="nav-item dropdown">
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"
@@ -180,7 +206,7 @@ function Header() {
               </ul>
             </li>
 
-            <li className="nav-item dropdown w-25">
+            <li className="nav-item dropdown1">
               <a className="nav-link" href="/login-forwarding">
                 Login
               </a>
