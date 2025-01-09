@@ -8,6 +8,7 @@ const Role = require("../schemas/role.schema");
 const User = require("../schemas/user.schema");
 const generateTemporaryPassword = require("../utils/tempPassword");
 const Payment = require("../schemas/payment.schema");
+const { validateCRMUserSubscription } = require("../helpers/validateSubscription");
 
 const crmUserService = {};
 
@@ -63,57 +64,50 @@ crmUserService.createCrmsUser = async (id, data) => {
 
 // LOGIN USER
 crmUserService.loginCrmsUsers = async (body) => {
-    try {
-        const { email, password } = body;
-        const crmuser = await CRMUser.findOne({ email: email });
-        if (!crmuser) {
-            throw new Error('Account Not Found');
-        }
-        const passwordMatch = await PasswordService.comparePassword(password, crmuser.password);
-        if (!passwordMatch) {
-            throw new Error("Incorrect Password");
-        }
-        const firm = await User.findOne({_id: crmuser.firmId})
-        if(!firm){
+  try {
+      const { email, password } = body;
+
+      const crmuser = await CRMUser.findOne({ email });
+      if (!crmuser) {
+          throw new Error('Account Not Found');
+      }
+      const passwordMatch = await PasswordService.comparePassword(password, crmuser.password);
+      if (!passwordMatch) {
+          throw new Error("Incorrect Password");
+      }
+      const firm = await User.findOne({ _id: crmuser.firmId });
+      if (!firm) {
           throw new Error('Firm not found for the user');
-        }
-        const clientAdmin = await User.findOne({_id: firm.adminId})
-        if(!clientAdmin){
+      }
+      const clientAdmin = await User.findOne({ _id: firm.adminId });
+      if (!clientAdmin) {
           throw new Error('Client admin not found for the firm');
-        }
-        const latestPayment = await Payment.findOne({ userId: clientAdmin._id, status: 'completed' }).sort({ paymentDate: -1 });
-        if (!latestPayment) {
-            throw new Error("No active subscription found for the Client Admin. Please purchase a plan to continue.");
-        }
-        if (new Date() > new Date(latestPayment.expirationDate)) {
-            clientAdmin.isActive = false;
-            latestPayment.status = 'expired';
-            await Promise.all([clientAdmin.save(), latestPayment.save()]);
-            throw new Error("Unable to log in. Your subscription has expired, Please contact your administrator.");
-        }
-        console.log(latestPayment, "latest")
-        if(crmuser.isActive === false){
-            throw new Error("Account is not active");
-        }
-        const userData = await CRMUser.findOne({ _id: crmuser._id })
-            .select("-password") 
-            .populate({
-                path: "roleId",
-                select: "roleName" 
-            });
+      }
 
-        // Extract the roleName and attach it to the response
-        const user = {
-            ...userData.toObject(),
-            roleId: userData.roleId?._id || null,
-            role: userData.roleId?.roleName || null 
-        };
-        return user;
+      // Step 5: Validate subscription
+      await validateCRMUserSubscription(clientAdmin);
 
-    } catch (error) {
-        console.error('Login failed:', error);
-        throw new Error(error.message || 'Login failed');
-    }
+      if (crmuser.isActive === false) {
+          throw new Error("Account is not active");
+      }
+      const userData = await CRMUser.findOne({ _id: crmuser._id })
+          .select("-password")
+          .populate({
+              path: "roleId",
+              select: "roleName"
+          });
+
+      // Attach role information to response
+      const user = {
+          ...userData.toObject(),
+          roleId: userData.roleId?._id || null,
+          role: userData.roleId?.roleName || null
+      };
+      return user;
+  } catch (error) {
+      console.error('Login failed:', error);
+      throw new Error(error.message || 'Login failed');
+  }
 };
 
 // GET CRMUser
