@@ -8,7 +8,7 @@ const Plan = require("../schemas/plans.schema");
 const crypto = require("crypto");
 const { sendCredentialsEmail, generateOtp } = require("../utils/mailer");
 const Payment = require("../schemas/payment.schema");
-const validateUserSubscription = require("../helpers/validateSubscription");
+const { validateUserSubscription } = require("../helpers/validateSubscription");
 
 const authService = {};
 

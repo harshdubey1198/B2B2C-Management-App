@@ -24,4 +24,20 @@ const validateUserSubscription = async (clientAdmin, userRole) => {
     }
 };
 
-module.exports = validateUserSubscription
+const validateCRMUserSubscription = async (clientAdmin) => {
+    const latestPayment = await Payment.findOne({ userId: clientAdmin._id, status: 'completed' }).sort({ paymentDate: -1 });
+
+    if (!latestPayment) {
+        throw new Error("No active subscription found for the Client Admin. Please purchase a plan to continue.");
+    }
+
+    if (new Date() > new Date(latestPayment.expirationDate)) {
+        clientAdmin.isActive = false;
+        latestPayment.status = 'expired';
+        await Promise.all([clientAdmin.save(), latestPayment.save()]);
+        throw new Error("Unable to log in. Your subscription has expired, Please contact your administrator.");
+    }
+};
+
+
+module.exports = { validateUserSubscription, validateCRMUserSubscription }
