@@ -7,6 +7,7 @@ const uploadToCloudinary = require("../utils/cloudinary");
 const Plan = require("../schemas/plans.schema");
 const crypto = require("crypto");
 const { sendCredentialsEmail, generateOtp } = require("../utils/mailer");
+const Payment = require("../schemas/payment.schema");
 
 const authService = {};
 
@@ -16,6 +17,13 @@ authService.Registration = async (body) => {
         const existingUser = await User.findOne({ email: body.email });
         if (existingUser) {
             return Promise.reject("Account already exists!");
+        }
+        if (!body.planId) {
+            return Promise.reject("Plan ID is required.");
+        }
+        const plan = await Plan.findById(body.planId);
+        if (!plan) {
+            return Promise.reject("Invalid Plan ID. Please select a valid plan.");
         }
 
         const hashedPassword = await PasswordService.passwordHash(body.password);
@@ -91,6 +99,50 @@ authService.resendOtp = async (body) => {
 };
 
 // LOGIN USER
+// authService.userLogin = async (body) => {
+//     try {
+//         const { email, password } = body;
+//         const user = await User.findOne({ email: email });
+//         if (!user) {
+//             throw new Error('Account Not Found');
+//         }
+        
+//         const passwordMatch = await PasswordService.comparePassword(password, user.password);
+//         if (!passwordMatch) {
+//             throw new Error("Incorrect Password");
+//         }
+        
+//         if (user.role === "client_admin"){
+//             if(user.isVerified === false){
+//                 throw new Error("Please verify your account");
+//             }
+//             if (user.isActive === false) {
+//                 throw new Error("Your account is pending approval. Please contact the administrator or wait until its approved.");
+//             }
+//             const latestPayment = await Payment.findOne({ userId: user._id, status: 'completed' }).sort({ paymentDate: -1 });
+//             if (!latestPayment) {
+//                 throw new Error("No active subscription found. Please purchase a plan to continue.");
+//             }
+//             if (new Date() > new Date(latestPayment.expirationDate)) {
+//                 user.isActive = false;
+//                 await user.save();
+//                 throw new Error("Your subscription has expired. Please renew your plan.");
+//             }
+//         }
+//         if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
+//             if(user.isActive === false){
+//                 throw new Error("Your account is inactive");
+//             }
+//         }
+//         // Return user data without password
+//         return await User.findOne({ _id: user._id }).select("-password");
+
+//     } catch (error) {
+//         console.error('Login failed:', error);
+//         throw new Error(error.message || 'Login failed');
+//     }
+// };
+
 authService.userLogin = async (body) => {
     try {
         const { email, password } = body;
@@ -103,26 +155,60 @@ authService.userLogin = async (body) => {
         if (!passwordMatch) {
             throw new Error("Incorrect Password");
         }
-        
-        if (user.role === "client_admin"){
-            if(user.isVerified === false){
+
+        // Skip all additional checks for superadmin
+        if (user.role === 'super_admin') {
+            return await User.findOne({ _id: user._id }).select("-password");
+        }
+
+        let clientAdmin;
+        if (user.role === 'firm_admin' || user.role === 'employee' || user.role === 'accountant') {
+            const firm = await User.findOne({ _id: user.adminId });
+            if (!firm) {
+                throw new Error('Firm not found for the user');
+            }
+            // Find the client admin using the firm's adminId
+            clientAdmin = await User.findOne({ _id: firm.adminId, role: 'client_admin' });
+            if (!clientAdmin) {
+                throw new Error('Client Admin not found for the firm');
+            }
+        } else if (user.role === 'client_admin') {
+            clientAdmin = user;
+        }
+
+        if (!clientAdmin) {
+            throw new Error('Associated Client Admin not found');
+        }
+
+        const latestPayment = await Payment.findOne({ userId: clientAdmin._id, status: 'completed' }).sort({ paymentDate: -1 });
+        if (!latestPayment) {
+            throw new Error("No active subscription found for the Client Admin. Please purchase a plan to continue.");
+        }
+        console.log(latestPayment);
+        if (new Date() > new Date(latestPayment.expirationDate)) {
+            clientAdmin.isActive = false;
+            latestPayment.status = "expired"
+            await Promise.all([clientAdmin.save(), latestPayment.save()]);
+            throw new Error("Your subscription has expired. No associated users can log in.");
+        }
+        if (user.role === "client_admin") {
+            if (!user.isVerified) {
                 throw new Error("Please verify your account");
             }
-        }
-        if(user.role === "firm_admin" || user.role === "accountant" || user.role === "employee"){
-            if(user.isActive === false){
+            if (!user.isActive) {
+                throw new Error("Your account is pending approval. Please contact the administrator.");
+            }
+        } else if (user.role === "firm_admin" || user.role === "accountant" || user.role === "employee") {
+            if (!user.isActive) {
                 throw new Error("Your account is inactive");
             }
         }
-        // Return user data without password
         return await User.findOne({ _id: user._id }).select("-password");
-
-    } catch (error) {
+        } catch (error) {
         console.error('Login failed:', error);
         throw new Error(error.message || 'Login failed');
     }
-};
-
+}
 
 authService.UserForgetPassword = async (body) => {
     const { email } = body;
@@ -346,6 +432,57 @@ authService.updatePassword = async (id, data) => {
     await user.save()
     return user
 }
+
+// Approved ClientAdmin through SuperAdmin 
+authService.approveClientAdmin = async (userId, body) => {
+    const { status } = body
+    const user = await User.findById(userId).populate('planId');
+    if (!user) {
+        throw new Error("User not found.");
+    }
+
+    if (user.role !== 'client_admin') {
+        throw new Error("Only client admin accounts can be approved.");
+    }
+
+    // Check if already active
+    if (user.isActive) {
+        throw new Error("Account is already active.");
+    }
+
+    // Calculate expiration date based on plan
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + user.planId.days);
+    
+    const payment = new Payment({
+        userId: user._id,
+        planId: user.planId._id,
+        amount: user.planId.price,
+        status: 'completed',
+        expirationDate: expirationDate,
+    });
+    await payment.save();
+    user.isActive = status;
+    await user.save();
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GOOGLE_MAIL,
+            pass: process.env.GOOGLE_PASS,
+        },
+    });
+
+    const mailOptions = {
+        from: process.env.GOOGLE_MAIL,
+        to: user.email,
+        subject: 'Approval Notification',
+        text: `Dear ${user.name},\n\nYour account and payment have been approved. You can now log in to your account using the following link: https://aamobee.com/login\n\nThank you for choosing our service.\n\nBest regards,\nAamobee Team`
+    };
+
+    await transporter.sendMail(mailOptions);
+    return user;
+};
+
   
 // USER INACTIVE
 authService.userInactive = async (id, body) => {
@@ -362,8 +499,19 @@ authService.userInactive = async (id, body) => {
 // GET FIRMS  
 authService.getCompany  = async (id) => {
     try {
-        const data = User.find({adminId: id}).select("-password").populate('adminId')
-        return data
+        const data = await User.find({ adminId: id }).select("-password").populate("adminId");
+        const populatedData = await Promise.all(
+            data.map(async (user) => {
+                if (user.role === "client_admin") {
+                    return await User.findById(user._id)
+                        .select("-password")
+                        .populate("adminId")
+                        .populate("planId")
+                }
+                return user;
+            })
+        );
+        return populatedData;
     } catch (error) {
         console.error(error);
         return Promise.reject('Error occured during fetching the company data.');

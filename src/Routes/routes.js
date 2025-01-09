@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 
 //Dashboard
 import Dashboard from "../Pages/Dashboard";
+import Portfolio from "../Pages/Portfolio-aaMOBee/index.jsx";
 // Invoicing routes
 import CreateInvoice from "../Pages/Invoicing/index";
 import ViewInvoice from "../Pages/Invoicing/view.jsx";
@@ -85,6 +86,7 @@ import CrmUser from "../Pages/CRM/CrmUser.jsx";
 import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 import ReassignTask from "../Pages/CRM/ReassignTask.jsx";
 import TaskManagement from "../Pages/CRM/TaskManagement.jsx";
+import Redirectors from "../Pages/Portfolio-aaMOBee/components/redirectors.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -240,7 +242,9 @@ const publicRoutes = [
   {path:"/reset-password/:token", component: <ResetPassword />},
   {path:"/reset-password", component: <Navigate to ="/login" />},
   {path:"/verify-email", component: <VerifyOtp/>},
-
+  {path:"/", component:<Portfolio/>},
+  {path:"/portfolio", component:<Portfolio/>},
+  {path:"/login-forwarding" , component:<Redirectors />},
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
   // { path: "/auth-register", component: <Register /> },

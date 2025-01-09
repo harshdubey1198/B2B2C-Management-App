@@ -283,7 +283,46 @@ export const updateLeadStatus = async (id, data) => {
     }
 };
 
+//  get firm data using id 
+export const getFirmById = async () => {
+    try {
+        const response = await axiosInstance.get(`/auth/getfirm/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// get all plans 
+export const getAllPlans = async () => {
+    try {
+        const response = await axiosInstance.get('/plan/all');
+        return response.data.response;
+    } catch (error) {
+        return error;
+    }
+};
 
 
+
+//  to approve status of client 
+export const approveClient = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/auth/approveClient/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error.response ? error.response.data : error;
+    }
+}
+
+//  to inactive status of client
+export const inactiveClient = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/auth/userInactive/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error.response ? error.response.data : error;
+    }
+}
 
 export default axiosInstance;

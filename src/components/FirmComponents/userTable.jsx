@@ -159,13 +159,17 @@ function UserTable({ selectedFirmId, trigger }) {
                   <td>{user.role?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>
                   <td>{user?.isActive ? "Active" : "Not Active"}</td>
                   <td>
-                    <button
-                      onClick={() => toggleUserStatus(user._id, user.isActive)}
-                      className={`btn btn-sm ${user.isActive ? "btn-danger" : "btn-success"}`}
-                    >
-                      {user.isActive ? "Deactivate" : "Activate"}
-                    </button>
-                  </td>
+                      {
+                        user._id !== authuser.response._id && (
+                          <button
+                            onClick={() => toggleUserStatus(user._id, user.isActive)}
+                            className={`btn btn-sm ${user.isActive ? "btn-danger" : "btn-success"}`}
+                          >
+                            {user.isActive ? "Deactivate" : "Activate"}
+                          </button>
+                        )
+                      }
+                   </td>
                 </tr>
               ))
             ) : (
