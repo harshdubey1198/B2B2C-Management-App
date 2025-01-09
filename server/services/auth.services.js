@@ -156,6 +156,11 @@ authService.userLogin = async (body) => {
             throw new Error("Incorrect Password");
         }
 
+        // Skip all additional checks for superadmin
+        if (user.role === 'super_admin') {
+            return await User.findOne({ _id: user._id }).select("-password");
+        }
+
         let clientAdmin;
         if (user.role === 'firm_admin' || user.role === 'employee' || user.role === 'accountant') {
             const firm = await User.findOne({ _id: user.adminId });
@@ -459,7 +464,22 @@ authService.approveClientAdmin = async (userId, body) => {
     await payment.save();
     user.isActive = status;
     await user.save();
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.GOOGLE_MAIL,
+            pass: process.env.GOOGLE_PASS,
+        },
+    });
 
+    const mailOptions = {
+        from: process.env.GOOGLE_MAIL,
+        to: user.email,
+        subject: 'Approval Notification',
+        text: `Dear ${user.name},\n\nYour account and payment have been approved. You can now log in to your account using the following link: https://aamobee.com/login\n\nThank you for choosing our service.\n\nBest regards,\nAamobee Team`
+    };
+
+    await transporter.sendMail(mailOptions);
     return user;
 };
 
