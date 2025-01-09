@@ -1,6 +1,9 @@
-import React from 'react';
-import LogoBig from '../assets/Logo-big.png';
-import LogoSmall from '../assets/small-logo.png';
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+import LogoBig from "../assets/Logo-big.png";
+import LogoSmall from "../assets/small-logo.png";
+
 function Header() {
   return (
     <header className="navbar navbar-expand-lg navbar-light bg-white border-bottom fixed-top">
@@ -11,14 +14,14 @@ function Header() {
             alt="aaMOBee Logo Large"
             loading="lazy"
             className="d-none d-md-block"
-            style={{ maxHeight: '50px' }}
+            style={{ maxHeight: "50px" }}
           />
           <img
             src={LogoSmall}
             alt="aaMOBee Logo Small"
             loading="lazy"
             className="d-block d-md-none"
-            style={{ maxHeight: '50px' }}
+            style={{ maxHeight: "50px" }}
           />
         </a>
 
@@ -49,13 +52,19 @@ function Header() {
               </a>
               <ul className="dropdown-menu" aria-labelledby="featuresDropdown">
                 <li>
-                  <a className="dropdown-item" href="#invoicing">Invoicing</a>
+                  <a className="dropdown-item" href="#invoicing">
+                    Invoicing
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#inventory">Inventory Management</a>
+                  <a className="dropdown-item" href="#inventory">
+                    Inventory Management
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#manufacturing">Manufacturing</a>
+                  <a className="dropdown-item" href="#manufacturing">
+                    Manufacturing
+                  </a>
                 </li>
               </ul>
             </li>
@@ -73,13 +82,19 @@ function Header() {
               </a>
               <ul className="dropdown-menu" aria-labelledby="pricingDropdown">
                 <li>
-                  <a className="dropdown-item" href="#mission">Mission</a>
+                  <a className="dropdown-item" href="#mission">
+                    Mission
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#team">Our Team</a>
+                  <a className="dropdown-item" href="#team">
+                    Our Team
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#vision">Vision</a>
+                  <a className="dropdown-item" href="#vision">
+                    Vision
+                  </a>
                 </li>
               </ul>
             </li>
@@ -95,12 +110,19 @@ function Header() {
               >
                 For Small Businesses
               </a>
-              <ul className="dropdown-menu" aria-labelledby="smallBusinessesDropdown">
+              <ul
+                className="dropdown-menu"
+                aria-labelledby="smallBusinessesDropdown"
+              >
                 <li>
-                  <a className="dropdown-item" href="#support">Support</a>
+                  <a className="dropdown-item" href="#support">
+                    Support
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#feedback">Feedback</a>
+                  <a className="dropdown-item" href="#feedback">
+                    Feedback
+                  </a>
                 </li>
               </ul>
             </li>
@@ -116,12 +138,19 @@ function Header() {
               >
                 For Accountants & Bookkeepers
               </a>
-              <ul className="dropdown-menu" aria-labelledby="accountantsDropdown">
+              <ul
+                className="dropdown-menu"
+                aria-labelledby="accountantsDropdown"
+              >
                 <li>
-                  <a className="dropdown-item" href="#support">Support</a>
+                  <a className="dropdown-item" href="#support">
+                    Support
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#feedback">Feedback</a>
+                  <a className="dropdown-item" href="#feedback">
+                    Feedback
+                  </a>
                 </li>
               </ul>
             </li>
@@ -139,16 +168,23 @@ function Header() {
               </a>
               <ul className="dropdown-menu" aria-labelledby="supportDropdown">
                 <li>
-                  <a className="dropdown-item" href="#support">Support</a>
+                  <a className="dropdown-item" href="#support">
+                    Support
+                  </a>
                 </li>
                 <li>
-                  <a className="dropdown-item" href="#feedback">Feedback</a>
+                  <a className="dropdown-item" href="#feedback">
+                    Feedback
+                  </a>
                 </li>
               </ul>
             </li>
-            <li className="nav-item dropdown">
-                <a className="nav-link" href="/login">Login</a>
-            </li>    
+
+            <li className="nav-item dropdown w-25">
+              <a className="nav-link" href="/login-forwarding">
+                Login
+              </a>
+            </li>
           </ul>
         </div>
       </div>
