@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,6 +11,7 @@ const VerifyOtp = () => {
   const [isResending, setIsResending] = useState(false);
   const [canResend, setCanResend] = useState(true);
   const [resendTimeout, setResendTimeout] = useState(null);
+  const [showModal, setShowModal] = useState(false);  // State for showing modal
   const navigate = useNavigate();
 
   const email = localStorage.getItem("email");
@@ -37,16 +38,16 @@ const VerifyOtp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     if (!otp) {
       toast.error("Please enter OTP");
       setError("OTP is required.");
       return;
     }
-  
+
     setIsSubmitting(true);
     setError("");
-  
+
     const otpNumber = Number(otp);
     const response = axios
       .post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
@@ -55,7 +56,7 @@ const VerifyOtp = () => {
       })
       .then((response) => {
         toast.success(response.message);
-        navigate("/dashboard");
+        setShowModal(true); // Show the acknowledgment modal after successful verification
       })
       .catch((err) => {
         const errorMessage = err.response?.message || "Invalid OTP";
@@ -66,7 +67,6 @@ const VerifyOtp = () => {
         setIsSubmitting(false);
       });
   };
-  
 
   const handleResendOtp = () => {
     if (!email) {
@@ -92,10 +92,15 @@ const VerifyOtp = () => {
       .catch((response) => {
         toast.error(response.message);
       })
-
-        .finally(() => {
+      .finally(() => {
         setIsResending(false);
       });
+  };
+
+  const handleGoBack = () => {
+    // Redirect to the home page or any other page after acknowledgment
+    navigate("/");
+    setShowModal(false); // Close modal after redirection
   };
 
   return (
@@ -131,7 +136,6 @@ const VerifyOtp = () => {
                         {isSubmitting ? "Verifying..." : "Verify OTP"}
                       </Button>
                     </form>
-                    {/* {error && <p className="text-danger text-center mt-2">{error}</p>} */}
                     <div className="mt-2 text-center">
                       <p className="text-muted">
                         <Button
@@ -161,6 +165,23 @@ const VerifyOtp = () => {
           </Container>
         </div>
       </div>
+
+      {/* Acknowledgment Modal */}
+      <Modal isOpen={showModal} toggle={() => setShowModal(false)} centered>
+        <ModalHeader toggle={() => setShowModal(false)} className="text-center">
+          <h4 className="text-success">Verification Successful!</h4>
+        </ModalHeader>
+        <ModalBody>
+          <p className="text-center">
+            Your request has been forwarded to our administration team. You will receive approval shortly. Thank you for your patience!
+          </p>
+        </ModalBody>
+        <ModalFooter className="justify-content-center">
+          <Button color="primary" onClick={handleGoBack}>
+            Go Back to Website
+          </Button>
+        </ModalFooter>
+      </Modal>
     </React.Fragment>
   );
 };

@@ -3,11 +3,14 @@ import indianFlag from '../assets/Country-Flags/in.png';
 import ukFlag from '../assets/Country-Flags/gb-eng.png';
 import usaFlag from '../assets/Country-Flags/us.png';
 import { getAllPlans } from '../../../apiServices/service';
+import { useNavigate } from 'react-router-dom';
 
 function Pricing() {
   const [selectedFlag, setSelectedFlag] = useState(indianFlag);
   const [plans, setPlans] = useState([]);
-
+  const [modal, setModal] = useState(false);
+  const toggleModal = () => setModal(!modal);
+  const navigate = useNavigate();
   const updateFlag = (e) => {
     const selectedOption = e.target.options[e.target.selectedIndex];
     const flagSrc = selectedOption.getAttribute('data-flag');
@@ -31,6 +34,16 @@ function Pricing() {
   useEffect(() => {
     fetchPlans();
   }, []);
+
+
+   
+  const handlePlanSelection = (planId) => {
+    localStorage.setItem("planId", planId); 
+    toggleModal(); 
+    // setTimeout(() => {
+      navigate("/register"); 
+    // }, 3000); 
+  };
 
   return (
     <div className="pricing-div">
@@ -76,7 +89,7 @@ function Pricing() {
             <div className="price">
               <del>₹{plan.price + 200}</del> ₹{plan.price}
             </div>
-            <a href="#" className="cta">Start my Free Trial</a>
+            <button  onClick={() => handlePlanSelection(plan._id)} className="cta">Start my Free Trial</button>
           </div>
         ))}
       </div>
