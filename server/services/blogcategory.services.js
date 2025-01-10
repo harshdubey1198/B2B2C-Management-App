@@ -38,7 +38,7 @@ BlogCategoryServices.createBlogCategory = async (userId, body) => {
 
 // GET ALL BLOG CATEGORIES
 BlogCategoryServices.getBlogCategories = async () => {
-    const data = await BlogCategory.find({ deleted_at: null });
+    const data = await BlogCategory.find({ deleted_at: null }).populate("parentId");
     if (data.length === 0) {
         throw new Error('No blog categories found');
     }
