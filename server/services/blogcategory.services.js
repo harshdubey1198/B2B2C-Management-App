@@ -5,7 +5,7 @@ const BlogCategoryServices = {};
 
 // CREATE BLOG CATEGORY
 BlogCategoryServices.createBlogCategory = async (userId, body) => {
-    const { categoryName, parentId, description } = body;
+    const { categoryName, parentId } = body;
 
     if (!categoryName) {
         throw new Error('Category name is required');
@@ -26,7 +26,6 @@ BlogCategoryServices.createBlogCategory = async (userId, body) => {
     const newBlogCategory = new BlogCategory({
         categoryName,
         slug,
-        description,
         parentId: parentId || null,
         createdBy: userId
     });
