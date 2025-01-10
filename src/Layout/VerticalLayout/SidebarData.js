@@ -58,6 +58,16 @@ export const masterAdminSidebarData = () => [
     ],
   },
   {
+    label : "Blogs",
+    icon : "mdi mdi-newspaper-variant-outline",
+    subItem : [
+      {sublabel:"All Blogs",link:"/all-blogs"},
+      {sublabel:"Create Blog",link:"/create-blog"},
+      {sublabel:"Manage Categories",link:"/manage-categories"},
+    ]
+  },
+
+  {
     label: "Vendors",
     icon: "mdi mdi-truck-delivery-outline",
     subItem: [

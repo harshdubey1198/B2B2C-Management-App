@@ -325,4 +325,70 @@ export const inactiveClient = async (id, data) => {
     }
 }
 
+
+//  blogcategory create api
+
+export const createBlogCategory = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/blogcategory/create-blogCategory/${id}`, data);
+        console.log(id);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to get all blog categories
+export const getBlogCategories = async () => {
+    try {
+        const response = await axiosInstance.get('/blogcategory/get-blogcategories');
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to get single blog category by id
+export const getBlogCategoryById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/blogcategory/get-blogCategory/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to update blog category
+
+export const updateBlogCategory = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/blogcategory/update-blogCategory/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to delete blog category
+export const deleteBlogCategory = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/blogcategory/delete-blogCategory/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// to create blog
+export const createBlog = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/blog/create-blog`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+
+
 export default axiosInstance;
