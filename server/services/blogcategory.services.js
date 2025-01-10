@@ -86,5 +86,21 @@ BlogCategoryServices.deleteBlogCategory = async (categoryId) => {
     }
     return deletedCategory;
 };
+// BlogCategoryServices.deleteBlogCategory = async (categoryId) => {
+//     const parentCategory = await BlogCategory.findOne({ _id: categoryId, deleted_at: null });
+//     if (!parentCategory) {
+//         throw new Error('Parent category does not exist');
+//     }
+
+//     // Soft delete parent
+//     parentCategory.deleted_at = new Date();
+//     await parentCategory.save();
+
+//     // Soft delete children
+//     await BlogCategory.updateMany({ parentId: categoryId }, { deleted_at: new Date() });
+
+//     return parentCategory;
+// };
+
 
 module.exports = BlogCategoryServices;
