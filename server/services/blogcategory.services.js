@@ -4,7 +4,6 @@ const slugify = require("slugify");
 const BlogCategoryServices = {};
 
 // CREATE BLOG CATEGORY
-// CREATE BLOG CATEGORY
 BlogCategoryServices.createBlogCategory = async (userId, body) => {
     const { categoryName, parentId, description } = body;
 
@@ -34,7 +33,6 @@ BlogCategoryServices.createBlogCategory = async (userId, body) => {
     await newBlogCategory.save();
     return newBlogCategory;
 };
-
 
 // GET ALL BLOG CATEGORIES
 BlogCategoryServices.getBlogCategories = async () => {
@@ -101,6 +99,5 @@ BlogCategoryServices.deleteBlogCategory = async (categoryId) => {
 
 //     return parentCategory;
 // };
-
 
 module.exports = BlogCategoryServices;

@@ -30,6 +30,7 @@ const leadRouter = require("./routers/lead.router")
 const taskRouter = require("./routers/task.router")
 const crmUserRouter = require("./routers/crmuser.router")
 const blogCategoryRouter = require("./routers/blogcategory.router")
+const blogRouter = require("./routers/blog.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -47,6 +48,7 @@ app.use("/api/lead", leadRouter);
 app.use("/api/task", taskRouter);
 app.use("/api/crmuser", crmUserRouter);
 app.use("/api/blogcategory", blogCategoryRouter);
+app.use("/api/blog", blogRouter);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))

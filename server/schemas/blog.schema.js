@@ -4,7 +4,6 @@ const blogSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
-    maxlength: 255,
   },
   short_description: {
     type: String,
@@ -14,7 +13,7 @@ const blogSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  image: {
+  blogImage: {
     type: String,
     required: true,
   },
@@ -64,12 +63,12 @@ const blogSchema = new mongoose.Schema({
   },
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'blogCategory',
+    ref: 'BlogCategory',
     default: null,
   },
   subcategoryId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'blogCategory',
+    ref: 'BlogCategory',
     default: null,
   },
   blog_tags: {

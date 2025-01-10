@@ -34,6 +34,7 @@ const upload = multer({
 }).fields([
     { name: 'avatar', maxCount: 1 }, // Single file upload for avatar
     { name: 'file', maxCount: 1 }, 
+    { name: 'blogImage', maxCount: 1 },
 ]);
 
 module.exports = {
