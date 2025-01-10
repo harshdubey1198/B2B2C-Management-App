@@ -157,7 +157,7 @@ BlogServices.deleteBlog = async (id) => {
     if (!existingBlog) {
         throw new Error('Blog does not exist');
     }
-    const deletedBlog = await Blog.findByIdAndUpdate(id, { deleted_at: new Date() }, { new: true });
+    const deletedBlog = await Blog.findByIdAndUpdate(id, { deleted_at: new Date(), status: "inactive" }, { new: true });
     if (!deletedBlog) {
         throw new Error('Blog not found');
     }
