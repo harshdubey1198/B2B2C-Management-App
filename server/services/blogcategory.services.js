@@ -47,7 +47,7 @@ BlogCategoryServices.getBlogCategories = async () => {
 
 // GET SINGLE BLOG CATEGORY BY ID
 BlogCategoryServices.getBlogCategoryById = async (categoryId) => {
-    const data = await BlogCategory.findOne({ _id: categoryId, deleted_at: null });
+    const data = await BlogCategory.findOne({ _id: categoryId, deleted_at: null }).populate("parentId");
     if (!data) {
         throw new Error('Blog category not found');
     }
