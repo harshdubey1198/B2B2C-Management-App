@@ -390,5 +390,15 @@ export const createBlog = async (data) => {
 };
 
 
+// to get all blogs
+export const getBlogs = async () => {
+    try {
+        const response = await axiosInstance.get('/blog/get-blogs');
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 
 export default axiosInstance;

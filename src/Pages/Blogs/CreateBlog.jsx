@@ -81,7 +81,11 @@ function CreateBlog() {
     dataToSend.append('subcategoryId', formData.subcategoryId);
     dataToSend.append('blog_tags', JSON.stringify(formData.blog_tags)); 
     dataToSend.append('author', formData.author);
-    dataToSend.append('blogImage', formData.blogImage);
+    if (formData.blogImage) {
+        dataToSend.append('blogImage', formData.blogImage);
+      } else {
+        console.log('No blog image selected');
+      }
 
     try {
       const response = await createBlog(dataToSend);
