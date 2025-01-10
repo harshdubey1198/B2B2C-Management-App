@@ -154,6 +154,12 @@ function Header() {
             </li>
 
             <li className="nav-item dropdown1">
+              <a className="nav-link" href="/blogs">
+                Blogs
+              </a>
+            </li>
+
+            <li className="nav-item dropdown1">
               <a
                 className="nav-link dropdown-toggle"
                 href="#"

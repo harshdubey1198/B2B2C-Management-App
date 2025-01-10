@@ -87,6 +87,8 @@ import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 import ReassignTask from "../Pages/CRM/ReassignTask.jsx";
 import TaskManagement from "../Pages/CRM/TaskManagement.jsx";
 import Redirectors from "../Pages/Portfolio-aaMOBee/components/redirectors.jsx";
+import BlogsPage from "../Pages/Portfolio-aaMOBee/pages/BlogsPage.jsx";
+import BlogDetailPage from "../Pages/Portfolio-aaMOBee/pages/BlogDetailPage.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -245,6 +247,9 @@ const publicRoutes = [
   {path:"/", component:<Portfolio/>},
   {path:"/portfolio", component:<Portfolio/>},
   {path:"/login-forwarding" , component:<Redirectors />},
+  {path:"/blogs" , component:<BlogsPage/>},
+  {path:"/blogs/:blog_slug" , component:<BlogDetailPage/>},
+
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
   // { path: "/auth-register", component: <Register /> },
