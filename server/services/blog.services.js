@@ -164,4 +164,30 @@ BlogServices.deleteBlog = async (id) => {
     return deletedBlog;
 };
 
+// GET BLOG BY SLUG
+BlogServices.getBlogBySlug = async (slug) => {
+    const blog = await Blog.findOne({ blog_slug: slug, deleted_at: null }).populate('categoryId subcategoryId author', 'categoryName firstName lastName');
+    if (!blog) {
+        throw new Error('Blog not found');
+    }
+    return blog;
+};
+
+// UPDATE BLOG BY SLUG
+BlogServices.updateBlogBySlug = async (slug, body) => {
+    if (body.title) {
+        const newSlug = slugify(body.title, { lower: true, strict: true });
+        const existingBlog = await Blog.findOne({ blog_slug: newSlug });
+        if (existingBlog) {
+            throw new Error('A blog with this slug already exists');
+        }
+        body.blog_slug = newSlug;
+    }
+    const updatedBlog = await Blog.findOneAndUpdate({ blog_slug: slug, deleted_at: null }, body, { new: true });
+    if (!updatedBlog) {
+        throw new Error('Blog not found');
+    }
+    return updatedBlog;
+};
+
 module.exports = BlogServices;
