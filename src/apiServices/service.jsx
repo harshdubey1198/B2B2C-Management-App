@@ -437,4 +437,14 @@ export const getBlogBySlug = async (slug) => {
     }
 };
 
+// to delete blog by id
+export const deleteBlog = async (id) => {
+    try {
+        const response = await axiosInstance.delete(`/blog/delete-blog/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

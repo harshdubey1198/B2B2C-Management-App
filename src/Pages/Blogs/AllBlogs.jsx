@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { getBlogs } from '../../apiServices/service';
+import { deleteBlog, getBlogs } from '../../apiServices/service';
 import UpdateBlogModal from '../../Modal/UpdateBlogModal';
 
 function AllBlogs() {
@@ -27,6 +27,18 @@ function AllBlogs() {
     const handleEditClick = (blog) => {
         setSelectedBlog(blog);
         toggleModal();
+    };
+    const handleDeleteBlog = async (blog) => {
+        setSelectedBlog(blog);
+        try {
+            const response = await deleteBlog(blog._id);
+            if (response) {
+                fetchBlogs();
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     useEffect(() => {
@@ -97,7 +109,9 @@ function AllBlogs() {
                                             <td>{blog.status}</td>
                                             <td>{blog.blog_tags.join(', ')}</td>
                                             <td>{blog.blogStatus}</td>
-                                            <td> <i className='bx bx-edit' style={{ cursor: 'pointer' , fontSize:'26px'}} onClick={() => handleEditClick(blog)}></i> </td>
+                                            <td>
+                                                <i className='bx bx-trash' style={{ cursor: 'pointer', fontSize:'26px'}} onClick={() => handleDeleteBlog(blog)}></i>
+                                                 <i className='bx bx-edit' style={{ cursor: 'pointer' , fontSize:'26px'}} onClick={() => handleEditClick(blog)}></i> </td>
                                         </tr>
                                     );
                                 })}
