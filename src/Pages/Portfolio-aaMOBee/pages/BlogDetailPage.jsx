@@ -1,47 +1,45 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/header';
+import { getBlogBySlug, getBlogs } from '../../../apiServices/service';
 
 function BlogDetailPage() {
   const { blog_slug } = useParams();
+  const [blog, setBlog] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState([]);
 
-  const BlogsData = [
-    {
-      title: 'Best Blog Intro',
-      short_description: 'Short description of Blog 1',
-      main_description: 'This is the main description of Blog 1',
-      blog_slug: 'best-blog-intro',
-      blogType: 'Technology',
-      author: 'Author 1',
-      date: '2022-01-01',
-      blog_tags: ['Tech', 'Innovation', 'Coding'],
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      title: 'Blog 2',
-      blog_slug: 'blog-2',
-      short_description: 'Short description of Blog 2',
-      main_description: 'This is the main description of Blog 2',
-      blogType: 'Lifestyle',
-      author: 'Author 2',
-      date: '2022-02-01',
-      blog_tags: ['Health', 'Fitness', 'Wellness'],
-      image: 'https://via.placeholder.com/150',
-    },
-    ...Array(5).fill({
-      title: 'Sample Blog',
-      blog_slug: 'sample-blog',
-      short_description: 'This is a sample blog description.',
-      main_description: 'Main description of the blog.',
-      blogType: 'General',
-      author: 'Sample Author',
-      date: '2022-03-01',
-      blog_tags: ['Sample', 'Demo', 'Placeholder'],
-      image: 'https://via.placeholder.com/150',
-    }),
-  ];
+  useEffect(() => {
+    const fetchBlogDetails = async () => {
+      try {
+        const data = await getBlogBySlug(blog_slug);
+        console.log(data.data);
+        setBlog(data.data);
+        setLoading(false);
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
+    };
+    const fetchBlogs = async () => {
+      try {
+        const response = await getBlogs();
+        setBlogs(response.data); 
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
-  const blog = BlogsData.find((b) => b.blog_slug === blog_slug);
+    fetchBlogs();
+    fetchBlogDetails();
+  }, [blog_slug]);
+
+
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!blog) {
     return <div>Blog not found</div>;
@@ -54,7 +52,7 @@ function BlogDetailPage() {
         className="blog-detail-container d-flex flex-column align-items-center"
         style={{
           padding: '20px',
-          marginTop: '80px',          
+          marginTop: '80px',
           backgroundColor: '#0d4251',
           minHeight: 'calc(100vh - 80px)',
         }}
@@ -71,10 +69,10 @@ function BlogDetailPage() {
         >
           {/* Blog Content */}
           <div className="p-4 pb-2" style={{ flex: 2 }}>
-            <h1 className='text-center'>{blog.title}</h1>
-           
+            <h1 className="text-center">{blog.title}</h1>
+
             <img
-              src={blog.image}
+              src={blog.blogImage}
               alt={blog.title}
               style={{
                 width: '100%',
@@ -86,16 +84,24 @@ function BlogDetailPage() {
             />
             <p style={{ marginTop: '20px' }}>{blog.short_description}</p>
             <p style={{ marginTop: '20px' }}>{blog.main_description}</p>
-            <div  className="d-flex gap-2 align-items-start mt-3 flex-wrap flex-column flex-lg-row " >
-                <p className="mb-1 d-flex gap-2">
-                    <strong>Author:</strong> {blog.author} <span className='d-none d-lg-block'>|</span>
-                </p>
-                <p className="mb-1 d-flex gap-2">
-                    <strong>Date:</strong> {blog.date} <span className='d-none d-lg-block'>|</span>
-                </p>
-                <p className="mb-1 d-flex gap-2">
-                    <strong>Type:</strong> {blog.blogType}
-                </p>
+            <div className="d-flex gap-2 align-items-start mt-3 flex-wrap flex-column flex-lg-row">
+              <p className="mb-1 d-flex gap-2">
+                <strong>Author:</strong> {blog.author.firstName + " " + blog.author.lastName} <span className="d-none d-lg-block">|</span>
+              </p>
+              <p className="mb-1 d-flex gap-2">
+                <strong>Date:</strong> {new Date(blog.createdAt).toLocaleString("en-IN", {
+                                timeZone: "Asia/Kolkata",
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                // hour: "2-digit",
+                                // minute: "2-digit",
+                                // hour12: true,
+                              })} <span className="d-none d-lg-block">|</span>
+              </p>
+              {/* <p className="mb-1 d-flex gap-2">
+                <strong>Type:</strong> {blog.blogType}
+              </p> */}
             </div>
 
             <div style={{ marginTop: '10px' }}>
@@ -151,7 +157,9 @@ function BlogDetailPage() {
             </div>
 
             <h3 className="mt-4">Latest Posts</h3>
-            {BlogsData.sort((a, b) => new Date(b.date) - new Date(a.date))
+            {blogs && blogs.length > 0
+          ? blogs
+              .sort((a, b) => new Date(b.date) - new Date(a.date))
               .slice(0, 5)
               .map((latestBlog, index) => (
                 <div
@@ -164,7 +172,7 @@ function BlogDetailPage() {
                   }}
                 >
                   <img
-                    src={latestBlog.image}
+                    src={latestBlog.blogImage}
                     alt={latestBlog.title}
                     style={{
                       width: '80px',
@@ -173,10 +181,7 @@ function BlogDetailPage() {
                       borderRadius: '4px',
                     }}
                   />
-                  <div
-                    className="d-flex flex-column"
-                    style={{ width: 'calc(100% - 80px)' }}
-                  >
+                  <div className="d-flex flex-column" style={{ width: 'calc(100% - 80px)' }}>
                     <h4
                       style={{
                         margin: '0',
@@ -194,11 +199,21 @@ function BlogDetailPage() {
                         marginBottom: '0',
                       }}
                     >
-                      {latestBlog.date}
+                      {new Date(latestBlog.createdAt).toLocaleString("en-IN", {
+                                timeZone: "Asia/Kolkata",
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric",
+                                // hour: "2-digit",
+                                // minute: "2-digit",
+                                // hour12: true,
+                              })}
                     </p>
                   </div>
                 </div>
-              ))}
+              ))
+          : <p>No blogs available</p>
+          }
           </div>
         </div>
       </div>

@@ -13,6 +13,13 @@ const axiosInstance = axios.create({
      },
     });
 
+const createAxiosInstance = axios.create({
+    baseURL: `${constant.appBaseUrl}/api/`,
+    headers: {  
+        "Content-Type":"multipart/form-data",
+        Authorization: token ? `Bearer ${token}` : null,
+    },    
+});
 
 axiosInstance.interceptors.response.use(
     (response) => response,
@@ -382,7 +389,7 @@ export const deleteBlogCategory = async (id) => {
 // to create blog
 export const createBlog = async (data) => {
     try {
-        const response = await axiosInstance.post(`/blog/create-blog`, data);
+        const response = await createAxiosInstance.post(`/blog/create-blog`, data);
         return response.data;
     } catch (error) {
         return error;
@@ -400,5 +407,34 @@ export const getBlogs = async () => {
     }
 };
 
+// to get blog by Id
+export const getBlogById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/blog/get-blog/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
+// to update blog by id
+export const updateBlog = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/blog/update-blog/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// get blogs by blog_slug
+export const getBlogBySlug = async (slug) => {
+    try {
+        const response = await axiosInstance.get(`/blog/get-blog-slug/${slug}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
 
 export default axiosInstance;

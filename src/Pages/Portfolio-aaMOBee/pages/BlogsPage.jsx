@@ -1,46 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/header';
 import '../assets/styles.css';
 import { useNavigate } from 'react-router-dom';
+import { getBlogs } from '../../../apiServices/service';
 
 function BlogsPage() {
   const navigate = useNavigate();
+  const [blogs, setBlogs] = useState([]);
 
-  const BlogsData = [
-    {
-      title: 'Best Blog Intro',
-      short_description: 'Short description of Blog 1',
-      main_description: 'This is the main description of Blog 1',
-      blog_slug: 'best-blog-intro',
-      blogType: 'Technology',
-      author: 'Author 1',
-      date: '2022-01-01',
-      blog_tags: ['Tech', 'Innovation', 'Coding'],
-      image: 'https://via.placeholder.com/150',
-    },
-    {
-      title: 'Blog 2',
-      blog_slug: 'blog-2',
-      short_description: 'Short description of Blog 2',
-      main_description: 'This is the main description of Blog 2',
-      blogType: 'Lifestyle',
-      author: 'Author 2',
-      date: '2022-02-01',
-      blog_tags: ['Health', 'Fitness', 'Wellness'],
-      image: 'https://via.placeholder.com/150',
-    },
-    ...Array(5).fill({
-      title: 'Sample Blog',
-      blog_slug: 'sample-blog',
-      short_description: 'This is a sample blog description.',
-      main_description: 'Main description of the blog.',
-      blogType: 'General',
-      author: 'Sample Author',
-      date: '2022-03-01',
-      blog_tags: ['Sample', 'Demo', 'Placeholder'],
-      image: 'https://via.placeholder.com/150',
-    }),
-  ];
+  const fetchBlogs = async () => {
+    try {
+      const response = await getBlogs();
+      setBlogs(response.data); // Assuming response.data contains the array of blogs
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   return (
     <div>
@@ -81,9 +61,9 @@ function BlogsPage() {
           </div>
         </div>
         <div
-          className="blogs-container d-flex flex-column flex-lg-row justify-content-center p-3 bg-white"
+          className="blogs-container d-flex flex-column flex-lg-row justify-content-center bg-white"
           style={{
-            ...(window.innerWidth > 576 && { borderTopRightRadius: '240px' }),
+            ...(window.innerWidth > 576 && { borderTopRightRadius: '240px', paddingRight:"60px", paddingTop:"70px" }),
             paddingTop: '30px',
             overflow: 'hidden',
             marginTop: '80px',
@@ -91,9 +71,9 @@ function BlogsPage() {
         >
           <div
             className="blogs-data d-flex flex-wrap justify-content-center p-4 gap-3 bg-white"
-            style={{ flex: 1 }}
+            style={{ flex: 2 }}
           >
-            {BlogsData.map((blog, index) => (
+            {blogs.map((blog, index) => (
               <div
                 key={index}
                 className="blog-card"
@@ -113,11 +93,11 @@ function BlogsPage() {
                 }}
               >
                 <img
-                  src={blog.image}
+                  src={blog.blogImage}
                   alt={blog.title}
                   style={{
                     width: '100%',
-                    height: '150px',
+                    height: '250px',
                     objectFit: 'cover',
                   }}
                 />
@@ -135,7 +115,7 @@ function BlogsPage() {
                       marginBottom: '10px',
                     }}
                   >
-                    Author: {blog.author} | Date: {blog.date}
+                    Author: {blog.author.firstName + ' ' + blog.author.lastName} | Date: {new Date(blog.createdAt).toLocaleDateString()}
                   </p>
                   <div
                     style={{
@@ -167,7 +147,7 @@ function BlogsPage() {
           <div
             className="sidebar"
             style={{
-              flex: '1 1 100%',
+              flex: 1,
               padding: '24px',
               background: '#fff',
               maxWidth: '100%',
@@ -200,7 +180,8 @@ function BlogsPage() {
               />
             </div>
             <h3 className="mt-3">Latest Posts</h3>
-            {BlogsData.sort((a, b) => new Date(b.date) - new Date(a.date))
+            {blogs
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
               .slice(0, 5)
               .map((blog, index) => (
                 <div
@@ -211,9 +192,10 @@ function BlogsPage() {
                     borderBottom: '1px solid #ccc',
                     paddingBottom: '10px',
                   }}
+                  onClick={() => navigate(`/blogs/${blog.blog_slug}`)}
                 >
                   <img
-                    src={blog.image}
+                    src={blog.blogImage}
                     alt={blog.title}
                     style={{
                       width: '80px',
@@ -236,7 +218,7 @@ function BlogsPage() {
                         marginBottom: '0',
                       }}
                     >
-                      {blog.date}
+                      {new Date(blog.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>

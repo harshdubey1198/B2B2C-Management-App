@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { Container, Row, Col, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { createBlog, getBlogCategories } from '../../apiServices/service';
@@ -6,23 +6,21 @@ import { createBlog, getBlogCategories } from '../../apiServices/service';
 function CreateBlog() {
   const authuser = JSON.parse(localStorage.getItem('authUser')) || {};
   const author = authuser.response._id;
+  const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [formData, setFormData] = useState({
-    title: '',
-    short_description: '',
-    main_description: '',
-    categoryId: '',
-    subcategoryId: '',
-    blogImage: null,
-    blog_tags: [],
-    author: author,
-  });
+  const [title, setTitle] = useState('Top 10 AI Innovations in 2025 in the world');
+  const [shortDescription, setShortDescription] = useState('A quick overview of the most impactful AI technologies shaping 2025.');
+  const [mainDescription, setMainDescription] = useState('This blog explores the top 10 AI innovations that are transforming industries worldwide. From natural language processing to autonomous vehicles, AI is shaping the future like never before.');
+  const [blogImage, setBlogImage] = useState(null);
+  const [categoryId, setCategoryId] = useState('6780bfb534341a470199fadc');
+  const [subcategoryId, setSubcategoryId] = useState('6780c00034341a470199fae0');
+  const [tags, setTags] = useState(['AI', 'Technology', 'Innovation']); 
 
   const fetchBlogCategories = async () => {
     try {
       const response = await getBlogCategories();
-      setCategories(response.data); // Store all categories, both parent and subcategories
+      setCategories(response.data); 
     } catch (error) {
       console.log(error);
     }
@@ -33,67 +31,79 @@ function CreateBlog() {
   }, []);
 
   useEffect(() => {
-    // Filter and set subcategories when categoryId changes
-    if (formData.categoryId) {
-      const selectedCategory = categories.find(
-        (category) => category._id === formData.categoryId
-      );
+    if (categoryId) {
+      const selectedCategory = categories.find((category) => category._id === categoryId);
       if (selectedCategory) {
         const filteredSubCategories = categories.filter(
           (category) => category.parentId && category.parentId._id === selectedCategory._id
         );
         setSubCategories(filteredSubCategories);
       }
+    } else {
+      setSubCategories([]);
     }
-  }, [formData.categoryId, categories]); // Trigger when categoryId or categories change
+  }, [categoryId, categories]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
     if (name === 'blog_tags') {
-      setFormData({
-        ...formData,
-        [name]: value.split(',').map(tag => tag.trim()),
-      });
+      setTags(value.split(',').map(tag => tag.trim())); 
+    } else if (name === 'categoryId') {
+      setCategoryId(value); 
+    } else if (name === 'subcategoryId') {
+      setSubcategoryId(value); 
     } else {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
+      if (name === 'title') setTitle(value);
+      if (name === 'short_description') setShortDescription(value);
+      if (name === 'main_description') setMainDescription(value);
     }
   };
 
   const handleFileChange = (e) => {
-    setFormData({
-      ...formData,
-      blogImage: e.target.files[0],
-    });
+    const file = e.target.files[0]; // Get the first selected file
+    if (file && file.type.startsWith("image/")) {
+      setBlogImage(file); // Store file object in state
+  
+      const reader = new FileReader();
+      reader.onload = () => setImagePreview(reader.result); // Create a preview
+      reader.readAsDataURL(file);
+    } else {
+      console.error("Please select a valid image file.");
+      setBlogImage(null); // Reset if invalid
+    }
   };
+  console.log(blogImage);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const dataToSend = new FormData();
-    dataToSend.append('title', formData.title);
-    dataToSend.append('short_description', formData.short_description);
-    dataToSend.append('main_description', formData.main_description);
-    dataToSend.append('categoryId', formData.categoryId);
-    dataToSend.append('subcategoryId', formData.subcategoryId);
-    dataToSend.append('blog_tags', JSON.stringify(formData.blog_tags)); 
-    dataToSend.append('author', formData.author);
-    if (formData.blogImage) {
-        dataToSend.append('blogImage', formData.blogImage);
-      } else {
-        console.log('No blog image selected');
-      }
-
+  
+    if (!blogImage) {
+      console.error("Blog image is required.");
+      return; // Prevent submission without an image
+    }
+  
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("short_description", shortDescription);
+    formData.append("main_description", mainDescription);
+    formData.append("categoryId", categoryId);
+    formData.append("subcategoryId", subcategoryId);
+    formData.append("blog_tags", JSON.stringify(tags));
+    formData.append("author", author);
+    formData.append("blogImage", blogImage); // Ensure file is appended
+  
     try {
-      const response = await createBlog(dataToSend);
-      console.log('Blog created successfully:', response);
+      const response = await createBlog(formData);
+      console.log("Blog created successfully:", response);
+      // Optionally, reset the form or show a success message
     } catch (error) {
-      console.error('Error creating blog:', error);
+      console.error("Error creating blog:", error);
     }
   };
+  
+  
+
 
   return (
     <React.Fragment>
@@ -109,7 +119,7 @@ function CreateBlog() {
                     type="text"
                     name="title"
                     id="title"
-                    value={formData.title}
+                    value={title}
                     onChange={handleInputChange}
                     placeholder="Enter blog title"
                     required
@@ -123,7 +133,7 @@ function CreateBlog() {
                     type="text"
                     name="short_description"
                     id="short_description"
-                    value={formData.short_description}
+                    value={shortDescription}
                     onChange={handleInputChange}
                     placeholder="Enter short description"
                     required
@@ -140,7 +150,7 @@ function CreateBlog() {
                     type="textarea"
                     name="main_description"
                     id="main_description"
-                    value={formData.main_description}
+                    value={mainDescription}
                     onChange={handleInputChange}
                     placeholder="Enter main description"
                     required
@@ -154,18 +164,18 @@ function CreateBlog() {
                     type="select"
                     name="categoryId"
                     id="categoryId"
-                    value={formData.categoryId}
+                    value={categoryId}
                     onChange={handleInputChange}
                     required
                   >
                     <option value="">Select Category</option>
                     {categories
-                      .filter((category) => !category.parentId) // Only show parent categories
+                      .filter((category) => !category.parentId)
                       .map((category) => (
                         <option key={category._id} value={category._id}>
                           {category.categoryName}
                         </option>
-                    ))}
+                      ))}
                   </Input>
                 </FormGroup>
               </Col>
@@ -179,9 +189,8 @@ function CreateBlog() {
                     type="select"
                     name="subcategoryId"
                     id="subcategoryId"
-                    value={formData.subcategoryId}
+                    value={subcategoryId}
                     onChange={handleInputChange}
-                    required
                   >
                     <option value="">Select Subcategory</option>
                     {subCategories.map((subCategory) => (
@@ -199,7 +208,7 @@ function CreateBlog() {
                     type="text"
                     name="blog_tags"
                     id="blog_tags"
-                    value={formData.blog_tags.join(', ')}
+                    value={tags.join(', ')}
                     onChange={handleInputChange}
                     placeholder="Enter tags (comma-separated)"
                     required
@@ -214,11 +223,16 @@ function CreateBlog() {
                   <Label for="blogImage">Blog Image</Label>
                   <Input
                     type="file"
-                    name="blogImage"
+                    name="blogImage" 
                     id="blogImage"
+                    // value={blogImage}
                     onChange={handleFileChange}
-                    required
                   />
+                  {imagePreview && (
+                    <div className="image-preview">
+                      <img src={imagePreview} alt="Blog Preview" style={{ maxWidth: "100%", height: "auto" }} />
+                    </div>
+                  )}
                 </FormGroup>
               </Col>
             </Row>
