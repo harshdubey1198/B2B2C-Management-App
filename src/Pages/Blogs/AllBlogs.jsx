@@ -63,7 +63,7 @@ function AllBlogs() {
                                     <th>Author</th>
                                     <th>Date</th>
                                     <th>Status</th>
-                                    <th>Tags</th>
+                                    {/* <th style={{ width: '208px' }}>Tags</th> */}
                                     <th>Blog Status</th>
                                     <th>Actions</th>
                                 </tr>
@@ -92,7 +92,7 @@ function AllBlogs() {
                                                     display: '-webkit-box',
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden',
-                                                    WebkitLineClamp: 3,
+                                                    WebkitLineClamp: 4,
                                                     whiteSpace: 'normal',
                                                 }}
                                             >
@@ -107,7 +107,13 @@ function AllBlogs() {
                                                 {time}
                                             </td>
                                             <td>{blog.status}</td>
-                                            <td>{blog.blog_tags.join(', ')}</td>
+                                            {/* <td  style={{
+                                                    maxWidth: '208px',
+                                                    // textWrap: 'wrap',
+                                                    display: '-webkit-box',
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                }}>{blog.blog_tags.join(', ')}</td> */}
                                             <td>{blog.blogStatus}</td>
                                             <td>
                                                 <i className='bx bx-trash' style={{ cursor: 'pointer', fontSize:'26px'}} onClick={() => handleDeleteBlog(blog)}></i>

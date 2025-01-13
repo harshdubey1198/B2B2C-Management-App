@@ -9,13 +9,13 @@ function CreateBlog() {
   const [imagePreview, setImagePreview] = useState(null);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  const [title, setTitle] = useState('Top 10 AI Innovations in 2025 in the world');
-  const [shortDescription, setShortDescription] = useState('A quick overview of the most impactful AI technologies shaping 2025.');
-  const [mainDescription, setMainDescription] = useState('This blog explores the top 10 AI innovations that are transforming industries worldwide. From natural language processing to autonomous vehicles, AI is shaping the future like never before.');
+  const [title, setTitle] = useState('');
+  const [shortDescription, setShortDescription] = useState('');
+  const [mainDescription, setMainDescription] = useState('');
   const [blogImage, setBlogImage] = useState(null);
-  const [categoryId, setCategoryId] = useState('6780bfb534341a470199fadc');
-  const [subcategoryId, setSubcategoryId] = useState('6780c00034341a470199fae0');
-  const [tags, setTags] = useState(['AI', 'Technology', 'Innovation']); 
+  const [categoryId, setCategoryId] = useState('');
+  const [subcategoryId, setSubcategoryId] = useState('');
+  const [tags, setTags] = useState([]); 
 
   const fetchBlogCategories = async () => {
     try {
@@ -97,6 +97,19 @@ function CreateBlog() {
       const response = await createBlog(formData);
       console.log("Blog created successfully:", response);
       // Optionally, reset the form or show a success message
+
+      setTitle('');
+      setShortDescription('');
+      setMainDescription('');
+      setCategoryId('');
+      setSubcategoryId('');
+      setTags([]);
+      setBlogImage(null);
+      setImagePreview(null);
+      
+
+
+
     } catch (error) {
       console.error("Error creating blog:", error);
     }
