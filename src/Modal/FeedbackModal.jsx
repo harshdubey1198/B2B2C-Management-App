@@ -8,7 +8,7 @@ const FeedbackModal = () => {
 
   const userRole =JSON.parse(localStorage.getItem("authUser"))?.response?.role || "super_admin";
   const [images, setImages] = useState([]);
-  console.log(userRole);
+  // console.log(userRole);
 
   if (userRole === "super_admin") return null;
 

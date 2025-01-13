@@ -87,6 +87,11 @@ import RoleManagement from "../Pages/CRM/RoleManagement.jsx";
 import ReassignTask from "../Pages/CRM/ReassignTask.jsx";
 import TaskManagement from "../Pages/CRM/TaskManagement.jsx";
 import Redirectors from "../Pages/Portfolio-aaMOBee/components/redirectors.jsx";
+import BlogsPage from "../Pages/Portfolio-aaMOBee/pages/BlogsPage.jsx";
+import BlogDetailPage from "../Pages/Portfolio-aaMOBee/pages/BlogDetailPage.jsx";
+import AllBlogs from "../Pages/Blogs/AllBlogs.jsx";
+import CreateBlog from "../Pages/Blogs/CreateBlog.jsx";
+import ManageCategories from "../Pages/Blogs/ManageCategories.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -97,6 +102,13 @@ const authProtectedRoutes = [
   // plans
   { path: "/create-plan", component: <CreatePlan /> },
   { path: "/manage-plan", component: <ManagePlan /> },
+
+  // blogs
+  {path:"/all-blogs", component: <AllBlogs />},
+  {path:"/create-blog", component: <CreateBlog />},
+  {path:"/manage-categories" , component:<ManageCategories/>},
+
+
 
   // invoicing
   { path: "/create-invoice", component: <CreateInvoice/> },
@@ -245,6 +257,9 @@ const publicRoutes = [
   {path:"/", component:<Portfolio/>},
   {path:"/portfolio", component:<Portfolio/>},
   {path:"/login-forwarding" , component:<Redirectors />},
+  {path:"/blogs" , component:<BlogsPage/>},
+  {path:"/blogs/:blog_slug" , component:<BlogDetailPage/>},
+
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
   // { path: "/auth-register", component: <Register /> },
