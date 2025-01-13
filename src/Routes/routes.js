@@ -92,6 +92,7 @@ import BlogDetailPage from "../Pages/Portfolio-aaMOBee/pages/BlogDetailPage.jsx"
 import AllBlogs from "../Pages/Blogs/AllBlogs.jsx";
 import CreateBlog from "../Pages/Blogs/CreateBlog.jsx";
 import ManageCategories from "../Pages/Blogs/ManageCategories.jsx";
+import AllFeedbacks from "../Pages/Feedbacks/AllFeedbacks.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -108,6 +109,8 @@ const authProtectedRoutes = [
   {path:"/create-blog", component: <CreateBlog />},
   {path:"/manage-categories" , component:<ManageCategories/>},
 
+  // feedbacks
+  {path:"/all-feedbacks", component: <AllFeedbacks />},
 
 
   // invoicing

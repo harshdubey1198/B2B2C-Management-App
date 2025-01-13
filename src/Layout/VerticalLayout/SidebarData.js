@@ -66,7 +66,14 @@ export const masterAdminSidebarData = () => [
       {sublabel:"Manage Categories",link:"/manage-categories"},
     ]
   },
-
+  {
+    label: "Feedbacks",
+    icon: "mdi mdi-comment-account-outline",
+    subItem: [
+      { sublabel: "View Feedbacks", link: "/all-feedbacks" },
+      { sublabel: "Feedback Analytics", link: "/feedbacks/analytics" },
+    ],
+  },
   {
     label: "Vendors",
     icon: "mdi mdi-truck-delivery-outline",
