@@ -17,6 +17,22 @@ function UpdateBlogModal({ isOpen, toggle, blog, onSuccess }) {
     const [error, setError] = useState('');
     const [categories, setCategories] = useState([]);
 
+
+    useEffect   (() => {
+        if (blog) {
+            setTitle(blog.title || '');
+            setShortDescription(blog.short_description || '');
+            setMainDescription(blog.main_description || '');
+            setBlogImage(blog.blogImage || '');
+            setStatus(blog.status || 'active');
+            setBlogStatus(blog.blogStatus || 'draft');
+            setCategoryId(blog.categoryId?._id || '');
+            setSubcategoryId(blog.subcategoryId?._id || '');
+            setTags(blog.blog_tags ? blog.blog_tags.join(', ') : '');
+        }
+    }, [blog]);
+
+
     const fetchBlogCategories = async () => {
         try {
             const response = await getBlogCategories();

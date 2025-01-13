@@ -19,7 +19,7 @@ FeedBackServices.getFeedBacks = async () => {
             if (feedback.userType === 'crmuser') {
                 userDetails = await CRMUser.findById(feedback.userId).select('firstName lastName email'); 
             } else if (feedback.userType === 'user') {8
-                userDetails = await User.findById(feedback.userId).select('firstName lastName email');
+                userDetails = await User.findById(feedback.userId).select('firstName lastName email role');
             }
             return {
                 ...feedback.toObject(),
@@ -32,6 +32,8 @@ FeedBackServices.getFeedBacks = async () => {
     }
     return detailedFeedbacks;
 }
+
+
 
 FeedBackServices.getFeedBackById = async (id) => {
     const feedBack = await Feedback.findOne({_id: id, deleted_at: null })

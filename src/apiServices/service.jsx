@@ -447,4 +447,54 @@ export const deleteBlog = async (id) => {
     }
 };
 
+// feedback api services 
+
+export const createFeedback = async (data) => {
+    try{
+        const response = await createAxiosInstance.post(`/feedback/create-feedback`, data); 
+        return response.data;
+    }
+    catch(error){
+        return error;
+    }
+}
+
+export const getAllFeedbacks = async () => {
+    try {
+        const response = await axiosInstance.get('/feedback/get-feedbacks');
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
+export const getFeedbackById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/feedback/get-feedback/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
+export const updateFeedback = async (id, data) => {
+    try {
+        const response = await createAxiosInstance.put(`/feedback/update-feedback/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
+export const deleteFeedbackById = async (id) => {
+    try { 
+        const response = await axiosInstance.delete(`/feedback/delete-feedback/${id}`);
+        return response.data;
+    }
+    catch (error) {
+        return error;
+    }
+}
+
+
 export default axiosInstance;

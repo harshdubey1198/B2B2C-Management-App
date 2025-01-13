@@ -60,7 +60,7 @@ function AllBlogs() {
                             <thead className="thead-light">
                                 <tr>
                                     <th style={{ width: '208px' }}>Blog Title</th>
-                                    <th>Author</th>
+                                    <th style={{ width: '180px' }}>Author</th>
                                     <th>Date</th>
                                     <th>Status</th>
                                     {/* <th style={{ width: '208px' }}>Tags</th> */}
@@ -98,7 +98,7 @@ function AllBlogs() {
                                             >
                                                 {blog.title}
                                             </td>
-                                            <td>
+                                            <td style={{ width: '180px' }}>
                                                 {blog.author.firstName} {blog.author.lastName}
                                             </td>
                                             <td>
