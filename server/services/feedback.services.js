@@ -1,7 +1,6 @@
 const CRMUser = require('../schemas/crmuser.schema');
 const Feedback = require('../schemas/feedback.schema');
 const User = require('../schemas/user.schema');
-const uploadToCloudinary = require('../utils/cloudinary');
 
 const FeedBackServices = {};
 

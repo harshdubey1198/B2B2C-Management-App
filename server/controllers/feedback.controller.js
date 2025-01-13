@@ -47,8 +47,6 @@ feedBackController.createFeedBack = async (req, res) => {
     });
 };
 
-
-
 // GET ALL FeedBackS
 feedBackController.getFeedBacks = async (req, res) => {
     try {
