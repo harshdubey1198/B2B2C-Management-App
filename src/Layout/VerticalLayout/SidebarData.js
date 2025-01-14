@@ -274,16 +274,31 @@ export const masterAdminSidebarData = () => [
       label: "Inventory",
       icon: "mdi mdi-archive-outline",
       subItem: [
-        { sublabel: "Inventory Table", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/add-inventory" },
+        {sublabel : "Inventory Table", link: "/inventory-table" },
+        {sublabel : "Table Form", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
-        { sublabel: "Table Taxation", link: "/table-taxation" },
-        { sublabel: "Vendor Management", link: "/vendors/manage" },
+        {sublabel : "Table Taxation", link: "/table-taxation" },
+        {sublabel : "Vendor Management", link: "/vendors/manage" },
         {sublabel : "Brands" ,link :"/brands"},
         {sublabel : "Manufacturers" ,link :"/manufacturers"},
     
       ],
     },
+
+    {
+      label:"Production Stock",
+      icon:"mdi mdi-archive-outline",
+      subItem:[
+          {sublabel: "Raw Material", link:"/production/raw-materials"},
+          {sublabel: "Finished Goods", link:"/production/finished-goods"},
+          {sublabel: "Work In Progress", link:"/production/work-in-progress"},
+          {sublabel: "Production Orders", link:"/production/orders"},
+          {sublabel: "Production Reports", link:"/production/reports"},
+          {sublabel: "Waste Management", link:"/production/waste-management"},
+          {sublabel: "Production Settings", link:"/production/settings"},
+      ],
+    },
+
     {
       label: "Invoicing",
       icon: "mdi mdi-file-document-outline",

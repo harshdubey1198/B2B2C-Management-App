@@ -93,6 +93,13 @@ import AllBlogs from "../Pages/Blogs/AllBlogs.jsx";
 import CreateBlog from "../Pages/Blogs/CreateBlog.jsx";
 import ManageCategories from "../Pages/Blogs/ManageCategories.jsx";
 import AllFeedbacks from "../Pages/Feedbacks/AllFeedbacks.jsx";
+import ProductionOrders from "../Pages/Production-Inventory/ProductionOrders.jsx";
+import ProductionReports from "../Pages/Production-Inventory/ProductionReports.jsx";
+import ProductionSettings from "../Pages/Production-Inventory/ProductionSettings.jsx";
+import FinishedGood from "../Pages/Production-Inventory/FinishedGood.jsx";
+import RawMaterialTable from "../Pages/Production-Inventory/RawMaterialTable.jsx";
+import WorkInProgressTable from "../Pages/Production-Inventory/WorkInProgressTable.jsx";
+import WasteManagement from "../Pages/Production-Inventory/WasteManagement.jsx";
 
 const authProtectedRoutes = [
   //dashboard
@@ -129,6 +136,16 @@ const authProtectedRoutes = [
   {path:"/vendors/manage", component: <Vendor />},
   {path:"/brands", component: <Brands />},
   {path:"/manufacturers", component: <Manufacturers />},
+
+  //  production and inventory
+  {path:"/production/raw-materials", component: <RawMaterialTable />},
+  {path:"/production/finished-goods", component: <FinishedGood />},
+  {path:"/production/work-in-progress", component: <WorkInProgressTable />},
+  {path:"/production/orders", component: <ProductionOrders />},
+  {path:"/production/reports", component: <ProductionReports />},
+  {path:"/production/waste-management", component: <WasteManagement />},
+  {path:"/production/settings", component: <ProductionSettings />},
+
   // firm
   {path:"/firms", component: <Firm />},
   {path:"/firmusers", component: <UserManage />},
