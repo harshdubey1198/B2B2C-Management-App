@@ -3,7 +3,7 @@
 //
 
 .metismenu {
-    margin: 20px;
+    margin: 10px;
 
     li {
         display: block;
@@ -86,6 +86,7 @@
                     transition: all 0.4s;
                     font-family: var(--bs-font-family-secondary);
                     margin-top: 10px;
+                    width: 230px;
 
                     i {
                         display: inline-block;

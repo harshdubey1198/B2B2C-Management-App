@@ -1,6 +1,6 @@
 // Controller File (FeedBack.controller.js)
 const multer = require('multer');
-const FeedBackServices = require('../services/FeedBack.services');
+const FeedBackServices = require('../services/feedback.services');
 const { createResult } = require('../utils/utills');
 const { upload } = require('../utils/multer');
 const uploadToCloudinary = require('../utils/cloudinary');
