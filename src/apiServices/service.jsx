@@ -497,4 +497,24 @@ export const deleteFeedbackById = async (id) => {
 }
 
 
+// get item category 
+export const getItemCategories = async () => {
+    try {
+        const response = await axiosInstance.get(`/category/get-categories/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getItemSubCategories = async (categoryId) => {
+    try {
+        const response = await axiosInstance.get(`/category/subcategories/${categoryId}`);
+        return response.data;
+    }
+    catch (error) {
+        return error;
+    }
+}
+
 export default axiosInstance;
