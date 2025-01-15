@@ -32,6 +32,7 @@ const crmUserRouter = require("./routers/crmuser.router")
 const blogCategoryRouter = require("./routers/blogcategory.router")
 const blogRouter = require("./routers/blog.router")
 const feedBackRouter = require("./routers/feedback.router")
+const bomRouter = require("./routers/bom.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -51,6 +52,7 @@ app.use("/api/crmuser", crmUserRouter);
 app.use("/api/blogcategory", blogCategoryRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/feedback", feedBackRouter);
+app.use("/api/bom", bomRouter);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
