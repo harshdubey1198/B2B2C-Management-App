@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { formatDate } from "../../Pages/Utility/formatDate";
-const countries = { India: { currency: "INR", gst: 18 }, Malaysia: { currency: "MYR", gst: 6 }, Dubai: { currency: "AED", gst: 5 }, Indonesia: { currency: "IDR", gst: 10 }, };
+// const countries = { India: { currency: "INR", gst: 18 }, Malaysia: { currency: "MYR", gst: 6 }, Dubai: { currency: "AED", gst: 5 }, Indonesia: { currency: "IDR", gst: 10 }, };
 
 const convertNumberToWords = (num) => {
   const a = [ "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", ];
@@ -58,8 +58,8 @@ const ViewFormat = forwardRef(
     const items = invoiceData?.items || [];
     // console.log("items", items);
     const companyAddress = selectInvoice.address || [];
-    const country = companyAddress.length ? companyAddress[0].country : "India";
-    const customerState = invoiceData?.customerState || "";
+    // const country = companyAddress.length ? companyAddress[0].country : "India";
+    // const customerState = invoiceData?.customerState || "";
     // Initialize total values
     let subtotal = 0;
     let totalTaxAmount = 0;
@@ -79,11 +79,11 @@ const ViewFormat = forwardRef(
     calculateTotals();
     const grandTotal = subtotal + totalTaxAmount;
 
-    const taxRate = countries[country]?.gst || 0;
-    const companyState = companyAddress.length
-      ? companyAddress[0]?.state?.toLowerCase()
-      : "";
-    const isSameState = companyState === customerState?.toLowerCase();
+    // const taxRate = countries[country]?.gst || 0;
+    // const companyState = companyAddress.length
+    //   ? companyAddress[0]?.state?.toLowerCase()
+    //   : "";
+    // const isSameState = companyState === customerState?.toLowerCase();
 
     const totalAmount = invoiceData?.totalAmount;
     // const taxAmount = (totalAmount * taxRate) / 100;
@@ -199,19 +199,19 @@ const ViewFormat = forwardRef(
             </thead>
             <tbody>
               {invoiceData?.items?.map((item, index) => {
-                const itemTotalValue = item.quantity * item.price;
-                const itemCgstAmount = isSameState
-                  ? (itemTotalValue * (taxRate / 2)) / 100
-                  : 0;
-                const itemSgstAmount = isSameState
-                  ? (itemTotalValue * (taxRate / 2)) / 100
-                  : 0;
-                const itemIgstAmount = !isSameState
-                  ? (itemTotalValue * taxRate) / 100
-                  : 0;
-                const itemTotalAmount = isSameState
-                  ? itemTotalValue + itemCgstAmount + itemSgstAmount
-                  : itemTotalValue + itemIgstAmount;
+                // const itemTotalValue = item.quantity * item.price;
+                // const itemCgstAmount = isSameState
+                //   ? (itemTotalValue * (taxRate / 2)) / 100
+                //   : 0;
+                // const itemSgstAmount = isSameState
+                //   ? (itemTotalValue * (taxRate / 2)) / 100
+                //   : 0;
+                // const itemIgstAmount = !isSameState
+                //   ? (itemTotalValue * taxRate) / 100
+                //   : 0;
+                // const itemTotalAmount = isSameState
+                //   ? itemTotalValue + itemCgstAmount + itemSgstAmount
+                //   : itemTotalValue + itemIgstAmount;
 
                 return (
                   <tr key={index}>

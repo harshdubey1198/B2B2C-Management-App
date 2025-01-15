@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FormGroup, Label, Input, Row, Col } from "reactstrap";
 import useDebounce from "../../Hooks/UseDebounceHook";
-import axios from "axios";
+// import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 
 const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
@@ -11,7 +11,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchKey, setSearchKey] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const debouncedSearchTerm = useDebounce(searchKey, 500);
+  // const debouncedSearchTerm = useDebounce(searchKey, 500);
   const [selectedIndex, setSelectedIndex] = useState(-1);
 
   const handleKeyDown = (e) => {
@@ -60,7 +60,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
     return `${year}-${month}-${day}`;
   };
 
-  const [issueDate, setIssueDate] = useState(getCurrentDate());
+  const [issueDate] = useState(getCurrentDate());
 
   useEffect(() => {
     if (!invoiceData.issueDate) {

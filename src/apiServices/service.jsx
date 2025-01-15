@@ -517,4 +517,31 @@ export const getItemSubCategories = async (categoryId) => {
     }
 }
 
+export const getVendors = async () => {
+    try {
+        const response = await axiosInstance.get(`/vendor/get-vendors/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getBrands = async () => {
+    try {
+        const response = await axiosInstance.get(`/brand/get-brands/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getTaxes = async () => {
+    try {
+        const response = await axiosInstance.get(`/tax/get-taxes/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

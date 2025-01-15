@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { Modal, ModalHeader, ModalBody,Row, ModalFooter, Button, Form, FormGroup, Label, Input, Col } from 'reactstrap';
-import { getItemCategories, getItemSubCategories } from '../../apiServices/service';
+import { getBrands, getItemCategories, getItemSubCategories, getTaxes } from '../../apiServices/service';
 
 function RawMaterialTable() {
   const [rawMaterials, setRawMaterials] = useState([]);
@@ -13,11 +13,14 @@ function RawMaterialTable() {
   const [filterType, setFilterType] = useState('All');
   const itemsPerPage = 10;
   const [categories, setCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
-  
-
+  const [brands, setBrands] = useState([]);
+  const [variants, setVariants] = useState([]);
   const authuser = JSON.parse(localStorage.getItem('authUser'));
   const userId = authuser?.response?._Id;
+  const [categoryName, setCategoryName] = useState([]);
+  const [taxes, setTaxes] = useState([]);
   const [newMaterial, setNewMaterial] = useState({
     name: '',
     description: '',
@@ -25,11 +28,19 @@ function RawMaterialTable() {
     qtyType: '',
     note: '',
     userId: userId,
+    categoryId: '',
+    subcategoryId: '',
+    brandId: '',  
+    sellingPrice: '',
+    costPrice: '',
+    taxId: '',
+    variants: [],
   });
 
   const fetchCategories = async () => {
     try {
       const response = await getItemCategories();
+      setAllCategories(response.data);
       const parentCategories = response.data.filter(category => category.parentId === null);
       setCategories(parentCategories);
       // console.log(parentCategories);
@@ -37,6 +48,17 @@ function RawMaterialTable() {
       console.log(error);
     }
   };
+
+  const fetchTaxes = async () => {
+    try {
+      const response = await getTaxes();
+      setTaxes(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   const fetchSubCategories = async (categoryId) => {
     try {
@@ -48,22 +70,56 @@ function RawMaterialTable() {
     }
   };
 
+  const fetchBrands = async () => {
+    try {
+      const response = await getBrands();
+      setBrands(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (newMaterial.categoryId) {
       fetchSubCategories(newMaterial.categoryId);
     }
   }, [newMaterial.categoryId]);
 
+  useEffect(() => {
+    const updateCategoryAndSubCategoryNames = () => {
+      const updatedMaterials = rawMaterials.map(material => {
+        const category = allCategories.find(cat => cat._id === material.categoryId);
+        const subCategory = subCategories.find(sub => sub._id === material.subcategoryId);
+        return {
+          ...material,
+          categoryName: category ? category.categoryName : 'N/A',
+          subCategoryName: subCategory ? subCategory.categoryName : 'N/A',
+        };
+      });
+      setFilteredMaterials(updatedMaterials);
+    };
+  
+    updateCategoryAndSubCategoryNames();
+  }, [rawMaterials, allCategories, subCategories]);
+  
+  
 
   useEffect(() => {
     const storedMaterials = JSON.parse(localStorage.getItem('rawMaterials')) || [];
     setRawMaterials(storedMaterials);
     setFilteredMaterials(storedMaterials);
     fetchCategories();
+    fetchBrands();
+    fetchTaxes();
+    
   }, []);
+  // console.log(taxes); 
 
 
-
+  const getTaxDetails = (taxId) => {
+    const tax = taxes.find(t => t._id === taxId);
+    return tax ? `${tax.taxName} (${tax.taxRates[0].rate}%)` : 'No Tax';
+  };
   
   useEffect(() => {
     const filtered = rawMaterials.filter(material => {
@@ -82,7 +138,7 @@ function RawMaterialTable() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setNewMaterial({ ...newMaterial, [name]: value });
+      setNewMaterial({ ...newMaterial, [name]: value });
   };
 
   const openModal = (material = null) => {
@@ -95,16 +151,22 @@ function RawMaterialTable() {
         qtyType: material.qtyType,
         note: '',
         userId: material.userId,
+        categoryId: material.categoryId,
+        subcategoryId: material.subcategoryId,
+        brandId: material.brandId,
+        variants: material.variants,
+        taxId: material.tax?.taxId,      
       });
     } else {
-      setNewMaterial({ name: '', description: '', quantity: 0, qtyType: '', note: '' });
+      setNewMaterial({ name: '', description: '', quantity: 0, qtyType: '', note: '', userId: userId, categoryId: '' , subcategoryId: '', brandId: '', variants: [] , taxId: ''});
     }
     setShowModal(true);
   };
+//match the category with id material category id and set the name of the category
 
   const closeModal = () => {
     setShowModal(false);
-    setNewMaterial({ name: '', description: '', quantity: 0, qtyType: '', note: '' });
+    setNewMaterial({ name: '', description: '', quantity: 0, qtyType: '', note: '' , categoryId: '' , subcategoryId: '', brandId: '' , variants: [] , taxId: '' });
     setEditingMaterial(null);
   };
 
@@ -117,14 +179,14 @@ function RawMaterialTable() {
       setRawMaterials(
         rawMaterials.map(material =>
           material.id === editingMaterial.id
-            ? { ...material, ...newMaterial, updatedAt: new Date(), id: editingMaterial.id }
+            ? { ...material, ...newMaterial,variants, updatedAt: new Date(), id: editingMaterial.id }
             : material
         )
       );
     } else {
       setRawMaterials([
         ...rawMaterials,
-        { ...newMaterial, id: Date.now(), createdAt: new Date(), updatedAt: null },
+      { ...newMaterial,variants, id: Date.now(), createdAt: new Date(), updatedAt: null },
       ]);
     }
     closeModal();
@@ -148,7 +210,16 @@ function RawMaterialTable() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentMaterials = filteredMaterials.slice(indexOfFirstItem, indexOfLastItem);
 
+  const handleVariantChange = (index, field, value) => {
+    const updatedVariants = [...variants];
+    updatedVariants[index][field] = value;
+    setVariants(updatedVariants);
+  };
   
+  const removeVariant = (index) => {
+    const updatedVariants = variants.filter((_, i) => i !== index);
+    setVariants(updatedVariants);
+  };
 
 
 
@@ -157,11 +228,6 @@ function RawMaterialTable() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Raw Material Table" />
         <div className="container mt-4 mb-4">
-
-          {/* <Button color="primary" onClick={() => openModal()}>
-            Add New Raw Material
-          </Button> */}
-
           <div className="mt-3 d-flex justify-content-between">
             <Input
               type="text"
@@ -173,7 +239,7 @@ function RawMaterialTable() {
 
             <Input
               type="select"
-              className="form-control w-25"
+              className="form-control w-25 no-appearance"
               value={filterType}
               onChange={handleFilterChange}
             >
@@ -192,8 +258,10 @@ function RawMaterialTable() {
                 <th>Name</th>
                 <th>Description</th>
                 <th>Quantity</th>
+                <th>Tax</th>
                 <th>Unit Type</th>
                 <th>Updated By</th>
+                <th>Category/SubCategory</th>
                 <th>Note</th>
                 <th>Actions</th>
               </tr>
@@ -204,21 +272,12 @@ function RawMaterialTable() {
                   <td>{material.name}</td>
                   <td>{material.description}</td>
                   <td>{material.quantity}</td>
+                  <td>{getTaxDetails(material.taxId)}</td>  
                   <td>{material.qtyType}</td>
                   <td>{material.userId || 'N/A'}</td>
+                  <td>{material.categoryName || 'N/A'}<br/> {material.subCategoryName}</td>
                   <td>{material.note || 'N/A'}</td>
                   <td>
-                    {/* <Button color="warning" size="sm" onClick={() => openModal(material)}>
-                      Edit
-                    </Button>
-                    <Button
-                      color="danger"
-                      size="sm"
-                      className="ml-2"
-                      onClick={() => deleteRawMaterial(material.id)}
-                    >
-                      Delete
-                    </Button> */}
                     <i className='bx bx-edit' style={{ fontSize: '1.5rem', cursor: 'pointer' }} onClick={() => openModal(material)}></i>
                     <i className='bx bx-trash' style={{ fontSize: '1.5rem', cursor: 'pointer', marginLeft: '1rem' }} onClick={() => deleteRawMaterial(material.id)}></i>
                   </td>
@@ -328,16 +387,102 @@ function RawMaterialTable() {
                 <Col md={6}>
                 <FormGroup>
                   <Label for="qtyType">Unit Type</Label>
-                  <Input
-                    type="text"
-                    name="qtyType"
-                    id="qtyType"
-                    value={newMaterial.qtyType}
-                    onChange={handleInputChange}
-                  />
+                  <Input type="select" name="qtyType" id="qtyType" value={newMaterial.qtyType} onChange={handleInputChange}>
+                    <option value="">Select Unit Type</option>
+                    <option value="kg">kg</option>
+                    <option value="liters">liters</option>
+                    <option value="pcs">pieces</option>
+                    <option value="meters">meters</option>
+                    <option value="grams">grams</option>
+                    <option value="milliliters">milliliters</option>
+                  </Input>
                 </FormGroup>
                 </Col>
                 </Row>
+
+                <Row>
+                  <Col md={6}>
+                  <FormGroup>
+                    <Label for="brandId">Brand</Label>
+                    <Input type="select" id="brandId" name="brandId" value={newMaterial.brandId} onChange={handleInputChange} >
+                      <option value="">Select Brand</option>
+                      {brands.map(brand => (
+                        <option key={brand._id} value={brand._id}>
+                          {brand.name}
+                        </option>
+                      ))}
+                    </Input>
+                  </FormGroup>
+                  </Col>
+                  <Col md={6}>
+                    <FormGroup>
+                      <Label for="taxId">Tax</Label>
+                      <Input type="select" id="taxId" name="taxId" value={newMaterial.taxId} onChange={handleInputChange} >
+                        <option value="">Select Tax</option>
+                        {taxes.map(tax => (
+                          <option key={tax._id} value={tax._id}>
+                            {tax.taxName}
+                          </option>
+                        ))}
+                        </Input>
+                    </FormGroup>
+                  </Col>
+                </Row>
+
+                <Row>
+                  <Col md={12}>
+                    <FormGroup className='d-flex items-center w-100'>
+                      <Label className='m-0'>Variants</Label>
+                      <i className="bx bx-plus bg-primary rounded text-white" style={{ fontSize: '1.25rem', marginLeft:'10px' ,cursor: 'pointer' }} onClick={() => setVariants([...variants, { name: '', price: 0, quantity: 0 }])}></i>
+                    </FormGroup>
+                    {variants.map((variant, index) => (
+                      <Row key={index} className="align-items-center">
+                        <Col md={4}>
+                          <FormGroup>
+                            <Input
+                              type="text"
+                              placeholder="Variant Name"
+                              value={variant.name}
+                              onChange={(e) =>
+                                handleVariantChange(index, 'name', e.target.value)
+                              }
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col md={3}>
+                          <FormGroup>
+                            <Input
+                              type="number"
+                              placeholder="Price"
+                              value={variant.price}
+                              onChange={(e) =>
+                                handleVariantChange(index, 'price', e.target.value)
+                              }
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col md={3}>
+                          <FormGroup>
+                            <Input
+                              type="number"
+                              placeholder="Quantity"
+                              value={variant.quantity}
+                              onChange={(e) =>
+                                handleVariantChange(index, 'quantity', e.target.value)
+                              }
+                            />
+                          </FormGroup>
+                        </Col>
+                        <Col md={2}>
+                          <Button color="danger" className='mb-3' onClick={() => removeVariant(index)}>
+                            X
+                          </Button>
+                        </Col>
+                      </Row>
+                    ))}
+                  </Col>
+                </Row>
+
                 <FormGroup>
                   <Label for="note">Note</Label>
                   <Input

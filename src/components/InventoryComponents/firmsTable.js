@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button } from 'reactstrap';
+import { Table } from 'reactstrap';
 import axios from 'axios';
 import FirmSwitcher from '../../Pages/Firms/FirmSwitcher';
 
