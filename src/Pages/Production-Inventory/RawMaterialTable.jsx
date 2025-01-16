@@ -19,7 +19,7 @@ function RawMaterialTable() {
   const [variants, setVariants] = useState([]);
   const authuser = JSON.parse(localStorage.getItem('authUser'));
   const userId = authuser?.response?._Id;
-  const [categoryName, setCategoryName] = useState([]);
+  // const [categoryName, setCategoryName] = useState([]);
   const [taxes, setTaxes] = useState([]);
   const [newMaterial, setNewMaterial] = useState({
     name: '',
