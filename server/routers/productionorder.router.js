@@ -3,11 +3,11 @@ const router = express.Router();
 const { tokenVerification } = require('../middleware/auth.middleware');
 const productionorderController = require('../controllers/productionorder.controller');
 
-router.post('/create-productionorder', tokenVerification, productionorderController.createproductionorder);
-router.get('/get-productionorder', productionorderController.getproductionorders);
-router.get('/get-productionorder/:id', productionorderController.getproductionorderById);
-router.put('/update-productionorder/:id', tokenVerification, productionorderController.updateproductionorder);
-router.put('/update-productionorderstatus/:id', tokenVerification, productionorderController.updateproductionorderStatus);
-router.delete('/delete-productionorder/:id', tokenVerification, productionorderController.deleteproductionorder);
+router.post('/create-productionorder', tokenVerification, productionorderController.createProductionOrder);
+router.get('/get-productionorders', productionorderController.getProductionOrders);
+router.get('/get-productionorder/:id', productionorderController.getProductionOrderById);
+router.put('/update-productionorder/:id', tokenVerification, productionorderController.updateProductionOrder);
+router.put('/update-productionorderstatus/:id', tokenVerification, productionorderController.updateProductionOrderStatus);
+router.delete('/delete-productionorder/:id', tokenVerification, productionorderController.deleteProductionOrder);
 
 module.exports = router;
