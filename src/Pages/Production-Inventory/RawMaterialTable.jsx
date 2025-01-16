@@ -63,7 +63,7 @@ function RawMaterialTable() {
   const fetchSubCategories = async (categoryId) => {
     try {
       const response = await getItemSubCategories(categoryId);
-      setSubCategories(response.data);
+      setSubCategories(response.data || []);
       // console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -275,7 +275,7 @@ function RawMaterialTable() {
                   <td>{getTaxDetails(material.taxId)}</td>  
                   <td>{material.qtyType}</td>
                   <td>{material.userId || 'N/A'}</td>
-                  <td>{material.categoryName || 'N/A'}<br/> {material.subCategoryName}</td>
+                  <td>{material.categoryName || 'N/A'}<br/> {material.subCategoryName || ''}</td>
                   <td>{material.note || 'N/A'}</td>
                   <td>
                     <i className='bx bx-edit' style={{ fontSize: '1.5rem', cursor: 'pointer' }} onClick={() => openModal(material)}></i>
