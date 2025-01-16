@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FormGroup, Label, Input, Button, Spinner } from 'reactstrap';
+import { FormGroup, Label, Input, Spinner } from 'reactstrap';
 import axiosInstance from '../../utils/axiosInstance';
 
 const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const firmId = authuser?.response?.adminId;
 

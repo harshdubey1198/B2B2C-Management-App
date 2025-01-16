@@ -23,7 +23,7 @@ const Index = () => {
   }, []);
 
   const renderInvoiceType = () => {
-    if (!firmDetails?.firmSpecified) return null;
+    if (!firmDetails?.firmSpecified) return <CreateInvoiceTrader/>;
 
     if (firmDetails.firmSpecified.includes('Invoice-Trader')) {
       return <CreateInvoiceTrader />;
