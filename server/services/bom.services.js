@@ -1,5 +1,5 @@
 const BOM = require("../schemas/bom.schema");
-const bom = require("../schemas/bom.schema");
+// const bom = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const User = require("../schemas/user.schema");
 
@@ -43,7 +43,7 @@ BomServices.getboms = async (body) => {
 };
 
 BomServices.getbomById = async (bomId) => {
-  const data = await bom.findOne({ _id: bomId, deleted_at: null })
+  const data = await BOM.findOne({ _id: bomId, deleted_at: null })
     .populate({ path: "rawMaterials.itemId" }) 
     .populate({ path: "firmId", select: "email companyTitle" }) 
     .populate({ path: "createdBy", select: "firstName lastName email" });
@@ -111,12 +111,12 @@ BomServices.updatebomStatus = async (id, body) => {
 
 // DELETE VENDOR
 BomServices.deletebom = async (bomId) => {
-  const existingbom = await bom.findOne({ _id: bomId, deleted_at: null });
+  const existingbom = await BOM.findOne({ _id: bomId, deleted_at: null });
   if (!existingbom) {
     throw new Error("BOM does not exist");
   }
 
-  const deletedbom = await bom.findOneAndUpdate(
+  const deletedbom = await BOM.findOneAndUpdate(
     { _id: bomId },
     { deleted_at: new Date() },
     { new: true }
