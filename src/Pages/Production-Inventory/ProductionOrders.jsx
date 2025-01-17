@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Form, FormGroup, Label, Input, Alert } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Form, FormGroup, Label, Input, Alert, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 
 function ProductionOrders() {
@@ -154,8 +154,10 @@ function ProductionOrders() {
                     </ul>
                   </td>
                   <td>
-                    <Button color="warning" size="sm" onClick={() => editBom(bom)}>Edit</Button>{' '}
-                    <Button color="danger" size="sm" onClick={() => deleteBom(bom.name)}>Delete</Button>
+                    {/* <Button color="warning" size="sm" onClick={() => editBom(bom)}>Edit</Button>{' '}
+                    <Button color="danger" size="sm" onClick={() => deleteBom(bom.name)}>Delete</Button> */}
+                    <i className='bx bx-edit cursor-pointer me-2 font-size-20' onClick={() => editBom(bom)}></i>
+                    <i className='bx bx-trash cursor-pointer font-size-20' onClick={() => deleteBom(bom.name)}></i>
                   </td>
                 </tr>
               ))}
@@ -219,36 +221,44 @@ function ProductionOrders() {
             </ModalFooter>
           </Modal>
 
-          <h5>Apply BOM</h5>
+          <h5>Create Product From Raw Material Using BOM Formula</h5>
           {error && <Alert color="danger">{error}</Alert>}
-          <Form>
-            <FormGroup>
-              <Label for="selectedBom">Select BOM</Label>
-              <Input
-                id="selectedBom"
-                type="select"
-                value={selectedBom}
-                onChange={(e) => setSelectedBom(e.target.value)}
-              >
-                <option value="">Select BOM</option>
-                {boms.map((bom, index) => (
-                  <option key={index} value={bom.name}>
-                    {bom.name}
-                  </option>
-                ))}
-              </Input>
-            </FormGroup>
-            <FormGroup>
-              <Label for="orderQuantity">Quantity</Label>
-              <Input
-                id="orderQuantity"
-                type="number"
-                value={orderQuantity}
-                onChange={(e) => setOrderQuantity(Number(e.target.value))}
-                min="1"
-              />
-            </FormGroup>
-            <Button color="primary" onClick={applyBom}>Approve & Apply</Button>
+          <Form className='mb-1'>
+            <Row>
+              <Col md={6}>
+                <FormGroup>
+                  <Label for="selectedBom">Select BOM</Label>
+                  <Input
+                    id="selectedBom"
+                    type="select"
+                    value={selectedBom}
+                    onChange={(e) => setSelectedBom(e.target.value)}
+                  >
+                    <option value="">Select BOM</option>
+                    {boms.map((bom, index) => (
+                      <option key={index} value={bom.name}>
+                        {bom.name}
+                      </option>
+                    ))}
+                  </Input>
+                </FormGroup>
+                </Col>
+              <Col md={3}>
+                <FormGroup>
+                  <Label for="orderQuantity">Quantity</Label>
+                  <Input
+                    id="orderQuantity"
+                    type="number"
+                    value={orderQuantity}
+                    onChange={(e) => setOrderQuantity(Number(e.target.value))}
+                    min="1"
+                  />
+                </FormGroup>
+              </Col>
+              <Col md={3} className='d-flex align-items-center'> 
+                <Button color="primary" onClick={applyBom}>Approve & Apply</Button>
+              </Col>
+            </Row>
           </Form>
 
           <h5>Raw Materials</h5>
