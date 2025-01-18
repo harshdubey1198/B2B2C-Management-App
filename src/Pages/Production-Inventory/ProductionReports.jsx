@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 function ProductionReports() {
   const [readyProductData, setReadyProductData] = useState([]);
   const [rawMaterialData, setRawMaterialData] = useState([]);
-  const [view, setView] = useState('rawMaterials'); 
+  const [view, setView] = useState('rawMaterials');
 
   useEffect(() => {
     const readyProducts = JSON.parse(localStorage.getItem('readyProducts')) || [];
@@ -16,11 +16,18 @@ function ProductionReports() {
     setRawMaterialData(rawMaterials);
   }, []);
 
-  const totalReadyProducts = readyProductData.reduce((sum, product) => sum + product.quantity, 0);
-  const totalRawMaterials = rawMaterialData.reduce((sum, material) => sum + material.quantity, 0);
+  const totalReadyProducts = readyProductData.reduce(
+    (sum, product) => sum + parseFloat(product.quantity || 0),
+    0
+  );
+
+  const totalRawMaterials = rawMaterialData.reduce(
+    (sum, material) => sum + parseFloat(material.quantity || 0),
+    0
+  );
 
   const productCategoryData = readyProductData.reduce((acc, product) => {
-    acc[product.name] = product.quantity;
+    acc[product.name] = (acc[product.name] || 0) + parseFloat(product.quantity || 0);
     return acc;
   }, {});
 
@@ -37,7 +44,7 @@ function ProductionReports() {
   const readyProductsChartSeries = Object.values(productCategoryData);
 
   const rawMaterialChartData = rawMaterialData.reduce((acc, material) => {
-    acc[material.name] = (acc[material.name] || 0) + material.quantity;
+    acc[material.name] = (acc[material.name] || 0) + parseFloat(material.quantity || 0);
     return acc;
   }, {});
 
@@ -58,22 +65,24 @@ function ProductionReports() {
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Reports" />
-        
+
         <div className="row">
           <div className="col-md-12">
             <div className="card">
-              <div className="card-body d-flex d-sm-flex flex-sm-col justify-content-between align-items-center">
+              <div className="card-body d-flex justify-content-between align-items-center">
                 <div>
                   <h5>Total Ready Products: {totalReadyProducts}</h5>
                   <h5>Total Raw Materials: {totalRawMaterials}</h5>
                   <h5 className="mt-2">Total Products in Inventory: {totalReadyProducts + totalRawMaterials}</h5>
                 </div>
                 <div>
-                  <button className="btn btn-primary me-2 "
+                  <button
+                    className="btn btn-primary me-2"
                     onClick={() => navigate('/production/orders')}
-                  > <i className='bx bxs-chevron-left me-1 font-size-14'></i>
-                    <span className='font-size-16'>Orders</span>
-                    </button>
+                  >
+                    <i className="bx bxs-chevron-left me-1 font-size-14"></i>
+                    <span className="font-size-16">Orders</span>
+                  </button>
                   <button
                     className={`btn ${view === 'readyProducts' ? 'btn-primary' : 'btn-outline-primary'} me-2`}
                     onClick={() => setView('readyProducts')}

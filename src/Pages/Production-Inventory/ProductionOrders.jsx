@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Form, FormGroup, Label, Input, Alert, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import { toast } from 'react-toastify';
 
 function ProductionOrders() {
   const [rawMaterials, setRawMaterials] = useState([]);
@@ -122,7 +123,8 @@ function ProductionOrders() {
     setError("");
     setSelectedBom("");
     setOrderQuantity(1);
-    alert(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
+    // alert(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
+    toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`); 
   };
 
   return (
