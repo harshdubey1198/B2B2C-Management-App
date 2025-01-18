@@ -141,28 +141,42 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
     const { status, notes } = body;
 
+    // Fetch the production order
     const order = await ProductionOrder.findById(id).populate('rawMaterials.itemId');
-    if (!order) throw new Error('Production Order not found');
-
-    if (['cancelled', 'completed'].includes(order.status)) {
-        throw new Error('Cannot update status of a cancelled or completed order');
+    if (!order) {
+        throw new Error('Production Order not found');
     }
 
+    // Validate the status transition
+    const allowedTransitions = {
+        created: ['in_progress', 'cancelled'],
+        in_progress: ['completed', 'cancelled'],
+        completed: [],
+        cancelled: []
+    };
+
+    if (!allowedTransitions[order.status].includes(status)) {
+        throw new Error(`Invalid status transition from ${order.status} to ${status}`);
+    }
+
+    // Handle inventory adjustments
     if (status === 'in_progress') {
-        // Deduct raw materials
+        // Deduct raw materials from inventory
         for (const material of order.rawMaterials) {
             const inventoryItem = await InventoryItem.findById(material.itemId);
             if (!inventoryItem) {
                 throw new Error(`Raw material with ID ${material.itemId} not found`);
             }
             if (inventoryItem.quantity < material.quantity) {
-                throw new Error(`Insufficient stock for ${inventoryItem.name}. Required: ${material.quantity}, Available: ${inventoryItem.quantity}`);
+                throw new Error(
+                    `Insufficient stock for ${inventoryItem.name}. Required: ${material.quantity}, Available: ${inventoryItem.quantity}`
+                );
             }
             inventoryItem.quantity -= material.quantity;
             await inventoryItem.save();
         }
     } else if (status === 'cancelled') {
-        // Return raw materials
+        // Return raw materials to inventory
         for (const material of order.rawMaterials) {
             const inventoryItem = await InventoryItem.findById(material.itemId);
             if (!inventoryItem) {
@@ -173,12 +187,14 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
         }
     }
 
+    // Update the production order status and notes
     order.status = status;
     order.notes = notes || order.notes;
     await order.save();
 
     return order;
 };
+
 
 
 module.exports = ProductionOrderServices;

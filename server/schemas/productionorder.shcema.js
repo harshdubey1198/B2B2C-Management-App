@@ -7,7 +7,7 @@ const ProductionOrderSchema = new Schema({
     quantity: { type: Number, required: true }, 
     rawMaterials: [
         {
-            itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
+            itemId: { type: Schema.Types.ObjectId, ref: 'RawInventory', required: true },
             quantity: { type: Number, required: true }, 
         }
     ],

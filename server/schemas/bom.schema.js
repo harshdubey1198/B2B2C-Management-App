@@ -5,7 +5,7 @@ const BOMSchema = new Schema({
   productName: { type: String, required: true }, 
   rawMaterials: [
     {
-      itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
+      itemId: { type: Schema.Types.ObjectId, ref: 'RawInventory', required: true },
       quantity: { type: Number, required: true },
     }
   ],
@@ -14,6 +14,7 @@ const BOMSchema = new Schema({
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
   status: { type: String, enum: ['created', 'approved', 'in_progress', 'completed', 'cancelled'], default: 'created' },
   notes: { type: String },
+  deleted_at: { type: Date, default: null } 
 }, { timestamps: true });
 
 const BOM = mongoose.model('BOM', BOMSchema);
