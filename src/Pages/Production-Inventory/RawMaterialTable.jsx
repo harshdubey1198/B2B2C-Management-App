@@ -35,6 +35,7 @@ function RawMaterialTable() {
     costPrice: '',
     taxId: '',
     variants: [],
+    wasteQuantity: '',
   });
   const [selectedUnitType, setSelectedUnitType] = useState('');
   const [selectedUnit, setSelectedUnit] = useState('');
@@ -43,8 +44,8 @@ function RawMaterialTable() {
   const unitTypes = {
     weight: ['kg', 'grams'],
     volume: ['liters', 'milliliters'],
-    length: ['meters'],
-    quantity: ['pcs'],
+    length: ['meters' , 'centimeters' , 'inches' , 'feet' , 'millimeters'],
+    quantity: ['pcs' , 'units'],
   };
 
   const handleUnitTypeChange = (e) => {
@@ -190,7 +191,7 @@ function RawMaterialTable() {
   };
 
   const saveMaterial = () => {
-    if (!newMaterial.name || !newMaterial.qtyType || newMaterial.quantity <= 0) {
+    if (!newMaterial.name  || newMaterial.quantity <= 0) {
       alert('Please fill in all fields with valid values.');
       return;
     }
