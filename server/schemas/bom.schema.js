@@ -7,6 +7,7 @@ const BOMSchema = new Schema({
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
       quantity: { type: Number, required: true },
+      wasteQuantity : { type: Number },
     }
   ],
   wastagePercentage: { type: Number, default: 0 }, 
