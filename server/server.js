@@ -34,6 +34,7 @@ const blogRouter = require("./routers/blog.router")
 const feedBackRouter = require("./routers/feedback.router")
 const bomRouter = require("./routers/bom.router")
 const productionOrderRouter = require("./routers/productionorder.router")
+const rawInventoryRouter = require("./routers/rawinventory.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -55,6 +56,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/feedback", feedBackRouter);
 app.use("/api/bom", bomRouter);
 app.use("/api/productionorder", productionOrderRouter);
+app.use("/api/rawinventory", rawInventoryRouter);
 
 // CLIENT ROUTES
 // app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))

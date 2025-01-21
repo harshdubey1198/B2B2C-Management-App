@@ -5,7 +5,7 @@ const BOMSchema = new Schema({
   productName: { type: String, required: true }, 
   rawMaterials: [
     {
-      itemId: { type: Schema.Types.ObjectId, ref: 'RawInventory', required: true },
+      itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
       quantity: { type: Number, required: true },
     }
   ],
