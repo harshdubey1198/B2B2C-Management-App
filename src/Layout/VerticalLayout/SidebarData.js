@@ -295,7 +295,7 @@ export const masterAdminSidebarData = () => [
           {sublabel: "Finished Goods", link:"/production/finished-goods"},
           {sublabel: "Production Reports", link:"/production/reports"},
           {sublabel: "Waste Management", link:"/production/waste-management"},
-          {sublabel: "Production Settings", link:"/production/settings"},
+          // {sublabel: "Production Settings", link:"/production/settings"},
       ],
     },
 

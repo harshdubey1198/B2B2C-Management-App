@@ -35,8 +35,28 @@ function RawMaterialTable() {
     costPrice: '',
     taxId: '',
     variants: [],
+    wasteQuantity: '',
   });
+  const [selectedUnitType, setSelectedUnitType] = useState('');
+  const [selectedUnit, setSelectedUnit] = useState('');
 
+  // Define unit types and corresponding units
+  const unitTypes = {
+    weight: ['kg', 'grams'],
+    volume: ['liters', 'milliliters'],
+    length: ['meters' , 'centimeters' , 'inches' , 'feet' , 'millimeters'],
+    quantity: ['pcs' , 'units'],
+  };
+
+  const handleUnitTypeChange = (e) => {
+    const unitType = e.target.value;
+    setSelectedUnitType(unitType);
+    setSelectedUnit(''); // Reset selected unit when unit type changes
+  };
+
+  const handleUnitChange = (e) => {
+    setSelectedUnit(e.target.value);
+  };
   const fetchCategories = async () => {
     try {
       const response = await getItemCategories();
@@ -171,7 +191,7 @@ function RawMaterialTable() {
   };
 
   const saveMaterial = () => {
-    if (!newMaterial.name || !newMaterial.qtyType || newMaterial.quantity <= 0) {
+    if (!newMaterial.name  || newMaterial.quantity <= 0) {
       alert('Please fill in all fields with valid values.');
       return;
     }
@@ -384,20 +404,44 @@ function RawMaterialTable() {
                   />
                 </FormGroup>
                 </Col>
-                <Col md={6}>
-                <FormGroup>
-                  <Label for="qtyType">Unit Type</Label>
-                  <Input type="select" name="qtyType" id="qtyType" value={newMaterial.qtyType} onChange={handleInputChange}>
-                    <option value="">Select Unit Type</option>
-                    <option value="kg">kg</option>
-                    <option value="liters">liters</option>
-                    <option value="pcs">pieces</option>
-                    <option value="meters">meters</option>
-                    <option value="grams">grams</option>
-                    <option value="milliliters">milliliters</option>
-                  </Input>
-                </FormGroup>
-                </Col>
+                  <Col md={6} className={selectedUnitType ? 'd-flex justify-content-evenly' : ''}>
+                  <FormGroup>
+                        <Label for="qtyType">Unit Type</Label>
+                        <Input
+                          type="select"
+                          name="qtyType"
+                          id="qtyType"
+                          value={selectedUnitType}
+                          onChange={handleUnitTypeChange}
+                        >
+                          <option value="">Select Unit Type</option>
+                          <option value="weight">Weight</option>
+                          <option value="volume">Volume</option>
+                          <option value="length">Length</option>
+                          <option value="quantity">Quantity</option>
+                        </Input>
+                      </FormGroup>
+
+                      {selectedUnitType && (
+                        <FormGroup>
+                          <Label for="unit">Unit</Label>
+                          <Input
+                            type="select"
+                            name="unit"
+                            id="unit"
+                            value={selectedUnit}
+                            onChange={handleUnitChange}
+                          >
+                            <option value="">Select Unit</option>
+                            {unitTypes[selectedUnitType]?.map((unit) => (
+                              <option key={unit} value={unit}>
+                                {unit}
+                              </option>
+                            ))}
+                          </Input>
+                        </FormGroup>
+                      )}
+                  </Col>
                 </Row>
 
                 <Row>

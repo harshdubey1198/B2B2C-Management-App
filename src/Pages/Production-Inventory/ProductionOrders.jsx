@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Form, FormGroup, Label, Input, Alert, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import { toast } from 'react-toastify';
 
 function ProductionOrders() {
   const [rawMaterials, setRawMaterials] = useState([]);
   const [readyProducts, setReadyProducts] = useState([]);
+  const [waste, setWaste] = useState([]); 
   const [boms, setBoms] = useState([]);
   const [selectedBom, setSelectedBom] = useState("");
   const [orderQuantity, setOrderQuantity] = useState(1);
@@ -17,6 +19,7 @@ function ProductionOrders() {
     setRawMaterials(JSON.parse(localStorage.getItem("rawMaterials")) || []);
     setReadyProducts(JSON.parse(localStorage.getItem("readyProducts")) || []);
     setBoms(JSON.parse(localStorage.getItem("boms")) || []);
+    setWaste(JSON.parse(localStorage.getItem('waste')) || []);
   }, []);
 
   const updateLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -66,15 +69,142 @@ function ProductionOrders() {
     updateLocalStorage("boms", updatedBoms);
   };
 
+  // const applyBom = () => {
+  //   if (!selectedBom || orderQuantity <= 0) {
+  //     setError("Please select a BOM and specify a valid quantity.");
+  //     return;
+  //   }
+
+  //   const selectedBomDetails = boms.find((bom) => bom.name === selectedBom);
+  //   if (!selectedBomDetails) {
+  //     setError("Invalid BOM selected.");
+  //     return;
+  //   }
+
+  //   const insufficientMaterials = selectedBomDetails.materials.some((material) => {
+  //     const isRaw = rawMaterials.find((rm) => rm.name === material.rawMaterial);
+  //     const isReady = readyProducts.find((rp) => rp.name === material.rawMaterial);
+  //     const availableQuantity = isRaw ? isRaw.quantity : isReady ? isReady.quantity : 0;
+  //     return material.quantity * orderQuantity > availableQuantity;
+  //   });
+
+  //   if (insufficientMaterials) {
+  //     setError("Insufficient materials to produce the specified quantity.");
+  //     return;
+  //   }
+
+  //   const updatedRawMaterials = rawMaterials.map((rm) => {
+  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rm.name);
+  //     if (bomMaterial) {
+  //       return { ...rm, quantity: rm.quantity - bomMaterial.quantity * orderQuantity };
+  //     }
+  //     return rm;
+  //   });
+
+  //   const updatedReadyProducts = readyProducts.map((rp) => {
+  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rp.name);
+  //     if (bomMaterial) {
+  //       return { ...rp, quantity: rp.quantity - bomMaterial.quantity * orderQuantity };
+  //     }
+  //     return rp;
+  //   });
+
+  //   const newReadyProduct = { name: selectedBom, quantity: orderQuantity };
+  //   const existingReadyProduct = updatedReadyProducts.find((rp) => rp.name === selectedBom);
+  //   if (existingReadyProduct) {
+  //     existingReadyProduct.quantity += orderQuantity;
+  //   } else {
+  //     updatedReadyProducts.push(newReadyProduct);
+  //   }
+
+  //   setRawMaterials(updatedRawMaterials);
+  //   setReadyProducts(updatedReadyProducts);
+  //   updateLocalStorage("rawMaterials", updatedRawMaterials);
+  //   updateLocalStorage("readyProducts", updatedReadyProducts);
+
+  //   setError("");
+  //   setSelectedBom("");
+  //   setOrderQuantity(1);
+  //   // alert(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
+  //   toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`); 
+  // };
+
+  // const applyBom = () => {
+  //   if (!selectedBom || orderQuantity <= 0) {
+  //     setError("Please select a BOM and specify a valid quantity.");
+  //     return;
+  //   }
+  
+  //   const selectedBomDetails = boms.find((bom) => bom.name === selectedBom);
+  //   if (!selectedBomDetails) {
+  //     setError("Invalid BOM selected.");
+  //     return;
+  //   }
+  
+  //   // Validate material availability considering wastage
+  //   const insufficientMaterials = selectedBomDetails.materials.some((material) => {
+  //     const isRaw = rawMaterials.find((rm) => rm.name === material.rawMaterial);
+  //     const isReady = readyProducts.find((rp) => rp.name === material.rawMaterial);
+  //     const availableQuantity = isRaw ? isRaw.quantity : isReady ? isReady.quantity : 0;
+  
+  //     const requiredQuantity = (material.quantity + (material.waste || 0)) * orderQuantity;
+  //     return requiredQuantity > availableQuantity;
+  //   });
+  
+  //   if (insufficientMaterials) {
+  //     setError("Insufficient materials to produce the specified quantity with wastage.");
+  //     return;
+  //   }
+  
+  //   // Deduct materials and handle wastage
+  //   const updatedRawMaterials = rawMaterials.map((rm) => {
+  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rm.name);
+  //     if (bomMaterial) {
+  //       const totalUsage = (bomMaterial.quantity + (bomMaterial.waste || 0)) * orderQuantity;
+  //       return { ...rm, quantity: rm.quantity - totalUsage };
+  //     }
+  //     return rm;
+  //   });
+  
+  //   const updatedReadyProducts = readyProducts.map((rp) => {
+  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rp.name);
+  //     if (bomMaterial) {
+  //       const totalUsage = (bomMaterial.quantity + (bomMaterial.waste || 0)) * orderQuantity;
+  //       return { ...rp, quantity: rp.quantity - totalUsage };
+  //     }
+  //     return rp;
+  //   });
+  
+  //   // Add or update the ready product
+  //   const newReadyProduct = { name: selectedBom, quantity: orderQuantity };
+  //   const existingReadyProduct = updatedReadyProducts.find((rp) => rp.name === selectedBom);
+  //   if (existingReadyProduct) {
+  //     existingReadyProduct.quantity += orderQuantity;
+  //   } else {
+  //     updatedReadyProducts.push(newReadyProduct);
+  //   }
+  
+  //   // Update state and local storage
+  //   setRawMaterials(updatedRawMaterials);
+  //   setReadyProducts(updatedReadyProducts);
+  //   updateLocalStorage("rawMaterials", updatedRawMaterials);
+  //   updateLocalStorage("readyProducts", updatedReadyProducts);
+  
+  //   setError("");
+  //   setSelectedBom("");
+  //   setOrderQuantity(1);
+  //   toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
+  // };
+  
   const applyBom = () => {
     if (!selectedBom || orderQuantity <= 0) {
-      setError("Please select a BOM and specify a valid quantity.");
+      setError('Please select a BOM and specify a valid quantity.');
       return;
     }
 
     const selectedBomDetails = boms.find((bom) => bom.name === selectedBom);
     if (!selectedBomDetails) {
-      setError("Invalid BOM selected.");
+      setError('Invalid BOM selected.');
       return;
     }
 
@@ -86,7 +216,7 @@ function ProductionOrders() {
     });
 
     if (insufficientMaterials) {
-      setError("Insufficient materials to produce the specified quantity.");
+      setError('Insufficient materials to produce the specified quantity.');
       return;
     }
 
@@ -98,14 +228,20 @@ function ProductionOrders() {
       return rm;
     });
 
-    const updatedReadyProducts = readyProducts.map((rp) => {
-      const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rp.name);
-      if (bomMaterial) {
-        return { ...rp, quantity: rp.quantity - bomMaterial.quantity * orderQuantity };
+    const updatedWaste = [...waste];
+    selectedBomDetails.materials.forEach((material) => {
+      const wasteQuantity = material.waste * orderQuantity;
+      if (wasteQuantity > 0) {
+        const existingWaste = updatedWaste.find((w) => w.name === material.rawMaterial);
+        if (existingWaste) {
+          existingWaste.quantity += wasteQuantity;
+        } else {
+          updatedWaste.push({ name: material.rawMaterial, quantity: wasteQuantity });
+        }
       }
-      return rp;
     });
 
+    const updatedReadyProducts = [...readyProducts];
     const newReadyProduct = { name: selectedBom, quantity: orderQuantity };
     const existingReadyProduct = updatedReadyProducts.find((rp) => rp.name === selectedBom);
     if (existingReadyProduct) {
@@ -115,16 +251,17 @@ function ProductionOrders() {
     }
 
     setRawMaterials(updatedRawMaterials);
+    setWaste(updatedWaste);
     setReadyProducts(updatedReadyProducts);
-    updateLocalStorage("rawMaterials", updatedRawMaterials);
-    updateLocalStorage("readyProducts", updatedReadyProducts);
+    updateLocalStorage('rawMaterials', updatedRawMaterials);
+    updateLocalStorage('waste', updatedWaste); // Save waste to localStorage
+    updateLocalStorage('readyProducts', updatedReadyProducts);
 
-    setError("");
-    setSelectedBom("");
+    setError('');
+    setSelectedBom('');
     setOrderQuantity(1);
-    alert(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
+    toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
   };
-
   return (
     <React.Fragment>
       <div className="page-content">
@@ -178,38 +315,54 @@ function ProductionOrders() {
                     onChange={(e) => setBomForm({ ...bomForm, name: e.target.value })}
                   />
                 </FormGroup>
-                <h6>Materials</h6>
+                <h6 className='text-primary'>Materials</h6>
                 {bomForm.materials.map((material, index) => (
                   <div key={index} className="d-flex align-items-center mb-2">
-                    {/* <Input
-                      type="text"
-                      placeholder="Material"
-                      value={material.rawMaterial}
-                      onChange={(e) => handleBomFormChange(index, "rawMaterial", e.target.value)}
-                      className="me-2"
-                    /> */}
-                    <Input type="select" value={material.rawMaterial} onChange={(e) => handleBomFormChange(index, "rawMaterial", e.target.value)}>
-                      <option value="">Select Material</option>
-                      {rawMaterials.map((rm, idx) => (
-                        <option key={idx} value={rm.name}>
-                          {rm.name}
-                        </option>
-                      ))}
-                      {readyProducts.map((rp, idx) => (
-                        <option key={idx} value={rp.name}>
-                          {rp.name}
-                        </option>
-                      ))}
-                    </Input>
-                    <Input
-                      type="number"
-                      placeholder="Quantity"
-                      value={material.quantity}
-                      onChange={(e) => handleBomFormChange(index, "quantity", e.target.value)}
-                      className="me-2"
-                      min="1"
-                    />
-                    <Button color="danger" size="sm" onClick={() => removeMaterialField(index)}>Remove</Button>
+                    <Row className=' d-flex justify-content-evenly'>
+                      <Col md={4}>
+                        <Label for="rawMaterial">Material</Label>
+                        <Input type="select" value={material.rawMaterial} onChange={(e) => handleBomFormChange(index, "rawMaterial", e.target.value)}>
+                          <option value="">Select Material</option>
+                          {rawMaterials.map((rm, idx) => (
+                            <option key={idx} value={rm.name}>
+                              {rm.name}
+                            </option>
+                          ))}
+                          {readyProducts.map((rp, idx) => (
+                            <option key={idx} value={rp.name}>
+                              {rp.name}
+                            </option>
+                          ))}
+                        </Input>
+                        </Col>
+                        <Col md={4}>
+                        <Label for="quantity" className="ms-2">Quantity <span style={{fontSize:"8px"}}>From Stock</span> </Label>
+                        <Input
+                          type="number"
+                          placeholder="Quantity"
+                          value={material.quantity}
+                          onChange={(e) => handleBomFormChange(index, "quantity", e.target.value)}
+                          className="me-2"
+                          min="1"
+                        />
+                        </Col>
+                        <Col md={2}>
+                         <Label for="waste" className="ms-2">Wastage</Label>
+                          <Input 
+                            type="number"
+                            placeholder="Waste"
+                            value={material.waste}
+                            onChange={(e) => handleBomFormChange(index, "waste", e.target.value)}
+                            className="me-2"
+                            min="1"
+                          />
+                        </Col>
+                        
+                        <Col md={2} sm={12}  className="mt-2 d-flex align-items-center justify-content-center">
+                          <Button color="danger"   size="sm" onClick={() => removeMaterialField(index)}>Remove</Button>
+                         </Col>
+                  </Row>
+                    
                   </div>
                 ))}
                 <Button color="success" size="sm" onClick={addMaterialField}>Add Material</Button>

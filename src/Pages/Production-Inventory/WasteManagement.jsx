@@ -3,24 +3,9 @@ import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from "reactstrap";
 
 function WasteManagement() {
-  const [wasteData, setWasteData] = useState([
-    {
-      id: 1,
-      material: "Plastic",
-      quantity: "500 kg",
-      reason: "Defective production",
-      status: "Disposed",
-      note: "Recycled into secondary products",
-    },
-    {
-      id: 2,
-      material: "Metal Scrap",
-      quantity: "200 kg",
-      reason: "Overcut during manufacturing",
-      status: "Pending Disposal",
-      note: "Stored in warehouse for further processing",
-    },
-  ]);
+  const [wasteData, setWasteData] = useState(() => {
+    return JSON.parse(localStorage.getItem("waste")) || [];
+  });
 
   const [rawMaterials, setRawMaterials] = useState([]);
   const [modal, setModal] = useState(false);
@@ -33,10 +18,15 @@ function WasteManagement() {
   });
 
   useEffect(() => {
-    // Load raw materials from local storage
+    // Load raw materials from localStorage
     const materials = JSON.parse(localStorage.getItem("rawMaterials")) || [];
     setRawMaterials(materials);
   }, []);
+
+  useEffect(() => {
+    // Save wasteData to localStorage whenever it changes
+    localStorage.setItem("wasteData", JSON.stringify(wasteData));
+  }, [wasteData]);
 
   const toggleModal = () => {
     setModal(!modal);
@@ -53,13 +43,12 @@ function WasteManagement() {
       return;
     }
 
-    setWasteData([
-      ...wasteData,
-      {
-        id: Date.now(),
-        ...newWaste,
-      },
-    ]);
+    const newEntry = {
+      id: Date.now(),
+      ...newWaste,
+    };
+
+    setWasteData((prevData) => [...prevData, newEntry]);
     setNewWaste({
       material: "",
       quantity: "",
@@ -97,9 +86,9 @@ function WasteManagement() {
                     Track and manage waste generated during production processes.
                   </p>
 
-                  <Button color="primary" onClick={toggleModal}>
+                  {/* <Button color="primary" onClick={toggleModal}>
                     Add Waste Entry
-                  </Button>
+                  </Button> */}
 
                   {wasteData.length === 0 ? (
                     <div className="text-center mt-4">
@@ -123,7 +112,7 @@ function WasteManagement() {
                           {wasteData.map((item, index) => (
                             <tr key={item.id}>
                               <td>{index + 1}</td>
-                              <td>{item.material || "N/A"}</td>
+                              <td>{item.material || item.name || "N/A"}</td>
                               <td>{item.quantity || "N/A"}</td>
                               <td>{item.reason || "Not provided"}</td>
                               <td>{renderStatusBadge(item.status)}</td>
