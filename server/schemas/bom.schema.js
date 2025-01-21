@@ -14,7 +14,7 @@ const BOMSchema = new Schema({
   firmId: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }, 
   status: { type: String, enum: ['created', 'approved', 'in_progress', 'completed', 'cancelled'], default: 'created' },
-  notes: { type: String },
+  notes: [{ type: String }],
   deleted_at: { type: Date, default: null } 
 }, { timestamps: true });
 

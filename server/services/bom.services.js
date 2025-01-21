@@ -5,10 +5,11 @@ const User = require("../schemas/user.schema");
 
 const BomServices = {};
 
-// CREATE VENDOR
+// CREATE BOM
 BomServices.createbom = async (body) => {
-  const { productName, rawMaterials, wastagePercentage, firmId, createdBy } =
-    body;
+  const { productName, rawMaterials, wastagePercentage, firmId, createdBy } = body;
+
+  // Validate raw materials exist
   for (const material of rawMaterials) {
     const item = await InventoryItem.findById(material.itemId);
     if (!item) {
@@ -16,7 +17,7 @@ BomServices.createbom = async (body) => {
     }
   }
 
-  // Create BOM
+  // Create BOM (no stock adjustments here)
   const newBOM = new BOM({
     productName,
     rawMaterials,
@@ -69,45 +70,25 @@ BomServices.updatebom = async (id, body) => {
 };
 
 // Update BOM (excluding status changes)
-BomServices.updatebomStatus = async (id, body) => {
-    const { status, notes } = body;
-    const existingBOM = await BOM.findById(id);
-    if (!existingBOM) {
-        throw new Error('BOM not found');
-    }
+BomServices.updateBomStatus = async (bomId, data) => {
+  const { status, note } = data;
 
-    // Handle status updates specifically
-    if (status === 'in_progress') {
-        // Deduct raw materials from inventory
-        for (const material of existingBOM.rawMaterials) {
-            const inventoryItem = await InventoryItem.findById(material.itemId);
-            if (inventoryItem) {
-                const requiredQuantity = material.quantity;
-                if (inventoryItem.quantity < requiredQuantity) {
-                    throw new Error(`Insufficient stock for ${inventoryItem.name}. Required: ${requiredQuantity}, Available: ${inventoryItem.quantity}`);
-                }
-                inventoryItem.quantity -= requiredQuantity;
-                await inventoryItem.save();
-            }
-        }
-    } else if (status === 'cancelled') {
-        // Return raw materials to inventory
-        for (const material of existingBOM.rawMaterials) {
-            const inventoryItem = await InventoryItem.findById(material.itemId);
-            if (inventoryItem) {
-                const returnQuantity = material.quantity;
-                inventoryItem.quantity += returnQuantity;
-                await inventoryItem.save();
-            }
-        }
-    }
+  if (!status || !note) {
+    throw new Error("Both status and note are required.");
+  }
 
-    existingBOM.status = status || existingBOM.status;
-    existingBOM.notes = notes || existingBOM.notes;
-    await existingBOM.save();
+  const bom = await BOM.findById(bomId);
+  if (!bom) {
+    throw new Error("BOM not found.");
+  }
 
-    return existingBOM;
+  bom.status = status;
+  bom.notes.push(note); // Add the note to the array
+
+  const updatedBom = await bom.save();
+  return updatedBom;
 };
+
 
 // DELETE VENDOR
 BomServices.deletebom = async (bomId) => {
