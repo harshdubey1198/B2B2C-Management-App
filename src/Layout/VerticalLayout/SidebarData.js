@@ -182,7 +182,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Table", link: "/inventory-table" },
-        // { sublabel: "Table Form", link: "/add-inventory" },
+        // { sublabel: "Create Item", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         // { sublabel: "Item Config", link: "/item-configuration" },
@@ -275,7 +275,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-archive-outline",
       subItem: [
         {sublabel : "Inventory Table", link: "/inventory-table" },
-        {sublabel : "Table Form", link: "/add-inventory" },
+        {sublabel : "Create Item", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         {sublabel : "Table Taxation", link: "/table-taxation" },
         {sublabel : "Vendor Management", link: "/vendors/manage" },
@@ -379,7 +379,7 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-archive-outline",
       subItem: [
         { sublabel: "Inventory Management", link: "/inventory-table" },
-        { sublabel: "Table Form", link: "/add-inventory" },
+        { sublabel: "Create Item", link: "/add-inventory" },
         {sublabel : "Categories" ,link :"/manage-category"},
         { sublabel: "Table Taxation", link: "/table-taxation" },
         { sublabel: "Vendor Management", link: "/vendors/manage" },
