@@ -9,6 +9,7 @@ const ProductionOrderSchema = new Schema({
         {
             itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
             quantity: { type: Number, required: true }, 
+            wastageQuantity: { type: Number, default: 0},
         }
     ],
     wastage: { type: Number, default: 0 },
