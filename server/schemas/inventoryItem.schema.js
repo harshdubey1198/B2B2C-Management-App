@@ -36,15 +36,14 @@ const InventoryItemSchema = new Schema({
         sku: { type: String },
         barcode: { type: String }
     }],
-    batches: [
-        {
-            batchNumber: { type: String },
-            quantity: { type: Number },
-            manufacturingDate: { type: Date },
-            expiryDate: { type: Date },
-            serialNumbers: [String]
-        }
-    ],
+    // batches:{
+    //         batchNumber: { type: String },
+    //         quantity: { type: Number },
+    //         manufacturingDate: { type: Date },
+    //         expiryDate: { type: Date },
+    //         serialNumbers: [String]
+    //     }
+    // ,
     deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 

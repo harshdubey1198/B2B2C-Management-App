@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button } from "reactstrap";
+import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import axiosInstance from "../../utils/axiosInstance";
@@ -28,7 +28,7 @@ const InventoryItemForm = () => {
   // const toggleModal = () => setModal(!modal);
   const [subcategories, setSubcategories] = useState([]);
   const [vendors, setVendors] = useState([]);
-  const [formValues, setFormValues] = useState({name: "",description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",taxId:  "", selectedTaxTypes: [],});
+  const [formValues, setFormValues] = useState({name: "" , type:""  ,description: "",costPrice: "",sellingPrice: "",supplier: "",manufacturer: "",brand: "",ProductHsn: "",qtyType: "",categoryId: "",subcategoryId: "",vendorId: "",quantity: "",taxId:  "", selectedTaxTypes: [],});
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
   const [ tosendTaxtype, setToSendTaxtype] = useState([]);
@@ -36,7 +36,49 @@ const InventoryItemForm = () => {
   const [manufacturers, setManufacturers] = useState([]);
   const [triggerManufacturer, setTriggerManufacurer] = useState(0)
   const [triggerBrand, setTriggerBrand] = useState(0)
-  
+//   const [batches, setBatches] = useState({
+//     batchNumber: "",
+//     quantity: "",
+//     manufacturingDate: "",
+//     expiryDate: "",
+//     serialNumbers: "",
+//   });
+// console.log("batches",batches);
+//   const [batchModalOpen, setBatchModalOpen] = useState(false);
+
+//   const toggleBatchModal = () => {
+//     setBatchModalOpen(!batchModalOpen);
+//   };
+
+//   const handleBatchChange = (e) => {
+//     const { name, value } = e.target;
+//     setBatches((prevState) => ({
+//       ...prevState,
+//       [name]: value,
+//     }));
+//   };
+
+//   const addBatch = () => {
+//     if (
+//       batches.batchNumber &&
+//       batches.quantity &&
+//       batches.manufacturingDate &&
+//       batches.expiryDate &&
+//       batches.serialNumbers
+//     ) {
+//       // setBatches({
+//       //   batchNumber: "",
+//       //   quantity: "",
+//       //   manufacturingDate: "",
+//       //   expiryDate: "",
+//       //   serialNumbers: "",
+//       // });
+//       setBatchModalOpen(false);
+//     } else {
+//       toast.error("Please fill in all batch details");
+//     }
+//   };
+
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
@@ -45,7 +87,7 @@ const InventoryItemForm = () => {
   };
   
   const handleReset = () => {
-    setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
+    setFormValues({ name: "",type:"", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
   };
   useEffect(() => {
@@ -64,9 +106,16 @@ const InventoryItemForm = () => {
   const toggleBrandModal = () => {
     setModalOpen(!modalOpen);
   };
+ 
   const toggleManufacturerModal = () => {
     setModal(!modal);
 };
+
+ 
+
+
+      
+
   const handleRateChange = (e) => {
     const value = e.target.value;
     setFormValues((prevState) => {
@@ -259,9 +308,9 @@ const InventoryItemForm = () => {
       return;
     }
     try {
-      const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants });
-      setFormValues({ name: "", description: "", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", taxId: "" , selectedTaxTypes: [] });
-      setVariants([]);
+      const response = await axiosInstance.post(`${process.env.REACT_APP_URL}/inventory/create-item/${createdBy}`, { ...formValues, variants  });
+      setFormValues({ name: "", description: "",  type:"", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", taxId: "" , selectedTaxTypes: [] });
+      setVariants([]); 
       handleReset();
 
       toast.success(response.message);
@@ -379,32 +428,38 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
+
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="type">Type</Label>
+                          <select id="type" name="type" value={formValues.type} onChange={handleChange} className="form-control">
+                            <option value="">Select Type</option>
+                            <option value="raw_material">Raw Material</option>
+                            <option value="finished_good">Finished Good</option>
+                          </select>
+                        </FormGroup>
+                      </Col>
+                      
+                    </Row>
+                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="costPrice">Cost Price</Label>
                           <Input type="number" id="costPrice" name="costPrice" placeholder="Enter cost price" value={formValues.costPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                    </Row>
-                    <Row>
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="sellingPrice">Selling Price</Label>
                           <Input type="number" id="sellingPrice" name="sellingPrice" placeholder="Enter selling price" value={formValues.sellingPrice} onChange={handleChange} />
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="quantity">Quantity</Label>
-                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity" value={formValues.quantity} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
                     </Row>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="ProductHsn">HSN</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
+                          <Label htmlFor="quantity">Quantity</Label>
+                          <Input type="number" id="quantity" name="quantity" placeholder="Enter quantity" value={formValues.quantity} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                       <Col md={6}>
@@ -436,6 +491,12 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="ProductHsn">HSN</Label>
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
+                        </FormGroup>
+                      </Col>
                       {selectedTaxComponents.length > 0 && (
                       <div className="mt-3">
                         <h5>Selected Tax Components</h5>
@@ -449,17 +510,29 @@ const InventoryItemForm = () => {
                       </div>
                     )}
                     </Row>
+
+                    {/* <h3>Batch Details:</h3>
+                    <div style={{ border: "1px solid black", padding: "10px", marginTop: "10px" }}>
+                      <p><strong>Batch Number:</strong> {batches.batchNumber || "N/A"}</p>
+                      <p><strong>Quantity:</strong> {batches.quantity || "N/A"}</p>
+                      <p><strong>Manufacturing Date:</strong> {batches.manufacturingDate || "N/A"}</p>
+                      <p><strong>Expiry Date:</strong> {batches.expiryDate || "N/A"}</p>
+                      <p><strong>Serial Numbers:</strong> {batches.serialNumbers || "N/A"}</p>
+                    </div> */}
+
                     <VariantModal  isOpen={variantModalOpen} toggleModal={() => setVariantModalOpen(!variantModalOpen)}  variant={variant} handleVariantChange={handleVariantChange} addVariant={addOrUpdateVariant} />
                     <Row className="mt-3">
                       <Col md={12}>
                         <Button className="mx-2" color="primary" onClick={()=>{
                           setVariantModalOpen(true);
                         }}>Add Variant</Button>
+                        {/* <Button className="mx-2" color="primary" onClick={toggleBatchModal}>Add Batch</Button> */}
                         <Button className="mx-2" type="submit" color="success" disabled={loading}>{loading ? "Saving..." : "Submit"}</Button>
                         <Button className="mx-2" color="secondary" onClick={handleReset}>Reset</Button>
                       </Col>
                     </Row>
                   </form>
+              
                   {variants.length > 0 && (
                   <div className="mt-4">
                     <h5 className="font-size-15 mb-3">Variants</h5>
@@ -499,6 +572,70 @@ const InventoryItemForm = () => {
             </Col>
           </Row>
         </Container>
+        {/* <Modal isOpen={batchModalOpen} toggle={toggleBatchModal}>
+        <ModalHeader toggle={toggleBatchModal}>Add Batch</ModalHeader>
+        <ModalBody>
+          <FormGroup>
+            <Label htmlFor="batchNumber">Batch Number</Label>
+            <Input
+              type="text"
+              id="batchNumber"
+              name="batchNumber"
+              placeholder="Enter batch number"
+              value={batches.batchNumber}
+              onChange={handleBatchChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="quantity">Quantity</Label>
+            <Input
+              type="number"
+              id="quantity"
+              name="quantity"
+              placeholder="Enter quantity"
+              value={batches.quantity}
+              onChange={handleBatchChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="manufacturingDate">Manufacturing Date</Label>
+            <Input
+              type="date"
+              id="manufacturingDate"
+              name="manufacturingDate"
+              value={batches.manufacturingDate}
+              onChange={handleBatchChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="expiryDate">Expiry Date</Label>
+            <Input
+              type="date"
+              id="expiryDate"
+              name="expiryDate"
+              value={batches.expiryDate}
+              onChange={handleBatchChange}
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label htmlFor="serialNumbers">Serial Numbers</Label>
+            <Input
+              type="text"
+              id="serialNumbers"
+              name="serialNumbers"
+              placeholder="Enter serial numbers"
+              value={batches.serialNumbers}
+              onChange={handleBatchChange}
+            />
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="primary" onClick={addBatch}>
+            Add Batch
+          </Button>
+        </ModalFooter>
+      </Modal> */}
+        
         <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} setTriggerBrand={setTriggerBrand}/>
         <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} setTriggerManufacurer={setTriggerManufacurer}/>
 
