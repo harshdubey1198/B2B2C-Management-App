@@ -13,6 +13,21 @@ BomServices.createbom = async (body) => {
     if (!item) {
       throw new Error(`Raw material with ID ${material.itemId} not found`);
     }
+    
+    if (material.variants && material.variants.length > 0) {
+      for (const variant of material.variants) {
+        if (!variant.variantId) {
+          throw new Error(`Variant ID is required for a raw material with ID ${material.itemId}`);
+        }
+        if (!variant.quantity || variant.quantity <= 0) {
+          throw new Error(`Invalid quantity for variant ID ${variant.variantId}`);
+        }
+      }
+    } else {
+      if (!material.quantity || material.quantity <= 0) {
+        throw new Error(`Quantity is required for raw material with ID ${material.itemId} if no variants are provided`);
+      }
+    }
   }
 
   // Create BOM (no stock adjustments here)
