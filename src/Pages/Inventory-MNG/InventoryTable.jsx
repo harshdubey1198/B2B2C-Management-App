@@ -186,6 +186,14 @@ function InventoryTable() {
           breadcrumbItem="Inventory Table"
         />
 
+<div className="d-flex justify-content-end gap-2 mb-3">
+    <span className="badge table-row-red p-2 text-black" > Raw Material</span>
+    <span className="badge table-row-blue p-2 text-black"> Finished Goods</span>
+    <span className="badge table-row-yellow p-2 text-black"> Other</span>
+    <span className="badge bg-success p-2">Total Items: {inventoryData.length}</span>
+
+</div>
+
 {authuser.role === 'client_admin' ? (
   <FirmsTable handleViewDetails={handleViewDetails}/>
 ) : (
@@ -203,32 +211,65 @@ function InventoryTable() {
         </tr>
       </thead>
       <tbody>
-        {inventoryData.length > 0 ? (
-          inventoryData.map((item, index) => (
-            <tr key={index}>
-              <td>{item.name}</td>
-              <td>{item.description}</td>
-              <td>
-                {item.quantity} {item.qtyType}
-              </td>
-              <td>{item.brand?.name}</td>
-              <td>₹ {item.costPrice?.toFixed(2)}</td>
-              <td>₹ {item.sellingPrice?.toFixed(2)}</td>
-              <td>
-               
-                <i className="bx bx-show" style={{fontSize: "22px", fontWeight:"bold",cursor: "pointer" }} color="info"
-                  onClick={() => handleViewDetails(item)}></i>
-                <i className="bx bx-trash"  style={{fontSize: "22px", fontWeight:"bold", cursor: "pointer" , marginLeft:"5px"}} onClick={() => handleDeleteInventory(item)}></i>
+  {inventoryData.length > 0 ? (
+    inventoryData.map((item, index) => {
+      // Determine the row color based on item.type
+      const rowClass =
+        item.type === "raw_material"
+          ? "table-row-red"
+          : item.type === "finished_goods"
+          ? "table-row-blue"
+          : "table-row-yellow";
 
-              </td>
-            </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7">No inventory items found</td>
-          </tr>
-        )}
-      </tbody>
+      return (
+        <tr key={index} className={rowClass}>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.name}</td>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>
+            {item.quantity} {item.qtyType}
+          </td>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
+          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
+          <td>
+            {/* <i
+              className="bx bx-show"
+              style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+              color="info"
+              onClick={() => handleViewDetails(item)}
+            ></i> */}
+            
+            <i className="bx bx-edit"
+              style={{
+                fontSize: "22px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                marginLeft: "5px",
+              }}
+              onClick={() => handleViewDetails(item)}
+            ></i>
+            <i
+              className="bx bx-trash"
+              style={{
+                fontSize: "22px",
+                fontWeight: "bold",
+                cursor: "pointer",
+                marginLeft: "5px",
+              }}
+              onClick={() => handleDeleteInventory(item)}
+            ></i>
+
+          </td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="7">No inventory items found</td>
+    </tr>
+  )}
+</tbody>
+
     </Table>
   </div>
 )}

@@ -467,12 +467,13 @@ const InventoryItemForm = () => {
                           <Label htmlFor="qtyType">Quantity Type</Label>
                           <select id="qtyType" name="qtyType" value={formValues.qtyType} onChange={handleChange} className="form-control">
                             <option value="">Select Quantity Type</option>
-                            <option value="litres">Litres</option>
                             <option value="kg">Kilograms</option>
-                            <option value="packets">Packets</option>
-                            <option value="pieces">Pieces</option>
-                            <option value="single unit">Single Unit</option>
-                            <option value="gm">Grams</option>
+                            <option value="grams">Grams</option>
+                            <option value="pcs">Pieces</option>
+                            <option value="litre">Litre</option>
+                            <option value="meters">Meters</option>
+                            <option value="centimeters">Centimeters</option>
+                            <option value="feet">Feet</option>
                           </select>
                         </FormGroup>
                       </Col>

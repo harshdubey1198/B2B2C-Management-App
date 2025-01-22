@@ -140,6 +140,10 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
     const { bomId, quantity: existingQuantity } = existingOrder;
     // Handle quantity update
     if (quantity && quantity !== existingQuantity) {
+       
+        if (status !== 'created') {
+            throw new Error('Quantity can only be updated when the status is "created".');
+        }
         // Fetch BOM to calculate new raw materials
         const bom = await BOM.findById(bomId);
         if (!bom) {

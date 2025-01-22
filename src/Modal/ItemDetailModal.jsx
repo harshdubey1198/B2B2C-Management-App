@@ -42,7 +42,9 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
       <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
       <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
         {" "}
-        {selectedItem?.name} Details{" "}
+        {selectedItem?.name} Details{" "} 
+        { selectedItem?.type || " " .replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) }
+
       </ModalHeader>
       <ModalBody>
         {selectedItem && (
@@ -160,13 +162,14 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     className="form-control w-50"
                     readOnly
                   >
-                    <option value="">Select Unit Type</option>
-                    <option value="litres">Litres</option>
+                    <option value="">Select Quantity Type</option>
                     <option value="kg">Kilograms</option>
-                    <option value="packets">Packets</option>
-                    <option value="pieces">Pieces</option>
-                    <option value="single unit">Single Unit</option>
-                    <option value="gm">Grams</option>
+                    <option value="grams">Grams</option>
+                    <option value="pcs">Pieces</option>
+                    <option value="litre">Litre</option>
+                    <option value="meters">Meters</option>
+                    <option value="centimeters">Centimeters</option>
+                    <option value="feet">Feet</option>
                   </select>
                 </div>
               </Col>
@@ -299,25 +302,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
               </Col>
             </Row>
 
-            <Button
-              className="my-4"
-              color="primary"
-              onClick={() =>
-                updateItem({
-                  name: selectedItem.name,
-                  description: selectedItem.description,
-                  qtyType: selectedItem.qtyType,
-                  quantity: selectedItem.quantity,
-                  manufacturer: selectedItem.manufacturer,
-                  brand: selectedItem.brand,
-                  costPrice: selectedItem.costPrice,
-                  sellingPrice: selectedItem.sellingPrice,
-                  vendor:selectedItem.vendor
-                })
-              }
-            >
-              Update Item
-            </Button>
 
             <div className="table-responsive">
               <strong>Variants:</strong>
@@ -399,6 +383,25 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
               }}
             >
               Add Variant
+            </Button>
+            <Button
+              className="my-4 ml-2"
+              color="primary"
+              onClick={() =>
+                updateItem({
+                  name: selectedItem.name,
+                  description: selectedItem.description,
+                  qtyType: selectedItem.qtyType,
+                  quantity: selectedItem.quantity,
+                  manufacturer: selectedItem.manufacturer,
+                  brand: selectedItem.brand,
+                  costPrice: selectedItem.costPrice,
+                  sellingPrice: selectedItem.sellingPrice,
+                  vendor:selectedItem.vendor
+                })
+              }
+            >
+              Update Item
             </Button>
           </div>
         )}
