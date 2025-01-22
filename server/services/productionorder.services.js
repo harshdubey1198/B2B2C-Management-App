@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const ProductionOrder = require("../schemas/productionorder.shcema");
@@ -46,7 +47,9 @@ const ProductionOrderServices = {};
 // Create Production Order with Transaction
 ProductionOrderServices.createProductionOrder = async (body) => {
     const { bomId, quantity, firmId, createdBy } = body;
-
+    if (!bomId || !quantity || !firmId || !createdBy) {
+        throw new Error("Missing required fields: bomId, quantity, firmId, or createdBy");
+    }
     const session = await mongoose.startSession();
     session.startTransaction();
 
