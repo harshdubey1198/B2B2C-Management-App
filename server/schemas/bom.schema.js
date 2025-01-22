@@ -6,14 +6,9 @@ const BOMSchema = new Schema({
   rawMaterials: [
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
-      variants: [
-        {
-          variantId: { type: String, },          
-          optionLabel: { type: String }, 
-          quantity: { type: Number, },        
-        }
-      ],
-    }
+      quantity: { type: Number, required: true },
+      wasteQuantity : { type: Number },
+    } //old schema
   ],
   wastagePercentage: { type: Number, default: 0 },
   firmId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
@@ -27,4 +22,6 @@ const BOMSchema = new Schema({
   deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 
-module.exports = mongoose.model('BOM', BOMSchema);
+const BOM = mongoose.model('BOM', BOMSchema);
+module.exports = BOM
+ 
