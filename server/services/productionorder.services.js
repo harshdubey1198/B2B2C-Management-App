@@ -139,8 +139,9 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
         const existingOrder = await ProductionOrder.findById(id).populate('bomId').session(session);
         if (!existingOrder) {
             throw new Error('Production Order not found');
-        }
-
+        } 
+ 
+        
         const { bomId, quantity: existingQuantity } = existingOrder;
 
         // Ensure status allows updates
