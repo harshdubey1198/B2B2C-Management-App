@@ -22,7 +22,7 @@ const CategoryManager = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showOnlyParents, setShowOnlyParents] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [categoriesPerPage] = useState(5);
+  const [categoriesPerPage] = useState(7);
 
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const config = { headers: { Authorization: `Bearer ${token}` } };

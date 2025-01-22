@@ -6,6 +6,7 @@ const BOMSchema = new Schema({
   rawMaterials: [
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
+      quantity:{type : Number},
       variants: [
         {
           variantId: { type: String, },          
