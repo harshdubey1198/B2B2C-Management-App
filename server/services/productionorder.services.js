@@ -1,46 +1,98 @@
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const ProductionOrder = require("../schemas/productionorder.shcema");
-const { calculateRawMaterials, generateProductionOrderNumber } = require("../utils/productionorderutility");
+const { calculateRawMaterials, generateProductionOrderNumber, deductRawMaterials, validateRawMaterials } = require("../utils/productionorderutility");
 
 const ProductionOrderServices = {};
 
+// ProductionOrderServices.createProductionOrder = async (body) => {
+//     const { bomId, quantity, firmId, createdBy } = body;
+
+//     const bom = await BOM.findById(bomId);
+//     if (!bom) throw new Error('BOM not found');
+
+//     // Validate raw materials
+//     for (const material of bom.rawMaterials) {
+//         const inventoryItem = await InventoryItem.findById(material.itemId);
+//         if (!inventoryItem) {
+//             throw new Error(`Raw material with ID ${material.itemId} not found`);
+//         }
+//         const requiredQuantity = material.quantity * quantity;
+//         if (inventoryItem.quantity < requiredQuantity) {
+//             throw new Error(`Insufficient stock for ${inventoryItem.name}. Required: ${requiredQuantity}, Available: ${inventoryItem.quantity}`);
+//         }
+//     }
+
+//     // Calculate total raw material requirements
+//     const rawMaterials = calculateRawMaterials(bom, quantity);
+
+//     // Generate production order number
+//     const productionOrderNumber = await generateProductionOrderNumber(firmId);
+
+//     const newProductionOrder = new ProductionOrder({
+//         productionOrderNumber,
+//         bomId,
+//         quantity,
+//         rawMaterials,
+//         firmId,
+//         createdBy,
+//         status: 'created',
+//     });
+
+//     await newProductionOrder.save();
+//     return newProductionOrder;
+// };
+
+// Create Production Order with Transaction
 ProductionOrderServices.createProductionOrder = async (body) => {
     const { bomId, quantity, firmId, createdBy } = body;
 
-    const bom = await BOM.findById(bomId);
-    if (!bom) throw new Error('BOM not found');
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    // Validate raw materials
-    for (const material of bom.rawMaterials) {
-        const inventoryItem = await InventoryItem.findById(material.itemId);
-        if (!inventoryItem) {
-            throw new Error(`Raw material with ID ${material.itemId} not found`);
+    try {
+        // Fetch BOM
+        const bom = await BOM.findById(bomId).session(session);
+        if (!bom) {
+            throw new Error("BOM not found.");
         }
-        const requiredQuantity = material.quantity * quantity;
-        if (inventoryItem.quantity < requiredQuantity) {
-            throw new Error(`Insufficient stock for ${inventoryItem.name}. Required: ${requiredQuantity}, Available: ${inventoryItem.quantity}`);
-        }
+
+        // Calculate raw materials
+        const rawMaterials = calculateRawMaterials(bom, quantity);
+
+        // Validate raw materials
+        await validateRawMaterials(rawMaterials, session);
+
+        // Deduct raw materials from inventory
+        await deductRawMaterials(rawMaterials, session);
+
+        // Generate production order number
+        const productionOrderNumber = await generateProductionOrderNumber(firmId);
+
+        // Create production order
+        const productionOrderData = {
+            productionOrderNumber,
+            bomId,
+            quantity,
+            rawMaterials,
+            firmId,
+            createdBy,
+            status: "created",
+        };
+
+        const newProductionOrder = await ProductionOrder.create([productionOrderData], { session });
+
+        // Commit transaction
+        await session.commitTransaction();
+        session.endSession();
+
+        return newProductionOrder;
+    } catch (error) {
+        // Rollback transaction
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
     }
-
-    // Calculate total raw material requirements
-    const rawMaterials = calculateRawMaterials(bom, quantity);
-
-    // Generate production order number
-    const productionOrderNumber = await generateProductionOrderNumber(firmId);
-
-    const newProductionOrder = new ProductionOrder({
-        productionOrderNumber,
-        bomId,
-        quantity,
-        rawMaterials,
-        firmId,
-        createdBy,
-        status: 'created',
-    });
-
-    await newProductionOrder.save();
-    return newProductionOrder;
 };
 
 ProductionOrderServices.getProductionOrders = async (body) => {

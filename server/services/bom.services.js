@@ -1,7 +1,5 @@
 const BOM = require("../schemas/bom.schema");
-// const bom = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
-const User = require("../schemas/user.schema");
 
 const BomServices = {};
 
@@ -88,7 +86,6 @@ BomServices.updateBomStatus = async (bomId, data) => {
   const updatedBom = await bom.save();
   return updatedBom;
 };
-
 
 // DELETE VENDOR
 BomServices.deletebom = async (bomId) => {
