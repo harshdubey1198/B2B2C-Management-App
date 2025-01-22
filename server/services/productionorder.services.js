@@ -131,42 +131,51 @@ ProductionOrderServices.getProductionOrderById = async (id) => {
 ProductionOrderServices.updateProductionOrder = async (id, body) => {
     const { quantity, ...otherFields } = body;
 
-    // Find the existing production order
-    const existingOrder = await ProductionOrder.findById(id).populate('bomId');
-    if (!existingOrder) {
-        throw new Error('Production Order not found');
-    }
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    const { bomId, quantity: existingQuantity } = existingOrder;
-    // Handle quantity update
-    if (quantity && quantity !== existingQuantity) {
-       
-        if (status !== 'created') {
+    try {
+        // Find the existing production order
+        const existingOrder = await ProductionOrder.findById(id).populate('bomId').session(session);
+        if (!existingOrder) {
+            throw new Error('Production Order not found');
+        }
+
+        const { bomId, quantity: existingQuantity } = existingOrder;
+
+        // Ensure status allows updates
+        if (existingOrder.status !== 'created') {
             throw new Error('Quantity can only be updated when the status is "created".');
         }
-        // Fetch BOM to calculate new raw materials
-        const bom = await BOM.findById(bomId);
+
+        // Fetch BOM
+        const bom = await BOM.findById(bomId).session(session);
         if (!bom) {
             throw new Error('BOM not found');
         }
 
-        // Calculate new raw materials
+        // Calculate raw materials for the new quantity
         const newRawMaterials = calculateRawMaterials(bom, quantity);
 
-        // Validate and adjust inventory
+        // Adjust inventory for each raw material
         for (const newMaterial of newRawMaterials) {
-            const inventoryItem = await InventoryItem.findById(newMaterial.itemId);
+            const inventoryItem = await InventoryItem.findById(newMaterial.itemId).session(session);
             if (!inventoryItem) {
                 throw new Error(`Raw material with ID ${newMaterial.itemId} not found`);
             }
-            // Find the corresponding existing material
+
+            // Find corresponding existing material
             const existingMaterial = existingOrder.rawMaterials.find(
-                (rm) => String(rm.itemId) === String(newMaterial.itemId)
+                (rm) => String(rm.itemId._id || rm.itemId) === String(newMaterial.itemId)
             );
-            // Calculate the difference in quantity
-            const difference = newMaterial.quantity - (existingMaterial?.quantity || 0);
+
+            const previouslyDeducted = existingMaterial?.quantity || 0;
+            const newRequiredQuantity = newMaterial.quantity;
+
+            // Adjust inventory
+            const difference = newRequiredQuantity - previouslyDeducted;
             if (difference > 0) {
-                // Deduct additional raw materials
+                // Deduct additional quantity
                 if (inventoryItem.quantity < difference) {
                     throw new Error(
                         `Insufficient stock for ${inventoryItem.name}. Required: ${difference}, Available: ${inventoryItem.quantity}`
@@ -174,28 +183,119 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
                 }
                 inventoryItem.quantity -= difference;
             } else if (difference < 0) {
-                // Return excess raw materials
+                // Return excess quantity
                 inventoryItem.quantity += Math.abs(difference);
             }
-            // Save updated inventory
+
             await inventoryItem.save();
         }
-        // Update the rawMaterials array in the production order
+
+        // Update rawMaterials in the production order
         otherFields.rawMaterials = newRawMaterials;
+
+        // Update the production order
+        const updatedOrder = await ProductionOrder.findOneAndUpdate(
+            { _id: id },
+            { ...otherFields, quantity },
+            { new: true, session }
+        )
+            .populate('bomId', 'productName')
+            .populate('rawMaterials.itemId', 'name');
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return updatedOrder;
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
     }
-   
-    // Update the production order
-    const updatedOrder = await ProductionOrder.findOneAndUpdate(
-        { _id: id },
-        { ...otherFields, quantity },
-        { new: true }
-    )
-        .populate('bomId', 'productName')
-        .populate('rawMaterials.itemId', 'name')
-        .populate('firmId', 'email companyTitle')
-        .populate('createdBy', 'firstName lastName email');
-    return updatedOrder;
 };
+
+
+
+// ProductionOrderServices.updateProductionOrder = async (id, body) => {
+//     const { quantity, ...otherFields } = body;
+
+//     // Find the existing production order
+//     const existingOrder = await ProductionOrder.findById(id).populate('bomId');
+//     if (!existingOrder) {
+//         throw new Error('Production Order not found');
+//     }
+
+//     const { bomId, quantity: existingQuantity } = existingOrder;
+
+//     // Handle quantity update
+//     if (quantity && quantity !== existingQuantity) {
+//         if (existingOrder.status !== 'created') {
+//             throw new Error('Quantity can only be updated when the status is "created".');
+//         }
+
+//         // Fetch BOM to calculate raw materials
+//         const bom = await BOM.findById(bomId);
+//         if (!bom) {
+//             throw new Error('BOM not found');
+//         }
+
+//         // Calculate new raw materials required
+//         const newRawMaterials = calculateRawMaterials(bom, quantity);
+
+//         // Calculate existing raw materials (already deducted)
+//         const existingRawMaterials = calculateRawMaterials(bom, existingQuantity);
+
+//         // Validate and adjust inventory for the delta
+//         for (const newMaterial of newRawMaterials) {
+//             const inventoryItem = await InventoryItem.findById(newMaterial.itemId);
+//             if (!inventoryItem) {
+//                 throw new Error(`Raw material with ID ${newMaterial.itemId} not found`);
+//             }
+
+//             // Find the corresponding existing material
+//             const existingMaterial = existingRawMaterials.find(
+//                 (rm) => String(rm.itemId) === String(newMaterial.itemId)
+//             );
+
+//             // Calculate the difference in quantity
+//             const deltaQuantity = newMaterial.quantity - (existingMaterial?.quantity || 0);
+
+//             if (deltaQuantity > 0) {
+//                 // Deduct additional quantity from inventory
+//                 if (inventoryItem.quantity < deltaQuantity) {
+//                     throw new Error(
+//                         `Insufficient stock for ${inventoryItem.name}. Required: ${deltaQuantity}, Available: ${inventoryItem.quantity}`
+//                     );
+//                 }
+//                 inventoryItem.quantity -= deltaQuantity;
+//                 console.log(`Deducted ${deltaQuantity} from inventory.`);
+//             } else if (deltaQuantity < 0) {
+//                 // Add excess quantity back to inventory
+//                 inventoryItem.quantity += Math.abs(deltaQuantity);
+//                 console.log(`Returned ${Math.abs(deltaQuantity)} to inventory.`);
+//             }
+
+//             // Save updated inventory
+//             await inventoryItem.save();
+//             console.log(`Inventory updated: ${inventoryItem.name}, New Quantity: ${inventoryItem.quantity}`);
+//         }
+
+//         // Update the rawMaterials array in the production order
+//         otherFields.rawMaterials = newRawMaterials;
+//     }
+
+//     // Update the production order
+//     const updatedOrder = await ProductionOrder.findOneAndUpdate(
+//         { _id: id },
+//         { ...otherFields, quantity },
+//         { new: true }
+//     )
+//         .populate('bomId', 'productName')
+//         .populate('rawMaterials.itemId', 'name')
+//         .populate('firmId', 'email companyTitle')
+//         .populate('createdBy', 'firstName lastName email');
+//     return updatedOrder;
+// };
+
 
 // UPDATE STATUS 
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
