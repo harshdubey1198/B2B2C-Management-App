@@ -28,4 +28,6 @@ const BOMSchema = new Schema({
   deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 
-module.exports = mongoose.model('BOM', BOMSchema);
+const BOM = mongoose.model('BOM', BOMSchema);
+module.exports = BOM
+ 
