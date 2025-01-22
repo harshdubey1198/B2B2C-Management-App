@@ -12,6 +12,8 @@ function InventoryTable() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
   const [variant, setVariant] = useState({
     variationType: "",
     optionLabel: "",
@@ -20,6 +22,14 @@ function InventoryTable() {
     sku: "",
     barcode: "",
   });
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = inventoryData.slice(indexOfFirstItem, indexOfLastItem);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(inventoryData.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
   const [variantIndex, setVariantIndex] = useState(null);
   const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
@@ -211,9 +221,8 @@ function InventoryTable() {
         </tr>
       </thead>
       <tbody>
-  {inventoryData.length > 0 ? (
-    inventoryData.map((item, index) => {
-      // Determine the row color based on item.type
+    {currentItems.length > 0 ? (
+      currentItems.map((item, index) => {
       const rowClass =
         item.type === "raw_material"
           ? "table-row-red"
@@ -231,34 +240,25 @@ function InventoryTable() {
           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
           <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
           <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
-          <td>
-            {/* <i
-              className="bx bx-show"
-              style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-              color="info"
-              onClick={() => handleViewDetails(item)}
-            ></i> */}
-            
-            <i className="bx bx-edit"
-              style={{
-                fontSize: "22px",
-                fontWeight: "bold",
-                cursor: "pointer",
-                marginLeft: "5px",
-              }}
-              onClick={() => handleViewDetails(item)}
-            ></i>
-            <i
-              className="bx bx-trash"
-              style={{
-                fontSize: "22px",
-                fontWeight: "bold",
-                cursor: "pointer",
-                marginLeft: "5px",
-              }}
-              onClick={() => handleDeleteInventory(item)}
-            ></i>
-
+          <td><i className="bx bx-edit"
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  marginLeft: "5px",
+                }}
+                onClick={() => handleViewDetails(item)}
+              ></i>
+              <i
+                className="bx bx-trash"
+                style={{
+                  fontSize: "22px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  marginLeft: "5px",
+                }}
+                onClick={() => handleDeleteInventory(item)}
+              ></i>
           </td>
         </tr>
       );
@@ -273,19 +273,26 @@ function InventoryTable() {
     </Table>
   </div>
 )}
-    <ItemDetailModal
-      setVariantIndex={setVariantIndex}
-      setVariant={setVariant}
-      setVariantModalOpen={setVariantModalOpen}
-      setSelectedItem={setSelectedItem}
-      deleteVariant={deleteVariant}
-      updateItem={updateItem}
-      handleEditVariant={handleEditVariant}
-      modalOpen={modalOpen}
-      setModalOpen={setModalOpen}
-      selectedItem={selectedItem} 
-      firmId={firmId}
-    />
+    <div className="pagination-controls d-flex gap-2 mt-2">
+      {pageNumbers.map(number => (
+        <Button key={number} onClick={() => paginate(number)}>
+          {number}
+        </Button>
+      ))}
+    </div>
+        <ItemDetailModal
+          setVariantIndex={setVariantIndex}
+          setVariant={setVariant}
+          setVariantModalOpen={setVariantModalOpen}
+          setSelectedItem={setSelectedItem}
+          deleteVariant={deleteVariant}
+          updateItem={updateItem}
+          handleEditVariant={handleEditVariant}
+          modalOpen={modalOpen}
+          setModalOpen={setModalOpen}
+          selectedItem={selectedItem} 
+          firmId={firmId}
+        />
 
         <VariantModal
           isOpen={variantModalOpen}
