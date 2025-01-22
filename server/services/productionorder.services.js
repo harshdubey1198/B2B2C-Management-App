@@ -98,6 +98,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     }
 };
 
+// GET PRODUCTIONS
 ProductionOrderServices.getProductionOrders = async (body) => {
     const { firmId } = body;
     const data = await ProductionOrder.find({ firmId: firmId, deleted_at: null })
@@ -112,7 +113,7 @@ ProductionOrderServices.getProductionOrders = async (body) => {
     return data;
 }
 
-
+// GET PRODUCTION BY ID
 ProductionOrderServices.getProductionOrderById = async (id) => {
     const data = await ProductionOrder.find({ _id: id, deleted_at: null })
       .populate('bomId', 'productName')
@@ -126,6 +127,7 @@ ProductionOrderServices.getProductionOrderById = async (id) => {
     return data;
 }
 
+// UPDATE PRODUCTION ORDER
 ProductionOrderServices.updateProductionOrder = async (id, body) => {
     const { quantity, ...otherFields } = body;
 
@@ -191,8 +193,7 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
     return updatedOrder;
 };
 
-
-
+// UPDATE STATUS 
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
     const { status, notes } = body;
 
@@ -249,7 +250,5 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
 
     return order;
 };
-
-
 
 module.exports = ProductionOrderServices;
