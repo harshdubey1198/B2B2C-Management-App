@@ -24,6 +24,11 @@ const calculateRawMaterials = (bom, productionQuantity) => {
     return bom.rawMaterials.map(material => ({
         itemId: material.itemId,
         quantity: material.quantity * productionQuantity,
+        variants: material.variants.map((variant) => ({
+            variantId: variant.variantId,
+            optionLabel: variant.optionLabel,
+            quantity: variant.quantity * productionQuantity
+        }))
     }));
 };
 
@@ -34,24 +39,63 @@ const validateRawMaterials = async (rawMaterials, session) => {
         if (!inventoryItem) {
             throw new Error(`Raw material with ID ${material.itemId} not found.`);
         }
-        if (inventoryItem.quantity < material.quantity) {
+
+        let totalQuantityRequired = material.quantity;
+        for (const variant of material.variants) {
+            const matchingVariant = inventoryItem.variants.find((v) => v._id.toString() === variant.variantId.toString());
+            if (!matchingVariant) {
+                throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}.`);
+            }
+            if (matchingVariant.stock < variant.quantity) {
+                throw new Error(`Insufficient stock for variant ${variant.optionLabel}. Required: ${variant.quantity}, Available: ${matchingVariant.stock}`);
+            }
+            totalQuantityRequired -= variant.quantity;
+        }
+        if (inventoryItem.quantity < totalQuantityRequired) {
             throw new Error(
-                `Insufficient stock for ${inventoryItem.name}. Required: ${material.quantity}, Available: ${inventoryItem.quantity}`
+                `Insufficient stock for ${inventoryItem.name}. Required: ${totalQuantityRequired}, Available: ${inventoryItem.quantity}`
             );
         }
     }
 };
 
-// Deduct raw materials
 const deductRawMaterials = async (rawMaterials, session) => {
     for (const material of rawMaterials) {
-        await InventoryItem.findByIdAndUpdate(
-            material.itemId,
-            { $inc: { quantity: -material.quantity } },
-            { session }
-        );
+        const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
+        if (!inventoryItem) {
+            throw new Error(`Item with ID ${material.itemId} not found.`);
+        }
+
+        if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+            for (const variant of material.variants) {
+                await InventoryItem.updateOne(
+                    { _id: material.itemId, "variants._id": variant.variantId },
+                    { $inc: { "variants.$.stock": -variant.quantity } },
+                    { session }
+                );
+            }
+
+            const updatedItem = await InventoryItem.findById(material.itemId).session(session);
+            const totalVariantStock = updatedItem.variants.reduce(
+                (sum, variant) => sum + variant.stock,
+                0
+            );
+
+            await InventoryItem.findByIdAndUpdate(
+                material.itemId,
+                { quantity: totalVariantStock },
+                { session }
+            );
+        } else {
+            await InventoryItem.findByIdAndUpdate(
+                material.itemId,
+                { $inc: { quantity: -material.quantity } },
+                { session }
+            );
+        }
     }
 };
+
 
 // Export all utility functions
 module.exports = {

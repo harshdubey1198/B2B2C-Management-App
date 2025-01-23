@@ -88,7 +88,6 @@ ProductionOrderServices.createProductionOrder = async (body) => {
         // Commit transaction
         await session.commitTransaction();
         session.endSession();
-
         return newProductionOrder;
     } catch (error) {
         // Rollback transaction
