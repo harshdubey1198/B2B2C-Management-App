@@ -11,7 +11,8 @@ const BOMSchema = new Schema({
         {
           variantId: { type: String, },          
           optionLabel: { type: String }, 
-          quantity: { type: Number, },        
+          quantity: { type: Number, }, 
+          waste: { type: String, },       
         }
       ],
     }
