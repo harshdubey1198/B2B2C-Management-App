@@ -315,60 +315,71 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
 
 // UPDATE STATUS 
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
-    const { status, notes } = body;
-
-    // Fetch the production order
-    const order = await ProductionOrder.findById(id).populate('rawMaterials.itemId');
-    if (!order) {
-        throw new Error('Production Order not found');
-    }
-
-    // Validate the status transition
-    const allowedTransitions = {
-        created: ['in_progress', 'cancelled'],
-        in_progress: ['completed', 'cancelled'],
-        completed: [],
-        cancelled: []
-    };
-
-    if (!allowedTransitions[order.status].includes(status)) {
-        throw new Error(`Invalid status transition from ${order.status} to ${status}`);
-    }
-
-    // Handle inventory adjustments
-    if (status === 'in_progress') {
-        // Deduct raw materials from inventory
-        for (const material of order.rawMaterials) {
-            const inventoryItem = await InventoryItem.findById(material.itemId);
-            if (!inventoryItem) {
-                throw new Error(`Raw material with ID ${material.itemId} not found`);
-            }
-            if (inventoryItem.quantity < material.quantity) {
-                throw new Error(
-                    `Insufficient stock for ${inventoryItem.name}. Required: ${material.quantity}, Available: ${inventoryItem.quantity}`
-                );
-            }
-            inventoryItem.quantity -= material.quantity;
-            await inventoryItem.save();
+    const session = await mongoose.startSession();
+    session.startTransaction(); 
+    try {
+        const { status, notes } = body;
+        const order = await ProductionOrder.findById(id)
+            .populate('rawMaterials.itemId')
+            .session(session);
+        if (!order) {
+            throw new Error('Production Order not found');
         }
-    } else if (status === 'cancelled') {
-        // Return raw materials to inventory
-        for (const material of order.rawMaterials) {
-            const inventoryItem = await InventoryItem.findById(material.itemId);
-            if (!inventoryItem) {
-                throw new Error(`Raw material with ID ${material.itemId} not found`);
-            }
-            inventoryItem.quantity += material.quantity;
-            await inventoryItem.save();
+
+        const allowedTransitions = {
+            created: ['in_progress', 'cancelled'],
+            in_progress: ['completed', 'cancelled'],
+            completed: [],
+            cancelled: []
+        };
+
+        if (!allowedTransitions[order.status].includes(status)) {
+            throw new Error(`Invalid status transition from ${order.status} to ${status}`);
         }
+
+        if (status === 'cancelled') {
+            for (const material of order.rawMaterials) {
+                const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
+                if (!inventoryItem) {
+                    throw new Error(`Raw material with ID ${material.itemId} not found`);
+                }
+
+                if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+                    for (const variant of material.variants) {
+                        const variantIndex = inventoryItem.variants.findIndex(
+                            v => v._id.toString() === variant.variantId
+                        );
+                        if (variantIndex === -1) {
+                            throw new Error(
+                                `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
+                            );
+                        }
+                        inventoryItem.variants[variantIndex].stock += variant.quantity;
+                    }
+                    inventoryItem.quantity = inventoryItem.variants.reduce(
+                        (total, variant) => total + variant.stock,
+                        0
+                    );
+                } else {
+                    inventoryItem.quantity += material.quantity;
+                }
+                await inventoryItem.save({ session });
+            }
+        }
+
+        order.status = status;
+        order.notes = notes || order.notes;
+        await order.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
+
+        return order;
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        throw error;
     }
-
-    // Update the production order status and notes
-    order.status = status;
-    order.notes = notes || order.notes;
-    await order.save();
-
-    return order;
 };
 
 module.exports = ProductionOrderServices;
