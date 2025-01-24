@@ -7,12 +7,14 @@ const BOMSchema = new Schema({
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
       quantity:{type : Number},
+      wastagePercentage: { type: Number, default: 0 },
       variants: [
         {
           variantId: { type: String, },          
           optionLabel: { type: String }, 
           quantity: { type: Number, }, 
-          waste: { type: String, },       
+          waste: { type: String, }, 
+          wastagePercentage: { type: Number, default: 0 }      
         }
       ],
     }

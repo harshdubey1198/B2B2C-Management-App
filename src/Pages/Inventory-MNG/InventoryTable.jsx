@@ -334,7 +334,7 @@ function InventoryTable() {
 )}
     <div className="pagination-controls d-flex gap-2 mt-2">
       {pageNumbers.map(number => (
-        <Button key={number} onClick={() => paginate(number)}>
+        <Button key={number} onClick={() => paginate(number)} className={currentPage === number ? "btn-primary" : "btn-secondary"}>
           {number}
         </Button>
       ))}
