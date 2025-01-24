@@ -6,14 +6,18 @@ import VariantModal from "./VariantModal";
 import FirmsTable from "../../components/InventoryComponents/firmsTable";
 import axiosInstance from "../../utils/axiosInstance";
 import ItemDetailModal from "../../Modal/ItemDetailModal";
+import { useNavigate } from "react-router-dom";
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
+  const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  // const [itemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [variant, setVariant] = useState({
     variationType: "",
     optionLabel: "",
@@ -30,6 +34,21 @@ function InventoryTable() {
   for (let i = 1; i <= Math.ceil(inventoryData.length / itemsPerPage); i++) {
     pageNumbers.push(i);
   }
+  const handleItemsPerPageChange = (e) => {
+    const value = parseInt(e.target.value, 10);
+    setItemsPerPage(value);
+    setCurrentPage(1); // Reset to the first page when items per page change
+  };
+
+  const handleCustomItemsPerPage = () => {
+    const value = parseInt(customItemsPerPage, 10);
+    if (!isNaN(value) && value > 0) {
+      setItemsPerPage(value);
+      setCurrentPage(1); // Reset to the first page when items per page change
+    } else {
+      toast.error("Please enter a valid number of items per page.");
+    }
+  };
   const [variantIndex, setVariantIndex] = useState(null);
   const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
@@ -77,6 +96,11 @@ function InventoryTable() {
       console.error("Error deleting Inventory:", error);
     }
   };
+
+  const handleAddItemPage = () => {
+    navigate("/add-inventory");
+  };
+
 
   const addOrUpdateVariant = async () => {
     if (
@@ -196,13 +220,48 @@ function InventoryTable() {
           breadcrumbItem="Inventory Table"
         />
 
-<div className="d-flex justify-content-end gap-2 mb-3">
-    <span className="badge table-row-red p-2 text-black" > Raw Material</span>
-    <span className="badge table-row-blue p-2 text-black"> Finished Goods</span>
-    <span className="badge table-row-yellow p-2 text-black"> Other</span>
-    <span className="badge bg-success p-2">Total Items: {inventoryData.length}</span>
+      <div className="d-flex justify-content-end gap-2 mb-3">
+          <div className="d-flex align-items-center gap-2">
+          <label htmlFor="itemsPerPageSelect">Items per page:</label>
+                <select
+                  id="itemsPerPageSelect"
+                  className="form-select"
+                  style={{ width: "auto" ,maxHeight:"33px"}}
+                  onChange={handleItemsPerPageChange}
+                >
+                  <option value="5">5</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="70">70</option>
+                  <option value="100">100</option>
+                </select>
 
-</div>
+                <label htmlFor="customItemsInput">Or enter custom:</label>
+                <input
+                  id="customItemsInput"
+                  type="number"
+                  min="1"
+                  value={customItemsPerPage}
+                  onChange={(e) => setCustomItemsPerPage(e.target.value)}
+                  className="form-control"
+                  style={{ width: "100px",maxHeight:"33px" }} 
+                />
+                <Button color="primary" onClick={handleCustomItemsPerPage}>
+                  Set
+                </Button>
+            </div>
+
+          <Button color="primary" className="p-2 text-black" style={{fontSize:"10.5px"}} onClick={handleAddItemPage}> Add Item </Button>
+          <span className="badge table-row-red p-2 text-black d-flex align-items-center" > Raw Material</span>
+          <span className="badge table-row-blue p-2 text-black d-flex align-items-center"> Finished Goods</span>
+          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center"> Other</span>
+          <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
+      </div>
+
+        {/* <div className="d-flex align-items-center gap-3 mb-3">
+       
+        </div> */}
+
 
 {authuser.role === 'client_admin' ? (
   <FirmsTable handleViewDetails={handleViewDetails}/>
