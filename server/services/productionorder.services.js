@@ -12,6 +12,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     if (!bomId || !quantity || !firmId || !createdBy) {
         throw new Error("Missing required fields: bomId, quantity, firmId, or createdBy");
     }
+
     const session = await mongoose.startSession();
     session.startTransaction();
 
@@ -21,18 +22,46 @@ ProductionOrderServices.createProductionOrder = async (body) => {
         if (!bom) {
             throw new Error("BOM not found.");
         }
+        // console.log("Fetched BOM:", JSON.stringify(bom, null, 2));
 
         // Calculate raw materials
         const rawMaterials = calculateRawMaterials(bom, quantity);
+        console.log("Calculated Raw Materials:", JSON.stringify(rawMaterials, null, 2));
+
+        let totalWastage = [];
+        let adjustedProductionQuantity = quantity;
+
+        // Calculate wastage and adjust production quantity
+        for (const material of rawMaterials) {
+            totalWastage.push({
+                itemId: material.itemId,
+                wasteQuantity: material.wastageQuantity, // Correct wastage value
+                reason: "Production wastage",
+            });
+        
+            for (const variant of material.variants) {
+                totalWastage.push({
+                    itemId: material.itemId,
+                    wasteQuantity: variant.wastageQuantity, // Variant wastage value
+                    reason: `Variant ${variant.optionLabel} wastage`,
+                });
+            }
+        }
+        console.log("Total Wastage for WasteManagement:", JSON.stringify(totalWastage, null, 2));
+        
+        console.log("Total Wastage for WasteManagement:", JSON.stringify(totalWastage, null, 2));
 
         // Validate raw materials
         await validateRawMaterials(rawMaterials, session);
+        // console.log("Raw materials validation passed.");
 
         // Deduct raw materials from inventory
         await deductRawMaterials(rawMaterials, session);
+        // console.log("Raw materials deducted from inventory.");
 
         // Generate production order number
         const productionOrderNumber = await generateProductionOrderNumber(firmId);
+        // console.log("Generated Production Order Number:", productionOrderNumber);
 
         // Create production order
         const productionOrderData = {
@@ -44,20 +73,36 @@ ProductionOrderServices.createProductionOrder = async (body) => {
             createdBy,
             status: "created",
         };
+        // console.log("Production Order Data:", JSON.stringify(productionOrderData, null, 2));
 
         const newProductionOrder = await ProductionOrder.create([productionOrderData], { session });
+        // console.log("Created Production Order:", JSON.stringify(newProductionOrder, null, 2));
+        
+        const wasteManagementData = {
+            productionOrderId: newProductionOrder[0]._id,
+            firmId,
+            createdBy,
+            rawMaterials: totalWastage, // Include all raw materials, without filtering
+        };
+        // console.log("Waste Management Data to Create:", JSON.stringify(wasteManagementData, null, 2));
+
+        await WasteManagement.create([wasteManagementData], { session });
+        // console.log("WasteManagement entry created.");
 
         // Commit transaction
         await session.commitTransaction();
         session.endSession();
+        console.log("Transaction committed successfully.");
         return newProductionOrder;
     } catch (error) {
         // Rollback transaction
         await session.abortTransaction();
         session.endSession();
+        console.error("Transaction rolled back due to error:", error);
         throw error;
     }
 };
+
 
 // GET PRODUCTIONS
 ProductionOrderServices.getProductionOrders = async (body) => {
