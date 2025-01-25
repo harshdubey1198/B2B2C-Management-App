@@ -566,4 +566,13 @@ export const getInventoryItems = async () => {
     }
 }
 
+export const createBom = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/bom/create-bom`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 export default axiosInstance;
