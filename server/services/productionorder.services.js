@@ -286,7 +286,11 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
                 await inventoryItem.save({ session });
             }
         }
-
+        const wasteRecords = await WasteManagement.find({ productionOrderId: id }).session(session);
+        for (const waste of wasteRecords) {
+            waste.status = 'cancelled';
+            await waste.save({ session });
+        }
         order.status = status;
         order.notes = notes || order.notes;
         await order.save({ session });
