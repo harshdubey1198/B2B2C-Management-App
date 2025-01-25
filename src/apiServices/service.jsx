@@ -557,4 +557,13 @@ export const getBoms = async () => {
     }
 };
 
+export const getInventoryItems = async () => {  
+    try {
+        const response = await axiosInstance.get(`/inventory/get-items/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 export default axiosInstance;

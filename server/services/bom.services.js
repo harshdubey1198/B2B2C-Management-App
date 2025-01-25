@@ -5,7 +5,7 @@ const BomServices = {};
 
 // CREATE BOM
 BomServices.createbom = async (body) => {
-  const { productName, rawMaterials, wastagePercentage, firmId, createdBy } = body;
+  const { productName, rawMaterials, wastePercentage, firmId, createdBy } = body;
 
   // Validate raw materials exist
   for (const material of rawMaterials) {
@@ -34,7 +34,7 @@ BomServices.createbom = async (body) => {
   const newBOM = new BOM({
     productName,
     rawMaterials,
-    wastagePercentage,
+    wastePercentage,
     firmId,
     createdBy,
   });

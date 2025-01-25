@@ -9,7 +9,14 @@ const WasteManagementSchema = new Schema({
         {
             itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true }, 
             wasteQuantity: { type: Number, required: true }, 
-            reason: { type: String } 
+            reason: { type: String },
+            variants: [
+                {
+                    variantId: { type: String },
+                    optionLabel: { type: String },
+                    wasteQuantity: { type: Number },
+                }
+            ] 
         } 
     ],
     status: { 

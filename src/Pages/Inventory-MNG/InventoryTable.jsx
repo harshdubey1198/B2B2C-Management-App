@@ -16,7 +16,7 @@ function InventoryTable() {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   // const [itemsPerPage] = useState(5);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [variant, setVariant] = useState({
     variationType: "",
@@ -229,7 +229,7 @@ function InventoryTable() {
                   style={{ width: "auto" ,maxHeight:"33px"}}
                   onChange={handleItemsPerPageChange}
                 >
-                  <option value="5">5</option>
+                  <option value="10"  >10</option>
                   <option value="25">25</option>
                   <option value="50">50</option>
                   <option value="70">70</option>
