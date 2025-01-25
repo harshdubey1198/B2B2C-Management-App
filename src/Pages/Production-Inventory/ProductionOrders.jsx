@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, Form, FormGroup, Label, Input, Alert, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { toast } from 'react-toastify';
+import { getBoms } from '../../apiServices/service';
 
 function ProductionOrders() {
   const [rawMaterials, setRawMaterials] = useState([]);
@@ -15,11 +16,24 @@ function ProductionOrders() {
   const [editingBom, setEditingBom] = useState(null);
   const [bomForm, setBomForm] = useState({ name: "", materials: [{ rawMaterial: "", quantity: 1 }] });
 
+  const fetchBoms = async () => {
+    try{
+      const result = await getBoms();
+      setBoms(result.data);
+      console.log(result.data);
+    }
+    catch(err){
+      console.log(err);
+    }
+  }
+
+
   useEffect(() => {
     setRawMaterials(JSON.parse(localStorage.getItem("rawMaterials")) || []);
     setReadyProducts(JSON.parse(localStorage.getItem("readyProducts")) || []);
-    setBoms(JSON.parse(localStorage.getItem("boms")) || []);
+    // setBoms(JSON.parse(localStorage.getItem("boms")) || []);
     setWaste(JSON.parse(localStorage.getItem('waste')) || []);
+    fetchBoms();
   }, []);
 
   const updateLocalStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -69,133 +83,6 @@ function ProductionOrders() {
     updateLocalStorage("boms", updatedBoms);
   };
 
-  // const applyBom = () => {
-  //   if (!selectedBom || orderQuantity <= 0) {
-  //     setError("Please select a BOM and specify a valid quantity.");
-  //     return;
-  //   }
-
-  //   const selectedBomDetails = boms.find((bom) => bom.name === selectedBom);
-  //   if (!selectedBomDetails) {
-  //     setError("Invalid BOM selected.");
-  //     return;
-  //   }
-
-  //   const insufficientMaterials = selectedBomDetails.materials.some((material) => {
-  //     const isRaw = rawMaterials.find((rm) => rm.name === material.rawMaterial);
-  //     const isReady = readyProducts.find((rp) => rp.name === material.rawMaterial);
-  //     const availableQuantity = isRaw ? isRaw.quantity : isReady ? isReady.quantity : 0;
-  //     return material.quantity * orderQuantity > availableQuantity;
-  //   });
-
-  //   if (insufficientMaterials) {
-  //     setError("Insufficient materials to produce the specified quantity.");
-  //     return;
-  //   }
-
-  //   const updatedRawMaterials = rawMaterials.map((rm) => {
-  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rm.name);
-  //     if (bomMaterial) {
-  //       return { ...rm, quantity: rm.quantity - bomMaterial.quantity * orderQuantity };
-  //     }
-  //     return rm;
-  //   });
-
-  //   const updatedReadyProducts = readyProducts.map((rp) => {
-  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rp.name);
-  //     if (bomMaterial) {
-  //       return { ...rp, quantity: rp.quantity - bomMaterial.quantity * orderQuantity };
-  //     }
-  //     return rp;
-  //   });
-
-  //   const newReadyProduct = { name: selectedBom, quantity: orderQuantity };
-  //   const existingReadyProduct = updatedReadyProducts.find((rp) => rp.name === selectedBom);
-  //   if (existingReadyProduct) {
-  //     existingReadyProduct.quantity += orderQuantity;
-  //   } else {
-  //     updatedReadyProducts.push(newReadyProduct);
-  //   }
-
-  //   setRawMaterials(updatedRawMaterials);
-  //   setReadyProducts(updatedReadyProducts);
-  //   updateLocalStorage("rawMaterials", updatedRawMaterials);
-  //   updateLocalStorage("readyProducts", updatedReadyProducts);
-
-  //   setError("");
-  //   setSelectedBom("");
-  //   setOrderQuantity(1);
-  //   // alert(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
-  //   toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`); 
-  // };
-
-  // const applyBom = () => {
-  //   if (!selectedBom || orderQuantity <= 0) {
-  //     setError("Please select a BOM and specify a valid quantity.");
-  //     return;
-  //   }
-  
-  //   const selectedBomDetails = boms.find((bom) => bom.name === selectedBom);
-  //   if (!selectedBomDetails) {
-  //     setError("Invalid BOM selected.");
-  //     return;
-  //   }
-  
-  //   // Validate material availability considering wastage
-  //   const insufficientMaterials = selectedBomDetails.materials.some((material) => {
-  //     const isRaw = rawMaterials.find((rm) => rm.name === material.rawMaterial);
-  //     const isReady = readyProducts.find((rp) => rp.name === material.rawMaterial);
-  //     const availableQuantity = isRaw ? isRaw.quantity : isReady ? isReady.quantity : 0;
-  
-  //     const requiredQuantity = (material.quantity + (material.waste || 0)) * orderQuantity;
-  //     return requiredQuantity > availableQuantity;
-  //   });
-  
-  //   if (insufficientMaterials) {
-  //     setError("Insufficient materials to produce the specified quantity with wastage.");
-  //     return;
-  //   }
-  
-  //   // Deduct materials and handle wastage
-  //   const updatedRawMaterials = rawMaterials.map((rm) => {
-  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rm.name);
-  //     if (bomMaterial) {
-  //       const totalUsage = (bomMaterial.quantity + (bomMaterial.waste || 0)) * orderQuantity;
-  //       return { ...rm, quantity: rm.quantity - totalUsage };
-  //     }
-  //     return rm;
-  //   });
-  
-  //   const updatedReadyProducts = readyProducts.map((rp) => {
-  //     const bomMaterial = selectedBomDetails.materials.find((m) => m.rawMaterial === rp.name);
-  //     if (bomMaterial) {
-  //       const totalUsage = (bomMaterial.quantity + (bomMaterial.waste || 0)) * orderQuantity;
-  //       return { ...rp, quantity: rp.quantity - totalUsage };
-  //     }
-  //     return rp;
-  //   });
-  
-  //   // Add or update the ready product
-  //   const newReadyProduct = { name: selectedBom, quantity: orderQuantity };
-  //   const existingReadyProduct = updatedReadyProducts.find((rp) => rp.name === selectedBom);
-  //   if (existingReadyProduct) {
-  //     existingReadyProduct.quantity += orderQuantity;
-  //   } else {
-  //     updatedReadyProducts.push(newReadyProduct);
-  //   }
-  
-  //   // Update state and local storage
-  //   setRawMaterials(updatedRawMaterials);
-  //   setReadyProducts(updatedReadyProducts);
-  //   updateLocalStorage("rawMaterials", updatedRawMaterials);
-  //   updateLocalStorage("readyProducts", updatedReadyProducts);
-  
-  //   setError("");
-  //   setSelectedBom("");
-  //   setOrderQuantity(1);
-  //   toast.success(`BOM "${selectedBom}" applied successfully for quantity ${orderQuantity}.`);
-  // };
-  
   const applyBom = () => {
     if (!selectedBom || orderQuantity <= 0) {
       setError('Please select a BOM and specify a valid quantity.');
@@ -274,22 +161,24 @@ function ProductionOrders() {
               <tr>
                 <th>BOM Name</th>
                 <th>Materials</th>
+                <th>Created By</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {boms.map((bom, index) => (
                 <tr key={index}>
-                  <td>{bom.name}</td>
+                  <td>{bom.productName}</td>
                   <td>
                     <ul>
-                      {bom.materials.map((material, idx) => (
+                      {bom.rawMaterials.map((material, idx) => (
                         <li key={idx}>
-                          {material.rawMaterial} - {material.quantity}
+                          {material.itemId.name} - {material.quantity}
                         </li>
                       ))}
                     </ul>
                   </td>
+                  <td>{bom.createdBy.firstName + " " + bom.createdBy.lastName}</td>
                   <td>
                     {/* <Button color="warning" size="sm" onClick={() => editBom(bom)}>Edit</Button>{' '}
                     <Button color="danger" size="sm" onClick={() => deleteBom(bom.name)}>Delete</Button> */}

@@ -252,7 +252,7 @@ function InventoryTable() {
             </div>
 
           <Button color="primary" className="p-2 text-black" style={{fontSize:"10.5px"}} onClick={handleAddItemPage}> Add Item </Button>
-          <span className="badge table-row-red p-2 text-black d-flex align-items-center" > Raw Material</span>
+          <span className="badge table-raw-materials p-2 text-black d-flex align-items-center" > Raw Material</span>
           <span className="badge table-row-blue p-2 text-black d-flex align-items-center"> Finished Goods</span>
           <span className="badge table-row-yellow p-2 text-black d-flex align-items-center"> Other</span>
           <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
@@ -284,7 +284,7 @@ function InventoryTable() {
       currentItems.map((item, index) => {
       const rowClass =
         item.type === "raw_material"
-          ? "table-row-red"
+          ? "table-raw-materials"
           : item.type === "finished_goods"
           ? "table-row-blue"
           : "table-row-yellow";

@@ -22,7 +22,7 @@ const ProductionOrderSchema = new Schema({
             ]
         }
     ],
-    wastage: { type: Number, default: 0 },
+    // wastage: { type: Number, default: 0 },
     firmId: { type: Schema.Types.ObjectId, ref: 'User' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
     status: {

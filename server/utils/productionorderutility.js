@@ -1,5 +1,7 @@
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const ProductionOrder = require("../schemas/productionorder.shcema");
+const WastageInventory = require("../schemas/wasteinventory.schema");
+
 
 // Generate unique production order number
 const generateProductionOrderNumber = async (firmId) => {
@@ -24,10 +26,12 @@ const calculateRawMaterials = (bom, productionQuantity) => {
     return bom.rawMaterials.map(material => ({
         itemId: material.itemId,
         quantity: material.quantity * productionQuantity,
+        wastagePercentage: material.wastagePercentage,
         variants: material.variants.map((variant) => ({
             variantId: variant.variantId,
             optionLabel: variant.optionLabel,
-            quantity: variant.quantity * productionQuantity
+            quantity: variant.quantity * productionQuantity,
+            wastagePercentage: variant.wastagePercentage
         }))
     }));
 };
@@ -95,6 +99,8 @@ const deductRawMaterials = async (rawMaterials, session) => {
         }
     }
 };
+
+
 
 
 // Export all utility functions

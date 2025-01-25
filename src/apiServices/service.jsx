@@ -544,4 +544,17 @@ export const getTaxes = async () => {
     }
 };
 
+
+
+export const getBoms = async () => {
+    try {
+        const response = await axiosInstance.post(`/bom/get-bom`, {
+                firmId
+        });
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

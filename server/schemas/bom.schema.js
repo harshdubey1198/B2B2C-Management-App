@@ -19,7 +19,7 @@ const BOMSchema = new Schema({
       ],
     }
   ],
-  wastagePercentage: { type: Number, default: 0 },
+  // wastagePercentage: { type: Number, default: 0 },
   firmId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   status: { 

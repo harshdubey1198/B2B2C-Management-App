@@ -12,6 +12,11 @@ const WasteManagementSchema = new Schema({
             reason: { type: String } 
         } 
     ],
+    status: { 
+        type: String, 
+        enum: ['created', 'approved', 'completed', 'cancelled'], 
+        default: 'created' 
+    },
     deleted_at: { type: Date, default: null } 
 }, { timestamps: true });
 

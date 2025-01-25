@@ -2,49 +2,11 @@ const { default: mongoose } = require("mongoose");
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const ProductionOrder = require("../schemas/productionorder.shcema");
+const WasteManagement = require("../schemas/wasteinventory.schema");
 const { calculateRawMaterials, generateProductionOrderNumber, deductRawMaterials, validateRawMaterials } = require("../utils/productionorderutility");
 
 const ProductionOrderServices = {};
 
-// ProductionOrderServices.createProductionOrder = async (body) => {
-//     const { bomId, quantity, firmId, createdBy } = body;
-
-//     const bom = await BOM.findById(bomId);
-//     if (!bom) throw new Error('BOM not found');
-
-//     // Validate raw materials
-//     for (const material of bom.rawMaterials) {
-//         const inventoryItem = await InventoryItem.findById(material.itemId);
-//         if (!inventoryItem) {
-//             throw new Error(`Raw material with ID ${material.itemId} not found`);
-//         }
-//         const requiredQuantity = material.quantity * quantity;
-//         if (inventoryItem.quantity < requiredQuantity) {
-//             throw new Error(`Insufficient stock for ${inventoryItem.name}. Required: ${requiredQuantity}, Available: ${inventoryItem.quantity}`);
-//         }
-//     }
-
-//     // Calculate total raw material requirements
-//     const rawMaterials = calculateRawMaterials(bom, quantity);
-
-//     // Generate production order number
-//     const productionOrderNumber = await generateProductionOrderNumber(firmId);
-
-//     const newProductionOrder = new ProductionOrder({
-//         productionOrderNumber,
-//         bomId,
-//         quantity,
-//         rawMaterials,
-//         firmId,
-//         createdBy,
-//         status: 'created',
-//     });
-
-//     await newProductionOrder.save();
-//     return newProductionOrder;
-// };
-
-// Create Production Order with Transaction
 ProductionOrderServices.createProductionOrder = async (body) => {
     const { bomId, quantity, firmId, createdBy } = body;
     if (!bomId || !quantity || !firmId || !createdBy) {
