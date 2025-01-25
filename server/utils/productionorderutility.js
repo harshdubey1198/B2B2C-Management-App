@@ -95,14 +95,14 @@ const calculateRawMaterials = (bom, productionQuantity) => {
             : 0;
         console.log(`Material Waste Percentage (Correct Field): ${wastePercentage}`);
 
-        const materialWastageQuantity = Math.ceil(
-            (material.quantity * productionQuantity * wastePercentage) / 100
+        const materialWastageQuantity = parseFloat(
+            ((material.quantity * productionQuantity * wastePercentage) / 100).toFixed(4)
         );
         console.log(`Material Wastage Quantity for Item ${material.itemId}: ${materialWastageQuantity}`);
 
         return {
             itemId: material.itemId,
-            quantity: material.quantity * productionQuantity,
+            quantity: parseFloat((material.quantity * productionQuantity).toFixed(4)),
             wastePercentage, // Add this field explicitly
             wastagePercentage: wastePercentage, // Add this if required
             wastageQuantity: materialWastageQuantity,
@@ -114,15 +114,15 @@ const calculateRawMaterials = (bom, productionQuantity) => {
                     : 0;
                 console.log(`Variant Waste Percentage: ${variantWastePercentage}`);
 
-                const variantWastageQuantity = Math.ceil(
-                    (variant.quantity * productionQuantity * variantWastePercentage) / 100
+                const variantWastageQuantity = parseFloat(
+                    ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
                 );
                 console.log(`Variant Wastage Quantity for Variant ${variant.variantId}: ${variantWastageQuantity}`);
 
                 return {
                     variantId: variant.variantId,
                     optionLabel: variant.optionLabel,
-                    quantity: variant.quantity * productionQuantity,
+                    quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
                     wastePercentage: variantWastePercentage, // Add this field explicitly
                     wastagePercentage: variantWastePercentage, // Add this if required
                     wastageQuantity: variantWastageQuantity,
