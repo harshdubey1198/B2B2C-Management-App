@@ -290,6 +290,7 @@ export const masterAdminSidebarData = () => [
       icon:"mdi mdi-archive-outline",
       subItem:[
           {sublabel: "Raw Material", link:"/production/raw-materials"},
+          {sublabel: "BOM", link:"/production/all-boms"},
           {sublabel: "Production Orders", link:"/production/orders"},
           {sublabel: "Work In Progress", link:"/production/work-in-progress"},
           {sublabel: "Finished Goods", link:"/production/finished-goods"},

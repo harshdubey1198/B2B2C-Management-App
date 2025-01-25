@@ -100,7 +100,7 @@ import FinishedGood from "../Pages/Production-Inventory/FinishedGood.jsx";
 import RawMaterialTable from "../Pages/Production-Inventory/RawMaterialTable.jsx";
 import WorkInProgressTable from "../Pages/Production-Inventory/WorkInProgressTable.jsx";
 import WasteManagement from "../Pages/Production-Inventory/WasteManagement.jsx";
-
+import BomPage from "../Pages/Production-Inventory/BomPage.jsx";
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
@@ -143,6 +143,7 @@ const authProtectedRoutes = [
   {path:"/production/work-in-progress", component: <WorkInProgressTable />},
   {path:"/production/orders", component: <ProductionOrders />},
   {path:"/production/reports", component: <ProductionReports />},
+  {path:"/production/all-boms", component: <BomPage/>},
   {path:"/production/waste-management", component: <WasteManagement />},
   {path:"/production/settings", component: <ProductionSettings />},
 

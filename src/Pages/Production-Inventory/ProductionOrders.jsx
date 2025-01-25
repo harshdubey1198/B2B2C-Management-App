@@ -155,8 +155,9 @@ function ProductionOrders() {
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
         <div className="container">
           <h5>BOMs</h5>
-          <Button color="primary" onClick={toggleBomModal}>Add New BOM</Button>
-          <Table bordered>
+          <Button color="primary" onClick={toggleBomModal} >Add New BOM</Button>
+         <div className='table-responsive mt-2'>
+         <Table bordered>
             <thead>
               <tr>
                 <th>BOM Name</th>
@@ -170,13 +171,25 @@ function ProductionOrders() {
                 <tr key={index}>
                   <td>{bom.productName}</td>
                   <td>
-                    <ul>
+                    <div className="d-flex flex-column">
                       {bom.rawMaterials.map((material, idx) => (
-                        <li key={idx}>
-                          {material.itemId.name} - {material.quantity}
-                        </li>
+                        <div key={idx} className="d-flex justify-content-between align-items-center mb-2">
+                          <span className="material-name">{material.itemId.name}</span>
+                          <span>
+                            {material.variants.length > 0 ? (
+                              <>
+                                <span className="badge bg-info me-1">
+                                  Variant: {material.variants[0].optionLabel} - {material.variants[0].quantity}
+                                </span>
+                                <span className="text-muted">(Total: {material.quantity})</span>
+                              </>
+                            ) : (
+                              <span>{material.quantity}</span>
+                            )}
+                          </span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   </td>
                   <td>{bom.createdBy.firstName + " " + bom.createdBy.lastName}</td>
                   <td>
@@ -189,6 +202,7 @@ function ProductionOrders() {
               ))}
             </tbody>
           </Table>
+          </div>
 
           {/* BOM Modal */}
           <Modal isOpen={isBomModalOpen} toggle={toggleBomModal}>
@@ -303,7 +317,7 @@ function ProductionOrders() {
             </Row>
           </Form>
 
-          <h5>Raw Materials</h5>
+          {/* <h5>Raw Materials</h5>
           <Table bordered>
             <thead>
               <tr>
@@ -319,7 +333,7 @@ function ProductionOrders() {
                 </tr>
               ))}
             </tbody>
-          </Table>
+          </Table> */}
 
           <h5>Ready Products</h5>
           <Table bordered>
