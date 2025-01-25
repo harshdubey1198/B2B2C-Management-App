@@ -7,14 +7,14 @@ const BOMSchema = new Schema({
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
       quantity:{type : Number},
-      wastagePercentage: { type: Number, default: 0 },
+      wastePercentage: { type: Number, default: 0 },
       variants: [
         {
           variantId: { type: String, },          
           optionLabel: { type: String }, 
           quantity: { type: Number, }, 
           waste: { type: String, }, 
-          wastagePercentage: { type: Number, default: 0 }      
+          wastePercentage: { type: Number, default: 0 }      
         }
       ],
     }
@@ -33,4 +33,3 @@ const BOMSchema = new Schema({
 
 const BOM = mongoose.model('BOM', BOMSchema);
 module.exports = BOM
- 
