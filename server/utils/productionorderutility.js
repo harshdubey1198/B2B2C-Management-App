@@ -21,121 +21,60 @@ const generateProductionOrderNumber = async (firmId) => {
       }
 };
 
-// Calculate raw materials based on BOM and production quantity
-// const calculateRawMaterials = (bom, productionQuantity) => {
-//     return bom.rawMaterials.map(material => ({
-//         itemId: material.itemId,
-//         quantity: material.quantity * productionQuantity,
-//         wastagePercentage: material.wastagePercentage,
-//         variants: material.variants.map((variant) => ({
-//             variantId: variant.variantId,
-//             optionLabel: variant.optionLabel,
-//             quantity: variant.quantity * productionQuantity,
-//             wastagePercentage: variant.wastagePercentage
-//         }))
-//     }));
-// };
-// const calculateRawMaterials = (bom, productionQuantity) => {
-//     console.log("Starting raw material calculation...");
-//     console.log("Fetched BOM Data:", JSON.stringify(bom, null, 2));
-
-//     return bom.rawMaterials.map((material, index) => {
-//         console.log(`\nProcessing Material at Index ${index}:`, JSON.stringify(material, null, 2));
-        
-//         // Handle `wastePercentage` explicitly
-//         const wastePercentage = material.wastePercentage !== undefined 
-//             ? Number(material.wastePercentage) 
-//             : 0;
-//         console.log(`Material Waste Percentage (Correct Field): ${wastePercentage}`);
-
-//         const materialWastageQuantity = Math.ceil(
-//             (material.quantity * productionQuantity * wastePercentage) / 100
-//         );
-//         console.log(`Material Wastage Quantity for Item ${material.itemId}: ${materialWastageQuantity}`);
-
-//         return {
-//             itemId: material.itemId,
-//             quantity: material.quantity * productionQuantity,
-//             wastagePercentage: wastePercentage,
-//             wastageQuantity: materialWastageQuantity,
-//             variants: material.variants.map((variant, variantIndex) => {
-//                 console.log(`\nProcessing Variant at Index ${variantIndex}:`, JSON.stringify(variant, null, 2));
-
-//                 const variantWastePercentage = variant.wastePercentage !== undefined
-//                     ? Number(variant.wastePercentage)
-//                     : 0;
-//                 console.log(`Variant Waste Percentage: ${variantWastePercentage}`);
-
-//                 const variantWastageQuantity = Math.ceil(
-//                     (variant.quantity * productionQuantity * variantWastePercentage) / 100
-//                 );
-//                 console.log(`Variant Wastage Quantity for Variant ${variant.variantId}: ${variantWastageQuantity}`);
-
-//                 return {
-//                     variantId: variant.variantId,
-//                     optionLabel: variant.optionLabel,
-//                     quantity: variant.quantity * productionQuantity,
-//                     wastagePercentage: variantWastePercentage,
-//                     wastageQuantity: variantWastageQuantity,
-//                 };
-//             }),
-//         };
-//     });
-// };
 const calculateRawMaterials = (bom, productionQuantity) => {
     console.log("Starting raw material calculation...");
     console.log("Fetched BOM Data:", JSON.stringify(bom, null, 2));
 
     return bom.rawMaterials.map((material, index) => {
-        console.log(`\nProcessing Material at Index ${index}:`, JSON.stringify(material, null, 2));
 
-        // Use the correct field name: `wastePercentage`
         const wastePercentage = material.wastePercentage !== undefined 
             ? Number(material.wastePercentage) 
             : 0;
-        console.log(`Material Waste Percentage (Correct Field): ${wastePercentage}`);
 
-        const materialWastageQuantity = parseFloat(
-            ((material.quantity * productionQuantity * wastePercentage) / 100).toFixed(4)
+        // Calculate item-level quantity
+        const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4));
+
+        // Calculate variant-level wastage and total variant wastage
+        const variants = material.variants.map((variant, variantIndex) => {
+            console.log(`\nProcessing Variant at Index ${variantIndex}:`, JSON.stringify(variant, null, 2));
+            const variantWastePercentage = variant.wastePercentage !== undefined
+                ? Number(variant.wastePercentage)
+                : 0;
+
+            const variantWastageQuantity = parseFloat(
+                ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
+            );
+
+            return {
+                variantId: variant.variantId,
+                optionLabel: variant.optionLabel,
+                quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
+                wastePercentage: variantWastePercentage,
+                wastageQuantity: variantWastageQuantity,
+            };
+        });
+
+        // Sum up variant wastage if variants exist
+        const totalVariantWastage = variants.reduce(
+            (sum, variant) => sum + variant.wastageQuantity, 0
         );
-        console.log(`Material Wastage Quantity for Item ${material.itemId}: ${materialWastageQuantity}`);
+
+        // Calculate item-level wastage only if no variants exist
+        const materialWastageQuantity = material.variants.length === 0
+            ? parseFloat(
+                ((materialQuantity * wastePercentage) / 100).toFixed(4)
+              )
+            : totalVariantWastage;
 
         return {
             itemId: material.itemId,
-            quantity: parseFloat((material.quantity * productionQuantity).toFixed(4)),
-            wastePercentage, // Add this field explicitly
-            wastagePercentage: wastePercentage, // Add this if required
-            wastageQuantity: materialWastageQuantity,
-            variants: material.variants.map((variant, variantIndex) => {
-                console.log(`\nProcessing Variant at Index ${variantIndex}:`, JSON.stringify(variant, null, 2));
-
-                const variantWastePercentage = variant.wastePercentage !== undefined
-                    ? Number(variant.wastePercentage)
-                    : 0;
-                console.log(`Variant Waste Percentage: ${variantWastePercentage}`);
-
-                const variantWastageQuantity = parseFloat(
-                    ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
-                );
-                console.log(`Variant Wastage Quantity for Variant ${variant.variantId}: ${variantWastageQuantity}`);
-
-                return {
-                    variantId: variant.variantId,
-                    optionLabel: variant.optionLabel,
-                    quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
-                    wastePercentage: variantWastePercentage, // Add this field explicitly
-                    wastagePercentage: variantWastePercentage, // Add this if required
-                    wastageQuantity: variantWastageQuantity,
-                };
-            }),
+            quantity: materialQuantity,
+            wastePercentage,
+            wastageQuantity: materialWastageQuantity, 
+            variants, 
         };
     });
 };
-
-
-
-
-
 
 // Validate raw materials
 const validateRawMaterials = async (rawMaterials, session) => {
@@ -200,9 +139,6 @@ const deductRawMaterials = async (rawMaterials, session) => {
         }
     }
 };
-
-
-
 
 // Export all utility functions
 module.exports = {
