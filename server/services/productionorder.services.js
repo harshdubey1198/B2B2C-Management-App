@@ -269,7 +269,9 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
                             v => v._id.toString() === variant.variantId
                         );
                         if (variantIndex === -1) {
-                            throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`);
+                            throw new Error(
+                                `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
+                            );
                         }
                         inventoryItem.variants[variantIndex].stock += variant.quantity;
                     }
