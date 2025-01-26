@@ -253,14 +253,14 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
         };
 
         if (!allowedTransitions[order.status].includes(status)) {
-            throw new Error(Invalid status transition from ${order.status} to ${status});
+            throw new Error(`Invalid status transition from ${order.status} to ${status}`);
         }
 
         if (status === 'cancelled') {
             for (const material of order.rawMaterials) {
                 const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
                 if (!inventoryItem) {
-                    throw new Error(Raw material with ID ${material.itemId} not found);
+                    throw new Error(`Raw material with ID ${material.itemId} not found`);
                 }
 
                 if (inventoryItem.variants && inventoryItem.variants.length > 0) {
@@ -269,9 +269,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
                             v => v._id.toString() === variant.variantId
                         );
                         if (variantIndex === -1) {
-                            throw new Error(
-                                Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}
-                            );
+                            throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`);
                         }
                         inventoryItem.variants[variantIndex].stock += variant.quantity;
                     }
