@@ -5,6 +5,8 @@ import QuantityUpdateModal from '../../Modal/ProductionModals/quantityUpdateModa
 import { updateProductionOrderStatus } from '../../apiServices/service';
 import StatusUpdateModal from '../../Modal/ProductionModals/StatusUpdateModal';
 import ProductionCreateModal from '../../Modal/ProductionModals/ProductionCreateModal';
+import { toast } from 'react-toastify';
+import { Button } from 'reactstrap';
 
 function ProductionOrders() {
   const [productionOrders, setProductionOrders] = useState([]);
@@ -16,6 +18,9 @@ function ProductionOrders() {
   const [newNote, setNewNote] = useState('');
   const authuser = JSON.parse(localStorage.getItem('authUser'));
   const role = authuser?.response?.role;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [trigger, setTrigger] = useState(false);
   const fetchProductionOrders = async () => {
     try {
@@ -37,6 +42,29 @@ function ProductionOrders() {
     fetchProductionOrders();
   }, [trigger]);
 
+   const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = productionOrders.slice(indexOfFirstItem, indexOfLastItem);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(productionOrders.length / itemsPerPage); i++) {
+      pageNumbers.push(i);
+    }
+    const handleItemsPerPageChange = (e) => {
+      const value = parseInt(e.target.value, 10);
+      setItemsPerPage(value);
+      setCurrentPage(1); 
+    };
+  
+    const handleCustomItemsPerPage = () => {
+      const value = parseInt(customItemsPerPage, 10);
+      if (!isNaN(value) && value > 0) {
+        setItemsPerPage(value);
+        setCurrentPage(1); 
+      } else {
+        toast.error("Please enter a valid number of items per page.");
+      }
+    };
 
   const handleOpenModal = (order) => {
     setSelectedOrder(order);
@@ -87,6 +115,35 @@ function ProductionOrders() {
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
         <div className="d-flex justify-content-end gap-2 mb-3">
+          <div className="d-flex align-items-center gap-2">
+            <label htmlFor="itemsPerPageSelect">Items per page:</label>
+                  <select
+                    id="itemsPerPageSelect"
+                    className="form-select"
+                    style={{ width: "auto" ,maxHeight:"33px"}}
+                    onChange={handleItemsPerPageChange}
+                  >
+                    <option value="10"  >10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="70">70</option>
+                    <option value="100">100</option>
+                  </select>
+  
+                  <label htmlFor="customItemsInput">Or enter custom:</label>
+                  <input
+                    id="customItemsInput"
+                    type="number"
+                    min="1"
+                    value={customItemsPerPage}
+                    onChange={(e) => setCustomItemsPerPage(e.target.value)}
+                    className="form-control"
+                    style={{ width: "100px",maxHeight:"33px" }} 
+                  />
+                  <Button color="primary" onClick={handleCustomItemsPerPage}>
+                    Set
+                  </Button>
+              </div>
           <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
         </div>  
 
@@ -104,14 +161,14 @@ function ProductionOrders() {
               </tr>
             </thead>
             <tbody>
-            {productionOrders.length === 0 ? (
+            {currentItems.length === 0 ? (
                 <tr>
                   <td colSpan="7" className="text-center">
                     No production orders found.
                   </td>
                 </tr>
               ) : (
-                productionOrders.map((order, index) => {
+                currentItems.map((order, index) => {
                   const createdAt = new Date(order.createdAt);
                   const date = createdAt.toLocaleDateString('en-IN', {
                     timeZone: 'Asia/Kolkata',
@@ -193,7 +250,13 @@ function ProductionOrders() {
             </tbody>
           </table>
         </div>
-
+        <div className="pagination-controls d-flex gap-2 mt-2">
+          {pageNumbers.map(number => (
+            <Button key={number} onClick={() => paginate(number)} className={currentPage === number ? "btn-primary" : "btn-secondary"}>
+              {number}
+            </Button>
+          ))}
+        </div>
         <QuantityUpdateModal
           modalOpen={modalOpen} 
           setModalOpen={setModalOpen}

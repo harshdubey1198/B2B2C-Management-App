@@ -89,17 +89,29 @@ function QuantityUpdateModal({
         <div className="form-group mt-3">
           <label htmlFor="quantity">Quantity:</label>
           {isEditMode ? (
-            <Input
-              type="number"
-              id="quantity"
-              value={newQuantity}
-              onChange={(e) => setNewQuantity(e.target.value)}
-              required
-              placeholder="Enter new quantity"
-            />
-          ) : (
-            <div>{selectedOrder?.quantity} units</div>
-          )}
+  <div>
+    <Input
+      type="number"
+      id="quantity"
+      value={newQuantity}
+      onChange={(e) => setNewQuantity(e.target.value)}
+      required
+      placeholder="Enter new quantity"
+    />
+    <div>Current Quantity: {selectedOrder?.quantity} units</div>
+  </div>
+) : (
+  <div>
+    {/* {selectedOrder?.quantity} units */}
+    <Input 
+        type="text"
+        value={selectedOrder?.quantity}
+        readOnly
+    />
+    {/* <button onClick={() => setIsEditMode(true)}>Edit</button> */}
+  </div>
+)}
+
         </div>
       </ModalBody>
       <ModalFooter>
