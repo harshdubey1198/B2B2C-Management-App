@@ -123,10 +123,10 @@ body{
   .navbar{
     width: 100% !important;
   }
-  .dropdown{
+  /* .dropdown{
     padding-left: 20% !important;
 
-  }
+  } */
 }
 
 @media (width<998px){
@@ -135,7 +135,7 @@ body{
   .dropdown{
     display: flex;
     border-radius: 10px !important;
-    padding-left: 40%;
+    /* padding-left: 40%; */
     a{
       width: 100% !important;
       

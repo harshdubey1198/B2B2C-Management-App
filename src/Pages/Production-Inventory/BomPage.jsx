@@ -153,7 +153,7 @@ function BomPage() {
           createdBy: createdBy,
           firmId: firmId,
         });}
-    }
+    } 
     catch(err){
         console.error(err);
     }
