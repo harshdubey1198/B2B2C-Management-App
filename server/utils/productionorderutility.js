@@ -140,10 +140,82 @@ const deductRawMaterials = async (rawMaterials, session) => {
     }
 };
 
+const adjustInventoryStock = async (oldRawMaterials, newRawMaterials, session) => {
+    for (const newMaterial of newRawMaterials) {
+      const inventoryItem = await InventoryItem.findById(
+        newMaterial.itemId
+      ).session(session);
+      if (!inventoryItem) {
+        throw new Error(
+          `Raw material with ID ${newMaterial.itemId} not found.`
+        );
+      }
+  
+      const oldMaterial = oldRawMaterials.find(
+        (rm) => String(rm.itemId) === String(newMaterial.itemId)
+      );
+  
+      const oldRequired = oldMaterial?.quantity || 0;
+      const newRequired = newMaterial.quantity;
+      const difference = newRequired - oldRequired;
+  
+      if (newMaterial.variants && newMaterial.variants.length > 0) {
+        // Handle variants
+        for (const variant of newMaterial.variants) {
+          const matchingVariant = inventoryItem.variants.find(
+            (v) => String(v._id) === String(variant.variantId)
+          );
+  
+          if (!matchingVariant) {
+            throw new Error(
+              `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
+            );
+          }
+  
+          const oldVariant = oldMaterial?.variants.find(
+            (v) => String(v.variantId) === String(variant.variantId)
+          );
+          const oldVariantRequired = oldVariant?.quantity || 0;
+          const variantDifference = variant.quantity - oldVariantRequired;
+  
+          adjustStock(matchingVariant, variantDifference, variant.optionLabel);
+        }
+  
+        // Sync parent item stock with variants
+        inventoryItem.quantity = inventoryItem.variants.reduce(
+          (sum, v) => sum + v.stock,
+          0
+        );
+      } else {
+        // Handle item without variants
+        adjustStock(inventoryItem, difference, inventoryItem.name);
+      }
+  
+      await inventoryItem.save();
+    }
+  }
+  
+const adjustStock = async (item, difference, itemName) => {
+    if (difference > 0) {
+      // Deduct stock
+      if (item.stock < difference) {
+        throw new Error(
+          `Insufficient stock for ${itemName}. Required: ${difference}, Available: ${item.stock}`
+        );
+      }
+      item.stock -= difference;
+    } else {
+      // Add stock
+      item.stock += Math.abs(difference);
+    }
+  }
+
 // Export all utility functions
 module.exports = {
     generateProductionOrderNumber,
     calculateRawMaterials,
     validateRawMaterials,
     deductRawMaterials,
+    adjustInventoryStock,
+    adjustStock,
 };
