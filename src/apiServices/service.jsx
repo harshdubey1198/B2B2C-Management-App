@@ -575,4 +575,55 @@ export const createBom = async (data) => {
     }
 }
 
+//get all production orders using firmId in the body , post api 
+export const getProductionOrders = async () => {
+    try {
+        const response = await axiosInstance.post(`/productionorder/get-productionorders`, {
+            firmId
+        });
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+// get production order by id
+export const getProductionOrderById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/productionorder/get-productionorder/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// create production order
+export const createProductionOrder = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/productionorder/create-productionorder`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// update production order quantity
+export const updateProductionOrderQuantity = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/productionorder/update-productionorder/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// update production order status
+export const updateProductionOrderStatus = async (id, data) => {
+    try {
+        const response = await axiosInstance.put(`/productionorder/update-productionorderstatus/${id}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

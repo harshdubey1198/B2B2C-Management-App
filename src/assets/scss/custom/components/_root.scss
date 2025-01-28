@@ -27,7 +27,7 @@
 [data-bs-theme="light"] {
     --#{$prefix}header-bg: #EAEEF1;
     --#{$prefix}header-item-color: #636e75;
-    --#{$prefix}header-height: 100px;
+    --#{$prefix}header-height: 70px;
     --#{$prefix}navbar-brand-box-width: 250px;
     --#{$prefix}header-dark-bg: #0D4251;
     --#{$prefix}body-dark-bg: #000;
@@ -176,7 +176,7 @@
         --#{$prefix}header-dark-item-color: #919bae;
         --#{$prefix}header-dark-bg: #0D4251;
 
-        --#{$prefix}header-height: 100px;
+        --#{$prefix}header-height: 70px;
         --#{$prefix}navbar-brand-box-width: 250px;
         --#{$prefix}display-block: block;
         --#{$prefix}display-none: none;
