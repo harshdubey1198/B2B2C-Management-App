@@ -251,7 +251,7 @@ const fetchBrands = async () => {
                             {bom.rawMaterials.map((material, idx) => (
                               <div key={idx} className="d-flex justify-content-between align-items-center mb-2">
                                 <span className="material-name">
-                                  {material.itemId.name} ({material.itemId.qtyType})
+                                  {material.itemId.name} 
                                 </span>
                                 <span>
                                   {material.variants.length > 0 ? (
@@ -362,8 +362,8 @@ const fetchBrands = async () => {
                     <Label for="vendor">Vendor</Label>
                     <Input
                         type="select"
-                        value={formData.vendorId}
-                        onChange={(e) => setFormData({ ...formData, vendorId: e.target.value })}
+                        value={formData.vendor}
+                        onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
                     >
                         <option value="">Select Vendor</option>
                         {vendors.length > 0 ? (
@@ -383,8 +383,8 @@ const fetchBrands = async () => {
                     <Label for="brand">Brand</Label>
                     <Input
                         type="select"
-                        value={formData.brandId}
-                        onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
+                        value={formData.brand}
+                        onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
                     >
                         <option value="">Select Brand</option>
                         {brands.length > 0 ? (
