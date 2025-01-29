@@ -34,7 +34,7 @@ const blogRouter = require("./routers/blog.router")
 const feedBackRouter = require("./routers/feedback.router")
 const bomRouter = require("./routers/bom.router")
 const productionOrderRouter = require("./routers/productionorder.router")
-// const rawInventoryRouter = require("./routers/rawinventory.router")
+const wasteInventoryRouter = require("./routers/wasteinventory.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -56,13 +56,7 @@ app.use("/api/blog", blogRouter);
 app.use("/api/feedback", feedBackRouter);
 app.use("/api/bom", bomRouter);
 app.use("/api/productionorder", productionOrderRouter);
-// app.use("/api/rawinventory", rawInventoryRouter); 
-
-// CLIENT ROUTES
-// app.use('/api/clientadmin', require("./controllers/clientadmin.controller"))
-// app.use('/api/plan', require("./controllers/plans.controller"))
-// app.use('/api/auth', require("./controllers/auth.controller"))
-// app.use('/api/firmadmin', require("./controllers/firm.controller"))
+app.use("/api/wasteinventory", wasteInventoryRouter); 
 
 app.get("/", (req, res) => {
   res.send("Welcome to HRMS Servers!");
