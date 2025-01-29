@@ -5,19 +5,20 @@ const BomServices = {};
 
 // CREATE BOM
 BomServices.createbom = async (body) => {
-  const { productName, rawMaterials, wastePercentage, firmId, createdBy } = body;
+  const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, costPrice, categoryId, subcategoryId, vendor, tax } = body;
 
-  // Validate raw materials exist
+  // Validate raw materials exist in Inventory
   for (const material of rawMaterials) {
     const item = await InventoryItem.findById(material.itemId);
     if (!item) {
       throw new Error(`Raw material with ID ${material.itemId} not found`);
     }
-    
+
+    // Validate variants (if applicable)
     if (material.variants && material.variants.length > 0) {
       for (const variant of material.variants) {
         if (!variant.variantId) {
-          throw new Error(`Variant ID is required for a raw material with ID ${material.itemId}`);
+          throw new Error(`Variant ID is required for raw material with ID ${material.itemId}`);
         }
         if (!variant.quantity || variant.quantity <= 0) {
           throw new Error(`Invalid quantity for variant ID ${variant.variantId}`);
@@ -30,13 +31,23 @@ BomServices.createbom = async (body) => {
     }
   }
 
-  // Create BOM (no stock adjustments here)
+  // Create BOM
   const newBOM = new BOM({
     productName,
     rawMaterials,
-    wastePercentage,
+    manufacturer,
+    brand,
+    type,
+    costPrice,
+    categoryId,
+    subcategoryId,
+    vendor,
+    tax,
     firmId,
     createdBy,
+    status: "created",
+    notes: [],
+    deleted_at: null,
   });
 
   await newBOM.save();
@@ -44,13 +55,18 @@ BomServices.createbom = async (body) => {
 };
 
 BomServices.getboms = async (body) => {
-  const { firmId } = body;
-  const data = await BOM.find({ firmId: firmId, deleted_at: null })
-    .populate({ path: "rawMaterials.itemId" }) 
-    .populate({ path: "firmId", select: "email companyTitle" }) 
+  const { firmId} = body;
+  const data = await BOM.find({ firmId, deleted_at: null })
+    .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice" })
+    .populate({ path: "manufacturer", select: "name" })
+    .populate({ path: "brand", select: "name" })
+    .populate({ path: "vendor", select: "name" })
+    .populate({ path: "categoryId", select: "name" })
+    .populate({ path: "subcategoryId", select: "name" })
+    .populate({ path: "firmId", select: "email companyTitle" })
     .populate({ path: "createdBy", select: "firstName lastName email" });
 
-  if (data.length === 0) {
+  if (!data.length) {
     throw new Error("No BOMs found for this Firm");
   }
   return data;
@@ -58,8 +74,13 @@ BomServices.getboms = async (body) => {
 
 BomServices.getbomById = async (bomId) => {
   const data = await BOM.findOne({ _id: bomId, deleted_at: null })
-    .populate({ path: "rawMaterials.itemId" }) 
-    .populate({ path: "firmId", select: "email companyTitle" }) 
+    .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice" })
+    .populate({ path: "manufacturer", select: "name" })
+    .populate({ path: "brand", select: "name" })
+    .populate({ path: "vendor", select: "name" })
+    .populate({ path: "categoryId", select: "name" })
+    .populate({ path: "subcategoryId", select: "name" })
+    .populate({ path: "firmId", select: "email companyTitle" })
     .populate({ path: "createdBy", select: "firstName lastName email" });
 
   if (!data) {
@@ -70,20 +91,25 @@ BomServices.getbomById = async (bomId) => {
 
 // UPDATE VENDOR
 BomServices.updatebom = async (id, body) => {
-    const updatedBOM = await BOM.findOneAndUpdate({ _id: id, deleted_at: null }, body, { new: true })
-    .populate({ path: 'rawMaterials.itemId' })
-    .populate({ path: 'firmId', select: 'email companyTitle' })
-    .populate({ path: 'createdBy', select: 'firstName lastName email' });
+  const updatedBOM = await BOM.findOneAndUpdate({ _id: id, deleted_at: null }, body, { new: true })
+    .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice" })
+    .populate({ path: "manufacturer", select: "name" })
+    .populate({ path: "brand", select: "name" })
+    .populate({ path: "vendor", select: "name" })
+    .populate({ path: "categoryId", select: "name" })
+    .populate({ path: "subcategoryId", select: "name" })
+    .populate({ path: "firmId", select: "email companyTitle" })
+    .populate({ path: "createdBy", select: "firstName lastName email" });
 
-    if (!updatedBOM) {
-        throw new Error('BOM not found');
-    }
+  if (!updatedBOM) {
+    throw new Error("BOM not found");
+  }
 
-    return updatedBOM;
+  return updatedBOM;
 };
 
 // Update BOM (excluding status changes)
-BomServices.updateBomStatus = async (bomId, data) => {
+BomServices.updatebomStatus = async (bomId, data) => {
   const { status, note } = data;
 
   if (!status || !note) {

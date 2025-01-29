@@ -3,6 +3,23 @@ const Schema = mongoose.Schema;
 
 const BOMSchema = new Schema({
   productName: { type: String, required: true },
+  manufacturer: { type: Schema.Types.ObjectId, ref: 'Manufacturer' },
+  brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+  type: { type: String, enum: ['raw_material', 'finished_good'] },
+  costPrice: { type: Number },
+  sellingPrice: { type: Number },
+  categoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
+  subcategoryId: { type: Schema.Types.ObjectId, ref: 'Category' },
+  vendor: { type: Schema.Types.ObjectId, ref: 'Vendor' },
+  tax: {
+    taxId: { type: Schema.Types.ObjectId, ref: 'Tax' },
+    components: [
+      {
+        taxType: { type: String },
+        rate: { type: Number }
+      }
+    ]
+  },
   rawMaterials: [
     {
       itemId: { type: Schema.Types.ObjectId, ref: 'InventoryItem', required: true },
@@ -27,7 +44,7 @@ const BOMSchema = new Schema({
     enum: ['created', 'approved', 'in_progress', 'completed', 'cancelled'], 
     default: 'created' 
   },
-  notes: { type: String },
+  notes: [{ type: String }],
   deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 
