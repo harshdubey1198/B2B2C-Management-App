@@ -1,33 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
+import { getProductionOrders } from '../../apiServices/service';
 
 function WorkInProgressTable() {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      productName: "Pen",
-      rawMaterials: "Cap, Refill, Pen's Body",
-      createdBy: "John Doe",
-      status: "Approved",
-      note: "Completed successfully",
-    },
-    {
-      id: 2,
-      productName: "Notebook",
-      rawMaterials: "Paper, Binding, Cover",
-      createdBy: "Jane Smith",
-      status: "Cancelled",
-      note: "Insufficient materials",
-    },
-    {
-      id: 3,
-      productName: "Marker",
-      rawMaterials: "Plastic Body, Ink, Cap",
-      createdBy: "Emily Johnson",
-      status: "Pending",
-      note: "Waiting for approval",
-    },
-  ]);
+  const [productionOrders, setProductionOrders] = useState([]);
+
+  const fetchProductionOrders = async () => {
+    try {
+      const response = await getProductionOrders();
+      const filteredOrders = response.data?.filter(order => order.status === "in_progress") || [];
+      setProductionOrders(filteredOrders);
+    } catch (error) {
+      console.error('Error fetching Production Orders:', error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductionOrders();
+  }, []);
 
   return (
     <React.Fragment>
@@ -38,45 +28,42 @@ function WorkInProgressTable() {
             <div className="col-12">
               <div className="card">
                 <div className="card-body">
-                  <h4 className="card-title">Work In Progress Table</h4>
-                  <p className="card-title-desc">
-                    View the current status of products being manufactured.
-                  </p>
                   <div className="table-responsive">
                     <table className="table table-striped">
                       <thead>
                         <tr>
-                          <th>#</th>
+                          <th>PO No.</th>
                           <th>Product Name</th>
                           <th>Raw Materials</th>
                           <th>Created By</th>
                           <th>Status</th>
-                          <th>Note</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {data.map((item, index) => (
-                          <tr key={item.id}>
-                            <td>{index + 1}</td>
-                            <td>{item.productName}</td>
-                            <td>{item.rawMaterials}</td>
-                            <td>{item.createdBy}</td>
+                        {productionOrders.map((order) => (
+                          <tr key={order._id}>
+                            <td>{order.productionOrderNumber}</td>
+                            <td>{order?.bomId?.productName}</td>
                             <td>
-                              <span
-                                className={`badge ${
-                                  item.status === "Approved"
-                                    ? "bg-success"
-                                    : item.status === "Cancelled"
-                                    ? "bg-danger"
-                                    : "bg-warning"
-                                }`}
-                              >
-                                {item.status}
-                              </span>
+                              <ul>
+                                {order?.rawMaterials.map((rawMaterial, index) => (
+                                  <li key={index}>
+                                    <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType}) - {rawMaterial.quantity} units
+                                  </li>
+                                ))}
+                              </ul>
                             </td>
-                            <td>{item.note}</td>
+                            <td>{order.createdBy.firstName}</td>
+                            <td>{order.status}</td>
                           </tr>
                         ))}
+                        {productionOrders.length === 0 && (
+                          <tr>
+                            <td colSpan="5" className="text-center">
+                              No work-in-progress orders found.
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>

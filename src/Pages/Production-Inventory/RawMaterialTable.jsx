@@ -60,7 +60,7 @@ function RawMaterialTable() {
   const fetchCategories = async () => {
     try {
       const response = await getItemCategories();
-      setAllCategories(response.data);
+      setAllCategories(response.data || []);
       const parentCategories = response.data.filter(category => category.parentId === null);
       setCategories(parentCategories);
       // console.log(parentCategories);
@@ -72,7 +72,7 @@ function RawMaterialTable() {
   const fetchTaxes = async () => {
     try {
       const response = await getTaxes();
-      setTaxes(response.data);
+      setTaxes(response.data || []);
       console.log(response.data);
     } catch (error) {
       console.log(error);
@@ -93,7 +93,7 @@ function RawMaterialTable() {
   const fetchBrands = async () => {
     try {
       const response = await getBrands();
-      setBrands(response.data);
+      setBrands(response.data || []);
     } catch (error) {
       console.log(error);
     }

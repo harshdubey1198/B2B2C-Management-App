@@ -626,4 +626,14 @@ export const updateProductionOrderStatus = async (id, data) => {
     }
 };
 
+// to get firm wise wastage 
+export const getFirmWastage = async () => {
+    try {
+        const response = await axiosInstance.get(`/wasteinventory/get-wasteManagments/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

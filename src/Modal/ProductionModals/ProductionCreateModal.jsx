@@ -15,7 +15,7 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
   const fetchBoms = async () => {
     try {
       const response = await getBoms();
-      setBoms(response.data);
+      setBoms(response.data || []);
     } catch (error) {
       console.error('Error fetching Boms:', error.message);
     }
