@@ -22,9 +22,6 @@ const generateProductionOrderNumber = async (firmId) => {
 };
 
 const calculateRawMaterials = (bom, productionQuantity) => {
-    console.log("Starting raw material calculation...");
-    console.log("Fetched BOM Data:", JSON.stringify(bom, null, 2));
-
     return bom.rawMaterials.map((material, index) => {
 
         const wastePercentage = material.wastePercentage !== undefined 
@@ -36,7 +33,6 @@ const calculateRawMaterials = (bom, productionQuantity) => {
 
         // Calculate variant-level wastage and total variant wastage
         const variants = material.variants.map((variant, variantIndex) => {
-            console.log(`\nProcessing Variant at Index ${variantIndex}:`, JSON.stringify(variant, null, 2));
             const variantWastePercentage = variant.wastePercentage !== undefined
                 ? Number(variant.wastePercentage)
                 : 0;
@@ -75,6 +71,41 @@ const calculateRawMaterials = (bom, productionQuantity) => {
         };
     });
 };
+
+// CALCULATE RAW MATERIAL COST 
+const calculateRawMaterialsCost = async (rawMaterials, session) => {
+  const itemIds = rawMaterials.map(material => material.itemId);
+  const inventoryItems = await InventoryItem.find({ _id: { $in: itemIds } }).session(session);
+  const inventoryMap = new Map(inventoryItems.map((item) => [item._id.toString(), item]));
+  let totalCost = 0;
+  for (const material of rawMaterials) {
+    const {
+      itemId,
+      quantity: materialQuantity = 0,
+      wastePercentage = 0,
+    } = material;
+
+    const inventoryItem = inventoryMap.get(itemId.toString());
+
+    if (!inventoryItem) {
+      throw new Error(`Raw material with ID ${itemId} not found in the inventory.`);
+    }
+
+    const costPricePerUnit = inventoryItem.costPrice || 0;
+
+    // Skip calculation if materialQuantity or costPricePerUnit is 0
+    if (materialQuantity === 0 || costPricePerUnit === 0) {
+      console.warn(`Skipping material with ID ${itemId} due to zero quantity or cost price.`);
+      continue;
+    }
+
+    const materialCost = materialQuantity * costPricePerUnit;
+    const wastageCost = materialQuantity * costPricePerUnit * (wastePercentage / 100);
+
+    totalCost += materialCost + wastageCost;
+  }
+  return totalCost;
+}
 
 // Validate raw materials
 const validateRawMaterials = async (rawMaterials, session) => {
@@ -142,13 +173,9 @@ const deductRawMaterials = async (rawMaterials, session) => {
 
 const adjustInventoryStock = async (oldRawMaterials, newRawMaterials, session) => {
     for (const newMaterial of newRawMaterials) {
-      const inventoryItem = await InventoryItem.findById(
-        newMaterial.itemId
-      ).session(session);
+      const inventoryItem = await InventoryItem.findById(newMaterial.itemId).session(session);
       if (!inventoryItem) {
-        throw new Error(
-          `Raw material with ID ${newMaterial.itemId} not found.`
-        );
+        throw new Error(`Raw material with ID ${newMaterial.itemId} not found.`);
       }
   
       const oldMaterial = oldRawMaterials.find(
@@ -167,9 +194,7 @@ const adjustInventoryStock = async (oldRawMaterials, newRawMaterials, session) =
           );
   
           if (!matchingVariant) {
-            throw new Error(
-              `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
-            );
+            throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`);
           }
   
           const oldVariant = oldMaterial?.variants.find(
@@ -183,37 +208,34 @@ const adjustInventoryStock = async (oldRawMaterials, newRawMaterials, session) =
   
         // Sync parent item stock with variants
         inventoryItem.quantity = inventoryItem.variants.reduce(
-          (sum, v) => sum + v.stock,
-          0
+          (sum, v) => sum + v.stock,0
         );
       } else {
         // Handle item without variants
         adjustStock(inventoryItem, difference, inventoryItem.name);
       }
-  
       await inventoryItem.save();
     }
-  }
+}
   
 const adjustStock = async (item, difference, itemName) => {
     if (difference > 0) {
       // Deduct stock
       if (item.stock < difference) {
-        throw new Error(
-          `Insufficient stock for ${itemName}. Required: ${difference}, Available: ${item.stock}`
-        );
+        throw new Error(`Insufficient stock for ${itemName}. Required: ${difference}, Available: ${item.stock}`);
       }
       item.stock -= difference;
     } else {
       // Add stock
       item.stock += Math.abs(difference);
     }
-  }
+}
 
 // Export all utility functions
 module.exports = {
     generateProductionOrderNumber,
     calculateRawMaterials,
+    calculateRawMaterialsCost,
     validateRawMaterials,
     deductRawMaterials,
     adjustInventoryStock,

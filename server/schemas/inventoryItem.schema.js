@@ -9,7 +9,7 @@ const InventoryItemSchema = new Schema({
         type: String, 
         enum: ['kg', 'grams', 'pcs', 'litre', 'meters', 'centimeters', 'feet'], 
         required: true 
-      },    
+    },    
     supplier: { type: String },
     ProductHsn: { type: String },
     manufacturer: { type: String },

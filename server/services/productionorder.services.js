@@ -9,7 +9,7 @@ const {
   deductRawMaterials,
   validateRawMaterials,
   adjustInventoryStock,
-  adjustStock
+  calculateRawMaterialsCost
 } = require("../utils/productionorderutility");
 
 const ProductionOrderServices = {};
@@ -32,7 +32,8 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     }
 
     const rawMaterials = calculateRawMaterials(bom, quantity);
-
+    const totalCostPrice = await calculateRawMaterialsCost(rawMaterials, session)
+    console.log(totalCostPrice,"totalcostprice")
     let totalWastage = [];
 
     // Construct the waste data properly
