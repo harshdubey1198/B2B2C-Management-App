@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { createBom, getBoms, getInventoryItems } from '../../apiServices/service';
+import { createBom, getBoms, getBrands, getInventoryItems, getItemCategories, getItemSubCategories, getVendors } from '../../apiServices/service';
 import { Table, Button, Input, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Row, Col, } from 'reactstrap';
 
 function BomPage() {
   const [boms, setBoms] = useState([]);
   const [items, setItems] = useState([]);
   const [bomModal, setBomModal] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [vendors, setVendors] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [filteredBoms, setFilteredBoms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -22,6 +26,10 @@ function BomPage() {
     wastagePercentage: 0,
     firmId: firmId,
     createdBy: createdBy,
+    categoryId: '',
+    subCategoryId: '',
+    vendor: '',
+    brand: '',
   });
 
   const fetchBoms = async () => {
@@ -45,14 +53,54 @@ function BomPage() {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const result = await getItemCategories();
+      const filterOnlyparent = result.data.filter((cat) => cat.parentId === null);
+      setCategories(filterOnlyparent);
+      // console.log(filterOnlyparent);
+      } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchSubCategories = async (categoryId) => {
+    try {
+      const result = await getItemSubCategories(categoryId);
+      setSubCategories(result.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const fetchVendors = async () => { 
+    try {
+      const result = await getVendors();
+      setVendors(result.data || []);
+      // console.log(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+const fetchBrands = async () => {
+    try {
+      const result = await getBrands();
+      setBrands(result.data || []);
+      console.log(result.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  
+
   useEffect(() => {
     fetchBoms();
     fetchItems();
+    fetchCategories();
+    fetchVendors();
+    fetchBrands();
   }, []);
 
   const toggleBomModal = () => setBomModal(!bomModal);
-
- 
 
   const handleSearch = (e) => {
     const term = e.target.value;
@@ -152,6 +200,11 @@ function BomPage() {
           wastagePercentage: 0,
           createdBy: createdBy,
           firmId: firmId,
+          categoryId: '',
+          subCategoryId: '',
+          vendor: '',
+          brand: '',
+          
         });}
     } 
     catch(err){
@@ -244,6 +297,8 @@ function BomPage() {
             <Modal isOpen={bomModal} toggle={toggleBomModal}>
               <ModalHeader toggle={toggleBomModal}>Add BOM</ModalHeader>
                 <ModalBody>
+                  <Row>
+                    <Col md={6}>
                     <FormGroup>
                     <Label for="productName">BOM Name</Label>
                     <Input
@@ -253,6 +308,98 @@ function BomPage() {
                         onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
                     />
                     </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                    <FormGroup>
+                    <Label for="category">Category</Label>
+                    <Input
+                        type="select"
+                        value={formData.categoryId}
+                        onChange={(e) => {
+                          const selectedCategory = e.target.value;
+                          setFormData({ ...formData, categoryId: selectedCategory });
+                          fetchSubCategories(selectedCategory);
+                        }}
+                      >
+                        <option value="">Select Category</option>
+                        {categories.length > 0 ? (
+                        categories.map((cat) => (
+                            <option key={cat._id} value={cat._id}>
+                            {cat.categoryName}
+                            </option>
+                        ))
+                        ) : (
+                        <option disabled>No categories available</option>
+                        )}
+                    </Input>
+                    </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="subCategory">Sub Category</Label>
+                        <Input
+                          type="select"
+                          value={formData.subCategoryId}
+                          onChange={(e) => setFormData({ ...formData, subCategoryId: e.target.value })}
+                        >
+                          <option value="">Select Subcategory</option>
+                          {subCategories.length > 0 ? (
+                            subCategories.map((subCat) => (
+                              <option key={subCat._id} value={subCat._id}>
+                                {subCat.categoryName}
+                              </option>
+                            ))
+                          ) : (
+                            <option disabled>No subcategories available</option>
+                          )}
+                        </Input>
+                      </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                    <FormGroup>
+                    <Label for="vendor">Vendor</Label>
+                    <Input
+                        type="select"
+                        value={formData.vendorId}
+                        onChange={(e) => setFormData({ ...formData, vendorId: e.target.value })}
+                    >
+                        <option value="">Select Vendor</option>
+                        {vendors.length > 0 ? (
+                        vendors.map((vendor) => (
+                            <option key={vendor._id} value={vendor._id}>
+                            {vendor.name}
+                            </option>
+                        ))
+                        ) : (
+                        <option disabled>No vendors available</option>
+                        )}
+                    </Input>
+                    </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                    <FormGroup>
+                    <Label for="brand">Brand</Label>
+                    <Input
+                        type="select"
+                        value={formData.brandId}
+                        onChange={(e) => setFormData({ ...formData, brandId: e.target.value })}
+                    >
+                        <option value="">Select Brand</option>
+                        {brands.length > 0 ? (
+                        brands.map((brand) => (
+                            <option key={brand._id} value={brand._id}>
+                            {brand.name}
+                            </option>
+                        ))
+                        ) : (
+                        <option disabled>No brands available</option>
+                        )}
+                    </Input>
+                    </FormGroup>
+                    </Col>
+                  </Row>
                     <h6 className="text-primary">Materials</h6>
                     {formData.rawMaterials.map((material, materialIndex) => (
                         <Row key={materialIndex} className="mb-3">
