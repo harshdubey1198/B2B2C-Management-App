@@ -636,4 +636,13 @@ export const getFirmWastage = async () => {
     }
 };
 
+export const getWastageById = async (id) => {
+    try {
+        const response = await axiosInstance.get(`/wasteinventory/get-wasteManagment/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from "react";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Form, FormGroup, Label, Input } from "reactstrap";
-import { getFirmWastage } from "../../apiServices/service";
+import { Modal, ModalHeader, ModalBody, Button } from "reactstrap";
+import { getFirmWastage, getWastageById } from "../../apiServices/service";
 
 function WasteManagement() {
   const [wasteData, setWasteData] = useState([]);
+  const [selectedWaste, setSelectedWaste] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const fetchFirmWaste = async () => {
     try {
       const response = await getFirmWastage();
       setWasteData(response.data || []);
-      console.log(response.data);
     } catch (error) {
       console.error("Error fetching Firm Waste:", error.message);
     }
   };
 
-  useEffect(() => {
-    fetchFirmWaste();
-  }, []);  
+  const fetchWastageDetails = async (id) => {
+    try {
+      const response = await getWastageById(id);
+      setSelectedWaste(response.data || []);
+      console.log("Selected Waste:", response.data);
+      setModalOpen(true);
+    } catch (error) {
+      console.error("Error fetching wastage details:", error.message);
+    }
+  };
 
   const renderStatusBadge = (status) => {
     switch (status) {
@@ -33,6 +41,10 @@ function WasteManagement() {
     }
   };
 
+  useEffect(() => {
+    fetchFirmWaste();
+  }, []);
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -42,11 +54,6 @@ function WasteManagement() {
             <div className="col-12">
               <div className="card">
                 <div className="card-body">
-
-                  {/* <Button color="primary" onClick={toggleModal}>
-                    Add Waste Entry
-                  </Button> */}
-
                   {wasteData.length === 0 ? (
                     <div className="text-center mt-4">
                       <h5>No waste data available</h5>
@@ -64,24 +71,26 @@ function WasteManagement() {
                           </tr>
                         </thead>
                         <tbody>
-                          {wasteData.map((item, index) => (
-                            <tr key={item.id}>
+                          {wasteData.map((item) => (
+                            <tr
+                              key={item._id}
+                              onClick={() => fetchWastageDetails(item._id)}
+                              style={{ cursor: "pointer" }}
+                            >
                               <td>{item?.productionOrderId?.productionOrderNumber}</td>
                               <td>
-                                <ul className="p-0" style={{appearance:"none", listStyleType:"none"}}>
+                                <ul className="p-0" style={{ listStyleType: "none" }}>
                                   {item?.rawMaterials.map((rawMaterial, index) => (
-                                    <li style={{appearance:"none"}} key={index}>
-                                      <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType}) 
+                                    <li key={index}>
+                                      <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType})
                                     </li>
                                   ))}
                                 </ul>
                               </td>
-                              <td> 
-                                <ul className="p-0" style={{appearance:"none", listStyleType:"none"}}>
+                              <td>
+                                <ul className="p-0" style={{ listStyleType: "none" }}>
                                   {item?.rawMaterials.map((rawMaterial, index) => (
-                                    <li style={{appearance:"none"}} key={index}>
-                                      {rawMaterial.wasteQuantity} units
-                                    </li>
+                                    <li key={index}>{rawMaterial.wasteQuantity} units</li>
                                   ))}
                                 </ul>
                               </td>
@@ -98,7 +107,31 @@ function WasteManagement() {
           </div>
         </div>
 
-      
+        <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} centered>
+          <ModalHeader toggle={() => setModalOpen(!modalOpen)}>Waste Details</ModalHeader>
+          <ModalBody>
+            {selectedWaste ? (
+              <div>
+                <p><strong>PO Number:</strong> {selectedWaste?.productionOrderId?.productionOrderNumber}</p>
+                <p><strong>Status:</strong> {selectedWaste?.status}</p>
+                <p><strong>Materials:</strong></p>
+                <ul>
+                  {selectedWaste?.rawMaterials.map((material, index) => (
+                    <li key={index}>
+                      <strong>{material.itemId.name}</strong>: {material.wasteQuantity} {material.itemId.qtyType}
+                    </li>
+                  ))}
+                </ul>
+                <p><strong>Created By : </strong>
+                  {selectedWaste?.createdBy?.firstName} {selectedWaste?.createdBy?.lastName}
+                </p>
+              </div>
+            ) : (
+              <p>Loading details...</p>
+            )}
+          </ModalBody>
+          <Button color="secondary" onClick={() => setModalOpen(false)}>Close</Button>
+        </Modal>
       </div>
     </React.Fragment>
   );
