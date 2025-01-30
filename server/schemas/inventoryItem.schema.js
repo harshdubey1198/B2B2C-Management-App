@@ -8,7 +8,6 @@ const InventoryItemSchema = new Schema({
     qtyType: { 
         type: String, 
         enum: ['kg', 'grams', 'pcs', 'litre', 'meters', 'centimeters', 'feet'], 
-        required: true 
     },    
     supplier: { type: String },
     ProductHsn: { type: String },
