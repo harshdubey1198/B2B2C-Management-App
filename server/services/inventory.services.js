@@ -126,7 +126,7 @@ inventoryServices.getItem = async (id) => {
 
 // UPDATE INVENTORY ITEM
 inventoryServices.updateItem = async (id, body) => {
-    const { name, description, quantity, qtyType, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId, variants } = body;
+    const { name, description, quantity, qtyType, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId,type, variants } = body;
     const existingItem = await InventoryItem.findById(id);
     if (!existingItem) {
         throw new Error('Inventory item not found');
@@ -177,6 +177,7 @@ inventoryServices.updateItem = async (id, body) => {
             supplier,
             manufacturer,
             brand,
+            type,
             vendor,
             costPrice,
             sellingPrice,

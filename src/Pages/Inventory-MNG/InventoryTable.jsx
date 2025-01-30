@@ -193,9 +193,10 @@ function InventoryTable() {
     try {
       const response = await axiosInstance.put(
         `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
-        updatedFields
-      );
-      setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
+        { ...updatedFields, type: selectedItem.type }
+      ); 
+      // setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
+      setSelectedItem((prev) => ({ ...prev, ...updatedFields ,type: selectedItem.type }));
       toast.success(response.message);
       setModalOpen(!modalOpen);
       setTrigger((prev) => prev + 1);

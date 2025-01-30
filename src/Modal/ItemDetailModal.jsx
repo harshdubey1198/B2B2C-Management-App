@@ -130,6 +130,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   ))}
                 </select>
               </Col> */}
+              
               <Col md={6}>
                 <label>
                   <strong>Quantity Type:</strong>
@@ -299,7 +300,27 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   className="form-control"
                   readOnly
                 />
-              </Col>
+              </Col>     
+              <Col md={6}>
+                  <label>
+                    <strong>Item Type</strong>
+                  </label>
+                  <select
+                    className="form-control"
+                    value={selectedItem?.type || ""}
+                    onChange={(e) =>
+                      setSelectedItem({
+                        ...selectedItem,
+                        type: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">Select the type</option>
+                    <option value="raw_material">Raw Material</option>
+                    <option value="finished_goods">Finished Goods</option>
+                  </select>
+                </Col>
+              
             </Row>
 
 
