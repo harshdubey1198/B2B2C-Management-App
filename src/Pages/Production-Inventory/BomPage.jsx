@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { createBom, getBoms, getBrands, getInventoryItems, getItemCategories, getItemSubCategories, getVendors } from '../../apiServices/service';
+import { createBom, getBoms, getBrands, getInventoryItems, getItemCategories, getItemSubCategories, getTaxes, getVendors } from '../../apiServices/service';
 import { Table, Button, Input, Modal, ModalHeader, ModalBody, ModalFooter, FormGroup, Label, Row, Col, } from 'reactstrap';
 
 function BomPage() {
@@ -11,6 +11,7 @@ function BomPage() {
   const [subCategories, setSubCategories] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [taxes , setTaxes] = useState([]);
   const [filteredBoms, setFilteredBoms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -91,12 +92,21 @@ const fetchBrands = async () => {
     }
   };
   
+  const fetchTaxes = async () => {
+    try {
+      const result = await getTaxes();
+      setTaxes(result.data || []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     fetchBoms();
     fetchItems();
     fetchCategories();
     fetchVendors();
+    fetchTaxes();
     fetchBrands();
   }, []);
 
@@ -303,6 +313,7 @@ const fetchBrands = async () => {
                     <Label for="productName">BOM Name</Label>
                     <Input
                         id="productName"
+                        placeholder='Enter Product Name'
                         type="text"
                         value={formData.productName}
                         onChange={(e) => setFormData({ ...formData, productName: e.target.value })}
@@ -398,6 +409,27 @@ const fetchBrands = async () => {
                         )}
                     </Input>
                     </FormGroup>
+                    </Col>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="tax">Tax Selection</Label>
+                        <Input
+                          type="select"
+                          value={formData.tax}
+                          onChange={(e) => setFormData({ ...formData, tax: e.target.value })}
+                        >
+                          <option value="">Select Tax</option>
+                          {taxes.length > 0 ? (
+                            taxes.map((tax) => (
+                              <option key={tax._id} value={tax._id}>
+                                {tax.taxName}
+                              </option>
+                            ))
+                          ) : (
+                            <option disabled>No taxes available</option>
+                          )}
+                        </Input>
+                      </FormGroup>
                     </Col>
                   </Row>
                     <h6 className="text-primary">Materials</h6>
