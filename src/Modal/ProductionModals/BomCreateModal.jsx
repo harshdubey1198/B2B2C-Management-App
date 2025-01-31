@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
-function BomCreateModal ({ bomModal, isOpen,toggle, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands, taxes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands, taxes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+  useEffect(() => {
+    formData.sellingPrice = minimumSellingPrice(calculateTotalCostPrice());
+  }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, formData.tax, formData.vendor, formData.brand, formData.subCategoryId, formData.categoryId]);
+  
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
     <ModalHeader toggle={toggleBomModal}>Add BOM</ModalHeader>
@@ -67,7 +71,7 @@ function BomCreateModal ({ bomModal, isOpen,toggle, toggleBomModal, formData, se
               </Input>
             </FormGroup>
           </Col>
-          <Col md={6}>
+          <Col md={3}>
           <FormGroup>
           <Label for="vendor">Vendor</Label>
           <Input
@@ -136,6 +140,24 @@ function BomCreateModal ({ bomModal, isOpen,toggle, toggleBomModal, formData, se
               disabled
             />
           </Col>
+          <Col md={3}>
+            <FormGroup>
+              <Label for="sellingPrice">Selling Price</Label>
+              <Input
+                type="number"
+                value={formData.sellingPrice}
+                onChange={(e) => {
+                  const value = parseFloat(e.target.value);
+                  const minPrice = parseFloat(minimumSellingPrice(calculateTotalCostPrice()));
+                  
+                  if (value >= minPrice || e.target.value === '') {
+                    setFormData({ ...formData, sellingPrice: e.target.value });
+                  }
+                }}
+                min={minimumSellingPrice(calculateTotalCostPrice())}              />
+            </FormGroup>
+          </Col>
+          
           <Col md={3}>
             <FormGroup>
               <Label for="tax">Tax Selection</Label>

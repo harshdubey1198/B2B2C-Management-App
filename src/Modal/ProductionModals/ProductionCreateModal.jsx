@@ -12,6 +12,14 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
   const firmId = authuser?.adminId;
   const createdBy = authuser?._id;
 
+  const handleQuantityChange = (e) => { 
+    const value = e.target.value;
+    if (value >= 0) {
+      setQuantity(value);
+    }
+  };
+  
+
   const fetchBoms = async () => {
     try {
       const response = await getBoms();
@@ -91,12 +99,19 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
           <Col md={6}>
             <Label for="quantity">Quantity</Label>
             <Input
-              type="number"
+              type="text"
               name="quantity"
               id="quantity"
               value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
+              onChange={handleQuantityChange}
+              onWheel={(e) => e.target.blur()}
+              onKeyDown={(e) => {
+                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === '-' || e.key === 'e') {
+                  e.preventDefault(); 
+                }
+              }}
               placeholder="Enter quantity"
+              // min="0"
             />
           </Col>
         </Row>
@@ -105,6 +120,8 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
             <Row>
               <Col md={6}>
                 <strong>Product Name:</strong> {selectedBomData.productName}
+                <br />
+                <strong>Estimated Cost:</strong> {calculateEstimatedCost()}
               </Col>
               <Col md={6}>
                 {selectedBomData.rawMaterials.length > 0 && (
@@ -131,6 +148,7 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                       <th>Raw Material</th>
                       <th>Variant</th>
                       <th>Unit Type</th>
+                      <th>Cost Price</th>
                       <th>Per Item Quantity</th>
                       <th>Total Quantity Required</th>
                     </tr>
@@ -152,6 +170,7 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                           )}
                         </td>
                         <td>{rawMaterial.itemId.qtyType}</td>
+                        <td>{rawMaterial.itemId.costPrice}</td>
                         <td>{rawMaterial.quantity}</td>
                         <td>{rawMaterial.quantity * quantity}</td>
                       </tr>

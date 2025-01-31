@@ -21,6 +21,7 @@ function BomPage() {
   const firmId = authuser?.response?.adminId || '';
   const createdBy = authuser?.response?._id || '';
   const [estimatedCost, setEstimatedCost] = useState(0);
+  const [sellingPrice, setSellingPrice] = useState(0);
   // console.log("firmId", firmId, "createdBy", createdBy);
   const [formData, setFormData] = useState({
     productName: '',
@@ -31,6 +32,7 @@ function BomPage() {
     categoryId: '',
     subCategoryId: '',
     vendor: '',
+    sellingPrice: sellingPrice,
     brand: '',
     qtyType: '',
     costPrice: estimatedCost,
@@ -142,6 +144,7 @@ const fetchBrands = async () => {
     materials[materialIndex] = { ...materials[materialIndex], [field]: value };
     setFormData({ ...formData, rawMaterials: materials });
     setEstimatedCost(calculateTotalCostPrice());
+    setSellingPrice(minimumSellingPrice(estimatedCost));
 
   };
   
@@ -168,6 +171,7 @@ const fetchBrands = async () => {
     materials[materialIndex].variants = variants;
     setFormData({ ...formData, rawMaterials: materials });
     setEstimatedCost(calculateTotalCostPrice());
+    setSellingPrice(minimumSellingPrice(estimatedCost));
   };
   
   const addMaterialField = () => {
@@ -227,7 +231,17 @@ const fetchBrands = async () => {
 };
 
 
-
+const minimumSellingPrice = (costPrice) => {
+  let minimumPrice = 0;
+  // without tax 
+  minimumPrice = costPrice * 1;
+  console.log("minimumPrice", minimumPrice);
+  return minimumPrice.toFixed(2);
+};
+useEffect(() => {
+  // setEstimatedCost(calculateTotalCostPrice());
+  setSellingPrice(minimumSellingPrice(estimatedCost));
+}, [formData]);
 
   const saveBom = async () => {
     console.log('BOM Data:', formData);
@@ -362,6 +376,7 @@ const fetchBrands = async () => {
              fetchTaxes={fetchTaxes}
              fetchItems={fetchItems}
              fetchCategories={fetchCategories}
+             minimumSellingPrice={minimumSellingPrice}
              />
       </div>
     </React.Fragment>
