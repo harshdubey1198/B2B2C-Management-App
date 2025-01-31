@@ -42,8 +42,9 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
       <FetchManufacturers firmId={firmId} onManufacturersFetched={handleManufacturersFetched} />
       <ModalHeader toggle={() => setModalOpen(!modalOpen)}>
         {" "}
-        {selectedItem?.name} Details{" "} 
-        { selectedItem?.type || " " .replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) }
+        {selectedItem?.name} Details{" "} ||
+        Item Type : 
+        { " " + selectedItem?.type.replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) || " " }
 
       </ModalHeader>
       <ModalBody>

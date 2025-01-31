@@ -7,14 +7,14 @@ import { getInventoryItems } from "../../apiServices/service";
 function ProductionReports() {
   const [finishedProductsData, setFinishedProductsData] = useState([]);
   const [rawMaterialData, setRawMaterialData] = useState([]);
-  const [view, setView] = useState("finishedProducts");
-  const [chartType, setChartType] = useState("bar");
+  const [view, setView] = useState("rawMaterials");
+  const [chartType, setChartType] = useState("pie");
 
   const fetchItems = async () => {
     try {
       const response = await getInventoryItems();
       const finishedProducts = response.data.filter(
-        (item) => item.type === "readyProduct" || item.type === "finished_goods"
+        (item) => item.type === "readyProduct" || item.type === "finished_good"
       );
       const rawMaterials = response.data.filter((item) => item.type === "raw_material");
       setFinishedProductsData(finishedProducts);

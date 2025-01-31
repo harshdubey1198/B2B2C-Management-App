@@ -65,7 +65,7 @@ BomServices.createbom = async (body) => {
 BomServices.getboms = async (body) => {
   const { firmId} = body;
   const data = await BOM.find({ firmId, deleted_at: null })
-    .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice" })
+    .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice qtyType" })
     .populate({ path: "manufacturer", select: "name" })
     .populate({ path: "brand", select: "name" })
     .populate({ path: "vendor", select: "name" })

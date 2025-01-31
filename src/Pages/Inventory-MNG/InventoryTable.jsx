@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
+  const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -28,10 +29,10 @@ function InventoryTable() {
   });
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = inventoryData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredInventoryData.slice(indexOfFirstItem, indexOfLastItem);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(inventoryData.length / itemsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(filteredInventoryData.length / itemsPerPage); i++) {
     pageNumbers.push(i);
   }
   const handleItemsPerPageChange = (e) => {
@@ -213,6 +214,28 @@ function InventoryTable() {
     setVariantModalOpen(true);
   }; 
 
+  const handleSortByType = (type) => {
+
+    // initially want all the data
+    if (type === " ") {
+      setFilteredInventoryData(inventoryData);
+    }
+    
+    if (!type) {
+      setFilteredInventoryData(inventoryData); 
+    } else {
+      const sortedData = inventoryData.filter((item) => item.type === type);
+      setFilteredInventoryData(sortedData);
+    }
+  };
+  useEffect(() => {
+    setFilteredInventoryData(inventoryData);
+  }, [inventoryData]);
+  
+useEffect(() => {
+  handleSortByType(" ");
+},[]);
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -253,14 +276,37 @@ function InventoryTable() {
             </div>
 
           <Button color="primary" className="p-2 text-black" style={{fontSize:"10.5px"}} onClick={handleAddItemPage}> Add Item </Button>
-          <span className="badge table-raw-materials p-2 text-black d-flex align-items-center" > Raw Material</span>
-          <span className="badge table-row-blue p-2 text-black d-flex align-items-center"> Finished Goods</span>
-          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center"> Other</span>
+            {/* <span
+                className="badge table-raw-materials p-2 text-black d-flex align-items-center cursor-pointer"
+                onClick={() => handleSortByType("raw_material")}
+              >
+                Raw Material
+              </span>
+
+              <span
+                className="badge table-row-blue p-2 text-black d-flex align-items-center cursor-pointer"
+                onClick={() => handleSortByType("finished_good")} 
+              >
+                Finished Goods
+              </span>
+          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center cursor-pointer"
+            onClick={() => handleSortByType("")}
+          >All</span> */}
+          <select
+            type="select"
+            className="form-select"
+            style={{ width: "auto" ,maxHeight:"33px"}}
+            onChange={(e) => handleSortByType(e.target.value)}
+          >
+            <option value="">All Items</option>
+            <option value="raw_material">Raw Material</option>
+            <option value="finished_good">Finished Goods</option>
+          </select>
           <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
       </div>
 
         {/* <div className="d-flex align-items-center gap-3 mb-3">
-       
+
         </div> */}
 
 
@@ -286,7 +332,7 @@ function InventoryTable() {
       const rowClass =
         item.type === "raw_material"
           ? "table-raw-materials"
-          : item.type === "finished_goods"
+          : item.type==="finished_good"
           ? "table-row-blue"
           : "table-row-yellow";
 
