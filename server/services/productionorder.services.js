@@ -32,11 +32,11 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     }
 
     const rawMaterials = calculateRawMaterials(bom, quantity);
-    const totalCostPrice = await calculateRawMaterialsCost(rawMaterials, session)
-    console.log(totalCostPrice,"totalcostprice")
-    if(totalCostPrice > sellingPrice) {
-      throw new Error("Selling price should not be less than total cost price.");
-    }
+    // const totalCostPrice = await calculateRawMaterialsCost(rawMaterials, session)
+    // console.log(totalCostPrice,"totalcostprice")
+    // if(totalCostPrice > sellingPrice) {
+    //   throw new Error("Selling price should not be less than total cost price.");
+    // }
     let totalWastage = [];
 
     // Construct the waste data properly
@@ -285,7 +285,7 @@ ProductionOrderServices.updateProductionOrder = async (id, body) => {
       session.endSession();
       throw error;
     }
-  };
+};
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
     const session = await mongoose.startSession();
     session.startTransaction(); 
@@ -361,8 +361,8 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               type: 'finished_good',
               manufacturer: bom.manufacturer,
               brand: bom.brand,
-              costPrice: order.totalCostPrice,
-              sellingPrice: order.sellingPrice,
+              costPrice: bom.totalCostPrice,
+              sellingPrice: bom.sellingPrice,
               categoryId: bom.categoryId,
               subcategoryId: bom.subcategoryId,
               firmId: order.firmId,
