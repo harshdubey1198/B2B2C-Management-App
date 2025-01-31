@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react'
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
-function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands, taxes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands, taxes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
   useEffect(() => {
-    formData.sellingPrice = minimumSellingPrice(calculateTotalCostPrice());
+    // it must be number not the string    
+    // setSellingPrice(formData.sellingPrice);
+    setFormData({ ...formData, sellingPrice: Number(formData.sellingPrice) });
+
   }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, formData.tax, formData.vendor, formData.brand, formData.subCategoryId, formData.categoryId]);
   
+  console.log("FormData's Selling Price", formData.sellingPrice);
+
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
     <ModalHeader toggle={toggleBomModal}>Add BOM</ModalHeader>
@@ -143,18 +148,15 @@ function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, f
           <Col md={3}>
             <FormGroup>
               <Label for="sellingPrice">Selling Price</Label>
-              <Input
-                type="number"
-                value={formData.sellingPrice}
-                onChange={(e) => {
-                  const value = parseFloat(e.target.value);
-                  const minPrice = parseFloat(minimumSellingPrice(calculateTotalCostPrice()));
-                  
-                  if (value >= minPrice || e.target.value === '') {
-                    setFormData({ ...formData, sellingPrice: e.target.value });
-                  }
-                }}
-                min={minimumSellingPrice(calculateTotalCostPrice())}              />
+              {/* <Input
+                type="text"
+                onChange={(e) => setSellingPrice(e.target.value)}
+              /> */}
+               <Input 
+              type="number" 
+              value={formData.sellingPrice || 0} 
+              onChange={(e) => setFormData({ ...formData, sellingPrice: e.target.value })}
+            />
             </FormGroup>
           </Col>
           
@@ -211,7 +213,8 @@ function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, f
                     <Col md={2}>
                       <Label>Quantity</Label>
                       <Input
-                        type="number"
+                        type="text"
+                        placeholder='Enter Quantity'
                         value={material.quantity}
                         onChange={(e) => {
                           const newValue = Math.max(0, Number(e.target.value)); 
@@ -247,7 +250,9 @@ function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, f
                           type="select"
                           value={variant.variantId}
                           onChange={(e) =>
-                              handleVariantChange(materialIndex, variantIndex, 'variantId', e.target.value)
+                                
+                            handleVariantChange(materialIndex, variantIndex, 'variantId', e.target.value)
+                            
                           }
                           >
                           <option value="">Select Variant</option>
@@ -263,7 +268,7 @@ function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, f
                       <Col md={2}>
                           <Label>Quantity</Label>
                           <Input
-                            type="number"
+                            type="text"
                             value={variant.quantity}
                             onChange={(e) => {
                               const newValue = Math.max(   Number(e.target.value));
@@ -283,8 +288,7 @@ function BomCreateModal ({ minimumSellingPrice, isOpen,toggle, toggleBomModal, f
                           type="number"
                           value={variant.wastePercentage}
                           onChange={(e) =>
-                              handleVariantChange(materialIndex, variantIndex, 'wastePercentage', e.target.value)
-                          }
+                              handleVariantChange(materialIndex, variantIndex, 'wastePercentage', e.target.value) }
                           />
                       </Col>
                       <Col md={2}>
