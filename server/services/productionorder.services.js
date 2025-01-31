@@ -15,10 +15,10 @@ const {
 const ProductionOrderServices = {};
 
 ProductionOrderServices.createProductionOrder = async (body) => {
-  const { bomId, quantity, firmId, createdBy } = body;
-  if (!bomId || !quantity || !firmId || !createdBy) {
+  const { bomId, quantity, firmId, createdBy, sellingPrice } = body;
+  if (!bomId || !quantity || !firmId || !createdBy || sellingPrice) {
     throw new Error(
-      "Missing required fields: bomId, quantity, firmId, or createdBy"
+      "Missing required fields: bomId, quantity, firmId, sellingPrice or createdBy"
     );
   }
   const session = await mongoose.startSession();
@@ -64,6 +64,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       quantity,
       rawMaterials,
       firmId,
+      sellingPrice,
       createdBy,
       totalCostPrice,
       status: "created",
@@ -358,6 +359,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               manufacturer: bom.manufacturer,
               brand: bom.brand,
               costPrice: order.totalCostPrice,
+              sellingPrice: order.sellingPrice,
               categoryId: bom.categoryId,
               subcategoryId: bom.subcategoryId,
               firmId: order.firmId,

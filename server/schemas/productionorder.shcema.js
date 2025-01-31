@@ -23,6 +23,7 @@ const ProductionOrderSchema = new Schema({
         }
     ],
     totalCostPrice: {type: Number},
+    sellingPrice: {type: Number},
     // wastage: { type: Number, default: 0 },
     firmId: { type: Schema.Types.ObjectId, ref: 'User' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
