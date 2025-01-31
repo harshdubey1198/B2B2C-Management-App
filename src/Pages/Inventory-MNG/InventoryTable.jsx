@@ -228,6 +228,10 @@ function InventoryTable() {
       setFilteredInventoryData(sortedData);
     }
   };
+  useEffect(() => {
+    setFilteredInventoryData(inventoryData);
+  }, [inventoryData]);
+  
 useEffect(() => {
   handleSortByType(" ");
 },[]);
@@ -272,8 +276,7 @@ useEffect(() => {
             </div>
 
           <Button color="primary" className="p-2 text-black" style={{fontSize:"10.5px"}} onClick={handleAddItemPage}> Add Item </Button>
-          {/* <span className="badge table-raw-materials p-2 text-black d-flex align-items-center" > Raw Material</span> */}
-            <span
+            {/* <span
                 className="badge table-raw-materials p-2 text-black d-flex align-items-center cursor-pointer"
                 onClick={() => handleSortByType("raw_material")}
               >
@@ -286,15 +289,24 @@ useEffect(() => {
               >
                 Finished Goods
               </span>
-          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center"
+          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center cursor-pointer"
             onClick={() => handleSortByType("")}
-
-          >All</span>
-          <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {currentItems.length}</span>
+          >All</span> */}
+          <select
+            type="select"
+            className="form-select"
+            style={{ width: "auto" ,maxHeight:"33px"}}
+            onChange={(e) => handleSortByType(e.target.value)}
+          >
+            <option value="">All Items</option>
+            <option value="raw_material">Raw Material</option>
+            <option value="finished_good">Finished Goods</option>
+          </select>
+          <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
       </div>
 
         {/* <div className="d-flex align-items-center gap-3 mb-3">
-       
+
         </div> */}
 
 
