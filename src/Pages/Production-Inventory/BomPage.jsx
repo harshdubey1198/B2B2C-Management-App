@@ -19,7 +19,7 @@ function BomPage() {
   const authuser = JSON.parse(localStorage.getItem('authUser')) || {};
   const firmId = authuser?.response?.adminId || '';
   const createdBy = authuser?.response?._id || '';
-
+  const [estimatedCost, setEstimatedCost] = useState(0);
   // console.log("firmId", firmId, "createdBy", createdBy);
   const [formData, setFormData] = useState({
     productName: '',
@@ -31,6 +31,8 @@ function BomPage() {
     subCategoryId: '',
     vendor: '',
     brand: '',
+    qtyType: '',
+    costPrice: estimatedCost,
   });
 
   const fetchBoms = async () => {
@@ -86,7 +88,6 @@ const fetchBrands = async () => {
     try {
       const result = await getBrands();
       setBrands(result.data || []);
-      console.log(result.data);
     } catch (err) {
       console.error(err);
     }
@@ -139,6 +140,8 @@ const fetchBrands = async () => {
     const materials = [...formData.rawMaterials];
     materials[materialIndex] = { ...materials[materialIndex], [field]: value };
     setFormData({ ...formData, rawMaterials: materials });
+    setEstimatedCost(calculateTotalCostPrice());
+
   };
   
   const handleVariantChange = (materialIndex, variantIndex, field, value) => {
@@ -163,6 +166,7 @@ const fetchBrands = async () => {
   
     materials[materialIndex].variants = variants;
     setFormData({ ...formData, rawMaterials: materials });
+    setEstimatedCost(calculateTotalCostPrice());
   };
   
   const addMaterialField = () => {
@@ -195,6 +199,34 @@ const fetchBrands = async () => {
     setFormData({ ...formData, rawMaterials: materials });
   };
   
+  //calculate the sum of costprice of all the materials
+  const calculateTotalCostPrice = () => {
+    let totalCost = 0;
+
+    formData.rawMaterials.forEach(material => {
+        const selectedMaterial = items.find(item => item._id === material.itemId);
+        if (selectedMaterial) {
+            let materialCost = selectedMaterial.costPrice;
+
+            if (material.variants?.length > 0) {
+                material.variants.forEach(variant => {
+                    const selectedVariant = selectedMaterial.variants.find(v => v._id === variant.variantId);
+                    if (selectedVariant) {
+                        let combinedCost = materialCost + selectedVariant.price;
+                        totalCost += combinedCost * variant.quantity;
+                    }
+                });
+            } else {
+                totalCost += materialCost * material.quantity;
+            }
+        }
+    });
+
+    return totalCost.toFixed(2);
+};
+
+
+
 
   const saveBom = async () => {
     console.log('BOM Data:', formData);
@@ -389,7 +421,7 @@ const fetchBrands = async () => {
                     </Input>
                     </FormGroup>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
                     <FormGroup>
                     <Label for="brand">Brand</Label>
                     <Input
@@ -410,7 +442,34 @@ const fetchBrands = async () => {
                     </Input>
                     </FormGroup>
                     </Col>
-                    <Col md={6}>
+                    <Col md={3}>
+                    <FormGroup>
+                      <Label for="qtyType">Qty Type</Label>
+                      <Input
+                        type="select"
+                        value={formData.qtyType}
+                        onChange={(e) => setFormData({ ...formData, qtyType: e.target.value })}
+                      >
+                        <option value="">Select Qty Type</option>
+                        <option value="pcs">Pieces</option>
+                        <option value="grams">Gm</option>
+                        <option value="kg">Kg</option>
+                        <option value="centimeters">Centimeter</option>
+                        <option value="feet">Feet</option>
+                        <option vlaue="meters">Meters</option>
+                        <option value="litre">Litre</option>
+                      </Input>
+                    </FormGroup>
+                    </Col>
+                    <Col md={3}>
+                      <Label for="estimatedCost">Estimated Cost</Label>
+                      <Input
+                        type="number"
+                        value={calculateTotalCostPrice()}
+                        disabled
+                      />
+                    </Col>
+                    <Col md={3}>
                       <FormGroup>
                         <Label for="tax">Tax Selection</Label>
                         <Input
@@ -455,14 +514,35 @@ const fetchBrands = async () => {
                               </Input>
 
                             </Col>
-                            <Col md={2}>
+                            {/* if variant in the item doesn't exist we will see this quantity for the item  */}
+                            {!items.find((item) => item._id === material.itemId)?.variants.length > 0 && (
+                              <Col md={2}>
+                                <Label>Quantity</Label>
+                                <Input
+                                  type="number"
+                                  value={material.quantity}
+                                  onChange={(e) => {
+                                    const newValue = Math.max(0, Number(e.target.value)); 
+                                    handleMaterialChange(materialIndex, 'quantity', newValue);
+                                  }}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === '-' || e.key === 'e') {
+                                      e.preventDefault(); 
+                                    }
+                                  }}                              
+                                />
+                              </Col>
+                            )}
+                            
+                            
+                            {/* <Col md={2}>
                             <Label>Quantity</Label>
                             <Input
                                 type="number"
                                 value={material.quantity}
                                 onChange={(e) => handleMaterialChange(materialIndex, 'quantity', e.target.value)}
                             />
-                            </Col>
+                            </Col> */}
                             <Col md={2}>
                             <Label>Waste (%)</Label>
                             <Input
@@ -472,15 +552,12 @@ const fetchBrands = async () => {
                             />
                             </Col>
                             <Col md={2} className="d-flex align-items-center">
-                            {/* <Button color="danger" onClick={() => removeMaterialField(materialIndex)} style={{width: '100%', height:"37px"}}>
-                                Remove Material
-                            </Button> */}
                               <i className='bx bx-trash' style={{fontSize: '1.5rem', cursor: 'pointer'}} onClick={() => removeMaterialField(materialIndex)}></i>
                             </Col>
                             <Col md={12} className="mt-2">
-                            <h6 className="text-primary">Variants</h6>
                             {material.variants?.map((variant, variantIndex) => (
-                                <Row key={variantIndex} className="mb-2">
+                              <Row key={variantIndex} className="mb-2">
+                                <h6 className="text-primary">Variants</h6>
                                 <Col md={3}>
                                     <Label>Variant</Label>
                                     <Input
@@ -503,12 +580,19 @@ const fetchBrands = async () => {
                                 <Col md={2}>
                                     <Label>Quantity</Label>
                                     <Input
-                                    type="number"
-                                    value={variant.quantity}
-                                    onChange={(e) =>
-                                        handleVariantChange(materialIndex, variantIndex, 'quantity', e.target.value)
-                                    }
+                                      type="number"
+                                      value={variant.quantity}
+                                      onChange={(e) => {
+                                        const newValue = Math.max(   Number(e.target.value));
+                                        handleVariantChange(materialIndex, variantIndex, 'quantity', newValue);
+                                      }}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === '-' || e.key === 'e') {
+                                          e.preventDefault(); 
+                                        }
+                                      }}
                                     />
+
                                 </Col>
                                 <Col md={2}>
                                     <Label>Waste (%)</Label>
@@ -530,9 +614,15 @@ const fetchBrands = async () => {
                                 </Col>
                                 </Row>
                             ))}
-                            <Button color="success" onClick={() => addVariantField(materialIndex)}>
-                                Add Variant
-                            </Button>
+
+                            {/* variant length > 0 */}
+                            {items.find((item) => item._id === material.itemId)?.variants.length > 0 && (
+                              <Col md={2}>
+                                <Button color="success" onClick={() => addVariantField(materialIndex)}>
+                                  Add Variant
+                                </Button>
+                              </Col>
+                            )}
                             </Col>
                         </Row>
                         ))}
