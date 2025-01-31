@@ -1,11 +1,12 @@
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
+const { calculateBomRawMaterialsCost } = require("../utils/productionorderutility");
 
 const BomServices = {};
 
 // CREATE BOM
 BomServices.createbom = async (body) => {
-  const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, costPrice, categoryId, subcategoryId, vendor, tax } = body;
+  const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, sellingPrice, categoryId, subcategoryId, vendor, tax } = body;
 
   // Validate raw materials exist in Inventory
   for (const material of rawMaterials) {
@@ -31,6 +32,12 @@ BomServices.createbom = async (body) => {
     }
   }
 
+  const totalCostPrice = await calculateBomRawMaterialsCost(rawMaterials);
+
+  if(totalCostPrice > sellingPrice) {
+    throw new Error("Selling price should not be less than total cost price.");
+  }
+
   // Create BOM
   const newBOM = new BOM({
     productName,
@@ -38,7 +45,8 @@ BomServices.createbom = async (body) => {
     manufacturer,
     brand,
     type,
-    costPrice,
+    totalCostPrice,
+    sellingPrice,
     categoryId,
     subcategoryId,
     vendor,

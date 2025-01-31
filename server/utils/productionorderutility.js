@@ -3,6 +3,45 @@ const ProductionOrder = require("../schemas/productionorder.shcema");
 const WastageInventory = require("../schemas/wasteinventory.schema");
 
 
+// calculate price for bom
+const calculateBomRawMaterialsCost = async (rawMaterials) => {
+  const itemIds = rawMaterials.map(material => material.itemId);
+  const inventoryItems = await InventoryItem.find({ _id: { $in: itemIds } });
+  const inventoryMap = new Map(inventoryItems.map((item) => [item._id.toString(), item]));
+
+  let totalCost = 0;
+
+  for (const material of rawMaterials) {
+    const {
+      itemId,
+      quantity: materialQuantity = 0,
+      wastePercentage = 0,
+    } = material;
+
+    const inventoryItem = inventoryMap.get(itemId.toString());
+
+    if (!inventoryItem) {
+      throw new Error(`Raw material with ID ${itemId} not found in the inventory.`);
+    }
+
+    const costPricePerUnit = inventoryItem.costPrice || 0;
+
+    // Skip calculation if materialQuantity or costPricePerUnit is 0
+    if (materialQuantity === 0 || costPricePerUnit === 0) {
+      console.warn(`Skipping material with ID ${itemId} due to zero quantity or cost price.`);
+      continue;
+    }
+
+    const materialCost = materialQuantity * costPricePerUnit;
+    const wastageCost = materialQuantity * costPricePerUnit * (wastePercentage / 100);
+
+    totalCost += materialCost + wastageCost;
+  }
+
+  return totalCost;
+};
+
+
 // Generate unique production order number
 const generateProductionOrderNumber = async (firmId) => {
     const currentDate = new Date();
@@ -239,5 +278,6 @@ module.exports = {
     validateRawMaterials,
     deductRawMaterials,
     adjustInventoryStock,
+    calculateBomRawMaterialsCost,
     adjustStock,
 };
