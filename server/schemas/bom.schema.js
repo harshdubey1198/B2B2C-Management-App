@@ -31,6 +31,7 @@ const BOMSchema = new Schema({
           variantId: { type: String, },          
           optionLabel: { type: String }, 
           quantity: { type: Number, }, 
+          price : { type: Number, default: 0 },
           waste: { type: String, }, 
           wastePercentage: { type: Number, default: 0 }      
         }

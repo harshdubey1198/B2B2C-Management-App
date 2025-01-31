@@ -163,7 +163,8 @@ function ProductionOrders() {
                 <th>Order Date</th>
                 <th>Created By</th>
                 <th>Status</th>
-                <th>Action</th>
+                {role === 'firm_admin' ? <th>Action</th> : null}
+
               </tr>
             </thead>
             <tbody>
@@ -241,11 +242,14 @@ function ProductionOrders() {
                       </td>
                       <td>
                         {role === 'firm_admin' ? (
-                          <i
-                            className="bx bx-edit bx-sm"
-                            style={{ cursor: 'pointer' }}
-                            onClick={() => handleOpenModal(order)}
-                          ></i>
+                            order.status !== 'completed' ? (
+                              <i
+                                className="bx bx-edit bx-sm"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => handleOpenModal(order)}
+                              ></i>
+                            ) : null
+
                         ) : null}
                       </td>
                     </tr>

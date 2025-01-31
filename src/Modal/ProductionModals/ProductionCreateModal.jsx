@@ -34,6 +34,9 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
           setSelectedBomData(null);
           trigger();
         }
+        else {
+          toast.error(response.error);
+        }
       } catch (error) {
         console.error('Error creating production order:', error.message);
       }
@@ -41,6 +44,17 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
       alert('Please select a BOM');
     }
   };
+
+  const calculateEstimatedCost = () => {
+    let cost = 0;
+    if (selectedBomData && selectedBomData.rawMaterials.length > 0) {
+      selectedBomData.rawMaterials.forEach((material) => {
+        cost += material.itemId.costPrice * material.quantity * quantity;
+      });
+    }
+    return cost;
+  }
+  console.log("estimated cost", calculateEstimatedCost());
 
   useEffect(() => {
     fetchBoms();
@@ -130,7 +144,7 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                           {rawMaterial.variants.length > 0 ? (
                             rawMaterial.variants.map((variant, index) => (
                               <span key={index} value={variant._id}>
-                                {variant.optionLabel}
+                                {variant.optionLabel} {variant.price}
                               </span>
                             ))
                           ) : (
