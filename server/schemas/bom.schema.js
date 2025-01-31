@@ -5,6 +5,7 @@ const BOMSchema = new Schema({
   productName: { type: String, required: true },
   manufacturer: { type: Schema.Types.ObjectId, ref: 'Manufacturer' },
   brand: { type: Schema.Types.ObjectId, ref: 'Brand' },
+  qtyType: { type: String },
   type: { type: String, enum: ['raw_material', 'finished_good'] },
   costPrice: { type: Number },
   sellingPrice: { type: Number },

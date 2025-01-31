@@ -22,6 +22,8 @@ const ProductionOrderSchema = new Schema({
             ]
         }
     ],
+    totalCostPrice: {type: Number},
+    sellingPrice: {type: Number},
     // wastage: { type: Number, default: 0 },
     firmId: { type: Schema.Types.ObjectId, ref: 'User' },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
@@ -30,7 +32,7 @@ const ProductionOrderSchema = new Schema({
         enum: ['created', 'in_progress', 'completed', 'cancelled'],
         default: 'created'
     },
-    notes: { type: String },
+    notes: [{ type: String }],
     deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 

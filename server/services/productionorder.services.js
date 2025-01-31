@@ -15,10 +15,10 @@ const {
 const ProductionOrderServices = {};
 
 ProductionOrderServices.createProductionOrder = async (body) => {
-  const { bomId, quantity, firmId, createdBy } = body;
-  if (!bomId || !quantity || !firmId || !createdBy) {
+  const { bomId, quantity, firmId, createdBy, sellingPrice } = body;
+  if (!bomId || !quantity || !firmId || !createdBy || sellingPrice) {
     throw new Error(
-      "Missing required fields: bomId, quantity, firmId, or createdBy"
+      "Missing required fields: bomId, quantity, firmId, sellingPrice or createdBy"
     );
   }
   const session = await mongoose.startSession();
@@ -64,7 +64,9 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       quantity,
       rawMaterials,
       firmId,
+      sellingPrice,
       createdBy,
+      totalCostPrice,
       status: "created",
     };
 
@@ -288,13 +290,14 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
         const { status, notes } = body;
         const order = await ProductionOrder.findById(id)
             .populate('rawMaterials.itemId')
+            .populate('bomId')
             .session(session);
         if (!order) {
             throw new Error('Production Order not found');
         }
 
         const allowedTransitions = {
-            created: ['in_progress', 'cancelled'],
+            created: ['in_progress', 'cancelled', 'completed'],
             in_progress: ['completed', 'cancelled'],
             completed: [],
             cancelled: []
@@ -333,13 +336,46 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
                 await inventoryItem.save({ session });
             }
         }
-        const wasteRecords = await WasteManagement.find({ productionOrderId: id }).session(session);
-        for (const waste of wasteRecords) {
-            waste.status = 'cancelled';
-            await waste.save({ session });
+        // **Step 2: Mark Waste Records as Cancelled**
+        if (status === 'cancelled') {
+          const wasteRecords = await WasteManagement.find({ productionOrderId: id }).session(session);
+          for (const waste of wasteRecords) {
+              waste.status = 'cancelled';
+              await waste.save({ session });
+          }
         }
+
+        if (status === 'completed') {
+          const bom = order.bomId;
+          if (!bom) {
+              throw new Error('Associated BOM not found.');
+          }
+          const finishedProduct = new InventoryItem({
+              name: bom.productName,
+              description: `Manufactured product from BOM: ${bom._id}`,
+              quantity: order.quantity, 
+              qtyType: bom.qtyType, 
+              type: 'finished_good',
+              manufacturer: bom.manufacturer,
+              brand: bom.brand,
+              costPrice: order.totalCostPrice,
+              sellingPrice: order.sellingPrice,
+              categoryId: bom.categoryId,
+              subcategoryId: bom.subcategoryId,
+              firmId: order.firmId,
+              createdBy: order.createdBy,
+              vendor: bom.vendor,
+              tax: {
+                taxId: bom.tax?.taxId,
+                components: bom.tax?.components || [] 
+            },
+              deleted_at: null,
+          });
+          await finishedProduct.save({ session });
+        }
+
         order.status = status;
-        order.notes = notes || order.notes;
+        order.notes.push(notes)
         await order.save({ session });
 
         await session.commitTransaction();
