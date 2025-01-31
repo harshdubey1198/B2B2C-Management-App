@@ -506,6 +506,9 @@ const fetchBrands = async () => {
                                   items.map((item) => (
                                     <option key={item._id} value={item._id}>
                                       {item.name} - {item.qtyType}
+                                       {/* {item.variants?.length > 0 && (
+                                        <span className="text-muted">✅</span>
+                                      )} */}
                                     </option>
                                   ))
                                 ) : (
@@ -552,7 +555,7 @@ const fetchBrands = async () => {
                             />
                             </Col>
                             <Col md={2} className="d-flex align-items-center">
-                              <i className='bx bx-trash' style={{fontSize: '1.5rem', cursor: 'pointer'}} onClick={() => removeMaterialField(materialIndex)}></i>
+                              <i className='bx bx-trash' style={{fontSize: '1.5rem', marginTop:'29px', cursor: 'pointer'}} onClick={() => removeMaterialField(materialIndex)}></i>
                             </Col>
                             <Col md={12} className="mt-2">
                             {material.variants?.map((variant, variantIndex) => (
@@ -605,12 +608,7 @@ const fetchBrands = async () => {
                                     />
                                 </Col>
                                 <Col md={2}>
-                                    <Button
-                                    color="danger"
-                                    onClick={() => removeVariantField(materialIndex, variantIndex)}
-                                    >
-                                    Remove Variant
-                                    </Button>
+                                  <i className='bx bx-trash' style={{fontSize: '1.5rem', marginTop:'29px', cursor: 'pointer'}} onClick={() => removeVariantField(materialIndex, variantIndex)}></i>
                                 </Col>
                                 </Row>
                             ))}
