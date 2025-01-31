@@ -7,11 +7,13 @@ import StatusUpdateModal from '../../Modal/ProductionModals/StatusUpdateModal';
 import ProductionCreateModal from '../../Modal/ProductionModals/ProductionCreateModal';
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
 
 function ProductionOrders() {
   const [productionOrders, setProductionOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
+  const navigate = useNavigate();
   const [newQuantity, setNewQuantity] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
   const [statusModalOpen, setStatusModalOpen] = useState(false); 
@@ -88,6 +90,10 @@ function ProductionOrders() {
   const handleStatusChange = (order, selectedStatus) => {
     setSelectedOrder({ ...order, status: selectedStatus });
     setStatusModalOpen(true);
+    if(selectedStatus==="completed"){
+      console.log("completed");
+      navigate('/inventory-table')
+    }
   };
   
 
