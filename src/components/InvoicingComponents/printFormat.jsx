@@ -1,33 +1,33 @@
 import React, { forwardRef } from 'react';
 import '../../assets/scss/bootstrap.scss';
 
-const convertNumberToWords = (num) => {
-    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-    const g = ['Hundred', 'Thousand', 'Million', 'Billion', 'Trillion'];
+// const convertNumberToWords = (num) => {
+//     const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+//     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+//     const g = ['Hundred', 'Thousand', 'Million', 'Billion', 'Trillion'];
 
-    const convert = (n) => {
-        if (n < 20) return a[n];
-        if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
-        if (n < 1000) return a[Math.floor(n / 100)] + ' ' + g[0] + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
+//     const convert = (n) => {
+//         if (n < 20) return a[n];
+//         if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
+//         if (n < 1000) return a[Math.floor(n / 100)] + ' ' + g[0] + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
 
-        for (let i = 0; i < g.length; i++) {
-            const divisor = Math.pow(1000, i + 1);
-            if (n < divisor) {
-                return convert(Math.floor(n / Math.pow(1000, i))) + ' ' + g[i] + (n % Math.pow(1000, i) !== 0 ? ' ' + convert(n % Math.pow(1000, i)) : '');
-            }
-        }
-    };
+//         for (let i = 0; i < g.length; i++) {
+//             const divisor = Math.pow(1000, i + 1);
+//             if (n < divisor) {
+//                 return convert(Math.floor(n / Math.pow(1000, i))) + ' ' + g[i] + (n % Math.pow(1000, i) !== 0 ? ' ' + convert(n % Math.pow(1000, i)) : '');
+//             }
+//         }
+//     };
 
-    const [whole, decimal] = num.toString().split('.').map(Number);
-    let words = convert(whole);
+//     const [whole, decimal] = num.toString().split('.').map(Number);
+//     let words = convert(whole);
     
-    if (decimal) {
-        words += ` Rupees and ${convert(decimal)} Paise`;
-    }
+//     if (decimal) {
+//         words += ` Rupees and ${convert(decimal)} Paise`;
+//     }
 
-    return words.trim();
-};
+//     return words.trim();
+// };
 
 const sliceDescription = (description) => {
     if (description && description.length > 50) {
@@ -41,22 +41,21 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
     const items = invoiceData?.items || []; 
     const companyAddress = companyData?.address || [];
 
-    // Calculate total amount based on quantity and price of each item
     const subtotal = items.reduce((acc, item) => {
-        const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
-        return acc + (item.quantity * itemPrice); // Accumulate subtotal
+        const itemPrice = item.varSelPrice || item.price; 
+        return acc + (item.quantity * itemPrice); 
     }, 0);
 
     const totalTaxAmount = items.reduce((acc, item) => {
-        const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
+        const itemPrice = item.varSelPrice || item.price; 
         const itemTotalValue = item.quantity * itemPrice;
-        const taxRate = (item.taxComponents || []).reduce((sum, tax) => sum + tax.rate, 0); // Sum all tax rates
-        return acc + (itemTotalValue * (taxRate / 100)); // Accumulate tax amount
+        const taxRate = (item.taxComponents || []).reduce((sum, tax) => sum + tax.rate, 0);
+        return acc + (itemTotalValue * (taxRate / 100)); 
     }, 0);
 
-    const grandTotal = subtotal + totalTaxAmount; // Grand total after tax
+    const grandTotal = subtotal + totalTaxAmount; 
     const amountPaid = Number(invoiceData?.amountPaid) || 0;    
-    //  const totalInWords = convertNumberToWords(grandTotal); // Total in words
+    //  const totalInWords = convertNumberToWords(grandTotal); 
 
     const customerName = invoiceData?.firstName && invoiceData?.lastName
         ? `${invoiceData.firstName} ${invoiceData.lastName}`
@@ -68,7 +67,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 <h2 className="text-white">{invoiceData?.invoiceType}</h2>
             </div>
 
-            <div className="row m-text-center p-4 m-0">
+            <div className="row m-text-center p-4 pb-0 m-0">
                 <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
                     {(invoiceData?.companyLogo || selectInvoice.avatar) && (
                         <img 
@@ -94,7 +93,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 </div>
             </div>
 
-            <div className="row p-4 m-0 border-bottom">
+            <div className="row pb-1 m-4 border-bottom">
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center">
                     <h4>Customer Details:</h4>
                     <p className="my-1">{customerName}</p>
@@ -104,7 +103,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 </div>
             </div>
 
-            <div className="table-responsive">
+            <div className="table-responsive mx-4 mt-2">
                 <table className="table table-bordered">
                     <thead className='table-light'>
                         <tr>
@@ -156,7 +155,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                 </table>
             </div>
 
-            <div className="row bg-light p-4 m-0">
+            <div className="row bg-light m-4">
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center ">
                     <h5>Bank Details</h5>
                     <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice?.bankName || 'Your Bank Name'}</p>
@@ -168,7 +167,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1"><strong>Subtotal:</strong> ₹ {subtotal?.toFixed(2)}</p>
                     <p className="my-1"><strong>Tax:</strong> ₹ {totalTaxAmount?.toFixed(2)}</p>
                     <p className="my-1"><strong>Grand Total:</strong> ₹ {grandTotal?.toFixed(2)}</p>
-                    <p><strong>Amount Paid:</strong> ₹ {amountPaid?.toFixed(2)}</p>
+                    <p className="my-1"><strong>Amount Paid:</strong> ₹ {amountPaid?.toFixed(2)}</p>
                     <p className="my-1"><strong>Balance:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
                     {/* <p className="my-1"><strong>Amount in Words:</strong> {totalInWords}</p> */}
                 </div>

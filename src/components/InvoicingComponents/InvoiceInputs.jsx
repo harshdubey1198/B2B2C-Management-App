@@ -130,7 +130,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
           <h3>Invoice Details</h3>
         </Col>
         <Col  lg={6} md={6} sm={12} className="text-right">
-          <FormGroup className="mb-0">
+        <FormGroup className="mb-0">
             <Input
               type="text"
               placeholder="Search Customer Here..."
@@ -146,63 +146,71 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
               }}
             />
             {showSuggestions && searchResults.length > 0 && (
-             <ul
-             ref={suggestionsRef}
-             className="list-group position-absolute"
-             style={{
-               width: "100%",
-               maxHeight: "200px",
-               overflowY: "auto",
-               zIndex: 1000,
-               marginTop: "5px",
-             }}
-           >
-             {searchResults.map((customer, index) => (
-               <li
-                 key={index}
-                 className={`list-group-item d-flex align-items-center ${
-                   selectedIndex === index ? "bg-light text-dark " : ""
-                 }`} 
-                 style={{
-                   cursor: "pointer",
-                   padding: "10px",
-                 }}
-                 onClick={() => handleSuggestionClick(customer)}
-                 onMouseEnter={() => setSelectedIndex(index)} 
-               >
-                 <div
-                   className="d-flex align-items-center gap-3"
-                   style={{ width: "100%" }}
-                 >
-                   <div
-                     className="mr-3"
-                     style={{
-                       fontSize: "24px",
-                       color: "#007bff",
-                     }}
-                   >
-                     <i className="fa fa-user-circle"></i>
-                   </div>
-                   <div style={{ flex: 1 }}>
-                     <p style={{ margin: 0, fontWeight: "bold" }}>
-                       {highlightSearchTerm(
-                         customer.firstName + " " + customer.lastName
-                       )}
-                     </p>
-                     <p
-                       style={{
-                         margin: 0,
-                         fontSize: "12px",
-                         color: "#666",
-                       }}
-                     >
-                       {customer.email}
-                     </p>
-                   </div>
-                 </div>
-               </li>
-             ))}
-           </ul>
+              <ul
+                ref={suggestionsRef}
+                className="list-group position-absolute"
+                style={{
+                  width: "100%",
+                  maxHeight: "200px",
+                  overflowY: "auto",
+                  zIndex: 1000,
+                  marginTop: "5px",
+                }}
+              >
+                {searchResults
+                  .sort((a, b) => {
+                    const searchTerm = searchKey.toLowerCase();
+                    const aMatch = a.firstName.toLowerCase().includes(searchTerm) || a.lastName.toLowerCase().includes(searchTerm);
+                    const bMatch = b.firstName.toLowerCase().includes(searchTerm) || b.lastName.toLowerCase().includes(searchTerm);
+                    // Move the matching user to the top
+                    return bMatch - aMatch;
+                  })
+                  .map((customer, index) => (
+                    <li
+                      key={index}
+                      className={`list-group-item d-flex align-items-center ${
+                        selectedIndex === index ? "bg-light text-dark" : ""
+                      }`}
+                      style={{
+                        cursor: "pointer",
+                        padding: "10px",
+                      }}
+                      onClick={() => handleSuggestionClick(customer)}
+                      onMouseEnter={() => setSelectedIndex(index)}
+                    >
+                      <div
+                        className="d-flex align-items-center gap-3"
+                        style={{ width: "100%" }}
+                      >
+                        <div
+                          className="mr-3"
+                          style={{
+                            fontSize: "24px",
+                            color: "#007bff",
+                          }}
+                        >
+                          <i className="fa fa-user-circle"></i>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <p style={{ margin: 0, fontWeight: "bold" }}>
+                            {highlightSearchTerm(
+                              customer.firstName + " " + customer.lastName
+                            )}
+                          </p>
+                          <p
+                            style={{
+                              margin: 0,
+                              fontSize: "12px",
+                              color: "#666",
+                            }}
+                          >
+                            {customer.email}
+                          </p>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+              </ul>
             )}
           </FormGroup>
         </Col>
