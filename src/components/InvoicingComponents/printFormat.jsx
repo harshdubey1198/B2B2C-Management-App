@@ -56,7 +56,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
 
     const grandTotal = subtotal + totalTaxAmount; // Grand total after tax
     const amountPaid = Number(invoiceData?.amountPaid) || 0;    
-     const totalInWords = convertNumberToWords(grandTotal); // Total in words
+    //  const totalInWords = convertNumberToWords(grandTotal); // Total in words
 
     const customerName = invoiceData?.firstName && invoiceData?.lastName
         ? `${invoiceData.firstName} ${invoiceData.lastName}`
@@ -170,7 +170,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     <p className="my-1"><strong>Grand Total:</strong> ₹ {grandTotal?.toFixed(2)}</p>
                     <p><strong>Amount Paid:</strong> ₹ {amountPaid?.toFixed(2)}</p>
                     <p className="my-1"><strong>Balance:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
-                    <p className="my-1"><strong>Amount in Words:</strong> {totalInWords}</p>
+                    {/* <p className="my-1"><strong>Amount in Words:</strong> {totalInWords}</p> */}
                 </div>
             </div>
         </div>

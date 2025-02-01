@@ -294,24 +294,48 @@ const totalAfterTax = totalPrice - totalTax;
           )}
 
             <div className="col-lg-2 col-md-3 col-sm-12">
-          <FormGroup>
+            <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
-            <Input
-              type="text  "
-              name={`quantity-${index}`}
-              id={`quantity-${index}`}
-              max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
-              value={item.quantity}
-              onWheel={(e) => e.target.blur()}
-              onChange={(e) =>
-                handleItemChange(
-                  index,
-                  'quantity',
-                  Math.max(0 , Math.min(parseFloat(e.target.value), getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
-                )
-              }
-              required
-            />
+            <div style={{ position: 'relative' }}>
+              <Input
+                type="text"
+                name={`quantity-${index}`}
+                id={`quantity-${index}`}
+                max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
+                value={item.quantity || ''}
+                placeholder="Enter Quantity"
+                onWheel={(e) => e.target.blur()}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const parsedValue = parseFloat(value);
+
+                  if (value === '' || !isNaN(parsedValue)) {
+                    handleItemChange(
+                      index,
+                      'quantity',
+                      Math.max(0, Math.min(parsedValue, getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")))
+                    );
+                  }
+                }}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => handleItemChange(index, 'quantity', 0)}
+                style={{
+                  position: 'absolute',
+                  right: '10px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  border: 'none',
+                  background: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px'
+                }}
+              >
+                ✖
+              </button>
+            </div>
           </FormGroup>
           </div>
           <div className="col-lg-2 col-md-3 col-sm-12">
