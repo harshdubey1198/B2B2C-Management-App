@@ -217,7 +217,7 @@ const ViewFormat = forwardRef(
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{item?.itemId?.name || "N/A"}</td>
-                    <td>{item?.selectedVariant?.[0]?.optionLabel || "N/A"}</td>
+                    <td>{item?.selectedVariant?.[0]?.optionLabel || "-"}</td>
                     <td>{sliceDescription(item?.itemId?.description)}</td>
                     {/* <td>{item.hsn}</td> */}
                     <td>{item.quantity}</td>

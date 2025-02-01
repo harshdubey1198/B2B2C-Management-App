@@ -1,11 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, Col, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table, Input } from 'reactstrap';
+import { getCustomers, updateCustomer } from '../../apiServices/service';
 
 const ViewCustomer = () => {
     const [customersData, setCustomersData] = useState([]);
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const customerData = selectedCustomer;
+    const [isEditMode, setIsEditMode] = useState(false); // Track if in edit mode
     const token = JSON.parse(localStorage.getItem("authUser")).token;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
     const [trigger, setTrigger] = useState(0);
@@ -17,16 +20,30 @@ const ViewCustomer = () => {
 
     const config = {
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
         },
     };
 
+    // useEffect(() => {
+    //     axios.get(`${process.env.REACT_APP_URL}/customer/get-customers/${firmId}`, config)
+    //         .then((response) => setCustomersData(response.data))
+    //         .catch((error) => console.error(error));
+    // }, [trigger]);
+
     useEffect(() => {
-        axios.get(`${process.env.REACT_APP_URL}/customer/get-customers/${firmId}`, config)
-            .then((response) => setCustomersData(response.data))
-            .catch((error) => console.error(error));
+        const fetchCustomers = async () => {
+            try {
+                const response = await getCustomers();
+                setCustomersData(response.data);
+            }
+            catch (error) {
+                console.error(error);
+            }
+        };
+        fetchCustomers();
     }, [trigger]);
+
 
     const handleDeleteClick = (customer) => {
         setCustomerToDelete(customer);
@@ -46,12 +63,32 @@ const ViewCustomer = () => {
     const handleViewDetails = (customer) => {
         setModalOpen(true);
         setSelectedCustomer(customer);
+        setIsEditMode(false); // Set to view mode by default
+    };
+
+    const handleEditDetails = (customer) => {
+        setModalOpen(true);
+        setSelectedCustomer(customer);
+        setIsEditMode(true); 
+    };
+
+    const handleUpdateCustomer = async () => {
+        try {
+            const response = await updateCustomer(selectedCustomer._id, customerData);
+            setTrigger(prev => prev + 1);
+            setIsEditMode(false); 
+            console.log(response);
+        }
+        catch (error) {
+            console.error(error);
+        }
+
     };
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilter(prev => ({ ...prev, [name]: value }));
-        setCurrentPage(1); // Reset to first page on filter change
+        setCurrentPage(1);
     };
 
     const filteredData = customersData.filter((customer) =>
@@ -69,7 +106,6 @@ const ViewCustomer = () => {
         <React.Fragment>
             <div className='page-content'>
                 <h1>View Customers</h1>
-
                 <div className="d-flex mb-3">
                     <Input
                         type="text"
@@ -105,15 +141,29 @@ const ViewCustomer = () => {
                             </thead>
                             <tbody>
                                 {currentItems.map((customer, i) => (
-                                    <tr key={customer.id}>
+                                    <tr key={customer.id} onClick={() => handleViewDetails(customer)}>
                                         <td className="text-center">{indexOfFirstItem + i + 1}</td>
                                         <td>{customer.firstName + " " + customer.lastName}</td>
                                         <td>{customer.email}</td>
                                         <td>{customer.firmId.companyTitle}</td>
                                         <td>{customer.address.country}</td>
                                         <td className="text-center">
-                                            <i className="bx bx-trash" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleDeleteClick(customer)}></i>
-                                            <i className="bx bx-show" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(customer)}></i>
+                                            <i
+                                                className="bx bx-edit"
+                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleEditDetails(customer);
+                                                }}
+                                            ></i>
+                                            <i
+                                                className="bx bx-trash"
+                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "10px" }}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteClick(customer);
+                                                }}
+                                            ></i>
                                         </td>
                                     </tr>
                                 ))}
@@ -121,8 +171,8 @@ const ViewCustomer = () => {
                         </Table>
                         <div className="pagination p-3">
                             {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map(number => (
-                                <Button key={number} onClick={() => paginate(number + 1)} 
-                                className={currentPage === number + 1 ? 'active' : 'mr-2'}>
+                                <Button key={number} onClick={() => paginate(number + 1)}
+                                    className={currentPage === number + 1 ? 'active' : 'mr-2'}>
                                     {number + 1}
                                 </Button>
                             ))}
@@ -144,119 +194,141 @@ const ViewCustomer = () => {
                                         type="text"
                                         value={selectedCustomer?.firstName + " " + selectedCustomer?.lastName}
                                         className="form-control"
-                                        readOnly
+                                        readOnly={!isEditMode}
+                                        onChange={(e) => {
+                                            if (isEditMode) {
+                                                setSelectedCustomer(prev => ({ ...prev, firstName: e.target.value }));
+                                            }
+                                        }}
                                     />
-                                  </Col>
+                                </Col>
                                 <Col md={6}>
                                     <label><strong>Email:</strong></label>
                                     <input
                                         type="email"
                                         value={selectedCustomer?.email}
                                         className="form-control"
-                                        readOnly
+                                        readOnly={!isEditMode}
+                                        onChange={(e) => {
+                                            if (isEditMode) {
+                                                setSelectedCustomer(prev => ({ ...prev, email: e.target.value }));
+                                            }
+                                        }}
                                     />
                                 </Col>
-                                        <Col md={6}>
-                                            <label><strong>Mobile:</strong></label>
+
+                                <Col md={6}>
+                                    <label><strong>Mobile:</strong></label>
+                                    <input
+                                        type="text"
+                                        value={selectedCustomer?.mobile}
+                                        className="form-control"
+                                        readOnly={!isEditMode}
+                                        onChange={(e) => {
+                                            if (isEditMode) {
+                                                setSelectedCustomer(prev => ({ ...prev, mobile: e.target.value }));
+                                            }
+                                        }}
+                                    />
+                                </Col>
+
+                                <Col md={12}>
+                                    <h5 className="text-center mt-3">Customer Address</h5>
+                                    <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
+                                        <div>
+                                            <label><strong>House Number:</strong></label>
+                                            <input
+                                                type="text"
+                                                value={selectedCustomer?.address?.h_no}
+                                                className="form-control"
+                                                readOnly={!isEditMode}
+                                                onChange={(e) => {
+                                                    if (isEditMode) {
+                                                        setSelectedCustomer(prev => ({ ...prev, address: { ...prev.address, h_no: e.target.value } }));
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label><strong>State:</strong></label>
+                                            <input
+                                                type="text"
+                                                value={selectedCustomer?.address?.state}
+                                                className="form-control"
+                                                readOnly={!isEditMode}
+                                                onChange={(e) => {
+                                                    if (isEditMode) {
+                                                        setSelectedCustomer(prev => ({ ...prev, address: { ...prev.address, state: e.target.value } }));
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label><strong>City:</strong></label>
+                                            <input
+                                                type="text"
+                                                value={selectedCustomer?.address?.city}
+                                                className="form-control"
+                                                readOnly={!isEditMode}
+                                                onChange={(e) => {
+                                                    if (isEditMode) {
+                                                        setSelectedCustomer(prev => ({ ...prev, address: { ...prev.address, city: e.target.value } }));
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label><strong>Country:</strong></label>
+                                            <input
+                                                type="text"
+                                                value={selectedCustomer?.address?.country}
+                                                className="form-control"
+                                                readOnly={!isEditMode}
+                                                onChange={(e) => {
+                                                    if (isEditMode) {
+                                                        setSelectedCustomer(prev => ({ ...prev, address: { ...prev.address, country: e.target.value } }));
+                                                    }
+                                                }}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label><strong>Zip Code:</strong></label>
                                             <input
                                                 type="number"
-                                                value={selectedCustomer?.mobile}
+                                                value={selectedCustomer?.address?.zip_code}
                                                 className="form-control"
-                                                readOnly
+                                                readOnly={!isEditMode}
+                                                onChange={(e) => {
+                                                    if (isEditMode) {
+                                                        setSelectedCustomer(prev => ({ ...prev, address: { ...prev.address, zip_code: e.target.value } }));
+                                                    }
+                                                }}
                                             />
-                                        </Col>
-
-                                        {/* <Col md={12}>
-                                            <h5 className="text-center mt-3">Firm Details</h5>
-                                            <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
-                                                <div>
-                                                    <img 
-                                                        src={selectedCustomer?.firmId.avatar} 
-                                                        alt="Firm Logo" 
-                                                        style={{ width: '50px', height: '50px' }}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <div><strong>Firm:</strong> {selectedCustomer?.firmId.companyTitle}</div>
-                                                </div>
-                                                <div>
-                                                    <div><strong>Email:</strong> {selectedCustomer?.firmId.email}</div>
-                                                </div>
-                                            </div>
-                                        </Col> */}
-
-                    <Col md={12}>
-                        <h5 className="text-center mt-3"> Customer Address</h5>
-                        <div className="d-flex align-items-center justify-content-center gap-4 mt-3">
-                            <div>
-                                <label><strong>House Number:</strong></label>
-                                <input
-                                    type="text"
-                                    value={selectedCustomer?.address?.h_no}
-                                    className="form-control"
-                                    readOnly
-                                />
-                            </div>
-                           
-                            <div>
-                                <label><strong>State:</strong></label>
-                                <input
-                                    type="text"
-                                    value={selectedCustomer?.address?.state}
-                                    className="form-control"
-                                    readOnly
-                                />
-                            </div>
-                            <div>
-                                <label><strong>City:</strong></label>
-                                <input
-                                    type="text"
-                                    value={selectedCustomer?.address?.city}
-                                    className="form-control"
-                                    readOnly
-                                />
-                            </div>
-                            <div>
-                                <label><strong>Country:</strong></label>
-                                <input
-                                    type="text"
-                                    value={selectedCustomer?.address?.country}
-                                    className="form-control"
-                                    readOnly
-                                />
-                            </div>
-                            <div>
-                                <label><strong>Zip Code:</strong></label>
-                                <input
-                                    type="number"
-                                    value={selectedCustomer?.address?.zip_code}
-                                    className="form-control"
-                                    readOnly
-                                />
-                            </div>
-                        </div>
-
-                        </Col>
-                        </Row>
+                                        </div>
+                                    </div>
+                                </Col>
+                            </Row>
                         )}
                     </ModalBody>
+                    <ModalFooter>
+                        {isEditMode ? (
+                            <Button color="primary" onClick={handleUpdateCustomer}>Update</Button>
+                        ) : (
+                            <Button color="secondary" onClick={() => setIsEditMode(true)}>Edit</Button>
+                        )}
+                        <Button color="danger" onClick={() => setModalOpen(false)}>Close</Button>
+                    </ModalFooter>
                 </Modal>
 
                 {/* Delete Confirmation Modal */}
-                <Modal isOpen={deleteModalOpen} toggle={() => setDeleteModalOpen(!deleteModalOpen)}>
-                    <ModalHeader toggle={() => setDeleteModalOpen(!deleteModalOpen)}>
-                        Confirm Delete
-                    </ModalHeader>
+                <Modal isOpen={deleteModalOpen} toggle={() => setDeleteModalOpen(false)}>
+                    <ModalHeader toggle={() => setDeleteModalOpen(false)}>Confirm Delete</ModalHeader>
                     <ModalBody>
-                        Are you sure you want to delete this customer: {customerToDelete?.firstName + " " + customerToDelete?.lastName}?
+                        Are you sure you want to delete this customer?
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="danger" onClick={handleCustomerDelete}>
-                            Yes, Delete
-                        </Button>
-                        <Button color="secondary" onClick={() => setDeleteModalOpen(false)}>
-                            Cancel
-                        </Button>
+                        <Button color="danger" onClick={handleCustomerDelete}>Delete</Button>
+                        <Button color="secondary" onClick={() => setDeleteModalOpen(false)}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
             </div>

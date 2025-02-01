@@ -120,17 +120,17 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                     </thead>
                     <tbody>
                         {items.map((item, index) => {
-                            const itemPrice = item.varSelPrice || item.price; // Use variant price or item price
+                            const itemPrice = item.varSelPrice || item.price; 
                             const itemTotalValue = item.quantity * itemPrice;
                             const taxRate = (item.taxComponents || []).reduce((sum, tax) => sum + tax.rate, 0);
                             const itemTaxAmount = itemTotalValue * (taxRate / 100);
-                            const totalWithTax = itemTotalValue + itemTaxAmount; // Total including tax
+                            const totalWithTax = itemTotalValue + itemTaxAmount;
 
                             return (
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{item?.name || 'N/A'}</td> 
-                                    <td>{item?.selectedVariant?.[0]?.optionLabel || 'N/A'}</td> 
+                                    <td>{item?.selectedVariant?.[0]?.optionLabel || '-'}</td> 
                                     <td>{sliceDescription(item?.description)}</td>
                                     <td>
                                         {item?.taxComponents && item?.taxComponents.length > 0 ? (

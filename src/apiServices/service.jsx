@@ -645,4 +645,25 @@ export const getWastageById = async (id) => {
     }
 };
 
+// get customers for firm
+export const getCustomers = async () => {
+    try {
+        const response = await axiosInstance.get(`/customer/get-customers/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+// update customer
+export const updateCustomer = async (customerId, customerData) => {
+    try {
+        const response = await axiosInstance.put(`/customer/update-customer/${customerId}`, { customerId, customerData });
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+
+
 export default axiosInstance;
