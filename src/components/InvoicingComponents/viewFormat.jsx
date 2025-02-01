@@ -173,7 +173,7 @@ const ViewFormat = forwardRef(
             </p>
           </div>
         </div>
-        <div class="table-responsive">
+        <div className="table-responsive">
           <table className="table table-bordered">
             <thead className="table-light ">
               <tr>

@@ -14,6 +14,7 @@ const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [viewInvoice, setViewInvoice] = useState(false);
     const [selectedFirmId, setSelectedFirmId] = useState(null);
     const [trigger, setTrigger] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
@@ -85,7 +86,7 @@ const ViewInvoices = () => {
     const fetchInvoice = async (invoiceId) => {
         try {
             const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
-            setSelectedInvoice(response.data);
+            setViewInvoice(response.data); 
         } catch (error) {
             console.error("Error fetching invoice for viewing:", error);
         }
@@ -93,9 +94,20 @@ const ViewInvoices = () => {
 
     const handlePrint = useReactToPrint({
         content: () => printRef.current,
-        onAfterPrint: () => setSelectedInvoice(null),
+        onAfterPrint: () => setViewInvoice(null),
     });
 
+    const handleFetchAndPrint = async (invoiceId) => {
+        try {
+            const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
+            setSelectedInvoice(response.data);  
+            setTimeout(() => {
+                handlePrint();
+            }, 300);
+        } catch (error) {
+            console.error("Error fetching invoice for printing:", error);
+        }
+    };
     const handleRejectProforma = async (invoiceId) => {
         if (!invoiceId) return;
 
@@ -203,11 +215,20 @@ const ViewInvoices = () => {
                                     </thead>
                                     <tbody>
                                         {currentInvoices.map((invoice) => (
-                                            <tr key={invoice._id}>
+                                            <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} 
+                                                style={{
+                                                    cursor: "pointer",
+                                                }}
+                                            >
                                                 <td>{invoice.invoiceNumber}</td>
                                                 <td>{invoice.customerName}</td>
                                                 <td>{invoice.totalAmount} ₹</td>
-                                                <td style={{ color: "red" }}>{invoice.amountDue} ₹</td>
+                                                <td style={{ 
+                                                    color: invoice.amountDue > 0 ? "red" : "green",                                                    
+                                                }}>
+                                                    {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
+
+                                                </td>
                                                 <td style={{ minWidth: "110px" }}>
                                                     <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
                                                         {invoice.items.map((item, itemIndex) =>
@@ -221,18 +242,14 @@ const ViewInvoices = () => {
                                                 </td>
                                                 <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
                                                 <td>{invoice.customerAddress.country}</td>
-                                                <td>{invoice.approvalStatus?.replace(/[_-]/g, " ") 
-                                .replace(/\b\w/g, (char) => char.toUpperCase())}</td>
+                                                <td>{invoice.approvalStatus?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>
                                                 <td>
-                                                    <i
-                                                        className="bx bx-show"
-                                                        style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                                        onClick={() => fetchInvoice(invoice._id)}
-                                                    ></i>
                                                     <i
                                                         className="bx bx-printer"
                                                         style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "10px" }}
-                                                        onClick={() => handlePrint()}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleFetchAndPrint(invoice._id)}}
                                                     ></i>
                                                 </td>
                                                 {authuser.role === "firm_admin" && (
@@ -258,26 +275,29 @@ const ViewInvoices = () => {
                                     </tbody>
                                 </Table>
                             </div>
-                            <Pagination aria-label="Page navigation example">
+                            <Pagination aria-label="Page navigation example" style={{
+                                width:"max-content",
+                                
+                            }}>
                                 <PaginationItem disabled={currentPage === 1}>
-                                    <PaginationLink onClick={() => setCurrentPage(currentPage - 1)}>Previous</PaginationLink>
+                                    <PaginationLink onClick={() => setCurrentPage(currentPage - 1)} style={{cursor:"pointer"}}>Previous</PaginationLink>
                                 </PaginationItem>
                                 {[...Array(totalPages)].map((_, index) => (
                                     <PaginationItem key={index} active={currentPage === index + 1}>
-                                        <PaginationLink onClick={() => setCurrentPage(index + 1)}>{index + 1}</PaginationLink>
+                                        <PaginationLink onClick={() => setCurrentPage(index + 1)} className='text-white bg-theme'>{index + 1}</PaginationLink>
                                     </PaginationItem>
                                 ))}
                                 <PaginationItem disabled={currentPage === totalPages}>
-                                    <PaginationLink onClick={() => setCurrentPage(currentPage + 1)}>Next</PaginationLink>
+                                    <PaginationLink onClick={() => setCurrentPage(currentPage + 1)} style={{cursor:"pointer"}}>Next</PaginationLink>
                                 </PaginationItem>
                             </Pagination>
                         </CardBody>
                     </Card>
-                    {selectedInvoice && (
+                    {viewInvoice && (
                         <Card className="mt-4">
                             <CardBody>
                                 <h4>Invoice Preview</h4>
-                                <ViewFormat invoiceData={selectedInvoice} />
+                                <ViewFormat invoiceData={viewInvoice} />
                             </CardBody>
                         </Card>
                     )}
