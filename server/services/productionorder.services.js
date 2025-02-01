@@ -292,7 +292,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
     try {
         const { status, notes } = body;
         const order = await ProductionOrder.findById(id)
-            .populate('rawMaterials.itemId')
+            .populate('rawMaterials.itemId', 'name')
             .populate('bomId')
             .session(session);
         if (!order) {
@@ -353,9 +353,13 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
           if (!bom) {
               throw new Error('Associated BOM not found.');
           }
+
+          const rawMaterialNames = order.rawMaterials.map(material => material.itemId?.name).filter(Boolean);
+          const description = `Manufactured product using: ${rawMaterialNames.join(', ')}`;
+
           const finishedProduct = new InventoryItem({
               name: bom.productName,
-              description: `Manufactured product from BOM: ${bom._id}`,
+              description,
               quantity: order.quantity, 
               qtyType: bom.qtyType, 
               type: 'finished_good',
