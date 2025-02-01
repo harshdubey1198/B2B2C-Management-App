@@ -11,6 +11,7 @@ import BrandModal from "../../Modal/BrandModal";
 import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
 import FetchManufacturers from "./fetchManufacturers";
+import { getItemCategories, getItemSubCategories, getTaxes, getVendors } from "../../apiServices/service";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -24,6 +25,7 @@ const InventoryItemForm = () => {
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
   const [taxes, setTaxes] = useState([]);
   const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
+  const [selectedTaxRates, setSelectedTaxRates] = useState([]);
   const [variants, setVariants] = useState([]);
   // const toggleModal = () => setModal(!modal);
   const [subcategories, setSubcategories] = useState([]);
@@ -95,7 +97,7 @@ const InventoryItemForm = () => {
       try {
         const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`);
         setTaxes(response.data);
-
+        // console.log(response.data);  
       } catch (error) {
         toast.error("Failed to fetch tax rates.");
       }
@@ -137,7 +139,7 @@ const InventoryItemForm = () => {
     const fetchCategories = async () => {
       try {
         
-        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/category/get-categories/${firmId}`);
+        const response = await getItemCategories();
         const parentCategories = response.data.filter(category => category.parentId === null);
         setCategories(parentCategories);
       } catch (error) {        
@@ -148,7 +150,7 @@ const InventoryItemForm = () => {
     const fetchVendors = async () => { 
       try {
        
-        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`);
+        const response = await getVendors();
         setVendors(response.data);
       } catch (error) {
         toast.error("Failed to fetch vendors.");
@@ -158,13 +160,9 @@ const InventoryItemForm = () => {
     
     const fetchTaxes = async () => {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/tax/get-taxes/${firmId}`);
+        const response = await getTaxes();
         setTaxes(response.data);
-        // console.log(response.data[0]._id);
-        // console.log(response.data[0].taxName);
-        // console.log(response.data[0].taxRates[0]);
-        // console.log(response.data[0].taxRates[0].taxType);
-        // console.log(response.data[0].taxRates[0].rate);
+        
       } catch (error) {
         toast.error("Failed to fetch taxes.");
         console.error(error.message);
@@ -197,18 +195,23 @@ const InventoryItemForm = () => {
     if (selectedTax) {
       
         const taxTypesArray = selectedTax.taxRates.map(rate => rate.taxType);
+        const taxRatesArray = selectedTax.taxRates.map(rate => rate.rate);
+        // console.log(taxTypesArray);
+        // console.log(taxRatesArray);
         setFormValues((prevState) => ({
             ...prevState,
             taxId: selectedTax._id,
             selectedTaxTypes: taxTypesArray,
         }));
         setSelectedTaxComponents(taxTypesArray);
-        console.log(taxTypesArray);
+        setSelectedTaxRates(taxRatesArray);
+        // console.log(taxTypesArray);
     } else {
       setFormValues((prevState) => ({
         ...prevState,
         taxId: "",
         selectedTaxTypes: [] 
+
       }));
       setSelectedTaxComponents([]);
     }
@@ -283,7 +286,7 @@ const InventoryItemForm = () => {
 
     if (value) {
       try {
-        const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/category/subcategories/${value}`);
+        const response = await getItemSubCategories(value);
         const subcategoryData = response.data;
         if (subcategoryData.length === 0) {
           toast.info("This category doesn't have any subcategories.");
@@ -502,9 +505,9 @@ const InventoryItemForm = () => {
                       <div className="mt-3">
                         <h5>Selected Tax Components</h5>
                         <ul>
-                          {selectedTaxComponents.map(( index) => (
+                          {selectedTaxComponents.map((tax, index) => (
                             <li key={index}>
-                              {index}
+                              {tax} - {selectedTaxRates[index]}%
                             </li>
                           ))}
                         </ul>

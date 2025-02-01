@@ -21,7 +21,12 @@ function BomPage() {
   const firmId = authuser?.response?.adminId || '';
   const createdBy = authuser?.response?._id || '';
   const [estimatedCost, setEstimatedCost] = useState(0);
-  // console.log("firmId", firmId, "createdBy", createdBy);
+  const [sellingPrice, setSellingPrice] = useState(0);
+  // console.log("estimatedCost", estimatedCost);
+  console.log("sellingPrice", sellingPrice);
+
+
+
   const [formData, setFormData] = useState({
     productName: '',
     rawMaterials: [],
@@ -31,9 +36,10 @@ function BomPage() {
     categoryId: '',
     subCategoryId: '',
     vendor: '',
+    sellingPrice: 0,
     brand: '',
     qtyType: '',
-    costPrice: estimatedCost,
+    // costPrice: estimatedCost,
   });
 
   const fetchBoms = async () => {
@@ -142,6 +148,7 @@ const fetchBrands = async () => {
     materials[materialIndex] = { ...materials[materialIndex], [field]: value };
     setFormData({ ...formData, rawMaterials: materials });
     setEstimatedCost(calculateTotalCostPrice());
+    setSellingPrice(minimumSellingPrice(estimatedCost));
 
   };
   
@@ -168,6 +175,7 @@ const fetchBrands = async () => {
     materials[materialIndex].variants = variants;
     setFormData({ ...formData, rawMaterials: materials });
     setEstimatedCost(calculateTotalCostPrice());
+    setSellingPrice(minimumSellingPrice(estimatedCost));
   };
   
   const addMaterialField = () => {
@@ -200,6 +208,8 @@ const fetchBrands = async () => {
     setFormData({ ...formData, rawMaterials: materials });
   };
   
+  
+
   //calculate the sum of costprice of all the materials
   const calculateTotalCostPrice = () => {
     let totalCost = 0;
@@ -227,6 +237,13 @@ const fetchBrands = async () => {
 };
 
 
+const minimumSellingPrice = (costPrice) => {
+  let minimumPrice = 0;
+  // without tax 
+  minimumPrice = costPrice * 1;
+  // console.log("minimumPrice", minimumPrice);
+  return minimumPrice.toFixed(2);
+};
 
 
   const saveBom = async () => {
@@ -245,6 +262,7 @@ const fetchBrands = async () => {
           firmId: firmId,
           categoryId: '',
           subCategoryId: '',
+          sellingPrice: 0,
           vendor: '',
           brand: '',
           
@@ -302,7 +320,7 @@ const fetchBrands = async () => {
                                       <span className="badge bg-info me-1">
                                         Variant: {material.variants[0].optionLabel} - {material.variants[0].quantity}
                                       </span>
-                                      <span className="text-muted">(Total: {material.quantity})</span>
+                                      <span className="text-muted">(Total: {material.quantity || material.variants[0].quantity})</span>
                                     </>
                                   ) : (
                                     <span>{material.quantity}</span>
@@ -350,7 +368,7 @@ const fetchBrands = async () => {
              removeVariantField={removeVariantField}
              calculateTotalCostPrice={calculateTotalCostPrice}
              categories={categories} 
-             subCategories={subCategories} 
+             subCategories={subCategories}
              vendors={vendors} 
              brands={brands} 
              taxes={taxes} 
@@ -362,6 +380,8 @@ const fetchBrands = async () => {
              fetchTaxes={fetchTaxes}
              fetchItems={fetchItems}
              fetchCategories={fetchCategories}
+             minimumSellingPrice={minimumSellingPrice}
+             setSellingPrice={setSellingPrice}
              />
       </div>
     </React.Fragment>
