@@ -16,6 +16,7 @@ const calculateBomRawMaterialsCost = async (rawMaterials) => {
       itemId,
       quantity: materialQuantity = 0,
       wastePercentage = 0,
+      variants = []
     } = material;
 
     const inventoryItem = inventoryMap.get(itemId.toString());
@@ -25,15 +26,39 @@ const calculateBomRawMaterialsCost = async (rawMaterials) => {
     }
 
     const costPricePerUnit = inventoryItem.costPrice || 0;
-
-    // Skip calculation if materialQuantity or costPricePerUnit is 0
-    if (materialQuantity === 0 || costPricePerUnit === 0) {
-      console.warn(`Skipping material with ID ${itemId} due to zero quantity or cost price.`);
+    if (costPricePerUnit === 0) {
+      console.warn(`Skipping material with ID ${itemId} due to zero cost price.`);
       continue;
     }
 
-    const materialCost = materialQuantity * costPricePerUnit;
-    const wastageCost = materialQuantity * costPricePerUnit * (wastePercentage / 100);
+    let materialCost = 0;
+    let wastageCost = 0;
+
+    if (variants.length > 0) {
+      for (const variant of variants) {
+        const variantQuantity = variant.quantity || 0;
+        const variantWastePercentage = variant.wastePercentage || 0;
+
+        if (variantQuantity === 0) {
+          console.warn(`Skipping variant with ID ${variant.variantId} due to zero quantity.`);
+          continue;
+        }
+
+        const variantCost = variantQuantity * costPricePerUnit;
+        const variantWastageCost = variantQuantity * costPricePerUnit * (variantWastePercentage / 100);
+
+        materialCost += variantCost;
+        wastageCost += variantWastageCost;
+      }
+    } else {
+      if (materialQuantity === 0) {
+        console.warn(`Skipping material with ID ${itemId} due to zero quantity.`);
+        continue;
+      }
+
+      materialCost = materialQuantity * costPricePerUnit;
+      wastageCost = materialQuantity * costPricePerUnit * (wastePercentage / 100);
+    }
 
     totalCost += materialCost + wastageCost;
   }
