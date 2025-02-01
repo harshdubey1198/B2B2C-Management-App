@@ -76,6 +76,7 @@ function InventoryTable() {
 
   const handleViewDetails = (item) => {
     setSelectedItem(item);
+    console.log(item);
     // console.log(selectedItem.vendor.name);
     setModalOpen(true);
   };

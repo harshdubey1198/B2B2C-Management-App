@@ -355,7 +355,8 @@ const minimumSellingPrice = (costPrice) => {
             ))}
             </div>
             
-            <BomCreateModal isOpen={bomModal}
+            <BomCreateModal
+             isOpen={bomModal}
              toggle={toggleBomModal}
              formData={formData}
              setFormData={setFormData}

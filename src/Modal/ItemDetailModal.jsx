@@ -3,16 +3,30 @@ import { Table, Modal, ModalHeader, ModalBody, Button, Row, Col, } from "reactst
 import axiosInstance from "../utils/axiosInstance";
 import FetchBrands from "../Pages/Inventory-MNG/FetchBrands";
 import FetchManufacturers from "../Pages/Inventory-MNG/fetchManufacturers";
+import { getTaxes } from "../apiServices/service";
 
 const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, setSelectedItem, deleteVariant, updateItem, handleEditVariant, modalOpen, setModalOpen, selectedItem, firmId, }) => {
   const [vendors, setVendors] = useState([]);
   const [brands, setBrands] = useState([]);
   const [manufacturers, setManufacturers] = useState([]);
+  const [taxes, setTaxes] = useState([]);
+  const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
+  const [selectedTaxRates, setSelectedTaxRates] = useState([]);
+
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
   const handleManufacturersFetched = (fetchedManufacturers) => {
     setManufacturers(fetchedManufacturers);
+  };
+  const fetchTaxes = async () => {
+    try {
+      const response = await getTaxes();
+      setTaxes(response.data);
+    } catch (error) {
+      console.error(error.message);
+
+    }
   };
 
   useEffect(() => {
@@ -27,10 +41,40 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
         console.error(error.message);
       }
     };
+    fetchTaxes();
     fetchVendors();
   }, []);
 
-  
+  const handleTaxChange = (e) => {
+    const { value } = e.target;
+    const selectedTax = taxes.find((tax) => tax._id === value);
+
+    if (selectedTax) {
+      const taxTypesArray = selectedTax.taxRates.map(rate => rate.taxType);
+      const taxRatesArray = selectedTax.taxRates.map(rate => rate.rate);
+
+      setSelectedTaxComponents(taxTypesArray);
+      setSelectedTaxRates(taxRatesArray);
+
+      setSelectedItem((prevState) => ({
+        ...prevState,
+        taxId: selectedTax._id,
+        selectedTaxTypes: taxTypesArray,
+        selectedTaxRates: taxRatesArray
+      }));
+    } else {
+      setSelectedTaxComponents([]);
+      setSelectedTaxRates([]);
+      
+      setSelectedItem((prevState) => ({
+        ...prevState,
+        taxId: "",
+        selectedTaxTypes: [],
+        selectedTaxRates: []
+      }));
+    }
+  };
+
 
   return (
     <Modal
@@ -80,9 +124,8 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   className="form-control"
                 />
               </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
+           
+              <Col md={3}>
                 <label>
                   <strong>Vendor:</strong>
                 </label>
@@ -109,6 +152,40 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   </select>
                 )}
 
+              </Col>
+              <Col md={3}>
+                <label>
+                  <strong>Brand:</strong>
+                </label>
+                {selectedItem?.brand && selectedItem?.brand?.name ? (
+                  <input
+                    type="text"
+                    value={selectedItem?.brand?.name}
+                    className="form-control"
+                    readOnly
+                  />
+                ) : (
+                  <select
+                    className="form-control"
+                    value={selectedItem?.brand?._id || ""}
+                    onChange={(e) => {
+                      const selectedBrand = brands.find(
+                        (brand) => brand._id === e.target.value
+                      );
+                      setSelectedItem({
+                        ...selectedItem,
+                        brand: selectedBrand || null,
+                      });
+                    }}
+                  >
+                    <option value="">Select Brand</option>
+                    {brands.map((brand) => (
+                      <option key={brand._id} value={brand._id}>
+                        {brand.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </Col>
               {/* <Col md={3}>
                 <label>
@@ -175,77 +252,65 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   </select>
                 </div>
               </Col>
-            </Row>
-            <Row>
-            <Col md={6}>
+           
+            
+
+               <Col md={6}>
                 <label>
-                  <strong>Brand:</strong>
+                  <strong>Manufacturer:</strong>
                 </label>
-                {selectedItem?.brand && selectedItem?.brand?.name ? (
+                {selectedItem?.manufacturer && selectedItem?.manufacturer?.name ? (
                   <input
                     type="text"
-                    value={selectedItem?.brand?.name}
+                    value={selectedItem?.manufacturer?.name}
                     className="form-control"
                     readOnly
                   />
                 ) : (
                   <select
                     className="form-control"
-                    value={selectedItem?.brand?._id || ""}
+                    value={selectedItem.manufacturer?._id || ""}
                     onChange={(e) => {
-                      const selectedBrand = brands.find(
-                        (brand) => brand._id === e.target.value
+                      const selectedManufacturer = manufacturers.find(
+                        (manufacturer) => manufacturer._id === e.target.value
                       );
                       setSelectedItem({
                         ...selectedItem,
-                        brand: selectedBrand || null,
+                        manufacturer: selectedManufacturer || null,
                       });
                     }}
                   >
-                    <option value="">Select Brand</option>
-                    {brands.map((brand) => (
-                      <option key={brand._id} value={brand._id}>
-                        {brand.name}
+                    <option value="">Select Manufacturer</option>
+                    {manufacturers.map((manufacturer) => (
+                      <option key={manufacturer._id} value={manufacturer._id}>
+                        {manufacturer.name}
                       </option>
                     ))}
                   </select>
                 )}
               </Col>
+              <Col md={6}>
+                <label><strong>Tax:</strong></label>
+                <select
+                className="form-control"
+                value={selectedItem?.tax?.taxId?._id || ""}  // Access the _id of taxId inside tax
+                onChange={(e) => {
+                  const selectedTax = taxes.find((tax) => tax._id === e.target.value);
+                  setSelectedItem((prevState) => ({
+                    ...prevState,
+                    tax: { ...prevState.tax, taxId: selectedTax },  // Update the taxId field in the tax object
+                  }));
+                }}
+              >
+                <option value="">Select Tax</option>
+                {taxes.map((tax) => (
+                  <option key={tax._id} value={tax._id}>
+                    {tax.taxName} {tax.taxRates.length > 0 ? `(${tax.taxRates[0]?.rate}%)` : ''}
+                  </option>
+                ))}
+              </select>
 
-               <Col md={6}>
-    <label>
-      <strong>Manufacturer:</strong>
-    </label>
-    {selectedItem?.manufacturer && selectedItem?.manufacturer?.name ? (
-      <input
-        type="text"
-        value={selectedItem?.manufacturer?.name}
-        className="form-control"
-        readOnly
-      />
-    ) : (
-      <select
-        className="form-control"
-        value={selectedItem.manufacturer?._id || ""}
-        onChange={(e) => {
-          const selectedManufacturer = manufacturers.find(
-            (manufacturer) => manufacturer._id === e.target.value
-          );
-          setSelectedItem({
-            ...selectedItem,
-            manufacturer: selectedManufacturer || null,
-          });
-        }}
-      >
-        <option value="">Select Manufacturer</option>
-        {manufacturers.map((manufacturer) => (
-          <option key={manufacturer._id} value={manufacturer._id}>
-            {manufacturer.name}
-          </option>
-        ))}
-      </select>
-    )}
-  </Col>
+              </Col>
               </Row>
             <Row>
               <Col md={6}>
@@ -262,7 +327,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     })
                   }
                   className="form-control"
-                  readOnly
+                  // readOnly
                 />
               </Col>
               <Col md={6}>
@@ -318,7 +383,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   >
                     <option value="">Select the type</option>
                     <option value="raw_material">Raw Material</option>
-                    <option value="finished_goods">Finished Goods</option>
+                    <option value="finished_good">Finished Goods</option>
                   </select>
                 </Col>
               
@@ -389,42 +454,48 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
               )}
             </div>
 
-            <Button
-              color="primary"
-              onClick={() => {
-                setVariantModalOpen(true);
-                setVariant({
-                  variationType: "",
-                  optionLabel: "",
-                  price: "",
-                  stock: "",
-                  sku: "",
-                  barcode: "",
-                });
-                setVariantIndex(null);
-              }}
-            >
-              Add Variant
-            </Button>
-            <Button
-              className="my-4 ml-2"
-              color="primary"
-              onClick={() =>
-                updateItem({
-                  name: selectedItem.name,
-                  description: selectedItem.description,
-                  qtyType: selectedItem.qtyType,
-                  quantity: selectedItem.quantity,
-                  manufacturer: selectedItem.manufacturer,
-                  brand: selectedItem.brand,
-                  costPrice: selectedItem.costPrice,
-                  sellingPrice: selectedItem.sellingPrice,
-                  vendor:selectedItem.vendor
-                })
-              }
-            >
-              Update Item
-            </Button>
+              <div className="d-flex justify-content-between mt-2 gap-2">
+                  <Button
+                      color="primary"
+                      onClick={() => {
+                        setVariantModalOpen(true);
+                        setVariant({
+                          variationType: "",
+                          optionLabel: "",
+                          price: "",
+                          stock: "",
+                          sku: "",
+                          barcode: "",
+                        });
+                        setVariantIndex(null);
+                      }}
+                    >
+                    Add Variant
+                  </Button>
+                  <Button
+                    className=" ml-2"
+                    color="primary"
+                    onClick={() =>
+                      updateItem({
+                        name: selectedItem.name,
+                        description: selectedItem.description,
+                        qtyType: selectedItem.qtyType,
+                        quantity: selectedItem.quantity,
+                        manufacturer: selectedItem.manufacturer,
+                        brand: selectedItem.brand,
+                        costPrice: selectedItem.costPrice,
+                        sellingPrice: selectedItem.sellingPrice,
+                        vendor:selectedItem.vendor,
+                        type: selectedItem.type,
+                        tax: selectedItem.tax,
+                        ProductHsn: selectedItem.ProductHsn,
+                      })
+                    }
+                  >
+                    Update Item
+                  </Button>
+              </div>
+
           </div>
         )}
       </ModalBody>

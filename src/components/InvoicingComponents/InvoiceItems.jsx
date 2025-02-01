@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FormGroup, Label, Input, Spinner } from 'reactstrap';
 import axiosInstance from '../../utils/axiosInstance';
+import Select from "react-select";
 
 const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
@@ -227,64 +228,76 @@ const totalAfterTax = totalPrice - totalTax;
     <div>
       {items.map((item, index) => (
         <div className="row d-flex  align-items-center w-100 mb-3 p-4 bg-light" key={index}>
-          <div className="col-lg-2 col-md-3 col-sm-12">
+          <div className="col-lg-3 col-md-3 col-sm-12">
           <FormGroup>
-            <Label for={`name-${index}`}>Item Name</Label>
-            <Input
-              type="select"
-              name={`name-${index}`}
-              id={`name-${index}`}
-              value={item.itemId || ""}
-              onChange={(e) => handleItemSelection(index, e.target.value)}
-              required
-            >
-              <option value="">Select Item</option>
-              {inventoryItems.map((inventoryItem) => (
-                <option key={inventoryItem._id} value={inventoryItem._id}>
-                  {inventoryItem.name}
-                </option>
-              ))}
-            </Input>
-          </FormGroup>
-          </div>
-          <div className="col-lg-2 col-md-3 col-sm-12">
-           <FormGroup>
-                <p>Tax <span style={{fontSize:"10px",fontWeight:"bolder"}}>{` (${inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.taxId?.taxName || 'N/A'})`}</span></p>
-                {inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.components && inventoryItems.find((invItem) => invItem._id === item.itemId).tax.components.map((taxComponent, index) => (
-                    <div key={index}>
-                        {taxComponent.taxType} - {taxComponent.rate}%
-                    </div>
-                ))}
+              <Label for={`name-${index}`}>Item Name</Label>
+              <Select
+                id={`name-${index}`}
+                value={
+                  item.itemId
+                    ? { 
+                        label: inventoryItems.find((inv) => inv._id === item.itemId)?.name || "", 
+                        value: item.itemId 
+                      }
+                    : null
+                }
+                style={{height: "40px"}}
+                onChange={(selectedOption) => {
+                  handleItemSelection(index, selectedOption ? selectedOption.value : "");
+                }}
+                options={inventoryItems.map((inventoryItem) => ({
+                  label: inventoryItem.name,
+                  value: inventoryItem._id,
+                }))}
+                placeholder="Search Item"
+                isSearchable
+                isClearable
+              />
             </FormGroup>
-
           </div>
+          {inventoryItems.find((invItem) => invItem._id === item.itemId)?.tax?.components?.length > 0 && (
+              <div className="col-lg-2 col-md-3 col-sm-12">
+                <FormGroup>
+                  <Label for={`tax-${index}`}>Tax</Label>
+                  {inventoryItems.find((invItem) => invItem._id === item.itemId).tax.components.map((taxComponent, index) => (
+                    <div key={index} className='form-control'>
+                      {taxComponent.taxType} - {taxComponent.rate}%
+                    </div>
+                  ))}
+                </FormGroup>
+              </div>
+            )}
 
-          <div className="col-lg-2 col-md-3 col-sm-12">
-          <FormGroup>
-            <Label for={`variant-${index}`}>Variant</Label>
-            <Input
-              type="select"
-              name={`variant-${index}`}
-              id={`variant-${index}`}
-              value={item.selectedVariant?.[0]?.optionLabel || ""}
-              onChange={(e) => handleVariantChange(item.itemId, e.target.value, index)}
-              // required
-            >
-              <option value="">Select Variant</option>
-              {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants.map((variant) => (
-                <option key={variant._id} value={variant.optionLabel}>
-                  {variant.optionLabel} - {variant.price}₹
-                </option>
-              ))}
-            </Input>
-         
-          </FormGroup>
-        </div>
+
+          {inventoryItems.find((invItem) => invItem._id === item.itemId)?.variants?.length > 0 && (
+            <div className="col-lg-2 col-md-3 col-sm-12">
+              <FormGroup>
+                <Label for={`variant-${index}`}>Variant</Label>
+                <Input
+                  type="select"
+                  name={`variant-${index}`}
+                  id={`variant-${index}`}
+                  value={item.selectedVariant?.[0]?.optionLabel || ""}
+                  onChange={(e) => handleVariantChange(item.itemId, e.target.value, index)}
+                >
+                  <option value="">Select Variant</option>
+                  {inventoryItems
+                    .find((invItem) => invItem._id === item.itemId)
+                    ?.variants.map((variant) => (
+                      <option key={variant._id} value={variant.optionLabel}>
+                        {variant.optionLabel} - {variant.price}₹
+                      </option>
+                    ))}
+                </Input>
+              </FormGroup>
+            </div>
+          )}
+
             <div className="col-lg-2 col-md-3 col-sm-12">
           <FormGroup>
             <Label for={`quantity-${index}`}>Quantity</Label>
             <Input
-              type="number"
+              type="text  "
               name={`quantity-${index}`}
               id={`quantity-${index}`}
               max={getMaxQuantity(item.itemId, item.selectedVariant?.[0]?.optionLabel || "")}
@@ -339,8 +352,8 @@ const totalAfterTax = totalPrice - totalTax;
             />
           </FormGroup>
           </div>
-          <div className="col-lg-2 col-md-3 col-sm-12">
-            <i className="bx bx-trash text-danger" style={{ cursor: 'pointer', fontSize:'22px' }} onClick={() => removeItem(index)}></i>
+          <div className="col-lg-1 col-md-3 col-sm-12">
+            <i className="bx bx-trash text-danger mb-3"  style={{ cursor: 'pointer', fontSize:'22px', marginTop:"29px" }} onClick={() => removeItem(index)}></i>
           </div>
         </div>
       ))}
