@@ -28,6 +28,7 @@ function ProductionOrders() {
     try {
       const response = await getProductionOrders();
       setProductionOrders(response.data || []);
+      // console.table(response.data);
     } catch (error) {
       console.error('Error fetching production orders:', error.message);
     }
@@ -100,7 +101,7 @@ function ProductionOrders() {
   const handleUpdateStatus = async (id, data) => {
     try {
       await updateProductionOrderStatus(id, data);
-      fetchProductionOrders(); // Refresh production orders after status update
+      fetchProductionOrders(); 
     } catch (error) {
       console.error('Error updating status:', error.message);
     }

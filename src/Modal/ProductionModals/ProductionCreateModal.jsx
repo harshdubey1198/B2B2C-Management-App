@@ -57,12 +57,28 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
     let cost = 0;
     if (selectedBomData && selectedBomData.rawMaterials.length > 0) {
       selectedBomData.rawMaterials.forEach((material) => {
-        cost += material.itemId.costPrice * material.quantity * quantity;
+        if (material.quantity > 0) { 
+          let materialCost = material.itemId.costPrice;
+  
+          if (material.variants?.length > 0) {
+            material.variants.forEach((variant) => {
+              if (variant.quantity > 0) { 
+                let variantCost = variant.price || 0;
+                let combinedCost = materialCost + variantCost;
+                cost += combinedCost * variant.quantity * quantity;
+              }
+            });
+          } else {
+            cost += materialCost * material.quantity * quantity;
+          }
+        }
       });
     }
     return cost;
-  }
-  console.log("estimated cost", calculateEstimatedCost());
+  };
+  
+  
+  // console.log("estimated cost", calculateEstimatedCost());
 
   useEffect(() => {
     fetchBoms();
