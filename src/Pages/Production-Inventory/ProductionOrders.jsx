@@ -30,7 +30,8 @@ function ProductionOrders() {
     try {
       const response = await getProductionOrders();
       setProductionOrders(response.data || []);
-      setFilteredOrders(response.data || []);      // console.table(response.data); 
+      setFilteredOrders(response.data || []);      
+      // console.table(response.data); 
     } catch (error) {
       console.error('Error fetching production orders:', error.message);
     }
@@ -138,15 +139,15 @@ function ProductionOrders() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
-        <div className="d-flex justify-content-between gap-2 mb-3">
+        <div className="d-flex justify-content-between gap-2 mb-3 ">
             <div className="d-flex align-items-center gap-2">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={handleSearch}
-                placeholder="Search by Product Name, Order Number, or Created By"
+                placeholder="Search Production Orders" 
                 className="form-control"
-                style={{ width: '300px' }}
+                style={{ width: "250px",maxHeight:"33px" }}
               />
             </div>
             <div className="d-flex align-items-center gap-2">
@@ -157,10 +158,10 @@ function ProductionOrders() {
                     style={{ width: "auto" ,maxHeight:"33px"}}
                     onChange={handleItemsPerPageChange}
                   >
-                    <option value="10"  >10</option>
-                    <option value="25">25</option>
-                    <option value="50">50</option>
-                    <option value="70">70</option>
+                    <option value="10" >10</option>
+                    <option value="25" >25</option>
+                    <option value="50" >50</option>
+                    <option value="70" >70</option>
                     <option value="100">100</option>
                   </select>
   

@@ -64,25 +64,32 @@ function QuantityUpdateModal({
         <Card className="mt-3">
           <CardBody>
             <h5>Raw Materials:</h5>
-            <ul>
-              {selectedOrder?.rawMaterials?.map((rawMaterial, index) => (
-                <li key={index}>
-                  <strong>{rawMaterial?.itemId?.name}</strong> ({rawMaterial?.itemId?.qtyType}) - {rawMaterial?.quantity} units
-                  <br />
-                  <span>
-                    <strong>Cost Price:</strong> ₹{rawMaterial?.itemId?.costPrice}
-                  </span>
-                  <br />
-                  <span>
-                    <strong>Selling Price:</strong> ₹{rawMaterial?.itemId?.sellingPrice}
-                  </span>
-                  <br />
-                  <span>
-                    <strong>Description:</strong> {rawMaterial?.itemId?.description}
-                  </span>
-                </li>
-              ))}
-            </ul>
+            <div className="table-responsive">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Item Name</th>
+                    <th>Quantity Type</th>
+                    <th>Quantity</th>
+                    <th>Cost Price</th>
+                    <th>Selling Price</th>
+                    <th>Description</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {selectedOrder?.rawMaterials?.map((rawMaterial, index) => (
+                    <tr key={index}>
+                      <td><strong>{rawMaterial?.itemId?.name}</strong></td>
+                      <td>{rawMaterial?.itemId?.qtyType}</td>
+                      <td>{rawMaterial?.quantity} units</td>
+                      <td>₹{rawMaterial?.itemId?.costPrice}</td>
+                      <td>₹{rawMaterial?.itemId?.sellingPrice}</td>
+                      <td>{rawMaterial?.itemId?.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </CardBody>
         </Card>
 
