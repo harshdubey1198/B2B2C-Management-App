@@ -111,7 +111,7 @@ const ViewCustomer = () => {
                         type="text"
                         placeholder="Filter by Customer Name"
                         name="customerName"
-                        value={filter.customerName}
+                        value={filter?.customerName}
                         onChange={handleFilterChange}
                         className="mr-2"
                     />
@@ -119,12 +119,12 @@ const ViewCustomer = () => {
                         type="text"
                         placeholder="Filter by Country"
                         name="country"
-                        value={filter.country}
+                        value={filter?.country}
                         onChange={handleFilterChange}
                     />
                 </div>
 
-                {filteredData.length === 0 ? (
+                {filteredData?.length === 0 ? (
                     <Alert color="info">No Customers found for Your Firm.</Alert>
                 ) : (
                     <div className="table-responsive" style={{ overflowX: "auto" }}>
@@ -140,13 +140,13 @@ const ViewCustomer = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentItems.map((customer, i) => (
+                                {currentItems?.map((customer, i) => (
                                     <tr key={customer.id} onClick={() => handleViewDetails(customer)}>
                                         <td className="text-center">{indexOfFirstItem + i + 1}</td>
-                                        <td>{customer.firstName + " " + customer.lastName}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.firmId.companyTitle}</td>
-                                        <td>{customer.address.country}</td>
+                                        <td>{customer?.firstName + " " + customer?.lastName}</td>
+                                        <td>{customer?.email}</td>
+                                        <td>{customer?.firmId?.companyTitle}</td>
+                                        <td>{customer?.address?.country}</td>
                                         <td className="text-center">
                                             <i
                                                 className="bx bx-edit"
@@ -170,7 +170,7 @@ const ViewCustomer = () => {
                             </tbody>
                         </Table>
                         <div className="pagination p-3">
-                            {[...Array(Math.ceil(filteredData.length / itemsPerPage)).keys()].map(number => (
+                            {[...Array(Math.ceil(filteredData?.length / itemsPerPage)).keys()].map(number => (
                                 <Button key={number} onClick={() => paginate(number + 1)}
                                     className={currentPage === number + 1 ? 'active' : 'mr-2'}>
                                     {number + 1}
