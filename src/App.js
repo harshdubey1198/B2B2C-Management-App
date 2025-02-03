@@ -9,23 +9,23 @@ fakeBackend();
 
 function App() {
 
-  // useEffect(() => {
-  //   // Create custom cursor element
-  //   const cursorImage = document.createElement("div");
-  //   cursorImage.classList.add("custom-cursor");
-  //   document.body.appendChild(cursorImage);
+  useEffect(() => {
+    // Create custom cursor element
+    const cursorImage = document.createElement("div");
+    cursorImage.classList.add("custom-cursor");
+    document.body.appendChild(cursorImage);
 
-  //   // Function to update position
-  //   const moveCursor = (e) => {
-  //     cursorImage.style.left = `${e.pageX}px`;
-  //     cursorImage.style.top = `${e.pageY}px`;
-  //   };
-  //   document.addEventListener("mousemove", moveCursor);
-  //   return () => {
-  //     document.removeEventListener("mousemove", moveCursor);
-  //     document.body.removeChild(cursorImage);
-  //   };
-  // }, []);
+    // Function to update position
+    const moveCursor = (e) => {
+      cursorImage.style.left = `${e.pageX}px`;
+      cursorImage.style.top = `${e.pageY}px`;
+    };
+    document.addEventListener("mousemove", moveCursor);
+    return () => {
+      document.removeEventListener("mousemove", moveCursor);
+      document.body.removeChild(cursorImage);
+    };
+  }, []);
   
   return (
     <React.Fragment>

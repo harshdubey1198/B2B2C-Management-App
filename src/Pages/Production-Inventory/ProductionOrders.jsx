@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 
 function ProductionOrders() {
   const [productionOrders, setProductionOrders] = useState([]);
+  const [filteredOrders, setFilteredOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [openCreateModal, setOpenCreateModal] = useState(false);
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ function ProductionOrders() {
   const [statusModalOpen, setStatusModalOpen] = useState(false); 
   const [newNote, setNewNote] = useState('');
   const authuser = JSON.parse(localStorage.getItem('authUser'));
+  const [searchTerm, setSearchTerm] = useState('');
   const role = authuser?.response?.role;
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -28,7 +30,7 @@ function ProductionOrders() {
     try {
       const response = await getProductionOrders();
       setProductionOrders(response.data || []);
-      // console.table(response.data);
+      setFilteredOrders(response.data || []);      // console.table(response.data); 
     } catch (error) {
       console.error('Error fetching production orders:', error.message);
     }
@@ -45,12 +47,27 @@ function ProductionOrders() {
     fetchProductionOrders();
   }, [trigger]);
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  useEffect(() => {
+    const filtered = productionOrders.filter((order) =>
+      order?.bomId?.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      order.productionOrderNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (order?.createdBy?.firstName + ' ' + order?.createdBy?.lastName)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
+    );
+    setFilteredOrders(filtered);
+  }, [searchTerm, productionOrders]);
+
    const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = productionOrders.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const pageNumbers = [];
-    for (let i = 1; i <= Math.ceil(productionOrders.length / itemsPerPage); i++) {
+    for (let i = 1; i <= Math.ceil(filteredOrders.length / itemsPerPage); i++) {
       pageNumbers.push(i);
     }
     const handleItemsPerPageChange = (e) => {
@@ -121,8 +138,18 @@ function ProductionOrders() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
-        <div className="d-flex justify-content-end gap-2 mb-3">
-          <div className="d-flex align-items-center gap-2">
+        <div className="d-flex justify-content-between gap-2 mb-3">
+            <div className="d-flex align-items-center gap-2">
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearch}
+                placeholder="Search by Product Name, Order Number, or Created By"
+                className="form-control"
+                style={{ width: '300px' }}
+              />
+            </div>
+            <div className="d-flex align-items-center gap-2">
             <label htmlFor="itemsPerPageSelect">Items per page:</label>
                   <select
                     id="itemsPerPageSelect"
@@ -146,12 +173,17 @@ function ProductionOrders() {
                     onChange={(e) => setCustomItemsPerPage(e.target.value)}
                     className="form-control"
                     style={{ width: "100px",maxHeight:"33px" }} 
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleCustomItemsPerPage();
+                      }
+                    }}
                   />
                   <Button color="primary" onClick={handleCustomItemsPerPage}>
                     Set
                   </Button>
+                  <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
               </div>
-          <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
         </div>  
 
         <div className="table-responsive">

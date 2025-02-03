@@ -289,11 +289,11 @@ export const masterAdminSidebarData = () => [
       label:"Production Stock",
       icon:"mdi mdi-archive-outline",
       subItem:[
-          {sublabel: "Raw Material", link:"/production/raw-materials"},
+          // {sublabel: "Raw Material", link:"/production/raw-materials"},
           {sublabel: "BOM", link:"/production/all-boms"},
           {sublabel: "Production Orders", link:"/production/orders"},
           {sublabel: "Work In Progress", link:"/production/work-in-progress"},
-          {sublabel: "Finished Goods", link:"/production/finished-goods"},
+          // {sublabel: "Finished Goods", link:"/production/finished-goods"},
           {sublabel: "Production Reports", link:"/production/reports"},
           {sublabel: "Waste Management", link:"/production/waste-management"},
           // {sublabel: "Production Settings", link:"/production/settings"},
