@@ -300,14 +300,18 @@ const CategoryManager = () => {
                     </ModalFooter>
                   </Modal>
                   <Pagination>
-                    {[...Array(Math.ceil(filteredCategories.length / categoriesPerPage)).keys()].map((_, index) => (
-                      <PaginationItem active={index + 1 === currentPage} key={index}>
-                        <PaginationLink onClick={() => handlePageChange(index + 1)}>
-                          {index + 1}
-                        </PaginationLink>
-                      </PaginationItem>
-                    ))}
-                  </Pagination>
+                      {[...Array(Math.ceil(filteredCategories.length / categoriesPerPage)).keys()].map((_, index) => (
+                        <PaginationItem active={index + 1 === currentPage} key={index}>
+                          <PaginationLink
+                            onClick={() => handlePageChange(index + 1)}
+                            className={`text-white ${index + 1 === currentPage ? "btn-primary" : "bg-secondary"}`}
+                            style={{ fontWeight: index + 1 === currentPage ? "bold" : "normal" }}
+                          >
+                            {index + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                    </Pagination>
                 </CardBody>
               </Card>
             </Col>
