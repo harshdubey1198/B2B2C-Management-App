@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const Tax = require("../schemas/tax.schema");
@@ -40,12 +41,16 @@ BomServices.createbom = async (body) => {
   if (!tax) {
     throw new Error(`Tax with ID ${taxId} not found`);
   }
+  const selectedTaxIds = selectedTaxTypes.map(id => new mongoose.Types.ObjectId(id)); 
+
   const taxRateIds = tax.taxRates
-    .filter(rate => selectedTaxTypes.includes(rate._id.toString()))
-    .map(rate => rate._id.toString()); 
+      .filter(rate => selectedTaxIds.some(selectedId => selectedId.equals(rate._id)))  
+      .map(rate => rate._id.toString()); 
+
   if (taxRateIds.length === 0) {
-    throw new Error('No valid tax components selected');
+      throw new Error('No valid tax components selected');
   }
+
 
   const newBOM = new BOM({
     productName,
@@ -83,8 +88,13 @@ BomServices.getboms = async (body) => {
     .populate({ path: "categoryId", select: "name" })
     .populate({ path: "subcategoryId", select: "name" })
     .populate({ path: "firmId", select: "email companyTitle" })
-    .populate({ path: "createdBy", select: "firstName lastName email" });
-
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .populate({ path: "tax.taxId", select: "taxName" })
+    .populate({
+      path: "tax.selectedTaxTypes",
+      model: "Tax", 
+      select: "taxName taxRates"
+    })
   if (!data.length) {
     throw new Error("No BOMs found for this Firm");
   }

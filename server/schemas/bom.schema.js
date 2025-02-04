@@ -14,7 +14,7 @@ const BOMSchema = new Schema({
   vendor: { type: Schema.Types.ObjectId, ref: 'Vendor' },
   tax: {
     taxId: { type: Schema.Types.ObjectId, ref: 'Tax' },
-    selectedTaxTypes: [{ type: Schema.Types.ObjectId, ref: 'Tax' }]
+    selectedTaxTypes: [{ type: Schema.Types.ObjectId, ref: 'Tax' }] 
   },
   rawMaterials: [
     {
