@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const InventoryItemSchema = new Schema({
     name: { type: String, required: true },
-    sku: { type: String, required: true },
+    sku: { type: String },
     description: { type: String },
     quantity: { type: Number },
     qtyType: { 
