@@ -8,6 +8,10 @@ const BomServices = {};
 BomServices.createbom = async (body) => {
   const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, sellingPrice, categoryId, subcategoryId, vendor, tax } = body;
 
+  const existingBOM = await BOM.findOne({ productName, firmId });
+  if (existingBOM) {
+    throw new Error(`BOM for product '${productName}' already exists in this firm.`);
+  }
   // Validate raw materials exist in Inventory
   for (const material of rawMaterials) {
     const item = await InventoryItem.findById(material.itemId);
@@ -39,27 +43,34 @@ BomServices.createbom = async (body) => {
   }
 
   // Create BOM
-  const newBOM = new BOM({
-    productName,
-    rawMaterials,
-    manufacturer,
-    brand,
-    type,
-    totalCostPrice,
-    sellingPrice,
-    categoryId,
-    subcategoryId,
-    vendor,
-    tax,
-    firmId,
-    createdBy,
-    status: "created",
-    notes: [],
-    deleted_at: null,
-  });
+  try {
+    const newBOM = new BOM({
+      productName,
+      rawMaterials,
+      manufacturer,
+      brand,
+      type,
+      totalCostPrice,
+      sellingPrice,
+      categoryId,
+      subcategoryId,
+      vendor,
+      tax,
+      firmId,
+      createdBy,
+      status: "created",
+      notes: [],
+      deleted_at: null,
+    });
 
-  await newBOM.save();
-  return newBOM;
+    await newBOM.save();
+    return newBOM;
+  } catch (error) {
+    if (error.code === 11000) {
+      throw new Error(`BOM for product '${productName}' already exists in this firm.`);
+    }
+    throw error; 
+  }
 };
 
 BomServices.getboms = async (body) => {

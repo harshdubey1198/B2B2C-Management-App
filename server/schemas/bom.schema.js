@@ -50,5 +50,7 @@ const BOMSchema = new Schema({
   deleted_at: { type: Date, default: null }
 }, { timestamps: true });
 
+BOMSchema.index({ productName: 1, firmId: 1 }, { unique: true });
+
 const BOM = mongoose.model('BOM', BOMSchema);
 module.exports = BOM
