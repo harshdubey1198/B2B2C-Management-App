@@ -243,7 +243,7 @@ function ProductionOrders() {
                         {role === 'firm_admin' ? (
                           <select
                             onChange={(e) => handleStatusChange(order, e.target.value)}
-                            className={`form-control form-control-sm ${
+                            className={`form-control form-control-sm w-auto ${
                               order.status === 'cancelled' ? 'bg-secondary text-white' : ''
                             }`}
                             onClick={(e) => e.stopPropagation()}
