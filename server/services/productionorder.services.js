@@ -378,7 +378,6 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
             },
               deleted_at: null,
           });
-          console.log(finishedProduct, "finishedproduct");
           await finishedProduct.save({ session });
         }
 

@@ -1,76 +1,82 @@
 const BOM = require("../schemas/bom.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
+const Tax = require("../schemas/tax.schema");
 const { calculateBomRawMaterialsCost } = require("../utils/productionorderutility");
 
 const BomServices = {};
 
 // CREATE BOM
 BomServices.createbom = async (body) => {
-  const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, sellingPrice, categoryId, subcategoryId, vendor, tax } = body;
+  const { 
+    productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, 
+    sellingPrice, categoryId, subcategoryId, vendor, taxId, selectedTaxTypes 
+  } = body;
 
   const existingBOM = await BOM.findOne({ productName, firmId });
   if (existingBOM) {
     throw new Error(`BOM for product '${productName}' already exists in this firm.`);
   }
+
   // Validate raw materials exist in Inventory
   for (const material of rawMaterials) {
     const item = await InventoryItem.findById(material.itemId);
     if (!item) {
       throw new Error(`Raw material with ID ${material.itemId} not found`);
     }
-
-    // Validate variants (if applicable)
-    if (material.variants && material.variants.length > 0) {
-      for (const variant of material.variants) {
-        if (!variant.variantId) {
-          throw new Error(`Variant ID is required for raw material with ID ${material.itemId}`);
-        }
-        if (!variant.quantity || variant.quantity <= 0) {
-          throw new Error(`Invalid quantity for variant ID ${variant.variantId}`);
-        }
-      }
-    } else {
-      if (!material.quantity || material.quantity <= 0) {
-        throw new Error(`Quantity is required for raw material with ID ${material.itemId} if no variants are provided`);
-      }
-    }
   }
 
   const totalCostPrice = await calculateBomRawMaterialsCost(rawMaterials);
 
-  if(totalCostPrice > sellingPrice) {
+  if (totalCostPrice > sellingPrice) {
     throw new Error("Selling price should not be less than total cost price.");
   }
 
-  // Create BOM
-  try {
-    const newBOM = new BOM({
-      productName,
-      rawMaterials,
-      manufacturer,
-      brand,
-      type,
-      totalCostPrice,
-      sellingPrice,
-      categoryId,
-      subcategoryId,
-      vendor,
-      tax,
-      firmId,
-      createdBy,
-      status: "created",
-      notes: [],
-      deleted_at: null,
-    });
-
-    await newBOM.save();
-    return newBOM;
-  } catch (error) {
-    if (error.code === 11000) {
-      throw new Error(`BOM for product '${productName}' already exists in this firm.`);
-    }
-    throw error; 
+  //Ensure `tax` is properly fetched and structured
+  if (!taxId) {
+    throw new Error('Tax is required for BOM creation');
   }
+  
+  const tax = await Tax.findById(taxId);
+  if (!tax) {
+    throw new Error(`Tax with ID ${taxId} not found`);
+  }
+
+  //Filter valid tax components based on `selectedTaxTypes`
+  const finalTaxComponents = tax.taxRates.filter(taxRate => 
+    selectedTaxTypes.includes(taxRate.taxType)
+  ).map(taxRate => ({
+    taxType: taxRate.taxType,
+    rate: taxRate.rate
+  }));
+
+  if (finalTaxComponents.length === 0) {
+    throw new Error('No valid tax components selected');
+  }
+
+  const newBOM = new BOM({
+    productName,
+    rawMaterials,
+    manufacturer,
+    brand,
+    type,
+    totalCostPrice,
+    sellingPrice,
+    categoryId,
+    subcategoryId,
+    vendor,
+    tax: {
+      taxId: tax._id,
+      components: finalTaxComponents
+    },
+    firmId,
+    createdBy,
+    status: "created",
+    notes: [],
+    deleted_at: null,
+  });
+
+  await newBOM.save();
+  return newBOM;
 };
 
 BomServices.getboms = async (body) => {
