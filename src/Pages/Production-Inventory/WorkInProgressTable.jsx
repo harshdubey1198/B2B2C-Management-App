@@ -48,7 +48,7 @@ function WorkInProgressTable() {
               <div className="card">
                 <div className="card-body">
                   <Row>
-                    <div className="mb-1 col-4">
+                    <div className="mb-1 col-md-4 col-sm-6">
                       <label htmlFor="filter-status" className="form-label">
                         Filter by Status:
                       </label>
@@ -83,15 +83,15 @@ function WorkInProgressTable() {
                             <td>{order.productionOrderNumber}</td>
                             <td>{order?.bomId?.productName}</td>
                             <td>
-                              <ul>
+                              <ul style={{paddingLeft:"0px"}}>
                                 {order?.rawMaterials.map(
                                   (rawMaterial, index) => (
-                                    <li key={index}>
+                                    <li key={index} style={{listStyleType:"none"}}>
                                       <strong>
                                         {rawMaterial.itemId.name}
                                       </strong>{' '}
                                       ({rawMaterial.itemId.qtyType}) -{' '}
-                                      {rawMaterial.quantity} units
+                                      {rawMaterial.quantity} {rawMaterial.quantity > 1 ? 'units' : 'unit'}
                                     </li>
                                   )
                                 )}

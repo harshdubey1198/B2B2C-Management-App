@@ -64,8 +64,10 @@ function WasteManagement() {
                       <table className="table table-striped">
                         <thead>
                           <tr>
-                            <th>PO No.</th>
-                            <th>Material</th>
+                            <th style={{
+                              minWidth:"80px"
+                            }}>PO No.</th> 
+                            <th style={{minWidth:"150px"}}>Material</th>
                             <th>Quantity</th>
                             <th>Status</th>
                           </tr>
