@@ -20,8 +20,13 @@ function Bookkeeping() {
   const fetchPlans = async () => {
     try {
       const response = await getAllPlans();
-      // console.log(response);
-      setPlans(response);
+      if (Array.isArray(response)) {
+        setPlans(response);
+      } else if (response && Array.isArray(response)) {
+        setPlans(response); 
+      } else {
+        setPlans([]); 
+      }
     } catch (error) {
       console.error("Error fetching plans:", error);
     }
@@ -217,11 +222,16 @@ function Bookkeeping() {
               <Input type="select" id="planId" required>
 
                 <option value="">Select Plan</option>
-                {plans.map((plan) => (
-                  <option key={plan._id} value={plan._id} className="d-flex justify-content-between">
-                    {plan.title} - {plan.price} ₹ - {plan.days} Days
-                  </option>
-                ))}
+                {Array.isArray(plans) && plans.length > 0 ? (
+                    plans.map((plan) => (
+                      <option key={plan._id} value={plan._id}>
+                        {plan.title} - {plan.price} ₹ - {plan.days} Days
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>No Plans Available</option>
+                  )}
+
               </Input>
             </FormGroup>
             <FormGroup>

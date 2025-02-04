@@ -20,7 +20,7 @@ function Pricing() {
   const fetchPlans = async () => {
     try {
       const response = await getAllPlans();
-      console.log(response);
+      console.log(response || []);
       if (response) {
         setPlans(response);
       }
@@ -77,21 +77,27 @@ function Pricing() {
       </span>
 
       <div className="pricing-container">
-        {plans.map((plan) => (
-          <div key={plan._id} className={`pricing-card ${plan.title === 'Gold' ? 'most-popular new-launch' : ''}`}>
-            <div className="card-title">{plan.title.toUpperCase()}</div>
-            <div className="card-subtitle">{plan.caption}</div>
-            <ul className="features">
-              {plan.features.map((feature, index) => (
-                <li key={index}>{feature}</li>
-              ))}
-            </ul>
-            <div className="price">
-              <del>₹{plan.price + 200}</del> ₹{plan.price}
-            </div>
-            <button  onClick={() => handlePlanSelection(plan._id)} className="cta">Start my Free Trial</button>
-          </div>
-        ))}
+      {Array.isArray(plans) && plans.length > 0 ? (
+    plans.map((plan) => (
+      <div key={plan._id} className={`pricing-card ${plan.title === 'Gold' ? 'most-popular new-launch' : ''}`}>
+        <div className="card-title">{plan.title.toUpperCase()}</div>
+        <div className="card-subtitle">{plan.caption}</div>
+        <ul className="features">
+          {plan.features.map((feature, index) => (
+            <li key={index}>{feature}</li>
+          ))}
+        </ul>
+        <div className="price">
+          <del>₹{plan.price + 200}</del> ₹{plan.price}
+        </div>
+        <button onClick={() => handlePlanSelection(plan._id)} className="cta">
+          Start my Free Trial
+        </button>
+      </div>
+    ))
+        ) : (
+          <div>No plans available</div> 
+        )}
       </div>
     </div>
   );

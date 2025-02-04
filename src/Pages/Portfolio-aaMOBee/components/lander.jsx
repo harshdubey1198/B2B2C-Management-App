@@ -1,12 +1,12 @@
 import React from 'react';
-import advBanner from '../assets/website_adv_banner 1.png';
+
 
 function Lander() {
   return (
     <div id="Home" className="lander">
       <div className="lander-content">
         <img
-          src={advBanner}
+          src="https://res.cloudinary.com/harshdubey1198/image/upload/v1738647390/website_adv_banner_1_xlzomb.png"
           loading="lazy"
           alt="aaMOBee Logo"
           className="adv-banner"
