@@ -28,7 +28,7 @@ const InventoryItemSchema = new Schema({
         taxId: { type: Schema.Types.ObjectId, ref: 'Tax' },
         components: [{
            taxType: { type: String },
-            rate: { type: Number }
+           rate: { type: Number }
         }]
     },
     variants: [{

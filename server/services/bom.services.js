@@ -45,11 +45,12 @@ BomServices.createbom = async (body) => {
 
   const taxRateIds = tax.taxRates
       .filter(rate => selectedTaxIds.some(selectedId => selectedId.equals(rate._id)))  
-      .map(rate => rate._id.toString()); 
-
+      .map(rate => rate._id);  // ✅ Now it remains an ObjectId
+  
   if (taxRateIds.length === 0) {
       throw new Error('No valid tax components selected');
   }
+  
 
 
   const newBOM = new BOM({
@@ -79,25 +80,27 @@ BomServices.createbom = async (body) => {
 };
 
 BomServices.getboms = async (body) => {
-  const { firmId} = body;
+  const { firmId } = body;
   const data = await BOM.find({ firmId, deleted_at: null })
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
     .populate({ path: "rawMaterials.itemId", select: "name quantity costPrice qtyType" })
     .populate({ path: "manufacturer", select: "name" })
     .populate({ path: "brand", select: "name" })
     .populate({ path: "vendor", select: "name" })
-    .populate({ path: "categoryId", select: "name" })
-    .populate({ path: "subcategoryId", select: "name" })
+    .populate({ path: "categoryId", select: "categoryName" })
+    .populate({ path: "subcategoryId", select: "categoryName" })
     .populate({ path: "firmId", select: "email companyTitle" })
     .populate({ path: "createdBy", select: "firstName lastName email" })
-    .populate({ path: "tax.taxId", select: "taxName" })
-    .populate({
-      path: "tax.selectedTaxTypes",
-      model: "Tax", 
-      select: "taxName taxRates"
-    })
-  if (!data.length) {
-    throw new Error("No BOMs found for this Firm");
+    .lean();
+
+  for (const bom of data) {
+    if (bom.tax.selectedTaxTypes.length > 0 && bom.tax.taxId?.taxRates) {
+      bom.tax.selectedTaxTypes = bom.tax.taxId.taxRates.filter(rate =>
+        bom.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+      );
+    }
   }
+  if (!data.length) throw new Error("No BOMs found for this Firm");
   return data;
 };
 
@@ -107,11 +110,19 @@ BomServices.getbomById = async (bomId) => {
     .populate({ path: "manufacturer", select: "name" })
     .populate({ path: "brand", select: "name" })
     .populate({ path: "vendor", select: "name" })
-    .populate({ path: "categoryId", select: "name" })
-    .populate({ path: "subcategoryId", select: "name" })
+    .populate({ path: "categoryId", select: "categoryName" })
+    .populate({ path: "subcategoryId", select: "categoryName" })
     .populate({ path: "firmId", select: "email companyTitle" })
-    .populate({ path: "createdBy", select: "firstName lastName email" });
-
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
+    
+    for (const bom of data) {
+      if (bom.tax.selectedTaxTypes.length > 0 && bom.tax.taxId?.taxRates) {
+        bom.tax.selectedTaxTypes = bom.tax.taxId.taxRates.filter(rate =>
+          bom.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+        );
+      }
+    }
   if (!data) {
     throw new Error("No BOM found");
   }
