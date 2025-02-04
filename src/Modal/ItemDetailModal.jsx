@@ -344,7 +344,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     })
                   }
                   className="form-control"
-                  readOnly
+                  // readOnly
                 />
               </Col>
             </Row>

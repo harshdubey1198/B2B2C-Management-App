@@ -52,33 +52,8 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
       alert('Please select a BOM');
     }
   };
-
-  const calculateEstimatedCost = () => {
-    let cost = 0;
-    if (selectedBomData && selectedBomData.rawMaterials.length > 0) {
-      selectedBomData.rawMaterials.forEach((material) => {
-        if (material.quantity > 0) { 
-          let materialCost = material.itemId.costPrice;
-  
-          if (material.variants?.length > 0) {
-            material.variants.forEach((variant) => {
-              if (variant.quantity > 0) { 
-                let variantCost = variant.price || 0;
-                let combinedCost = materialCost + variantCost;
-                cost += combinedCost * variant.quantity * quantity;
-              }
-            });
-          } else {
-            cost += materialCost * material.quantity * quantity;
-          }
-        }
-      });
-    }
-    return cost;
-  };
   
   
-  // console.log("estimated cost", calculateEstimatedCost());
 
   useEffect(() => {
     fetchBoms();
@@ -136,8 +111,6 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
             <Row>
               <Col md={6}>
                 <strong>Product Name:</strong> {selectedBomData.productName}
-                <br />
-                <strong>Estimated Cost:</strong> {calculateEstimatedCost()}
               </Col>
               <Col md={6}>
                 {selectedBomData.rawMaterials.length > 0 && (
@@ -146,7 +119,7 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                     <ul>
                       {selectedBomData.rawMaterials.map((rawMaterial, index) => (
                         <li key={index}>
-                          <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType}) - {rawMaterial.quantity} units
+                          <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType}) - {rawMaterial.itemId.quantity} units
                         </li>
                       ))}
                     </ul>
@@ -178,7 +151,8 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                           {rawMaterial.variants.length > 0 ? (
                             rawMaterial.variants.map((variant, index) => (
                               <span key={index} value={variant._id}>
-                                {variant.optionLabel} {variant.price}
+                                {variant.optionLabel} 
+                                {/* {variant.price} */}
                               </span>
                             ))
                           ) : (
@@ -187,8 +161,14 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                         </td>
                         <td>{rawMaterial.itemId.qtyType}</td>
                         <td>{rawMaterial.itemId.costPrice}</td>
-                        <td>{rawMaterial.quantity}</td>
-                        <td>{rawMaterial.quantity * quantity}</td>
+                        <td>{rawMaterial.variants.length > 0
+                            ? rawMaterial.variants.reduce((acc, variant) => acc + (variant.quantity || 0), 0)
+                            : rawMaterial.quantity}
+                          </td>
+                        <td>{(rawMaterial.variants.length > 0
+                            ? rawMaterial.variants.reduce((acc, variant) => acc + (variant.quantity || 0), 0)
+                            : rawMaterial.quantity) * quantity}
+                          </td>
                       </tr>
                     ))}
                   </tbody>
