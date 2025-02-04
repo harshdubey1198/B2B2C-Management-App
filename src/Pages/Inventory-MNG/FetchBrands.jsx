@@ -9,7 +9,7 @@ const FetchBrands = ({ firmId, onBrandsFetched, triggerBrand }) => {
         const response = await axiosInstance.get(
           `${process.env.REACT_APP_URL}/brand/get-brands/${firmId}`
         );
-        onBrandsFetched(response.data);
+        onBrandsFetched(response.data || []);
       } catch (error) {
         toast.error("Failed to fetch brands.");
         console.error(error.message);
