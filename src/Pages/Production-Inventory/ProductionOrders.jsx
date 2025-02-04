@@ -111,7 +111,7 @@ function ProductionOrders() {
     setStatusModalOpen(true);
     if(selectedStatus==="completed"){
       console.log("completed");
-      navigate('/inventory-table')
+      // navigate('/inventory-table')
     }
   };
   

@@ -69,7 +69,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       firmId,
       sellingPrice,
       createdBy,
-      totalCostPrice,
+      // totalCostPrice,
       status: "created",
     };
 
@@ -378,6 +378,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
             },
               deleted_at: null,
           });
+          console.log(finishedProduct, "finishedproduct");
           await finishedProduct.save({ session });
         }
 
