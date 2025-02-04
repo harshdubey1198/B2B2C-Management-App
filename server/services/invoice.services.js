@@ -4,6 +4,7 @@ const User = require("../schemas/user.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const Tax = require("../schemas/tax.schema");
 const { handleCustomer, calculateInvoiceAmount, generateInvoiceNumber, updateInventoryStock } = require("../utils/invoiceutility");
+const { default: mongoose } = require("mongoose");
 
 const invoiceServices = {};
 
@@ -152,54 +153,69 @@ const invoiceServices = {};
 // };
 
 invoiceServices.createInvoice = async (invoiceData) => {
-  const {
-    customer,
-    items,
-    invoiceDate,
-    dueDate,
-    amountPaid,
-    createdBy,
-    firmId,
-    invoiceType,
-    invoiceSubType,
-  } = invoiceData;
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  // Handle customer creation or retrieval
-  const customerData = await handleCustomer(customer, firmId, createdBy);
+  try {
+    const {
+      customer,
+      items,
+      invoiceDate,
+      dueDate,
+      amountPaid,
+      createdBy,
+      firmId,
+      invoiceType,
+      invoiceSubType,
+    } = invoiceData;
 
-  // Calculate total amount
-  const totalAmount = await calculateInvoiceAmount(items);
+    // Handle customer creation or retrieval
+    const customerData = await handleCustomer(customer, firmId, createdBy, session);
 
-  // Generate invoice number
-  const invoiceNumber = await generateInvoiceNumber(firmId);
-  const amountDue = Math.max(totalAmount - amountPaid, 0);
+    // Calculate total amount
+    const totalAmount = await calculateInvoiceAmount(items, session);
 
-  const newInvoice = new Invoice({
-    invoiceNumber,
-    customerName: customerData.customerName,
-    customerEmail: customerData.customerEmail,
-    customerPhone: customerData.customerPhone,
-    customerAddress: customerData.customerAddress,
-    invoiceType,
-    invoiceSubType,
-    amountPaid,
-    amountDue,
-    firmId,
-    items,
-    invoiceDate,
-    dueDate,
-    totalAmount,
-    createdBy,
-  });
+    // Generate invoice number
+    const invoiceNumber = await generateInvoiceNumber(firmId, session);
+    const amountDue = Math.max(totalAmount - amountPaid, 0);
 
-  if (invoiceType === "Proforma") {
-    await updateInventoryStock(items, true);
-  } else if (invoiceType === "Tax Invoice") {
-    await updateInventoryStock(items, false);
+    const newInvoice = new Invoice({
+      invoiceNumber,
+      customerName: customerData.customerName,
+      customerEmail: customerData.customerEmail,
+      customerPhone: customerData.customerPhone,
+      customerAddress: customerData.customerAddress,
+      invoiceType,
+      invoiceSubType,
+      amountPaid,
+      amountDue,
+      firmId,
+      items,
+      invoiceDate,
+      dueDate,
+      totalAmount,
+      createdBy,
+    });
+
+    if (invoiceType === "Proforma") {
+      await updateInventoryStock(items, true, session);
+    } else if (invoiceType === "Tax Invoice") {
+      await updateInventoryStock(items, false, session);
+    }
+
+    const savedInvoice = await newInvoice.save({ session });
+
+    // Commit transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    return savedInvoice;
+  } catch (error) {
+    // Rollback transaction if anything fails
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
   }
-
-  const savedInvoice = await newInvoice.save();
-  return savedInvoice;
 };
 
 // PERFORMA INVOICE GETS REJECTED
