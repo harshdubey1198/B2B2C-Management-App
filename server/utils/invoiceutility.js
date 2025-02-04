@@ -1,5 +1,6 @@
 const Customer = require("../schemas/cutomer.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
+const Invoice = require("../schemas/invoice.schema");
 const Tax = require("../schemas/tax.schema");
 
 const generateInvoiceNumber = async (firmId, session) => {
