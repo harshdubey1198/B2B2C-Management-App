@@ -40,11 +40,9 @@ BomServices.createbom = async (body) => {
   if (!tax) {
     throw new Error(`Tax with ID ${taxId} not found`);
   }
-
   const taxRateIds = tax.taxRates
-    .filter(rate => selectedTaxTypes.includes(rate.taxType)) 
+    .filter(rate => selectedTaxTypes.includes(rate._id.toString()))
     .map(rate => rate._id.toString()); 
-
   if (taxRateIds.length === 0) {
     throw new Error('No valid tax components selected');
   }
