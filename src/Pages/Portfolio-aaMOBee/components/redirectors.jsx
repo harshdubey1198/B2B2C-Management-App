@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Button } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import "./redirectors.css";
-import crmImage from "../../../assets/images/crm-leads.jpg";
 import invocingImage from "../../../assets/images/invoicing.jpg";
 
 function Redirectors() {
@@ -17,36 +16,6 @@ function Redirectors() {
     };
     handleResize(); // Initial check
     window.addEventListener("resize", handleResize);
-
-    const lazyLoadBackgrounds = () => {
-      const lazyBackgrounds = document.querySelectorAll(".lazy-bg");
-      if ("IntersectionObserver" in window) {
-        const observer = new IntersectionObserver(
-          (entries, observer) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const element = entry.target;
-                const bgUrl = element.getAttribute("data-bg");
-                element.style.backgroundImage = `url(${bgUrl})`;
-                element.classList.remove("lazy-bg");
-                observer.unobserve(element);
-              }
-            });
-          },
-          { threshold: 0.1 }
-        );
-        lazyBackgrounds.forEach((bg) => observer.observe(bg));
-      } else {
-        // Fallback for older browsers
-        lazyBackgrounds.forEach((bg) => {
-          const bgUrl = bg.getAttribute("data-bg");
-          bg.style.backgroundImage = `url(${bgUrl})`;
-          bg.classList.remove("lazy-bg");
-        });
-      }
-    };
-
-    lazyLoadBackgrounds();
 
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -89,7 +58,7 @@ function Redirectors() {
             </div>
           ) : (
             <Row className="desktop-view text-center">
-              <Col className="col lazy-bg" data-bg={invocingImage}>
+              <Col className="col" style={{ backgroundImage: `url(https://res.cloudinary.com/harshdubey1198/image/upload/v1738647908/invoicing_fz6n7g.jpg)` }}>
                 <Button
                   color="primary"
                   className="custom-button"
@@ -98,7 +67,7 @@ function Redirectors() {
                   Login <br /> (Inventory, Firm, Invoicing)
                 </Button>
               </Col>
-              <Col className="col lazy-bg" data-bg={crmImage}>
+              <Col className="col" style={{ backgroundImage: `url(https://res.cloudinary.com/harshdubey1198/image/upload/v1738647651/crm-leads_tuo9pt.jpg)` }}>
                 <Button
                   className="custom-button-2"
                   onClick={handleCRMLogin}

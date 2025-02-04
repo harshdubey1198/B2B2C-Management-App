@@ -19,6 +19,8 @@ const CreateInvoiceTrader = () => {
   const printRef = useRef();
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const firmId = authuser?.response?.adminId;
+  const createdBy = authuser?.response?._id;
+
   const [invoiceData, setInvoiceData] = useState({
     companyName: "",
     companyAddress: [{ h_no: "", nearby: "", zip_code: "", district: "", state: "", city: "", country: "" }],
@@ -42,6 +44,7 @@ const CreateInvoiceTrader = () => {
     date: '',
     country: 'India',
     items: [],
+    createdBy: createdBy,
     paymentLink: '',
     taxComponents: [],
     id: '',
