@@ -264,9 +264,11 @@ const ViewInvoices = () => {
                                                 {authuser.role === "firm_admin" && (
                                                     <td>
                                                         {invoice.approvalStatus === "pending" ? (
-                                                            <Button onClick={() => handleRejectProforma(invoice._id)} color="danger">Reject</Button>
+                                                            <Button style={{width:"91px" }} onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleRejectProforma(invoice._id)}} color="danger">Reject</Button>
                                                         ) : (
-                                                            <Button color="success" disabled>Approved</Button>
+                                                            <Button style={{width:"91px" , cursor:"no-drop", pointerEvents:"auto" }} color="success" disabled>Approved</Button>
                                                         )}
                                                     </td>
                                                 )}
