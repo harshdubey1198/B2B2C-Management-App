@@ -375,7 +375,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               tax: {
                 taxId: bom.tax?.taxId,
                 components: bom.tax?.components || [] 
-            },
+              },
               deleted_at: null,
           });
           await finishedProduct.save({ session });

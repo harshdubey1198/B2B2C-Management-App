@@ -41,15 +41,11 @@ BomServices.createbom = async (body) => {
     throw new Error(`Tax with ID ${taxId} not found`);
   }
 
-  //Filter valid tax components based on `selectedTaxTypes`
-  const finalTaxComponents = tax.taxRates.filter(taxRate => 
-    selectedTaxTypes.includes(taxRate.taxType)
-  ).map(taxRate => ({
-    taxType: taxRate.taxType,
-    rate: taxRate.rate
-  }));
+  const taxRateIds = tax.taxRates
+    .filter(rate => selectedTaxTypes.includes(rate.taxType)) 
+    .map(rate => rate._id.toString()); 
 
-  if (finalTaxComponents.length === 0) {
+  if (taxRateIds.length === 0) {
     throw new Error('No valid tax components selected');
   }
 
@@ -66,7 +62,7 @@ BomServices.createbom = async (body) => {
     vendor,
     tax: {
       taxId: tax._id,
-      components: finalTaxComponents
+      selectedTaxTypes: taxRateIds 
     },
     firmId,
     createdBy,
