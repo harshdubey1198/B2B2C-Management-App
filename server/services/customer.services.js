@@ -85,12 +85,19 @@ customerServices.updateCustomer = async (customerId, customerData) => {
         throw new Error('Customer not found');
     }
 
+    if (customerData.address) {
+      customerData.address = { 
+          ...existingCustomer.address,  
+          ...customerData.address      
+      };
+    }
     const updatedCustomer = await Customer.findByIdAndUpdate(
-        {_id: customerId},
-        customerData,
-        {updated_at: Date.now()},
-        {new: true}
-    )
+      customerId,
+      { 
+          $set: customerData  
+      },
+      { new: true }
+    );
     return updatedCustomer
 }
 
