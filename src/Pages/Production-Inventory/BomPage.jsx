@@ -316,7 +316,7 @@ const minimumSellingPrice = (costPrice) => {
                             {bom.rawMaterials.map((material, idx) => (
                               <div key={idx} className="d-flex justify-content-between align-items-center mb-2">
                                 <span className="material-name">
-                                  {material.itemId.name} 
+                                  {material?.itemId?.name} 
                                 </span>
                                 <span>
                                   {material.variants.length > 0 ? (
