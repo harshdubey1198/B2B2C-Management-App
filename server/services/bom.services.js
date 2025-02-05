@@ -9,7 +9,7 @@ const BomServices = {};
 // CREATE BOM
 BomServices.createbom = async (body) => {
   const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, 
-    sellingPrice, categoryId, subcategoryId, vendor, taxId, selectedTaxTypes 
+    sellingPrice, categoryId, subcategoryId, vendor, taxId, selectedTaxTypes, ProductHsn 
   } = body;
 
   const existingBOM = await BOM.findOne({ productName, firmId });
@@ -56,6 +56,7 @@ BomServices.createbom = async (body) => {
     sellingPrice,
     categoryId,
     subcategoryId,
+    ProductHsn,
     vendor,
     tax: {
       taxId: tax._id,

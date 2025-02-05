@@ -369,6 +369,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               sellingPrice: bom.sellingPrice,
               categoryId: bom.categoryId,
               subcategoryId: bom.subcategoryId,
+              ProductHsn: bom.ProductHsn,
               firmId: order.firmId,
               createdBy: order.createdBy,
               vendor: bom.vendor,

@@ -61,7 +61,6 @@ const calculateBomRawMaterialsCost = async (rawMaterials) => {
   return totalCost;
 };
 
-
 // Generate unique production order number
 const generateProductionOrderNumber = async (firmId) => {
     const currentDate = new Date();
