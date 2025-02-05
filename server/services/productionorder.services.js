@@ -374,7 +374,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               vendor: bom.vendor,
               tax: {
                 taxId: bom.tax?.taxId,
-                components: bom.tax?.components || [] 
+                selectedTaxTypes: bom.tax?.selectedTaxTypes || []
               },
               deleted_at: null,
           });
