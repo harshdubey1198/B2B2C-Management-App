@@ -3,6 +3,7 @@ const InventoryItem = require('../schemas/inventoryItem.schema');
 const User = require('../schemas/user.schema');
 const Vendor = require('../schemas/vendor.schema');
 const Tax = require('../schemas/tax.schema');
+const { default: mongoose } = require('mongoose');
 
 let inventoryServices = {};
 
@@ -47,15 +48,23 @@ inventoryServices.createItem = async (userId, body) => {
     if (!taxId || !tax) {
         throw new Error('Tax not found');
     }
-    const finalTaxComponents = tax.taxRates.filter(taxRate => 
-        selectedTaxTypes.includes(taxRate.taxType)
-    ).map(taxRate => ({
-        taxType: taxRate.taxType,
-        rate: taxRate.rate
-    }));
-    if (finalTaxComponents.length === 0) {
-        throw new Error('No valid tax components selected');
+    const selectedTaxIds = selectedTaxTypes.map(id  => new mongoose.Types.ObjectId(id))
+    const taxRateIds = tax.taxRates
+      .filter(rate => selectedTaxIds.some(selectedId => selectedId.equals(rate._id)))  
+      .map(rate => rate._id); 
+  
+    if (taxRateIds.length === 0) {
+        throw new Error('No valid tax components selected')
     }
+    // const finalTaxComponents = tax.taxRates.filter(taxRate => 
+    //     selectedTaxTypes.includes(taxRate.taxType)
+    // ).map(taxRate => ({
+    //     taxType: taxRate.taxType,
+    //     rate: taxRate.rate
+    // }));
+    // if (finalTaxComponents.length === 0) {
+    //     throw new Error('No valid tax components selected');
+    // }
     const totalStock = variants && variants.length > 0 ? calculateStock(variants) : quantity;   
     const newItem = new InventoryItem({
         name,
@@ -76,7 +85,7 @@ inventoryServices.createItem = async (userId, body) => {
         firmId: user.adminId,
         tax: {
             taxId: tax._id,
-            components: finalTaxComponents
+            selectedTaxTypes: taxRateIds 
         },
         subcategoryId: subcategoryId || null,
         variants: variants || []
@@ -89,12 +98,9 @@ inventoryServices.createItem = async (userId, body) => {
 // GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getAllItems = async (adminId) => {
     const items = await InventoryItem.find({firmId:adminId, deleted_at: null})
-    .populate('categoryId')
-    .populate('subcategoryId')
-    .populate({
-        path: 'createdBy',
-        select: "firstName lastName email"
-    })
+    .populate({path: 'categoryId', select: "categoryName"})
+    .populate({path: 'subcategoryId', select: "categoryName"})
+    .populate({path: 'createdBy', select: "firstName lastName email"})
     .populate('vendor')
     .populate('tax.taxId')
     .populate('brand')
@@ -111,10 +117,7 @@ inventoryServices.getItem = async (id) => {
     .populate('categoryId')
     .populate('subcategoryId')
     .populate('vendor')
-    .populate({
-        path: 'createdBy',
-        select: "firstName lastName email"
-    })
+    .populate({ path: 'createdBy', select: "firstName lastName email" })
     .populate('tax')
     .populate('brand')
     .populate('manufacturer')

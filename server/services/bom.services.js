@@ -8,8 +8,7 @@ const BomServices = {};
 
 // CREATE BOM
 BomServices.createbom = async (body) => {
-  const { 
-    productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, 
+  const { productName, rawMaterials, firmId, createdBy, manufacturer, brand, type, 
     sellingPrice, categoryId, subcategoryId, vendor, taxId, selectedTaxTypes 
   } = body;
 
@@ -33,25 +32,19 @@ BomServices.createbom = async (body) => {
   }
 
   //Ensure `tax` is properly fetched and structured
-  if (!taxId) {
-    throw new Error('Tax is required for BOM creation');
-  }
+  if (!taxId) { throw new Error('Tax is required for BOM creation')}
   
   const tax = await Tax.findById(taxId);
-  if (!tax) {
-    throw new Error(`Tax with ID ${taxId} not found`);
-  }
+  if (!tax) {throw new Error(`Tax with ID ${taxId} not found`)}
   const selectedTaxIds = selectedTaxTypes.map(id => new mongoose.Types.ObjectId(id)); 
 
   const taxRateIds = tax.taxRates
       .filter(rate => selectedTaxIds.some(selectedId => selectedId.equals(rate._id)))  
-      .map(rate => rate._id);  // ✅ Now it remains an ObjectId
+      .map(rate => rate._id); 
   
   if (taxRateIds.length === 0) {
-      throw new Error('No valid tax components selected');
+    throw new Error('No valid tax components selected')
   }
-  
-
 
   const newBOM = new BOM({
     productName,
