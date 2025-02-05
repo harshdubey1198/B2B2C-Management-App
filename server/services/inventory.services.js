@@ -143,7 +143,7 @@ inventoryServices.getItem = async (id) => {
 
 // UPDATE INVENTORY ITEM
 inventoryServices.updateItem = async (id, body) => {
-    const { name, description, quantity, qtyType,tax, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId,type, variants } = body;
+    const { name, description, quantity, qtyType, taxId, selectedTaxTypes, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId,type, variants } = body;
     const existingItem = await InventoryItem.findById(id);
     if (!existingItem) {
         throw new Error('Inventory item not found');
@@ -182,6 +182,29 @@ inventoryServices.updateItem = async (id, body) => {
             )
         }
     }
+
+    let taxUpdate = {}
+    if(taxId){
+        const tax = await Tax.findById(taxId)
+        if(!tax){
+            throw new Error('Tax not found')
+        }
+        let finalTaxComponents = [];
+        if (selectedTaxTypes && selectedTaxTypes.length > 0) {
+            finalTaxComponents = tax.taxRates.filter(taxRate =>
+                selectedTaxTypes.includes(taxRate._id.toString())
+            );
+
+            if (finalTaxComponents.length === 0) {
+                throw new Error("No valid tax components selected");
+            }
+        }
+
+        taxUpdate = {
+            taxId: tax._id,
+            selectedTaxTypes: selectedTaxTypes || [],
+        };
+    }
     const updateItem = await InventoryItem.findById(id);
     // totalStock = calculateStock(updateItem.variants);
     totalStock = variants && variants.length > 0 ? calculateStock(updateItem.variants) : quantity;   
@@ -198,6 +221,7 @@ inventoryServices.updateItem = async (id, body) => {
             vendor,
             costPrice,
             sellingPrice,
+            tax: taxId ? taxUpdate : existingItem.tax,
             categoryId,
             subcategoryId: subcategoryId || null 
         },
