@@ -8,6 +8,7 @@ import axiosInstance from "../../utils/axiosInstance";
 import ItemDetailModal from "../../Modal/ItemDetailModal";
 import { useNavigate } from "react-router-dom";
 import { getInventoryItems } from "../../apiServices/service";
+import { RiseLoader, ScaleLoader } from "react-spinners";
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
@@ -16,7 +17,7 @@ function InventoryTable() {
   const [modalOpen, setModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage] = useState(5);
+  const [loading, setLoading] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [variant, setVariant] = useState({
@@ -75,13 +76,14 @@ function InventoryTable() {
   // }, [userId, trigger ]);
 
   const fetchItems = async () => {
+    setLoading(true);
     try {
       const response = await getInventoryItems();
       setInventoryData(response.data || []);
     } catch (error) {
       console.error("Error fetching inventory data:", error);
     }
-
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -305,81 +307,66 @@ useEffect(() => {
             onChange={(e) => handleSortByType(e.target.value)}
           >
             <option value="">All Items</option>
-            <option value="raw_material">Raw Material</option>
-            <option value="finished_good">Finished Goods</option>
+            <option value="raw_material" className="table-raw-materials">Raw Material</option>
+            <option value="finished_good" className="table-row-blue">Finished Goods</option>
           </select>
           <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
       </div>
 
-    {authuser.role === 'client_admin' ? (
-      <FirmsTable handleViewDetails={handleViewDetails}/>
-    ) : (
-      <div className="table-responsive">
-        <Table bordered className="mb-0">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Description</th>
-              <th>Quantity</th>
-              <th>Brand</th>
-              <th>Cost Price</th>
-              <th>Selling Price</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-        {currentItems.length > 0 ? (
-          currentItems.map((item, index) => {
-          const rowClass =
-            item.type === "raw_material"
-              ? "table-raw-materials"
-              : item.type==="finished_good"
-              ? "table-row-blue"
-              : "table-row-yellow";
+      {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
+            {/* <RiseLoader color="#0d4251" /> */}
+            <ScaleLoader color="#0d4251" />
+          </div>
+        ) : (
+          authuser.role === 'client_admin' ? (
+            <FirmsTable handleViewDetails={handleViewDetails} />
+          ) : (
+            <div className="table-responsive">
+              <Table bordered className="mb-0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Brand</th>
+                    <th>Cost Price</th>
+                    <th>Selling Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredInventoryData.length > 0 ? (
+                    filteredInventoryData.map((item, index) => {
+                      const rowClass =
+                        item.type === "raw_material" ? "table-raw-materials" :
+                        item.type === "finished_good" ? "table-row-blue" : "table-row-yellow";
 
-          return (
-            <tr key={index} className={rowClass}>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.name}</td>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>
-                {item.quantity} {item.qtyType}
-              </td>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
-              <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
-              <td><i className="bx bx-edit"
-                    style={{
-                      fontSize: "22px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      marginLeft: "5px",
-                    }}
-                    onClick={() => handleViewDetails(item)}
-                  ></i>
-                  <i
-                    className="bx bx-trash"
-                    style={{
-                      fontSize: "22px",
-                      fontWeight: "bold",
-                      cursor: "pointer",
-                      marginLeft: "5px",
-                    }}
-                    onClick={() => handleDeleteInventory(item)}
-                  ></i>
-              </td>
-            </tr>
-          );
-        })
-      ) : (
-        <tr>
-          <td colSpan="7">No inventory items found</td>
-        </tr>
-      )}
-    </tbody>
-
-        </Table>
-      </div>
-    )}
+                      return (
+                        <tr key={index} className={rowClass}>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.name}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.quantity} {item.qtyType}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
+                          <td>
+                            <i className="bx bx-edit" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(item)}></i>
+                            <i className="bx bx-trash" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteInventory(item)}></i>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="text-center">No inventory items found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          )
+        )}
 
     <div className="pagination-controls d-flex gap-2 mt-2">
       {pageNumbers.map(number => (
