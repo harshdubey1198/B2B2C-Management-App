@@ -98,33 +98,47 @@ inventoryServices.createItem = async (userId, body) => {
 // GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getAllItems = async (adminId) => {
     const items = await InventoryItem.find({firmId:adminId, deleted_at: null})
-    .populate({path: 'categoryId', select: "categoryName"})
-    .populate({path: 'subcategoryId', select: "categoryName"})
-    .populate({path: 'createdBy', select: "firstName lastName email"})
+    .populate('categoryId')
+    .populate('subcategoryId')
     .populate('vendor')
-    .populate('tax.taxId')
+    .populate({ path: 'createdBy', select: "firstName lastName email" })
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
     .populate('brand')
     .populate('manufacturer')
-    if(!items){
+    .lean()
+    if(!items.length){
         throw new Error('No items found')
+    }
+    for (const item of items) {
+        if (item.tax && item.tax.selectedTaxTypes?.length > 0 && item.tax.taxId?.taxRates) {
+            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate =>
+                item.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+            );
+        }
     }
     return items
 };
 
 // GET SINGLE ITEM 
 inventoryServices.getItem = async (id) => {
-    const items = await InventoryItem.findOne({_id: id, deleted_at:null})
+    const item = await InventoryItem.findOne({_id: id, deleted_at:null})
     .populate('categoryId')
     .populate('subcategoryId')
     .populate('vendor')
     .populate({ path: 'createdBy', select: "firstName lastName email" })
-    .populate('tax')
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
     .populate('brand')
     .populate('manufacturer')
-    if(!items){
+    .lean()
+    if(!item){
         throw new Error('No items found')
     }
-    return items
+        if (item.tax.selectedTaxTypes.length > 0 && item.tax.taxId?.taxRates) {
+            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate =>
+                item.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+            );
+        }
+    return item
 };
 
 // UPDATE INVENTORY ITEM
