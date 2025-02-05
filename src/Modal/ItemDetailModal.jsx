@@ -23,7 +23,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
   const fetchTaxes = async () => {
     try {
       const response = await getTaxes();
-      setTaxes(response.data);
+      setTaxes(response.data || [] );
     } catch (error) {
       console.error(error.message);
 
@@ -36,7 +36,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
         const response = await axiosInstance.get( 
           `${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`
         );
-        setVendors(response.data);
+        setVendors(response.data || []);
         // console.log(response.data);
       } catch (error) {
         console.error(error.message);
@@ -56,13 +56,18 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
       }));
   
       setSelectedTaxComponents(taxTypesArray);
+  
       setSelectedItem((prevState) => ({
         ...prevState,
         tax: {
           taxId: selectedTax,
-          selectedTaxTypes: prevState.tax?.selectedTaxTypes?.filter(id => 
-            selectedTax.taxRates.some(rate => rate._id === id)
-          ) || []
+          selectedTaxTypes: prevState.tax?.selectedTaxTypes?.length 
+            ? prevState.tax.selectedTaxTypes 
+            : selectedTax.taxRates.map(rate => ({
+                _id: rate._id,
+                taxType: rate.taxType,
+                rate: rate.rate
+              })) 
         }
       }));
     } else {
@@ -74,35 +79,55 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     }
   };
   
+  
   const handleTaxTypeChange = (selectedTypes) => {
-    const selectedTypeIds = selectedTypes ? selectedTypes.map(type => type.value) : [];
+    const selectedTypeObjects = selectedTypes
+      ? selectedTypes.map(type => ({
+          _id: type.value,
+          taxType: type.label.split(" (")[0], 
+          rate: parseFloat(type.label.match(/\d+/)[0])
+        }))
+      : [];
   
     setSelectedItem((prevState) => ({
       ...prevState,
       tax: {
         ...prevState.tax,
-        selectedTaxTypes: selectedTypeIds
+        selectedTaxTypes: selectedTypeObjects 
       }
     }));
   };
   
-  useEffect(() => {
-    console.log("Selected Tax Types:", selectedItem?.tax?.selectedTaxTypes || []);
-  }, [selectedItem?.tax?.selectedTaxTypes]);
-  // Get current selected tax
+  
   const selectedTaxId = selectedItem?.tax?.taxId?._id || "";
-  const selectedTax = taxes.find(tax => tax._id === selectedTaxId);
-  
-  // Get available tax rates for the selected tax
-  const availableTaxTypes = selectedTax?.taxRates.map(rate => ({
-    value: rate._id,
-    label: `${rate.taxType} (${rate.rate}%)`
-  })) || [];
-  
-  // Match current selected tax types with available ones
-  const selectedTaxTypes = availableTaxTypes.filter(type =>
-    selectedItem?.tax?.selectedTaxTypes?.includes(type.value)
-  );
+const selectedTax = taxes.find(tax => tax._id === selectedTaxId);
+
+const availableTaxTypes = selectedTax?.taxRates.map(rate => ({
+  value: rate._id,
+  label: `${rate.taxType} (${rate.rate}%)`
+})) || [];
+
+const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes?.map(type => ({
+  value: type._id,
+  label: `${type.taxType} (${type.rate}%)`
+})) || [];
+
+useEffect(() => {
+  if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
+    setSelectedItem((prevState) => ({
+      ...prevState,
+      tax: {
+        ...prevState.tax,
+        selectedTaxTypes: selectedTax.taxRates.map(rate => ({
+          _id: rate._id,
+          taxType: rate.taxType,
+          rate: rate.rate
+        })) 
+      }
+    }));
+  }
+}, [selectedTax]);
+
   return (
     <Modal
       modalClassName="custom-modal-width"
@@ -213,29 +238,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     ))}
                   </select>
                 )}
-              </Col>
-              {/* <Col md={3}>
-                <label>
-                  <strong>More Vendors:</strong>
-                </label>
-                <select id="vendorId" name="vendorId" value={selectedItem.vendorId}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      vendorId: e.target.value,
-                    })
-                  }
-                  className="form-control"
-                >
-                  <option value="">Select Vendor</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor._id} value={vendor._id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </Col> */}
-              
+              </Col>              
               <Col md={6}>
                 <label>
                   <strong>Quantity Type:</strong>
@@ -316,32 +319,41 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   </select>
                 )}
               </Col>
-              <Col md={6}>
-      <label>
-        <strong>Tax:</strong>
-      </label>
-      <Select
-        options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
-        value={selectedTaxId
-          ? { value: selectedTaxId, label: selectedTax?.taxName || "Select Tax" }
-          : null}
-        onChange={handleTaxChange}
-        placeholder="Select Tax"
-      />
-    </Col>
+            <Col md={6}>
+              <label>
+                <strong>Tax:</strong>
+              </label>
+              <Select
+                options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
+                value={selectedTaxId
+                  ? { value: selectedTaxId, label: selectedTax?.taxName || "Select Tax" }
+                  : null}
+                onChange={handleTaxChange}
+                placeholder="Select Tax"
+              />
+            </Col>
 
-    <Col md={6}>
-      <label>
-        <strong>Tax Type(s):</strong>
-      </label>
-      <Select
-        isMulti
-        options={availableTaxTypes}
-        value={selectedTaxTypes}
-        onChange={handleTaxTypeChange}
-        placeholder="Select Tax Type"
-      />
-    </Col>
+            <Col md={6}>
+              <label>
+                <strong>Tax Type(s):</strong>
+              </label>
+              <Select
+                isMulti
+                options={availableTaxTypes}
+                value={selectedTaxTypes}
+                onChange={handleTaxTypeChange} 
+                placeholder="Select Tax Type"
+                getOptionLabel={(e) => (
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    {selectedItem?.tax?.selectedTaxTypes?.some(type => type._id === e.value) ? (
+                      <span style={{ color: "green", fontWeight: "bold" }}>✔ {e.label}</span> 
+                    ) : (
+                      <span>{e.label}</span>
+                    )}
+                  </div>
+                )}
+              />
+            </Col>
             </Row>
             <Row>
               <Col md={6}>
@@ -439,7 +451,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedItem.variants.map((variant, vIndex) => (
+                    {selectedItem?.variants?.map((variant, vIndex) => (
                       <tr key={vIndex}>
                         <td>{vIndex + 1}</td>
                         <td>{variant.variationType}</td>
@@ -450,12 +462,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                         <td>{variant.sku}</td>
                         <td>{variant.barcode}</td>
                         <td className="d-flex justify-content-center">
-                          {/* <Button
-                          color="danger"
-                          onClick={() => deleteVariant(variant._id)}
-                        >
-                          Delete
-                        </Button> */}
                           <i
                             className="bx bx-pencil"
                             style={{

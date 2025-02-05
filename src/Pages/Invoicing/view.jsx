@@ -3,12 +3,14 @@ import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,
 import { useReactToPrint } from 'react-to-print';
 // import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
-import { formatDate } from '../Utility/formatDate'; // Importing the formatDate function
+import { formatDate } from '../Utility/formatDate'; 
 import FirmSwitcher from '../Firms/FirmSwitcher';
 import { toast } from 'react-toastify';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import axiosInstance from '../../utils/axiosInstance';
 import ViewFormat from '../../components/InvoicingComponents/viewFormat';
+import { ScaleLoader } from "react-spinners";
+
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
@@ -18,6 +20,7 @@ const ViewInvoices = () => {
     const [selectedFirmId, setSelectedFirmId] = useState(null);
     const [trigger, setTrigger] = useState(0);
     const [currentPage, setCurrentPage] = useState(1);
+    const [loading , setLoading] = useState(false);
     const [invoicesPerPage] = useState(10);
     const [filter, setFilter] = useState({
         clientName: '',
@@ -32,19 +35,21 @@ const ViewInvoices = () => {
     const statusOptions = ["Pending", "Approved", "Rejected"]; 
     useEffect(() => {
         const fetchInvoices = async () => {
+            setLoading(true);
             try {
                 const url = authuser.role === "client_admin"
                     ? `${process.env.REACT_APP_URL}/invoice/get-invoices/${selectedFirmId}`
                     : `${process.env.REACT_APP_URL}/invoice/get-invoices/${firmId}`;
 
                 const response = await axiosInstance.get(url);
-                setInvoices(response.data);
-                setFilteredInvoices(response.data); // Initialize filtered invoices
+                setInvoices(response.data || []);
+                setFilteredInvoices(response.data); 
             } catch (error) {
                 console.error("Error fetching invoices:", error);
                 setInvoices([]);
                 setFilteredInvoices([]);
             }
+            setLoading(false);
         };
 
         fetchInvoices();
@@ -149,162 +154,152 @@ const ViewInvoices = () => {
                         />
                     )}
                 </div>
-                <div className="mb-3">
-                <Row form>
-                    <Col md={4}>
-                        <Input
-                            type="text"
-                            placeholder="Client Name / Invoice ID"
-                            value={filter.clientName || filter.invoiceId}
-                            onChange={(e) => {
-                                const value = e.target.value;
-                                if (/^\d+$/.test(value)) {
-                                    setFilter({ ...filter, invoiceId: value, clientName: '' });
-                                } else {
-                                    setFilter({ ...filter, clientName: value, invoiceId: '' });
-                                }
-                            }}
-                        />
-                    </Col>
-                    <Col md={4}>
-                        <Input
-                            type="date"
-                            placeholder="Date of Invoice"
-                            value={filter.date}
-                            onChange={(e) => setFilter({ ...filter, date: e.target.value })}
-                        />
-                    </Col>
-                    <Col md={4}>
-                        <Input
-                            type="select"
-                            value={filter.status}
-                            onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-                        >
-                            <option value="">Select Status</option>
-                            {statusOptions.map((status) => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </Input>
-                    </Col>
-                </Row>
-            </div>
-                {filteredInvoices.length === 0 ? (
-                    <Alert color="info">No invoices found.</Alert>
+                {loading ? (
+                    <div className="d-flex justify-content-center align-items-center" style={{ height: "300px" }}>
+                        <ScaleLoader color="#0d4251" />
+                    </div>
                 ) : (
-                <>
-                    <Card>
-                        <CardBody>
-                            <div className="table-responsive">
-                                <Table bordered>
-                                    <thead className="table-light">
-                                        <tr>
-                                            <th>Inv ID</th>
-                                            <th>Client</th>
-                                            <th>Total</th>
-                                            <th>Due</th>
-                                            <th>Taxes</th>
-                                            <th>Date</th>
-                                            <th>Country</th>
-                                            <th>Status</th>
-                                            <th>Actions</th>
-                                            {authuser.role === "firm_admin" && <th className='d-flex justify-content-center'>Approvals</th>}
-                                            {authuser.role === "firm_admin" && <th>Proforma Status</th>}
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {currentInvoices.map((invoice) => (
-                                            <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} 
-                                                style={{
-                                                    cursor: "pointer",
-                                                }}
-                                            >
-                                                <td>{invoice.invoiceNumber}</td>
-                                                <td>{invoice.customerName}</td>
-                                                <td>{invoice.totalAmount} ₹</td>
-                                                <td style={{ 
-                                                    color: invoice.amountDue > 0 ? "red" : "green",                                                    
-                                                }}>
-                                                    {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
-
-                                                </td>
-                                                <td style={{ minWidth: "110px" }}>
-                                                    <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
-                                                        {invoice.items.map((item, itemIndex) =>
-                                                            item.itemId.tax.components.map((tax, taxIndex) => (
-                                                                <li key={`${itemIndex}-${taxIndex}`}>
-                                                                    {tax.taxType} - {tax.rate}%
-                                                                </li>
-                                                            ))
-                                                        )}
-                                                    </ul>
-                                                </td>
-                                                <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
-                                                <td>{invoice.customerAddress.country}</td>
-                                                <td>{invoice.approvalStatus?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>
-                                                <td>
-                                                    <i
-                                                        className="bx bx-printer"
-                                                        style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "10px" }}
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleFetchAndPrint(invoice._id)}}
-                                                    ></i>
-                                                </td>
-                                                {authuser.role === "firm_admin" && (
-                                                    <td>
-                                                        {invoice.approvalStatus === "approved" ? (
-                                                            <i className="bx bx-x" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
-                                                        ) : (
-                                                            <i className="bx bx-check" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "approved")}></i>
-                                                        )}
-                                                    </td>
-                                                )}
-                                                {authuser.role === "firm_admin" && (
-                                                    <td>
-                                                        {invoice.approvalStatus === "pending" ? (
-                                                            <Button style={{width:"91px" }} onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleRejectProforma(invoice._id)}} color="danger">Reject</Button>
-                                                        ) : (
-                                                            <Button style={{width:"91px" , cursor:"no-drop", pointerEvents:"auto" }} color="success" disabled>Approved</Button>
-                                                        )}
-                                                    </td>
-                                                )}
-                                            </tr>
+                    <>
+                        <div className="mb-3">
+                            <Row form>
+                                <Col md={4}>
+                                    <Input
+                                        type="text"
+                                        placeholder="Client Name / Invoice ID"
+                                        value={filter.clientName || filter.invoiceId}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (/^\d+$/.test(value)) {
+                                                setFilter({ ...filter, invoiceId: value, clientName: '' });
+                                            } else {
+                                                setFilter({ ...filter, clientName: value, invoiceId: '' });
+                                            }
+                                        }}
+                                    />
+                                </Col>
+                                <Col md={4}>
+                                    <Input
+                                        type="date"
+                                        placeholder="Date of Invoice"
+                                        value={filter.date}
+                                        onChange={(e) => setFilter({ ...filter, date: e.target.value })}
+                                    />
+                                </Col>
+                                <Col md={4}>
+                                    <Input
+                                        type="select"
+                                        value={filter.status}
+                                        onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                                    >
+                                        <option value="">Select Status</option>
+                                        {statusOptions.map((status) => (
+                                            <option key={status} value={status}>
+                                                {status}
+                                            </option>
                                         ))}
-                                    </tbody>
-                                </Table>
-                            </div>
-                            <Pagination aria-label="Page navigation example" style={{
-                                width:"max-content",
-                                
-                            }}>
-                                <PaginationItem disabled={currentPage === 1}>
-                                    <PaginationLink onClick={() => setCurrentPage(currentPage - 1)} style={{cursor:"pointer"}}>Previous</PaginationLink>
-                                </PaginationItem>
-                                {[...Array(totalPages)].map((_, index) => (
-                                    <PaginationItem key={index} active={currentPage === index + 1}>
-                                        <PaginationLink onClick={() => setCurrentPage(index + 1)} className='text-white bg-theme'>{index + 1}</PaginationLink>
-                                    </PaginationItem>
-                                ))}
-                                <PaginationItem disabled={currentPage === totalPages}>
-                                    <PaginationLink onClick={() => setCurrentPage(currentPage + 1)} style={{cursor:"pointer"}}>Next</PaginationLink>
-                                </PaginationItem>
-                            </Pagination>
-                        </CardBody>
-                    </Card>
-                    {viewInvoice && (
-                        <Card className="mt-4">
-                            <CardBody>
-                                <h4>Invoice Preview</h4>
-                                <ViewFormat invoiceData={viewInvoice} />
-                            </CardBody>
-                        </Card>
-                    )}
-                </>
-            )}
+                                    </Input>
+                                </Col>
+                            </Row>
+                        </div>
+                        {filteredInvoices.length === 0 ? (
+                            <Alert color="info">No invoices found.</Alert>
+                        ) : (
+                            <Card>
+                                <CardBody>
+                                    <div className="table-responsive">
+                                        <Table bordered>
+                                            <thead className="table-light">
+                                                <tr>
+                                                    <th>Inv ID</th>
+                                                    <th>Client</th>
+                                                    <th>Total</th>
+                                                    <th>Due</th>
+                                                    <th>Taxes</th>
+                                                    <th>Date</th>
+                                                    <th>Country</th>
+                                                    <th>Status</th>
+                                                    <th>Actions</th>
+                                                    {authuser.role === "firm_admin" && <th className='d-flex justify-content-center'>Approvals</th>}
+                                                    {authuser.role === "firm_admin" && <th>Proforma Status</th>}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {currentInvoices.map((invoice) => (
+                                                    <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} style={{ cursor: "pointer" }}>
+                                                        <td>{invoice.invoiceNumber}</td>
+                                                        <td>{invoice.customerName}</td>
+                                                        <td>{invoice.totalAmount} ₹</td>
+                                                        <td style={{ color: invoice.amountDue > 0 ? "red" : "green" }}>
+                                                            {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
+                                                        </td>
+                                                        <td style={{ minWidth: "110px" }}>
+                                                            <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
+                                                                {invoice.items.map((item, itemIndex) =>
+                                                                    item.itemId.tax.components.map((tax, taxIndex) => (
+                                                                        <li key={`${itemIndex}-${taxIndex}`}>
+                                                                            {tax.taxType} - {tax.rate}%
+                                                                        </li>
+                                                                    ))
+                                                                )}
+                                                            </ul>
+                                                        </td>
+                                                        <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
+                                                        <td>{invoice.customerAddress.country}</td>
+                                                        <td>{invoice.approvalStatus?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>
+                                                        <td>
+                                                            <i
+                                                                className="bx bx-printer"
+                                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "10px" }}
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleFetchAndPrint(invoice._id);
+                                                                }}
+                                                            ></i>
+                                                        </td>
+                                                        {authuser.role === "firm_admin" && (
+                                                            <td>
+                                                                {invoice.approvalStatus === "approved" ? (
+                                                                    <i className="bx bx-x" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
+                                                                ) : (
+                                                                    <i className="bx bx-check" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "approved")}></i>
+                                                                )}
+                                                            </td>
+                                                        )}
+                                                        {authuser.role === "firm_admin" && (
+                                                            <td>
+                                                                {invoice.approvalStatus === "pending" ? (
+                                                                    <Button style={{ width: "91px" }} onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleRejectProforma(invoice._id);
+                                                                    }} color="danger">Reject</Button>
+                                                                ) : (
+                                                                    <Button style={{ width: "91px", cursor: "no-drop", pointerEvents: "auto" }} color="success" disabled>Approved</Button>
+                                                                )}
+                                                            </td>
+                                                        )}
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                    <Pagination aria-label="Page navigation example" style={{ width: "max-content" }}>
+                                        <PaginationItem disabled={currentPage === 1}>
+                                            <PaginationLink onClick={() => setCurrentPage(currentPage - 1)} style={{ cursor: "pointer" }}>Previous</PaginationLink>
+                                        </PaginationItem>
+                                        {[...Array(totalPages)].map((_, index) => (
+                                            <PaginationItem key={index} active={currentPage === index + 1}>
+                                                <PaginationLink onClick={() => setCurrentPage(index + 1)} className='text-white bg-theme'>{index + 1}</PaginationLink>
+                                            </PaginationItem>
+                                        ))}
+                                        <PaginationItem disabled={currentPage === totalPages}>
+                                            <PaginationLink onClick={() => setCurrentPage(currentPage + 1)} style={{ cursor: "pointer" }}>Next</PaginationLink>
+                                        </PaginationItem>
+                                    </Pagination>
+                                </CardBody>
+                            </Card>
+                        )}
+                    </>
+                )}
             </div>
             {selectedInvoice && (
                 <div style={{ display: 'none' }}>
@@ -315,6 +310,7 @@ const ViewInvoices = () => {
             )}
         </React.Fragment>
     );
+    
 };
 
 export default ViewInvoices;
