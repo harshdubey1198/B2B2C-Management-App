@@ -195,12 +195,39 @@ function Vendor() {
                 
                 {/* Show vendor details */}
                 {vendorToDelete && (
-                <div className="mt-3 text-center">
-                    <strong>Vendor Name:</strong> {vendorToDelete.name} <br />
-                    <strong>Contact Person:</strong> {vendorToDelete.contactPerson} <br />
-                    <strong>Phone:</strong> {vendorToDelete.phone} <br />
-                    <strong>Email:</strong> {vendorToDelete.email} <br />
-                    <strong>Address:</strong> {vendorToDelete.address.h_no}, {vendorToDelete.address.city}, {vendorToDelete.address.state}, {vendorToDelete.address.zip_code}, {vendorToDelete.address.country}
+                <div className="mt-3 text-left">
+                    <table className="table table-bordered">
+                    <thead>
+                        <tr>
+                        <th>Field</th>
+                        <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td><strong>Vendor Name:</strong></td>
+                        <td>{vendorToDelete.name}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Contact Person:</strong></td>
+                        <td>{vendorToDelete.contactPerson}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Phone:</strong></td>
+                        <td>{vendorToDelete.phone}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Email:</strong></td>
+                        <td>{vendorToDelete.email}</td>
+                        </tr>
+                        <tr>
+                        <td><strong>Address:</strong></td>
+                        <td>
+                            {vendorToDelete.address.h_no}, {vendorToDelete.address.city}, {vendorToDelete.address.state}, {vendorToDelete.address.zip_code}, {vendorToDelete.address.country}
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
                 </div>
                 )}
             </ModalBody>
