@@ -38,15 +38,12 @@ const calculateBomRawMaterialsCost = async (rawMaterials) => {
       for (const variant of variants) {
         const variantQuantity = variant.quantity || 0;
         const variantWastePercentage = variant.wastePercentage || 0;
-
         if (variantQuantity === 0) {
           console.warn(`Skipping variant with ID ${variant.variantId} due to zero quantity.`);
           continue;
         }
-
         const variantCost = variantQuantity * costPricePerUnit;
         const variantWastageCost = variantQuantity * costPricePerUnit * (variantWastePercentage / 100);
-
         materialCost += variantCost;
         wastageCost += variantWastageCost;
       }
@@ -55,17 +52,14 @@ const calculateBomRawMaterialsCost = async (rawMaterials) => {
         console.warn(`Skipping material with ID ${itemId} due to zero quantity.`);
         continue;
       }
-
       materialCost = materialQuantity * costPricePerUnit;
       wastageCost = materialQuantity * costPricePerUnit * (wastePercentage / 100);
     }
-
     totalCost += materialCost + wastageCost;
   }
 
   return totalCost;
 };
-
 
 // Generate unique production order number
 const generateProductionOrderNumber = async (firmId) => {

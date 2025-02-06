@@ -305,7 +305,8 @@ export const masterAdminSidebarData = () => [
       icon: "mdi mdi-file-document-outline",
       subItem: [
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "View Customers", link: "/view-customers" }
+        { sublabel: "View Customers", link: "/view-customers" },
+        // { sublabel: "Print Template", link: "/simple-template-printer" },
     
       ],
     },

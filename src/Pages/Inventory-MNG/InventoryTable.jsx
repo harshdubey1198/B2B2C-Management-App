@@ -7,7 +7,8 @@ import FirmsTable from "../../components/InventoryComponents/firmsTable";
 import axiosInstance from "../../utils/axiosInstance";
 import ItemDetailModal from "../../Modal/ItemDetailModal";
 import { useNavigate } from "react-router-dom";
-
+import { getInventoryItems } from "../../apiServices/service";
+import { RiseLoader, ScaleLoader } from "react-spinners";
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
@@ -16,7 +17,7 @@ function InventoryTable() {
   const [modalOpen, setModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage] = useState(5);
+  const [loading, setLoading] = useState(true);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [variant, setVariant] = useState({
@@ -38,14 +39,14 @@ function InventoryTable() {
   const handleItemsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
     setItemsPerPage(value);
-    setCurrentPage(1); // Reset to the first page when items per page change
+    setCurrentPage(1); 
   };
 
   const handleCustomItemsPerPage = () => {
     const value = parseInt(customItemsPerPage, 10);
     if (!isNaN(value) && value > 0) {
       setItemsPerPage(value);
-      setCurrentPage(1); // Reset to the first page when items per page change
+      setCurrentPage(1); 
     } else {
       toast.error("Please enter a valid number of items per page.");
     }
@@ -56,23 +57,43 @@ function InventoryTable() {
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
   const firmId = authuser?.adminId;
-  useEffect(() => {
-    if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
-      const fetchInventoryData = async () => {
-        try {
-          const response = await axiosInstance.get(
-            `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`
-          );
-          setInventoryData(response.data);
+  // useEffect(() => {
+  //   if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
+  //     const fetchInventoryData = async () => {
+  //       try {
+  //         const response = await axiosInstance.get(
+  //           `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`
+  //         );
+  //         setInventoryData(response.data);
           
-        } catch (error) {
-          console.error("Error fetching inventory data:", error);
-        }
-      };
+  //       } catch (error) {
+  //         console.error("Error fetching inventory data:", error);
+  //       }
+  //     };
   
-      fetchInventoryData();
+  //     fetchInventoryData();
+  //   }
+  // }, [userId, trigger ]);
+
+  const fetchItems = async () => {
+    setLoading(true);
+    try {
+      const response = await getInventoryItems();
+      setInventoryData(response.data || []);
+    } catch (error) {
+      console.error("Error fetching inventory data:", error);
     }
-  }, [userId, trigger]);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, [trigger]);
+    
+
+  const refetchItems = () => {
+    setTrigger((prev) => prev + 1);
+  };
 
   const handleViewDetails = (item) => {
     setSelectedItem(item);
@@ -129,9 +150,8 @@ function InventoryTable() {
             }
           );
   
-          // Update the selectedItem's variants list with the updated variant
           const updatedVariants = [...selectedItem.variants];
-          updatedVariants[variantIndex] = { ...variant, _id: updatedVariants[variantIndex]._id }; // Retain original variant ID
+          updatedVariants[variantIndex] = { ...variant, _id: updatedVariants[variantIndex]._id }; 
           setSelectedItem({
             ...selectedItem,
             variants: updatedVariants,
@@ -245,9 +265,11 @@ useEffect(() => {
           breadcrumbItem="Inventory Table"
         />
 
-      <div className="d-flex justify-content-end gap-2 mb-3">
+      <div className="d-flex justify-content-end align-items-center gap-2 mb-3">
+           <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchItems} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+
           <div className="d-flex align-items-center gap-2">
-          <label htmlFor="itemsPerPageSelect">Items per page:</label>
+          <label htmlFor="itemsPerPageSelect" className="m-0">Items per page:</label>
                 <select
                   id="itemsPerPageSelect"
                   className="form-select"
@@ -261,7 +283,7 @@ useEffect(() => {
                   <option value="100">100</option>
                 </select>
 
-                <label htmlFor="customItemsInput">Or enter custom:</label>
+                <label htmlFor="customItemsInput" className="m-0">Or enter custom:</label>
                 <input
                   id="customItemsInput"
                   type="number"
@@ -271,28 +293,13 @@ useEffect(() => {
                   className="form-control"
                   style={{ width: "100px",maxHeight:"33px" }} 
                 />
-                <Button color="primary" onClick={handleCustomItemsPerPage}>
+                <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
                   Set
                 </Button>
             </div>
 
-          <Button color="primary" className="p-2 text-black" style={{fontSize:"10.5px"}} onClick={handleAddItemPage}> Add Item </Button>
-            {/* <span
-                className="badge table-raw-materials p-2 text-black d-flex align-items-center cursor-pointer"
-                onClick={() => handleSortByType("raw_material")}
-              >
-                Raw Material
-              </span>
-
-              <span
-                className="badge table-row-blue p-2 text-black d-flex align-items-center cursor-pointer"
-                onClick={() => handleSortByType("finished_good")} 
-              >
-                Finished Goods
-              </span>
-          <span className="badge table-row-yellow p-2 text-black d-flex align-items-center cursor-pointer"
-            onClick={() => handleSortByType("")}
-          >All</span> */}
+          <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
+          
           <select
             type="select"
             className="form-select"
@@ -300,86 +307,67 @@ useEffect(() => {
             onChange={(e) => handleSortByType(e.target.value)}
           >
             <option value="">All Items</option>
-            <option value="raw_material">Raw Material</option>
-            <option value="finished_good">Finished Goods</option>
+            <option value="raw_material" className="table-raw-materials">Raw Material</option>
+            <option value="finished_good" className="table-row-blue">Finished Goods</option>
           </select>
           <span className="badge bg-success p-2 d-flex align-items-center">Total Items: {inventoryData.length}</span>
       </div>
 
-        {/* <div className="d-flex align-items-center gap-3 mb-3">
+      {loading ? (
+          <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "300px" }}>
+            {/* <RiseLoader color="#0d4251" /> */}
+            <ScaleLoader color="#0d4251" />
+          </div>
+        ) : (
+          authuser.role === 'client_admin' ? (
+            <FirmsTable handleViewDetails={handleViewDetails} />
+          ) : (
+            <div className="table-responsive">
+              <Table bordered className="mb-0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Quantity</th>
+                    <th>Brand</th>
+                    <th>Cost Price</th>
+                    <th>Selling Price</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredInventoryData.length > 0 ? (
+                    filteredInventoryData.map((item, index) => {
+                      const rowClass =
+                        item.type === "raw_material" ? "table-raw-materials" :
+                        item.type === "finished_good" ? "table-row-blue" : "table-row-yellow";
 
-        </div> */}
+                      return (
+                        <tr key={index} className={rowClass}>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.name}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.quantity} {item.qtyType}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
+                          <td>
+                            <i className="bx bx-edit" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(item)}></i>
+                            <i className="bx bx-trash" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteInventory(item)}></i>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className="text-center">No inventory items found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </div>
+          )
+        )}
 
-
-{authuser.role === 'client_admin' ? (
-  <FirmsTable handleViewDetails={handleViewDetails}/>
-) : (
-  <div className="table-responsive">
-    <Table bordered className="mb-0">
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Quantity</th>
-          <th>Brand</th>
-          <th>Cost Price</th>
-          <th>Selling Price</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-    {currentItems.length > 0 ? (
-      currentItems.map((item, index) => {
-      const rowClass =
-        item.type === "raw_material"
-          ? "table-raw-materials"
-          : item.type==="finished_good"
-          ? "table-row-blue"
-          : "table-row-yellow";
-
-      return (
-        <tr key={index} className={rowClass}>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.name}</td>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>
-            {item.quantity} {item.qtyType}
-          </td>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
-          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
-          <td><i className="bx bx-edit"
-                style={{
-                  fontSize: "22px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  marginLeft: "5px",
-                }}
-                onClick={() => handleViewDetails(item)}
-              ></i>
-              <i
-                className="bx bx-trash"
-                style={{
-                  fontSize: "22px",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  marginLeft: "5px",
-                }}
-                onClick={() => handleDeleteInventory(item)}
-              ></i>
-          </td>
-        </tr>
-      );
-    })
-  ) : (
-    <tr>
-      <td colSpan="7">No inventory items found</td>
-    </tr>
-  )}
-</tbody>
-
-    </Table>
-  </div>
-)}
     <div className="pagination-controls d-flex gap-2 mt-2">
       {pageNumbers.map(number => (
         <Button key={number} onClick={() => paginate(number)} className={currentPage === number ? "btn-primary" : "btn-secondary"}>

@@ -1,16 +1,15 @@
 import React, { useEffect } from 'react'
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
+import Select from "react-select";
 
-function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands, taxes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands,taxes, taxId , selectedTaxTypes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
   useEffect(() => {
     // it must be number not the string    
     // setSellingPrice(formData.sellingPrice);
     setFormData({ ...formData, sellingPrice: Number(formData.sellingPrice) });
 
-  }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, formData.tax, formData.vendor, formData.brand, formData.subCategoryId, formData.categoryId]);
+  }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, formData.taxId, formData.selectedTaxTypes , formData.vendor, formData.brand, formData.subCategoryId, formData.categoryId] );
   
-  console.log("FormData's Selling Price", formData.sellingPrice);
-
   return (
     <Modal isOpen={isOpen} toggle={toggle}>
     <ModalHeader toggle={toggleBomModal}>Add BOM</ModalHeader>
@@ -28,7 +27,7 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, form
           />
           </FormGroup>
           </Col>
-          <Col md={6}>
+          <Col md={3}>
           <FormGroup>
           <Label for="category">Category</Label>
           <Input
@@ -53,9 +52,9 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, form
           </Input>
           </FormGroup>
           </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
+        {/* </Row>
+        <Row> */}
+          <Col md={3}>
             <FormGroup>
               <Label for="subCategory">Sub Category</Label>
               <Input
@@ -165,8 +164,8 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, form
               <Label for="tax">Tax Selection</Label>
               <Input
                 type="select"
-                value={formData.tax}
-                onChange={(e) => setFormData({ ...formData, tax: e.target.value })}
+                value={formData.taxId}
+                onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
               >
                 <option value="">Select Tax</option>
                 {taxes.length > 0 ? (
@@ -181,6 +180,43 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, form
               </Input>
             </FormGroup>
           </Col>
+          <Col md={3}>
+            <FormGroup>
+              <Label className="form-label">Select Tax Types</Label>
+              <Select
+                isMulti 
+                name="selectedTaxTypes"
+                value={formData.selectedTaxTypes.map(id => ({
+                  value: id,
+                  label: taxes
+                    .find(tax => tax.taxRates.some(rate => rate._id === id))
+                    ?.taxRates.find(rate => rate._id === id)?.taxType + " - " +
+                    taxes.find(tax => tax.taxRates.some(rate => rate._id === id))
+                    ?.taxRates.find(rate => rate._id === id)?.rate + "%" 
+                }))}
+                onChange={(selectedOptions) => {
+                  const selectedIds = selectedOptions.map(option => option.value);
+                  console.log('Selected Tax Type IDs:', selectedIds);
+
+                  setFormData({
+                    ...formData,
+                    selectedTaxTypes: selectedIds,
+                  });
+                }}
+                options={taxes
+                  .filter(tax => tax._id === formData.taxId)
+                  .map(tax => (
+                    tax.taxRates.map(taxRate => ({
+                      value: taxRate._id,  
+                      label: `${taxRate.taxType} - ${taxRate.rate}%`,
+                    }))
+                  ))
+                  .flat() 
+                }
+              />
+            </FormGroup>
+          </Col>
+
         </Row>
           <h6 className="text-primary">Materials</h6>
           {formData.rawMaterials.map((material, materialIndex) => (

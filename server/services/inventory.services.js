@@ -3,6 +3,7 @@ const InventoryItem = require('../schemas/inventoryItem.schema');
 const User = require('../schemas/user.schema');
 const Vendor = require('../schemas/vendor.schema');
 const Tax = require('../schemas/tax.schema');
+const { default: mongoose } = require('mongoose');
 
 let inventoryServices = {};
 
@@ -47,15 +48,23 @@ inventoryServices.createItem = async (userId, body) => {
     if (!taxId || !tax) {
         throw new Error('Tax not found');
     }
-    const finalTaxComponents = tax.taxRates.filter(taxRate => 
-        selectedTaxTypes.includes(taxRate.taxType)
-    ).map(taxRate => ({
-        taxType: taxRate.taxType,
-        rate: taxRate.rate
-    }));
-    if (finalTaxComponents.length === 0) {
-        throw new Error('No valid tax components selected');
+    const selectedTaxIds = selectedTaxTypes.map(id  => new mongoose.Types.ObjectId(id))
+    const taxRateIds = tax.taxRates
+      .filter(rate => selectedTaxIds.some(selectedId => selectedId.equals(rate._id)))  
+      .map(rate => rate._id); 
+  
+    if (taxRateIds.length === 0) {
+        throw new Error('No valid tax components selected')
     }
+    // const finalTaxComponents = tax.taxRates.filter(taxRate => 
+    //     selectedTaxTypes.includes(taxRate.taxType)
+    // ).map(taxRate => ({
+    //     taxType: taxRate.taxType,
+    //     rate: taxRate.rate
+    // }));
+    // if (finalTaxComponents.length === 0) {
+    //     throw new Error('No valid tax components selected');
+    // }
     const totalStock = variants && variants.length > 0 ? calculateStock(variants) : quantity;   
     const newItem = new InventoryItem({
         name,
@@ -76,7 +85,7 @@ inventoryServices.createItem = async (userId, body) => {
         firmId: user.adminId,
         tax: {
             taxId: tax._id,
-            components: finalTaxComponents
+            selectedTaxTypes: taxRateIds 
         },
         subcategoryId: subcategoryId || null,
         variants: variants || []
@@ -91,42 +100,50 @@ inventoryServices.getAllItems = async (adminId) => {
     const items = await InventoryItem.find({firmId:adminId, deleted_at: null})
     .populate('categoryId')
     .populate('subcategoryId')
-    .populate({
-        path: 'createdBy',
-        select: "firstName lastName email"
-    })
     .populate('vendor')
-    .populate('tax.taxId')
+    .populate({ path: 'createdBy', select: "firstName lastName email" })
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
     .populate('brand')
     .populate('manufacturer')
-    if(!items){
+    .lean()
+    if(!items.length){
         throw new Error('No items found')
+    }
+    for (const item of items) {
+        if (item.tax && item.tax.selectedTaxTypes?.length > 0 && item.tax.taxId?.taxRates) {
+            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate =>
+                item.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+            );
+        }
     }
     return items
 };
 
 // GET SINGLE ITEM 
 inventoryServices.getItem = async (id) => {
-    const items = await InventoryItem.findOne({_id: id, deleted_at:null})
+    const item = await InventoryItem.findOne({_id: id, deleted_at:null})
     .populate('categoryId')
     .populate('subcategoryId')
     .populate('vendor')
-    .populate({
-        path: 'createdBy',
-        select: "firstName lastName email"
-    })
-    .populate('tax')
+    .populate({ path: 'createdBy', select: "firstName lastName email" })
+    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
     .populate('brand')
     .populate('manufacturer')
-    if(!items){
+    .lean()
+    if(!item){
         throw new Error('No items found')
     }
-    return items
+        if (item.tax.selectedTaxTypes.length > 0 && item.tax.taxId?.taxRates) {
+            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate =>
+                item.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+            );
+        }
+    return item
 };
 
 // UPDATE INVENTORY ITEM
 inventoryServices.updateItem = async (id, body) => {
-    const { name, description, quantity, qtyType,tax, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId,type, variants } = body;
+    const { name, description, quantity, qtyType, taxId, selectedTaxTypes, supplier, manufacturer,vendor, brand, costPrice, sellingPrice, categoryId, subcategoryId,type, variants } = body;
     const existingItem = await InventoryItem.findById(id);
     if (!existingItem) {
         throw new Error('Inventory item not found');
@@ -165,6 +182,29 @@ inventoryServices.updateItem = async (id, body) => {
             )
         }
     }
+
+    let taxUpdate = {}
+    if(taxId){
+        const tax = await Tax.findById(taxId)
+        if(!tax){
+            throw new Error('Tax not found')
+        }
+        let finalTaxComponents = [];
+        if (selectedTaxTypes && selectedTaxTypes.length > 0) {
+            finalTaxComponents = tax.taxRates.filter(taxRate =>
+                selectedTaxTypes.includes(taxRate._id.toString())
+            );
+
+            if (finalTaxComponents.length === 0) {
+                throw new Error("No valid tax components selected");
+            }
+        }
+
+        taxUpdate = {
+            taxId: tax._id,
+            selectedTaxTypes: selectedTaxTypes || [],
+        };
+    }
     const updateItem = await InventoryItem.findById(id);
     // totalStock = calculateStock(updateItem.variants);
     totalStock = variants && variants.length > 0 ? calculateStock(updateItem.variants) : quantity;   
@@ -181,6 +221,7 @@ inventoryServices.updateItem = async (id, body) => {
             vendor,
             costPrice,
             sellingPrice,
+            tax: taxId ? taxUpdate : existingItem.tax,
             categoryId,
             subcategoryId: subcategoryId || null 
         },

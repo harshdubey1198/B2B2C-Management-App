@@ -13,6 +13,8 @@ function BomPage() {
   const [vendors, setVendors] = useState([]);
   const [brands, setBrands] = useState([]);
   const [taxes , setTaxes] = useState([]);
+  const [taxId , setTaxId] = useState([]);
+  const [ selectedTaxTypes , setSelectedTaxTypes] = useState([]);
   const [filteredBoms, setFilteredBoms] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -23,7 +25,7 @@ function BomPage() {
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
   // console.log("estimatedCost", estimatedCost);
-  console.log("sellingPrice", sellingPrice);
+  // console.log("sellingPrice", sellingPrice);
 
 
 
@@ -39,6 +41,8 @@ function BomPage() {
     sellingPrice: 0,
     brand: '',
     qtyType: '',
+    taxId: '',
+    selectedTaxTypes: [],
     // costPrice: estimatedCost,
   });
 
@@ -312,7 +316,7 @@ const minimumSellingPrice = (costPrice) => {
                             {bom.rawMaterials.map((material, idx) => (
                               <div key={idx} className="d-flex justify-content-between align-items-center mb-2">
                                 <span className="material-name">
-                                  {material.itemId.name} 
+                                  {material?.itemId?.name} 
                                 </span>
                                 <span>
                                   {material.variants.length > 0 ? (
@@ -372,7 +376,9 @@ const minimumSellingPrice = (costPrice) => {
              subCategories={subCategories}
              vendors={vendors} 
              brands={brands} 
-             taxes={taxes} 
+             taxes={taxes}
+             taxId={taxId} 
+             selectedTaxTypes={selectedTaxTypes}
              items={items} 
              fetchSubCategories={fetchSubCategories}
              fetchBoms={fetchBoms}

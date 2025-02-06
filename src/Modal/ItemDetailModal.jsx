@@ -4,6 +4,7 @@ import axiosInstance from "../utils/axiosInstance";
 import FetchBrands from "../Pages/Inventory-MNG/FetchBrands";
 import FetchManufacturers from "../Pages/Inventory-MNG/fetchManufacturers";
 import { getTaxes } from "../apiServices/service";
+import Select from "react-select";
 
 const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, setSelectedItem, deleteVariant, updateItem, handleEditVariant, modalOpen, setModalOpen, selectedItem, firmId, }) => {
   const [vendors, setVendors] = useState([]);
@@ -22,7 +23,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
   const fetchTaxes = async () => {
     try {
       const response = await getTaxes();
-      setTaxes(response.data);
+      setTaxes(response.data || [] );
     } catch (error) {
       console.error(error.message);
 
@@ -35,7 +36,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
         const response = await axiosInstance.get( 
           `${process.env.REACT_APP_URL}/vendor/get-vendors/${firmId}`
         );
-        setVendors(response.data);
+        setVendors(response.data || []);
         // console.log(response.data);
       } catch (error) {
         console.error(error.message);
@@ -45,35 +46,81 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     fetchVendors();
   }, []);
 
-  const handleTaxChange = (e) => {
-    const { value } = e.target;
-    const selectedTax = taxes.find((tax) => tax._id === value);
+  const selectedTaxId = selectedItem?.tax?.taxId || "";
+  const selectedTax = taxes.find((tax) => tax._id === selectedTaxId) || null;
+  
+  const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
+  
+  const availableTaxTypes = selectedTax ? selectedTax.taxRates.map(rate => ({
+    value: rate._id,
+    label: `${rate.taxType} (${rate.rate}%)`
+  })) : []; 
+
+  const handleTaxChange = (selectedOption) => { 
+    const selectedTax = taxes.find((tax) => tax._id === selectedOption.value);
 
     if (selectedTax) {
-      const taxTypesArray = selectedTax.taxRates.map(rate => rate.taxType);
-      const taxRatesArray = selectedTax.taxRates.map(rate => rate.rate);
+        setSelectedTaxComponents(selectedTax.taxRates.map(rate => ({
+            value: rate._id,
+            label: `${rate.taxType} (${rate.rate}%)`
+        })));
 
-      setSelectedTaxComponents(taxTypesArray);
-      setSelectedTaxRates(taxRatesArray);
-
-      setSelectedItem((prevState) => ({
-        ...prevState,
-        taxId: selectedTax._id,
-        selectedTaxTypes: taxTypesArray,
-        selectedTaxRates: taxRatesArray
-      }));
+        setSelectedItem((prevState) => ({
+            ...prevState,
+            tax: {
+                taxId: selectedTax._id, 
+                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id) // Always update selectedTaxTypes when changing tax
+            }
+        }));
     } else {
-      setSelectedTaxComponents([]);
-      setSelectedTaxRates([]);
-      
-      setSelectedItem((prevState) => ({
-        ...prevState,
-        taxId: "",
-        selectedTaxTypes: [],
-        selectedTaxRates: []
-      }));
+        setSelectedTaxComponents([]);
+        setSelectedItem((prevState) => ({
+            ...prevState,
+            tax: { taxId: null, selectedTaxTypes: [] }
+        }));
     }
-  };
+};
+
+
+
+useEffect(() => {
+    if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
+        setSelectedItem((prevState) => ({
+            ...prevState,
+            tax: {
+                ...prevState.tax,
+                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id)
+            }
+        }));
+    }
+}, [selectedTaxId]);
+const handleTaxTypeChange = (selectedTypes) => {
+  const selectedTypeIds = selectedTypes ? selectedTypes.map(type => type.value) : [];
+
+  setSelectedItem((prevState) => ({
+    ...prevState,
+    tax: {
+      ...prevState.tax,
+      selectedTaxTypes: selectedTypeIds 
+    }
+  }));
+};
+
+
+console.log("available tax types",availableTaxTypes);
+
+
+useEffect(() => {
+    if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
+        setSelectedItem((prevState) => ({
+            ...prevState,
+            tax: {
+                ...prevState.tax,
+                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id)
+            }
+        }));
+    }
+}, [selectedTax]);
 
 
   return (
@@ -129,7 +176,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 <label>
                   <strong>Vendor:</strong>
                 </label>
-                {/* <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly /> */}
                 {selectedItem?.vendor && selectedItem?.vendor?.name ? (
                   <input type="text" value={selectedItem?.vendor?.name} className="form-control" readOnly />
                 ) : (
@@ -186,29 +232,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     ))}
                   </select>
                 )}
-              </Col>
-              {/* <Col md={3}>
-                <label>
-                  <strong>More Vendors:</strong>
-                </label>
-                <select id="vendorId" name="vendorId" value={selectedItem.vendorId}
-                  onChange={(e) =>
-                    setSelectedItem({
-                      ...selectedItem,
-                      vendorId: e.target.value,
-                    })
-                  }
-                  className="form-control"
-                >
-                  <option value="">Select Vendor</option>
-                  {vendors.map((vendor) => (
-                    <option key={vendor._id} value={vendor._id}>
-                      {vendor.name}
-                    </option>
-                  ))}
-                </select>
-              </Col> */}
-              
+              </Col>              
               <Col md={6}>
                 <label>
                   <strong>Quantity Type:</strong>
@@ -252,9 +276,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                   </select>
                 </div>
               </Col>
-           
-            
-
                <Col md={6}>
                 <label>
                   <strong>Manufacturer:</strong>
@@ -290,28 +311,33 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                 )}
               </Col>
               <Col md={6}>
-                <label><strong>Tax:</strong></label>
-                <select
-                className="form-control"
-                value={selectedItem?.tax?.taxId?._id || ""}  // Access the _id of taxId inside tax
-                onChange={(e) => {
-                  const selectedTax = taxes.find((tax) => tax._id === e.target.value);
-                  setSelectedItem((prevState) => ({
-                    ...prevState,
-                    tax: { ...prevState.tax, taxId: selectedTax },  // Update the taxId field in the tax object
-                  }));
-                }}
-              >
-                <option value="">Select Tax</option>
-                {taxes.map((tax) => (
-                  <option key={tax._id} value={tax._id}>
-                    {tax.taxName} {tax.taxRates.length > 0 ? `(${tax.taxRates[0]?.rate}%)` : ''}
-                  </option>
-                ))}
-              </select>
-
+                  <label>
+                      <strong>Tax:</strong>
+                  </label>
+                  <Select
+                      options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
+                      value={selectedTax ? { value: selectedTax._id, label: selectedTax.taxName } : null}
+                      onChange={handleTaxChange}
+                      placeholder="Select Tax"
+                    />
               </Col>
-              </Row>
+
+              <Col md={6}>
+                <label>
+                  <strong>Tax Type(s):</strong>
+                </label>
+                <Select
+                  isMulti
+                  options={availableTaxTypes}
+                  value={selectedTaxTypes.map(id => ({
+                    value: id, 
+                    label: availableTaxTypes.find(type => type.value === id)?.label || "Unknown"
+                  }))} 
+                  onChange={handleTaxTypeChange} 
+                  placeholder="Select Tax Type"
+                />
+              </Col>
+            </Row>
             <Row>
               <Col md={6}>
                 <label>
@@ -344,7 +370,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     })
                   }
                   className="form-control"
-                  readOnly
+                  // readOnly
                 />
               </Col>
             </Row>
@@ -408,7 +434,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                     </tr>
                   </thead>
                   <tbody>
-                    {selectedItem.variants.map((variant, vIndex) => (
+                    {selectedItem?.variants?.map((variant, vIndex) => (
                       <tr key={vIndex}>
                         <td>{vIndex + 1}</td>
                         <td>{variant.variationType}</td>
@@ -419,12 +445,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                         <td>{variant.sku}</td>
                         <td>{variant.barcode}</td>
                         <td className="d-flex justify-content-center">
-                          {/* <Button
-                          color="danger"
-                          onClick={() => deleteVariant(variant._id)}
-                        >
-                          Delete
-                        </Button> */}
                           <i
                             className="bx bx-pencil"
                             style={{
@@ -489,6 +509,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
                         type: selectedItem.type,
                         tax: selectedItem.tax,
                         ProductHsn: selectedItem.ProductHsn,
+                        selectedTaxTypes: selectedItem.tax.selectedTaxTypes,
                       })
                     }
                   >

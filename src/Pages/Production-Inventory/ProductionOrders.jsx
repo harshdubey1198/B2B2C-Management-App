@@ -31,7 +31,7 @@ function ProductionOrders() {
       const response = await getProductionOrders();
       setProductionOrders(response.data || []);
       setFilteredOrders(response.data || []);      
-      // console.table(response.data); 
+      console.table(response.data); 
     } catch (error) {
       console.error('Error fetching production orders:', error.message);
     }
@@ -110,8 +110,8 @@ function ProductionOrders() {
     setSelectedOrder({ ...order, status: selectedStatus });
     setStatusModalOpen(true);
     if(selectedStatus==="completed"){
-      console.log("completed");
-      navigate('/inventory-table')
+      // console.log("completed");
+      // navigate('/inventory-table')
     }
   };
   

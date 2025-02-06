@@ -10,7 +10,7 @@ function QuantityUpdateModal({
   const [isEditMode, setIsEditMode] = useState(false);
   const [newQuantity, setNewQuantity] = useState(selectedOrder?.quantity || '');
   const [newNote, setNewNote] = useState(selectedOrder?.notes || '');
-
+  console.log(selectedOrder, 'selectedOrder');
   const handleSave = () => {
     const updatedData = { quantity: newQuantity, notes: newNote };
     handleUpdateQuantity(selectedOrder._id, updatedData);
@@ -69,7 +69,7 @@ function QuantityUpdateModal({
                 <thead>
                   <tr>
                     <th>Item Name</th>
-                    <th>Quantity Type</th>
+                    <th style={{width:"90px"}}>Qty Type</th>
                     <th>Quantity</th>
                     <th>Cost Price</th>
                     <th>Selling Price</th>
@@ -81,7 +81,10 @@ function QuantityUpdateModal({
                     <tr key={index}>
                       <td><strong>{rawMaterial?.itemId?.name}</strong></td>
                       <td>{rawMaterial?.itemId?.qtyType}</td>
-                      <td>{rawMaterial?.quantity} units</td>
+                      <td>
+                          {rawMaterial?.itemId?.quantity.length > 0 ? rawMaterial?.itemId?.quantity : rawMaterial?.variants?.map((variant) => variant.quantity).join(', ') + " "}
+                         units
+                        </td>
                       <td>₹{rawMaterial?.itemId?.costPrice}</td>
                       <td>₹{rawMaterial?.itemId?.sellingPrice}</td>
                       <td>{rawMaterial?.itemId?.description}</td>

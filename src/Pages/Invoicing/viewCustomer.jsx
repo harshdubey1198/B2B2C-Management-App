@@ -8,7 +8,7 @@ const ViewCustomer = () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const customerData = selectedCustomer;
-    const [isEditMode, setIsEditMode] = useState(false); // Track if in edit mode
+    const [isEditMode, setIsEditMode] = useState(false); 
     const token = JSON.parse(localStorage.getItem("authUser")).token;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
     const [trigger, setTrigger] = useState(0);
@@ -169,15 +169,18 @@ const ViewCustomer = () => {
                                 ))}
                             </tbody>
                         </Table>
-                        <div className="pagination p-3">
+                        <div className="pagination p-3 d-flex gap-1">
                             {[...Array(Math.ceil(filteredData?.length / itemsPerPage)).keys()].map(number => (
-                                <Button key={number} onClick={() => paginate(number + 1)}
-                                    className={currentPage === number + 1 ? 'active' : 'mr-2'}>
-                                    {number + 1}
+                                <Button 
+                                    key={number} 
+                                    onClick={() => paginate(number + 1)}
+                                    className={`mr-2 ${currentPage === number + 1 ? 'btn-primary' : ''}`}
+                                >
+                                  {number + 1}
                                 </Button>
                             ))}
+                         </div>
                         </div>
-                    </div>
                 )}
 
                 {/* Customer Details Modal */}
@@ -188,11 +191,11 @@ const ViewCustomer = () => {
                     <ModalBody>
                         {selectedCustomer && (
                             <Row>
-                                <Col md={6}>
-                                    <label><strong>Name:</strong></label>
+                                <Col md={6}>    
+                                    <label><strong>First Name:</strong></label>
                                     <input
                                         type="text"
-                                        value={selectedCustomer?.firstName + " " + selectedCustomer?.lastName}
+                                        value={selectedCustomer?.firstName}
                                         className="form-control"
                                         readOnly={!isEditMode}
                                         onChange={(e) => {
@@ -202,6 +205,22 @@ const ViewCustomer = () => {
                                         }}
                                     />
                                 </Col>
+
+                                <Col md={6}>
+                                    <label><strong>Last Name:</strong></label>
+                                    <input  
+                                        type="text"
+                                        value={selectedCustomer?.lastName}
+                                        className="form-control"
+                                        readOnly={!isEditMode}
+                                        onChange={(e) => {
+                                            if (isEditMode) {
+                                                setSelectedCustomer(prev => ({ ...prev, lastName: e.target.value }));
+                                            }
+                                        }}
+                                    />
+                                </Col>
+
                                 <Col md={6}>
                                     <label><strong>Email:</strong></label>
                                     <input

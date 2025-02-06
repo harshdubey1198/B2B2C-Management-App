@@ -10,7 +10,7 @@ import ViewInvoice from "../Pages/Invoicing/view.jsx";
 import PaymentsInvoice from "../Pages/Invoicing/payments.jsx";
 import ReportsInvoice from "../Pages/Invoicing/reports.jsx";
 import CategoryManager from "../Pages/Inventory-MNG/categoryManager.jsx";
-
+import SimpleTemplatePrinter from "../components/InvoicingComponents/SimpleTemplatePrinter.jsx";
 import Firm from "../Pages/Firms/FirmsTable.jsx";
 import Calender from "../Pages/Calender/index.js";
 
@@ -126,6 +126,8 @@ const authProtectedRoutes = [
   { path: "/payments-invoice", component: < PaymentsInvoice /> },
   { path: "/reports-invoice", component: < ReportsInvoice /> },
   { path: "/view-customers", component: <ViewCustomer />},
+  { path: "/simple-template-printer", component: <SimpleTemplatePrinter /> },
+
 
   // Inventory MNG
   {path:"/inventory-table", component: <InventoryTable />},

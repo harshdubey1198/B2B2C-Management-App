@@ -12,6 +12,8 @@ import ManufacturerModal from "../../Modal/ManufacturerModal";
 import FetchBrands from "./FetchBrands";
 import FetchManufacturers from "./fetchManufacturers";
 import { getItemCategories, getItemSubCategories, getTaxes, getVendors } from "../../apiServices/service";
+import Select from "react-select";
+import VendorModal from "../../Modal/VendorModal";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -20,12 +22,19 @@ const InventoryItemForm = () => {
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [vendorModalOpen, setVendorModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
+  const [vendorData, setVendorData] = useState({
+    name: "",
+    contactPerson: "",
+    phone: "",
+    email: "",
+    address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" }
+  });
   const [editIndex, setEditIndex] = useState(null); 
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
   const [taxes, setTaxes] = useState([]);
-  const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
-  const [selectedTaxRates, setSelectedTaxRates] = useState([]);
+  const [selectedTaxTypes, setSelectedTaxTypes] = useState([]);
   const [variants, setVariants] = useState([]);
   // const toggleModal = () => setModal(!modal);
   const [subcategories, setSubcategories] = useState([]);
@@ -38,48 +47,7 @@ const InventoryItemForm = () => {
   const [manufacturers, setManufacturers] = useState([]);
   const [triggerManufacturer, setTriggerManufacurer] = useState(0)
   const [triggerBrand, setTriggerBrand] = useState(0)
-//   const [batches, setBatches] = useState({
-//     batchNumber: "",
-//     quantity: "",
-//     manufacturingDate: "",
-//     expiryDate: "",
-//     serialNumbers: "",
-//   });
-// console.log("batches",batches);
-//   const [batchModalOpen, setBatchModalOpen] = useState(false);
-
-//   const toggleBatchModal = () => {
-//     setBatchModalOpen(!batchModalOpen);
-//   };
-
-//   const handleBatchChange = (e) => {
-//     const { name, value } = e.target;
-//     setBatches((prevState) => ({
-//       ...prevState,
-//       [name]: value,
-//     }));
-//   };
-
-//   const addBatch = () => {
-//     if (
-//       batches.batchNumber &&
-//       batches.quantity &&
-//       batches.manufacturingDate &&
-//       batches.expiryDate &&
-//       batches.serialNumbers
-//     ) {
-//       // setBatches({
-//       //   batchNumber: "",
-//       //   quantity: "",
-//       //   manufacturingDate: "",
-//       //   expiryDate: "",
-//       //   serialNumbers: "",
-//       // });
-//       setBatchModalOpen(false);
-//     } else {
-//       toast.error("Please fill in all batch details");
-//     }
-//   };
+  const [triggerVendor , setTriggerVendor] = useState(0)
 
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
@@ -88,6 +56,11 @@ const InventoryItemForm = () => {
     setManufacturers(fetchedManufacturers);
   };
   
+  const handleVendorsFetched = (fetchedVendors) => {
+    setVendors(fetchedVendors);
+  };
+
+
   const handleReset = () => {
     setFormValues({ name: "",type:"", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
@@ -111,49 +84,38 @@ const InventoryItemForm = () => {
  
   const toggleManufacturerModal = () => {
     setModal(!modal);
-};
-
- 
-
-
-      
-
-  const handleRateChange = (e) => {
-    const value = e.target.value;
-    setFormValues((prevState) => {
-      let selectedTaxTypes = [...prevState.selectedTaxTypes];
-      if (selectedTaxTypes.includes(value)) {
-        selectedTaxTypes = selectedTaxTypes.filter(rate => rate !== value);
-      } else {
-         selectedTaxTypes.push(value);
-      }
-      return {
-        ...prevState,
-        selectedTaxTypes: selectedTaxTypes,
-      };
+  };
+  const toggleVendorModal = () => {
+    setVendorModalOpen(!vendorModalOpen);
+    setVendorData({  // Reset form when opening
+      name: "",
+      contactPerson: "",
+      phone: "",
+      email: "",
+      address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" }
     });
   };
 
-
+  const fetchVendors = async () => { 
+    try {
+      const response = await getVendors();
+      setVendors(response.data || []);
+      console.log("fetching Vendors")
+       } catch (error) {
+      toast.error("Failed to fetch vendors.");
+      console.error(error.message);
+    }
+  };
   useEffect(() => {
     const fetchCategories = async () => {
-      try {
-        
+      try {        
         const response = await getItemCategories();
-        const parentCategories = response.data.filter(category => category.parentId === null);
+        // const parentCategories = response.data.filter(category => category.parentId === null);
+        // setCategories(parentCategories);
+        const parentCategories = response.data.length > 0 ? response.data.filter(category => category.parentId === null) : [];
         setCategories(parentCategories);
       } catch (error) {        
         toast.error("Failed to fetch categories.");
-        console.error(error.message);
-      }
-    };
-    const fetchVendors = async () => { 
-      try {
-       
-        const response = await getVendors();
-        setVendors(response.data);
-      } catch (error) {
-        toast.error("Failed to fetch vendors.");
         console.error(error.message);
       }
     };
@@ -161,8 +123,7 @@ const InventoryItemForm = () => {
     const fetchTaxes = async () => {
       try {
         const response = await getTaxes();
-        setTaxes(response.data);
-        
+        setTaxes(response.data || []);
       } catch (error) {
         toast.error("Failed to fetch taxes.");
         console.error(error.message);
@@ -190,34 +151,12 @@ const InventoryItemForm = () => {
   };
   
   const handleTaxChange = (e) => {
-    const { value } = e.target;
-    const selectedTax = taxes.find((tax) => tax._id === value);
-    if (selectedTax) {
-      
-        const taxTypesArray = selectedTax.taxRates.map(rate => rate.taxType);
-        const taxRatesArray = selectedTax.taxRates.map(rate => rate.rate);
-        // console.log(taxTypesArray);
-        // console.log(taxRatesArray);
-        setFormValues((prevState) => ({
-            ...prevState,
-            taxId: selectedTax._id,
-            selectedTaxTypes: taxTypesArray,
-        }));
-        setSelectedTaxComponents(taxTypesArray);
-        setSelectedTaxRates(taxRatesArray);
-        // console.log(taxTypesArray);
-    } else {
-      setFormValues((prevState) => ({
-        ...prevState,
-        taxId: "",
-        selectedTaxTypes: [] 
-
-      }));
-      setSelectedTaxComponents([]);
-    }
-};
-
-
+    setFormValues({
+      ...formValues,
+      taxId: e.target.value,
+      selectedTaxTypes: [],
+    });
+  };
 
   const addOrUpdateVariant = () => {
     if (
@@ -315,7 +254,6 @@ const InventoryItemForm = () => {
       setFormValues({ name: "", description: "",  type:"", costPrice: "", sellingPrice: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "",  quantity: "", brand: "", manufacturer: "", supplier: "", taxId: "" , selectedTaxTypes: [] });
       setVariants([]); 
       handleReset();
-
       toast.success(response.message);
     } catch (error) {
       toast.error("Failed to add item. Please try again.");
@@ -359,11 +297,11 @@ const InventoryItemForm = () => {
                           <Label htmlFor="categoryId">Category</Label>
                           <Input type="select" id="categoryId" name="categoryId" value={formValues.categoryId} onChange={handleCategory} >
                             <option value="">Select Category</option>
-                            {categories.map(category => (
+                            {categories.length > 0 ? categories.map((category) => (
                               <option key={category._id} value={category._id}>
                                 {category.categoryName}
                               </option>
-                            ))}
+                            )) : <option value="">No Categories Available</option>}
                           </Input>
                         </FormGroup>
                       </Col>
@@ -372,11 +310,12 @@ const InventoryItemForm = () => {
                           <Label htmlFor="subcategoryId">Subcategory</Label>
                           <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange} >
                             <option value="">Select Subcategory</option>
-                            {subcategories.map(subcategory => (
-                              <option key={subcategory._id} value={subcategory._id}>
+                            {subcategories.length > 0 ? subcategories.map((subcategory) => (
+                              <option key={subcategory._id} value={subcategory._id}>  
                                 {subcategory.categoryName}
                               </option>
-                            ))}
+                            )) : <option value="">No Subcategories Available</option>}
+
                           </Input>
                         </FormGroup>
                       </Col>
@@ -388,11 +327,11 @@ const InventoryItemForm = () => {
                             <div className="d-flex align-items-center">
                               <select id="brand" name="brand" value={formValues.brand} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
                                 <option value="">Select Brand</option>
-                                {brands.map((brand) => (
+                               {brands.length > 0 ? brands.map((brand) => (
                                   <option key={brand._id} value={brand._id}>
                                     {brand.name}
                                   </option>
-                                ))}
+                                )) : <option value="">No Brands Available</option>}
                               </select>
                               {/* <Button color="primary" onClick={toggleBrandModal} style={{ marginLeft: "10px" }} > Add Brand </Button> */}
                               <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleBrandModal}></i>
@@ -405,11 +344,12 @@ const InventoryItemForm = () => {
                             <div className="d-flex align-items-center">
                               <select id="manufacturer" name="manufacturer" value={formValues.manufacturer} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
                                 <option value="">Select </option>
-                                {manufacturers.map((manufacturer) => (
+                                {manufacturers.length > 0 ? manufacturers.map((manufacturer) => (
                                   <option key={manufacturer._id} value={manufacturer._id}>
                                     {manufacturer.name}
                                   </option>
-                                ))}
+                                )) : <option value="">No Manufacturers Available</option>}
+
                               </select>
                               {/* <Button color="primary" onClick={toggleManufacturerModal} style={{ marginLeft: "10px" }} > Add Manufacturer </Button> */}
                                 <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleManufacturerModal}></i>
@@ -421,14 +361,27 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="vendorId">Vendor</Label>
-                          <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
+                          {/* <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
                             <option value="">Select Vendor</option>
-                            {vendors.map(vendor => (
-                              <option key={vendor._id} value={vendor._id}>
-                                {vendor.name}
-                              </option>
-                            ))}
-                          </Input>
+                              {vendors.length > 0 ? vendors.map((vendor) => (
+                                <option key={vendor._id} value={vendor._id}>
+                                  {vendor.name}
+                                </option>
+                              )) : <option value="">No Vendors Available</option>}
+
+
+                          </Input> */}
+                          <div className="d-flex align-items-center">
+                            <select id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
+                              <option value="">Select Vendor</option>
+                              {vendors.length > 0 ? vendors.map((vendor) => (
+                                <option key={vendor._id} value={vendor._id}>
+                                  {vendor.name}
+                                </option>
+                              )) : <option value="">No Vendors Available</option>}
+                            </select>
+                            <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleVendorModal}></i>
+                          </div>
                         </FormGroup>
                       </Col>
 
@@ -487,11 +440,11 @@ const InventoryItemForm = () => {
                           <Label htmlFor="tax">Tax</Label>
                           <Input type="select" id="tax" name="tax" value={formValues.taxId} onChange={handleTaxChange}>
                             <option value="">Select Tax</option>
-                            {taxes.map(tax => (
+                            {taxes.length > 0 ? taxes.map((tax) => (
                               <option key={tax._id} value={tax._id}>
                                 {tax.taxName}
                               </option>
-                            ))}
+                            )) : <option value="">No Taxes Available</option>}
                           </Input>
                         </FormGroup>
                       </Col>
@@ -501,28 +454,48 @@ const InventoryItemForm = () => {
                           <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
                         </FormGroup>
                       </Col>
-                      {selectedTaxComponents.length > 0 && (
-                      <div className="mt-3">
-                        <h5>Selected Tax Components</h5>
-                        <ul>
-                          {selectedTaxComponents.map((tax, index) => (
-                            <li key={index}>
-                              {tax} - {selectedTaxRates[index]}%
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    </Row>
+                      {formValues.taxId && (
+                        <Row className="mt-3">
+                          <Col md={6}>
+                          <FormGroup>
+                              <Label>Select Tax Components</Label>
+                              <Select
+                                  isMulti
+                                  name="selectedTaxTypes"
+                                  value={formValues.selectedTaxTypes.map((id) => ({
+                                    value: id,
+                                    label: taxes
+                                      .find((tax) => tax.taxRates.some((rate) => rate._id === id))
+                                      ?.taxRates.find((rate) => rate._id === id)?.taxType +
+                                      " - " +
+                                      taxes
+                                        .find((tax) => tax.taxRates.some((rate) => rate._id === id))
+                                        ?.taxRates.find((rate) => rate._id === id)?.rate +
+                                      "%",
+                                  }))}
+                                  onChange={(selectedOptions) => {
+                                    const selectedIds = selectedOptions.map((option) => option.value);
+                                    console.log("Selected Tax Type IDs:", selectedIds);
 
-                    {/* <h3>Batch Details:</h3>
-                    <div style={{ border: "1px solid black", padding: "10px", marginTop: "10px" }}>
-                      <p><strong>Batch Number:</strong> {batches.batchNumber || "N/A"}</p>
-                      <p><strong>Quantity:</strong> {batches.quantity || "N/A"}</p>
-                      <p><strong>Manufacturing Date:</strong> {batches.manufacturingDate || "N/A"}</p>
-                      <p><strong>Expiry Date:</strong> {batches.expiryDate || "N/A"}</p>
-                      <p><strong>Serial Numbers:</strong> {batches.serialNumbers || "N/A"}</p>
-                    </div> */}
+                                    setFormValues({
+                                      ...formValues,
+                                      selectedTaxTypes: selectedIds,
+                                    });
+                                  }}
+                                  options={taxes
+                                    .filter((tax) => tax._id === formValues.taxId)
+                                    .flatMap((tax) =>
+                                      tax.taxRates.map((taxRate) => ({
+                                        value: taxRate._id,
+                                        label: `${taxRate.taxType} - ${taxRate.rate}%`,
+                                      }))
+                                    )}
+                                />
+                            </FormGroup>
+                          </Col>
+                        </Row>
+                      )}
+                    </Row>
 
                     <VariantModal  isOpen={variantModalOpen} toggleModal={() => setVariantModalOpen(!variantModalOpen)}  variant={variant} handleVariantChange={handleVariantChange} addVariant={addOrUpdateVariant} />
                     <Row className="mt-3">
@@ -576,73 +549,51 @@ const InventoryItemForm = () => {
             </Col>
           </Row>
         </Container>
-        {/* <Modal isOpen={batchModalOpen} toggle={toggleBatchModal}>
-        <ModalHeader toggle={toggleBatchModal}>Add Batch</ModalHeader>
-        <ModalBody>
-          <FormGroup>
-            <Label htmlFor="batchNumber">Batch Number</Label>
-            <Input
-              type="text"
-              id="batchNumber"
-              name="batchNumber"
-              placeholder="Enter batch number"
-              value={batches.batchNumber}
-              onChange={handleBatchChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="quantity">Quantity</Label>
-            <Input
-              type="number"
-              id="quantity"
-              name="quantity"
-              placeholder="Enter quantity"
-              value={batches.quantity}
-              onChange={handleBatchChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="manufacturingDate">Manufacturing Date</Label>
-            <Input
-              type="date"
-              id="manufacturingDate"
-              name="manufacturingDate"
-              value={batches.manufacturingDate}
-              onChange={handleBatchChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="expiryDate">Expiry Date</Label>
-            <Input
-              type="date"
-              id="expiryDate"
-              name="expiryDate"
-              value={batches.expiryDate}
-              onChange={handleBatchChange}
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="serialNumbers">Serial Numbers</Label>
-            <Input
-              type="text"
-              id="serialNumbers"
-              name="serialNumbers"
-              placeholder="Enter serial numbers"
-              value={batches.serialNumbers}
-              onChange={handleBatchChange}
-            />
-          </FormGroup>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={addBatch}>
-            Add Batch
-          </Button>
-        </ModalFooter>
-      </Modal> */}
-        
         <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} setTriggerBrand={setTriggerBrand}/>
         <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} setTriggerManufacurer={setTriggerManufacurer}/>
-
+        <VendorModal
+            modalOpen={vendorModalOpen}
+            toggleModal={toggleVendorModal}
+            vendorData={vendorData}
+            handleInputChange={(e) => {
+              const { name, value } = e.target;
+              if (name in vendorData.address) {
+                setVendorData({ ...vendorData, address: { ...vendorData.address, [name]: value } });
+              } else {
+                setVendorData({ ...vendorData, [name]: value });
+              }
+            }}
+            handleVendorSubmit={async () => {
+              try {
+                const response = await fetch(`${process.env.REACT_APP_URL}/vendor/create-vendor/${createdBy}`, {
+                  method: "POST",
+                  headers: { 
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(vendorData),
+                });
+            
+                const result = await response.json();
+            
+                if (response.ok && result.message === "Vendor created successfully") {
+                  console.log("Vendor created successfully");
+            
+                  await fetchVendors(); 
+                  toast.success(result.message);
+            
+                  setVendorModalOpen(false);
+                } else {
+                  throw new Error(result.error || "Failed to create vendor");
+                }
+              } catch (error) {
+                console.error(error);
+                toast.error("Failed to create vendor.");
+              }
+            }}
+            
+            editMode={false}
+          />
       </div>
     </React.Fragment>
   );

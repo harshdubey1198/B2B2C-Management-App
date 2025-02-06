@@ -69,7 +69,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       firmId,
       sellingPrice,
       createdBy,
-      totalCostPrice,
+      // totalCostPrice,
       status: "created",
     };
 
@@ -369,13 +369,14 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
               sellingPrice: bom.sellingPrice,
               categoryId: bom.categoryId,
               subcategoryId: bom.subcategoryId,
+              ProductHsn: bom.ProductHsn,
               firmId: order.firmId,
               createdBy: order.createdBy,
               vendor: bom.vendor,
               tax: {
                 taxId: bom.tax?.taxId,
-                components: bom.tax?.components || [] 
-            },
+                selectedTaxTypes: bom.tax?.selectedTaxTypes || []
+              },
               deleted_at: null,
           });
           await finishedProduct.save({ session });
