@@ -169,7 +169,7 @@ const ViewCustomer = () => {
                                 ))}
                             </tbody>
                         </Table>
-                        <div className="pagination p-3">
+                        <div className="pagination p-3 d-flex gap-1">
                             {[...Array(Math.ceil(filteredData?.length / itemsPerPage)).keys()].map(number => (
                                 <Button 
                                     key={number} 
