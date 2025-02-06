@@ -13,6 +13,7 @@ import FetchBrands from "./FetchBrands";
 import FetchManufacturers from "./fetchManufacturers";
 import { getItemCategories, getItemSubCategories, getTaxes, getVendors } from "../../apiServices/service";
 import Select from "react-select";
+import VendorModal from "../../Modal/VendorModal";
 
 const InventoryItemForm = () => {
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
@@ -21,7 +22,15 @@ const InventoryItemForm = () => {
   const navigate = useNavigate();
   const [modal, setModal] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [vendorModalOpen, setVendorModalOpen] = useState(false);
   const [variantModalOpen, setVariantModalOpen] = useState(false);
+  const [vendorData, setVendorData] = useState({
+    name: "",
+    contactPerson: "",
+    phone: "",
+    email: "",
+    address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" }
+  });
   const [editIndex, setEditIndex] = useState(null); 
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
   const [taxes, setTaxes] = useState([]);
@@ -38,6 +47,7 @@ const InventoryItemForm = () => {
   const [manufacturers, setManufacturers] = useState([]);
   const [triggerManufacturer, setTriggerManufacurer] = useState(0)
   const [triggerBrand, setTriggerBrand] = useState(0)
+  const [triggerVendor , setTriggerVendor] = useState(0)
 
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
@@ -46,6 +56,11 @@ const InventoryItemForm = () => {
     setManufacturers(fetchedManufacturers);
   };
   
+  const handleVendorsFetched = (fetchedVendors) => {
+    setVendors(fetchedVendors);
+  };
+
+
   const handleReset = () => {
     setFormValues({ name: "",type:"", description: "", costPrice: "", sellingPrice: "", supplier: "", manufacturer: "", brand: "", ProductHsn: "", qtyType: "", categoryId: "", subcategoryId: "", vendorId: "", quantity: "",taxId:"", selectedTaxTypes: [], });
     setVariants([]); 
@@ -69,8 +84,28 @@ const InventoryItemForm = () => {
  
   const toggleManufacturerModal = () => {
     setModal(!modal);
-};
+  };
+  const toggleVendorModal = () => {
+    setVendorModalOpen(!vendorModalOpen);
+    setVendorData({  // Reset form when opening
+      name: "",
+      contactPerson: "",
+      phone: "",
+      email: "",
+      address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" }
+    });
+  };
 
+  const fetchVendors = async () => { 
+    try {
+      const response = await getVendors();
+      setVendors(response.data || []);
+      console.log("fetching Vendors")
+       } catch (error) {
+      toast.error("Failed to fetch vendors.");
+      console.error(error.message);
+    }
+  };
   useEffect(() => {
     const fetchCategories = async () => {
       try {        
@@ -81,15 +116,6 @@ const InventoryItemForm = () => {
         setCategories(parentCategories);
       } catch (error) {        
         toast.error("Failed to fetch categories.");
-        console.error(error.message);
-      }
-    };
-    const fetchVendors = async () => { 
-      try {
-        const response = await getVendors();
-        setVendors(response.data || []);
-         } catch (error) {
-        toast.error("Failed to fetch vendors.");
         console.error(error.message);
       }
     };
@@ -335,7 +361,7 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="vendorId">Vendor</Label>
-                          <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
+                          {/* <Input type="select" id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} >
                             <option value="">Select Vendor</option>
                               {vendors.length > 0 ? vendors.map((vendor) => (
                                 <option key={vendor._id} value={vendor._id}>
@@ -344,7 +370,18 @@ const InventoryItemForm = () => {
                               )) : <option value="">No Vendors Available</option>}
 
 
-                          </Input>
+                          </Input> */}
+                          <div className="d-flex align-items-center">
+                            <select id="vendorId" name="vendorId" value={formValues.vendorId} onChange={handleChange} className="form-control" style={{ flex: 1 }} >
+                              <option value="">Select Vendor</option>
+                              {vendors.length > 0 ? vendors.map((vendor) => (
+                                <option key={vendor._id} value={vendor._id}>
+                                  {vendor.name}
+                                </option>
+                              )) : <option value="">No Vendors Available</option>}
+                            </select>
+                            <i className="bx bx-plus" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleVendorModal}></i>
+                          </div>
                         </FormGroup>
                       </Col>
 
@@ -514,7 +551,49 @@ const InventoryItemForm = () => {
         </Container>
         <BrandModal isOpen={modalOpen} toggle={toggleBrandModal} onBrandsFetched={handleBrandsFetched} firmId={firmId} setTriggerBrand={setTriggerBrand}/>
         <ManufacturerModal isOpen={modal} toggle={toggleManufacturerModal} setTriggerManufacurer={setTriggerManufacurer}/>
-
+        <VendorModal
+            modalOpen={vendorModalOpen}
+            toggleModal={toggleVendorModal}
+            vendorData={vendorData}
+            handleInputChange={(e) => {
+              const { name, value } = e.target;
+              if (name in vendorData.address) {
+                setVendorData({ ...vendorData, address: { ...vendorData.address, [name]: value } });
+              } else {
+                setVendorData({ ...vendorData, [name]: value });
+              }
+            }}
+            handleVendorSubmit={async () => {
+              try {
+                const response = await fetch(`${process.env.REACT_APP_URL}/vendor/create-vendor/${createdBy}`, {
+                  method: "POST",
+                  headers: { 
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                  },
+                  body: JSON.stringify(vendorData),
+                });
+            
+                const result = await response.json();
+            
+                if (response.ok && result.message === "Vendor created successfully") {
+                  console.log("Vendor created successfully");
+            
+                  await fetchVendors(); 
+                  toast.success(result.message);
+            
+                  setVendorModalOpen(false);
+                } else {
+                  throw new Error(result.error || "Failed to create vendor");
+                }
+              } catch (error) {
+                console.error(error);
+                toast.error("Failed to create vendor.");
+              }
+            }}
+            
+            editMode={false}
+          />
       </div>
     </React.Fragment>
   );

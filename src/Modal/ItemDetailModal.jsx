@@ -46,7 +46,17 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     fetchVendors();
   }, []);
 
-const handleTaxChange = (selectedOption) => { 
+  const selectedTaxId = selectedItem?.tax?.taxId || "";
+  const selectedTax = taxes.find((tax) => tax._id === selectedTaxId) || null;
+  
+  const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
+  
+  const availableTaxTypes = selectedTax ? selectedTax.taxRates.map(rate => ({
+    value: rate._id,
+    label: `${rate.taxType} (${rate.rate}%)`
+  })) : []; 
+
+  const handleTaxChange = (selectedOption) => { 
     const selectedTax = taxes.find((tax) => tax._id === selectedOption.value);
 
     if (selectedTax) {
@@ -59,9 +69,7 @@ const handleTaxChange = (selectedOption) => {
             ...prevState,
             tax: {
                 taxId: selectedTax._id, 
-                selectedTaxTypes: prevState.tax?.selectedTaxTypes?.length 
-                    ? prevState.tax.selectedTaxTypes 
-                    : selectedTax.taxRates.map(rate => rate._id)
+                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id) // Always update selectedTaxTypes when changing tax
             }
         }));
     } else {
@@ -75,14 +83,17 @@ const handleTaxChange = (selectedOption) => {
 
 
 
-const selectedTaxId = selectedItem?.tax?.taxId || "";
-const selectedTax = taxes.find(tax => tax._id === selectedTaxId);
-console.log("selected tax",selectedTax);
-console.log("selected tax name " ,selectedTaxId);
-
-console.log("selected tax types",selectedItem?.tax?.selectedTaxTypes);
-
-
+useEffect(() => {
+    if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
+        setSelectedItem((prevState) => ({
+            ...prevState,
+            tax: {
+                ...prevState.tax,
+                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id)
+            }
+        }));
+    }
+}, [selectedTaxId]);
 const handleTaxTypeChange = (selectedTypes) => {
   const selectedTypeIds = selectedTypes ? selectedTypes.map(type => type.value) : [];
 
@@ -95,12 +106,6 @@ const handleTaxTypeChange = (selectedTypes) => {
   }));
 };
 
-const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
-console.log("selected tax types",selectedTaxTypes);
-const availableTaxTypes = selectedTax?.taxRates.map(rate => ({
-  value: rate._id,
-  label: `${rate.taxType} (${rate.rate}%)`
-})) || [];
 
 console.log("available tax types",availableTaxTypes);
 
@@ -311,12 +316,10 @@ useEffect(() => {
                   </label>
                   <Select
                       options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
-                      value={selectedTaxId
-                          ? { value: selectedTaxId, label: selectedTaxId?.taxName || "Select Tax" }
-                          : null}
+                      value={selectedTax ? { value: selectedTax._id, label: selectedTax.taxName } : null}
                       onChange={handleTaxChange}
                       placeholder="Select Tax"
-                  />
+                    />
               </Col>
 
               <Col md={6}>
@@ -506,6 +509,7 @@ useEffect(() => {
                         type: selectedItem.type,
                         tax: selectedItem.tax,
                         ProductHsn: selectedItem.ProductHsn,
+                        selectedTaxTypes: selectedItem.tax.selectedTaxTypes,
                       })
                     }
                   >
