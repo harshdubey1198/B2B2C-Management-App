@@ -265,10 +265,10 @@ useEffect(() => {
           breadcrumbItem="Inventory Table"
         />
 
-      <div className="d-flex justify-content-end align-items-center gap-2 mb-3">
+      <div className="d-flex flex-wrap justify-content-start align-items-center gap-2 mb-3">
            <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchItems} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
 
-          <div className="d-flex align-items-center gap-2">
+          {/* <div className="d-flex align-items-center gap-2"> */}
           <label htmlFor="itemsPerPageSelect" className="m-0">Items per page:</label>
                 <select
                   id="itemsPerPageSelect"
@@ -296,7 +296,7 @@ useEffect(() => {
                 <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
                   Set
                 </Button>
-            </div>
+            {/* </div> */}
 
           <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
           

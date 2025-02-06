@@ -45,8 +45,7 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     fetchTaxes();
     fetchVendors();
   }, []);
-
-  const selectedTaxId = selectedItem?.tax?.taxId || "";
+  const selectedTaxId = selectedItem?.tax?.taxId?._id || "";
   const selectedTax = taxes.find((tax) => tax._id === selectedTaxId) || null;
   
   const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
@@ -311,15 +310,23 @@ useEffect(() => {
                 )}
               </Col>
               <Col md={6}>
-                  <label>
-                      <strong>Tax:</strong>
-                  </label>
-                  <Select
-                      options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
-                      value={selectedTax ? { value: selectedTax._id, label: selectedTax.taxName } : null}
-                      onChange={handleTaxChange}
-                      placeholder="Select Tax"
-                    />
+                <label>
+                  <strong>Tax:</strong>
+                </label>
+                <select
+                  id="tax"
+                  name="tax"
+                  className="form-control"
+                  value={selectedTax ? selectedTax._id : ""}
+                  onChange={(e) => handleTaxChange({ value: e.target.value })}
+                >
+                  <option value="">Select Tax</option>
+                  {taxes.map((tax) => (
+                    <option key={tax._id} value={tax._id}>
+                      {tax.taxName}
+                    </option>
+                  ))}
+                </select>
               </Col>
 
               <Col md={6}>

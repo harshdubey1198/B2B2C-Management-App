@@ -43,7 +43,7 @@ $footer-color: var(--#{$prefix}footer-color);
 // Horizontal nav
 $topnav-bg: #fff;
 $menu-item-color: #74788d;
-$menu-item-active-color: #0bb197;
+$menu-item-active-color: #0D4251;
 
 // apex charts
 $apex-grid-color: var(--#{$prefix}tertiary-bg);
@@ -112,6 +112,7 @@ $grays: (
 
 // scss-docs-start color-variables
 $blue: #0bb197;
+$aaMOBee-green:#0D4251;
 $indigo: #564ab1;
 $purple: #5664d2;
 $pink: #e83e8c;
@@ -374,7 +375,7 @@ $cyans: (
 // fusv-enable
 
 // scss-docs-start theme-color-variables
-$primary:       $blue ;
+$primary:       $aaMOBee-green ;
 $secondary:     $gray-600 ;
 $success:       $green ;
 $info:          $cyan ;
@@ -386,6 +387,7 @@ $yellowTheme:   $yellow ;
 $greenTheme:    $green ;
 $redTheme:      $red ;
 $blueTheme:     $blue ;
+$aaMOBee-greenTheme: $aaMOBee-green;
 $purpleTheme:   $purple ;
 $indigoTheme:   $indigo ;
 
