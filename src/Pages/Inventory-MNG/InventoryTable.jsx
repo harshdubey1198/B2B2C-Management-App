@@ -290,7 +290,7 @@ useEffect(() => {
           <select
             type="select"
             className="form-select"
-            style={{ width: "auto" ,maxHeight:"27.13px"}}
+            style={{ width: "auto" ,maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}}
             onChange={(e) => handleSortByType(e.target.value)}
           >
             <option value="">All Items</option>
