@@ -112,6 +112,16 @@ export const getFirmUsers = async () => {
     }
 };
 
+// ro get company for admin 
+export const getCompanyForAdmin = async () => {
+    try {   
+        const response =await axiosInstance.get(`/auth/getCompany/${id}}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 // to get user id data using crmuser id 
 export const getCrmUserById = async () => {
     try {
@@ -557,7 +567,7 @@ export const getBoms = async () => {
     }
 };
 
-export const getInventoryItems = async () => {  
+export const getInventoryItems = async (firmId) => {  
     try {
         const response = await axiosInstance.get(`/inventory/get-items/${firmId}`);
         return response.data;

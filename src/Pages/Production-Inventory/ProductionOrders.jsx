@@ -148,7 +148,7 @@ function ProductionOrders() {
                 className="form-control"
                 style={{ width: "250px",height : "26.6px",maxHeight:"33px" }}
               />
-            <label htmlFor="itemsPerPageSelect" className='mb-0'>Items per page:</label>
+               <label htmlFor="itemsPerPageSelect" className='mb-0'>Items per page:</label>
                   <select
                     id="itemsPerPageSelect"
                     className="form-select"
