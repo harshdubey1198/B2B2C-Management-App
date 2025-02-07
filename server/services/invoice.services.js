@@ -177,7 +177,7 @@ invoiceServices.createInvoice = async (invoiceData) => {
 
     // Generate invoice number
     const invoiceNumber = await generateInvoiceNumber(firmId, session);
-    const amountDue = Math.max(totalAmount - amountPaid, 0);
+    const amountDue = Math.max((totalAmount - amountPaid).toFixed(2), 0);
 
     const newInvoice = new Invoice({
       invoiceNumber,

@@ -82,9 +82,7 @@ const calculateInvoiceAmount = async (items, session) => {
       itemTotal,
       session
     );
-
-    const itemTotalWithTax = Math.round(itemTotal + totalTaxForItem);
-
+    const itemTotalWithTax = (itemTotal + totalTaxForItem);
     item.total = itemTotalWithTax;
     totalAmount += itemTotalWithTax;
   }
@@ -96,22 +94,20 @@ const calculateTotalTax = async (inventoryItem, itemTotal, session) => {
   if (!tax) {
     throw new Error(`Tax with ID ${inventoryItem.tax.taxId} not found`);
   }
-
+  
   let totalTaxForItem = 0;
-  inventoryItem.tax.components.forEach((selectedComponent) => {
-    const taxComponent = tax.taxRates.find(
-      (tc) =>
-        tc.taxType.toLowerCase() === selectedComponent.taxType.toLowerCase()
-    );
+  inventoryItem.tax.selectedTaxTypes.forEach((selectedComponent) => {
+    const taxComponent = tax.taxRates.find(tc => tc._id.equals(selectedComponent)); 
+
     if (!taxComponent) {
       throw new Error(
-        `Selected tax component ${selectedComponent.taxType} not found in tax object`
+        `Selected tax component ${selectedComponent} not found in tax object`
       );
     }
     const taxAmount = (itemTotal * taxComponent.rate) / 100;
     totalTaxForItem += taxAmount;
   });
-
+  console.log(totalTaxForItem, "formitem");
   return totalTaxForItem;
 };
 
