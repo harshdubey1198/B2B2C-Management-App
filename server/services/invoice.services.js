@@ -250,77 +250,82 @@ invoiceServices.rejectInvoice = async (invoiceId) => {
   }
 };
 
+// invoiceServices.getInvoices = async (adminId) => {
+//   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })
+//     .populate({ path: "items.itemId", populate: {path: "tax.taxId"} })
+//     .populate({ path: "firmId", select: "-password" })
+//     .populate({ path: "createdBy", select: "firstName lastName email" });
 
-// // Function to release reserved stock when a Proforma invoice is rejected
-// const releaseReservedStock = async (items) => {
-//   for (let item of items) {
-//     const inventoryItem = await InventoryItem.findById(item.itemId);
-//     if (!inventoryItem) {
-//       throw new Error(`Item with ID ${item.itemId} not found in inventory`);
-//     }
-
-//     // If the item has variants, handle reserved stock
-//     if (inventoryItem.variants && inventoryItem.variants.length > 0) {
-//       item.selectedVariant.forEach((variant) => {
-//         const inventoryVariant = inventoryItem.variants.find(
-//           (v) => v.sku === variant.sku
-//         );
-//         if (inventoryVariant) {
-//           if (inventoryVariant.reservedQuantity < item.quantity) {
-//             throw new Error(
-//               `Cannot release more than reserved quantity for variant: ${variant.optionLabel}`
-//             );
-//           }
-//           // Reduce reserved quantity, but do NOT modify stock as it was only reserved
-//           inventoryVariant.reservedQuantity -= item.quantity;
-
-//           // Note: Do NOT increase the actual stock since it's only reserved
-//           // inventoryVariant.stock should remain unchanged as it already reflects the available stock
-//         } else {
-//           throw new Error(
-//             `Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`
-//           );
-//         }
-//       });
-
-//       // Recalculate the total stock, but without adding the reserved stock back into total stock
-//       inventoryItem.quantity = inventoryItem.variants.reduce(
-//         (sum, v) => sum + v.stock,
-//         0
-//       );
-//     } else {
-//       // If no variants, adjust stock directly at item level
-//       // Here we would just return the reserved quantity back if needed, but no change in stock
-//       inventoryItem.quantity += 0; // No change in the stock level here
-//     }
-
-//     await inventoryItem.save();
+//   if (invoices.length === 0) {
+//     throw new Error("No Invoices found");
 //   }
+//   return invoices;
 // };
-
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })
-    .populate({ path: "items.itemId", populate: {path: "tax.taxId"} })
+    .populate({ 
+      path: "items.itemId", 
+      populate: [
+        { path: "tax.taxId", select: "taxName taxRates" }, 
+        { path: "categoryId", select: "categoryName" }, 
+        { path: "subcategoryId", select: "categoryName" }, 
+        { path: "brand", select: "name" }, 
+        { path: "vendor", select: "name contactPerson phone email" } 
+      ] 
+    })
     .populate({ path: "firmId", select: "-password" })
-    .populate({ path: "createdBy", select: "firstName lastName email" });
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .lean(); 
 
   if (invoices.length === 0) {
     throw new Error("No Invoices found");
   }
+
+  for (const invoice of invoices) {
+    for (const item of invoice.items) {
+      if (item.itemId?.tax && item.itemId.tax.selectedTaxTypes?.length > 0 && item.itemId.tax.taxId?.taxRates) {
+        item.itemId.tax.selectedTaxTypes = item.itemId.tax.taxId.taxRates.filter(rate =>
+          item.itemId.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+        );
+      }
+    }
+  }
+
   return invoices;
 };
 
+
 invoiceServices.getInvoice = async (invoiceId) => {
   const invoice = await Invoice.findOne({ _id: invoiceId, deleted_at: null })
-    .populate({ path: "items.itemId" })
+    .populate({ 
+      path: "items.itemId", 
+      populate: [
+        { path: "tax.taxId", select: "taxName taxRates" },
+        { path: "categoryId", select: "categoryName" }, 
+        { path: "subcategoryId", select: "categoryName" }, 
+        { path: "brand", select: "name" }, 
+        { path: "vendor", select: "name contactPerson phone email" } 
+      ] 
+    })
     .populate({ path: "firmId", select: "-password" })
-    .populate({ path: "createdBy", select: "firstName lastName email" });
+    .populate({ path: "createdBy", select: "firstName lastName email" })
+    .lean(); 
 
   if (!invoice) {
     throw new Error("No invoice found");
   }
+
+  for (const item of invoice.items) {
+    if (item.itemId?.tax && item.itemId.tax.selectedTaxTypes?.length > 0 && item.itemId.tax.taxId?.taxRates) {
+      item.itemId.tax.selectedTaxTypes = item.itemId.tax.taxId.taxRates.filter(rate =>
+        item.itemId.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
+      );
+    }
+  }
+
   return invoice;
 };
+
 
 invoiceServices.deleteInvoice = async (invoiceId) => {
   const existingInvoice = await Invoice.findOne({ _id: invoiceId });
