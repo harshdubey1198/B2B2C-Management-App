@@ -114,7 +114,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     const selectedItem = inventoryItems.find((invItem) => invItem._id === selectedItemId);
     if (selectedItem) {
       const price = getSellingPrice(selectedItem._id);
-      const taxComponents = selectedItem.tax?.components || []; // Get tax components
+      const taxComponents = selectedItem.tax?.selectedTaxTypes || []; // Get tax components
       updatedItems[index] = {
         ...updatedItems[index],
         name: selectedItem.name,
@@ -145,7 +145,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       };
       const { quantity = 0, discount = 0 } = updatedItems[index];
   
-      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
+      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.selectedTaxTypes || [];
       updatedItems[index].taxComponents = taxComponents; 
   
       const itemPrice = updatedItems[index].price;
@@ -173,7 +173,7 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
       const price = basePrice;
       const varSelPrice = basePrice + variantPrice;
   
-      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.components || [];
+      const taxComponents = inventoryItems.find((invItem) => invItem._id === itemId)?.tax?.selectedTaxTypes || [];
       updatedItems[index] = {
         ...selectedItem,
         selectedVariant: [{ optionLabel: variantName, sku:sku ,variationType, barcode, varSelPrice, price: variantPrice }],
@@ -208,8 +208,8 @@ const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
     const price = selectedItem.price || 0;
     const varSelPrice = selectedItem.varSelPrice || 0; 
     const discount = selectedItem.discount || 0;
-    const taxComponents = inventoryItems.find((invItem) => invItem._id === selectedItem.itemId)?.tax?.components || [];
-    // console.log(taxComponents);
+    const taxComponents = inventoryItems.find((invItem) => invItem._id === selectedItem.itemId)?.tax?.selectedTaxTypes || [];
+    console.log(taxComponents);
     newItems[index].total = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).total;
     newItems[index].afterTax = calculateTotal(quantity, varSelPrice, price, taxComponents, discount).afterTax;
   
@@ -259,7 +259,7 @@ const totalAfterTax = totalPrice - totalTax;
               <div className="col-lg-2 col-md-3 col-sm-12">
                 <FormGroup>
                   <Label for={`tax-${index}`}>Tax</Label>
-                  {inventoryItems.find((invItem) => invItem._id === item.itemId).tax.components.map((taxComponent, index) => (
+                  {inventoryItems.find((invItem) => invItem._id === item.itemId).tax.selectedTaxTypes.map((taxComponent, index) => (
                     <div key={index} className='form-control'>
                       {taxComponent.taxType} - {taxComponent.rate}%
                     </div>

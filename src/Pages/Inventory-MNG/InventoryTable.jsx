@@ -285,7 +285,10 @@ useEffect(() => {
                 </Button>
             {/* </div> */}
 
-          <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
+          {role !== "client_admin" ? (
+            <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
+          ) : null}
+          
           
           <select
             type="select"
