@@ -79,22 +79,18 @@ invoiceServices.rejectInvoice = async (invoiceId) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    // Find the invoice
     const invoice = await Invoice.findById(invoiceId).session(session);
     if (!invoice) {
       throw new Error(`Invoice with ID ${invoiceId} not found`);
     }
-
     if (invoice.invoiceType !== "Proforma") {
       throw new Error("Only Proforma invoices can be rejected");
     }
-
     if (["rejected", "Canceled"].includes(invoice.status)) {
       throw new Error("This invoice has already been rejected or canceled");
     }
-
     invoice.status = "rejected";
-    await releaseReservedStock(invoice.items);
+    await releaseReservedStock(invoice.items, session);
     await invoice.save({ session });
     await session.commitTransaction();
     session.endSession();

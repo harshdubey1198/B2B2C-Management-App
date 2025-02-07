@@ -184,47 +184,46 @@ const updateInventoryStock = async (items, isProforma, session) => {
 };
 
 // ReleasedReservedStock
-const releaseReservedStock = async (items) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
+const releaseReservedStock = async (items, session) => {
   try {
+    const itemIds = items.map((item) => item.itemId);
+
+    const inventoryItems = await InventoryItem.find({ _id: { $in: itemIds } }).session(session);
+    if (inventoryItems.length === 0) {
+      throw new Error("No matching inventory items found");
+    }
     for (let item of items) {
-      const inventoryItem = await InventoryItem.findById(item.itemId).session(session);
+      const inventoryItem = inventoryItems.find((inv) => inv._id.toString() === item.itemId.toString());
       if (!inventoryItem) {
         throw new Error(`Item with ID ${item.itemId} not found in inventory`);
       }
-
       if (inventoryItem.variants && inventoryItem.variants.length > 0) {
         if (!item.selectedVariant || item.selectedVariant.length === 0) {
           throw new Error(`Missing selected variants for item ${inventoryItem.name}`);
         }
-
-        item.selectedVariant.forEach((variant) => {
+        for (let variant of item.selectedVariant) {
           const inventoryVariant = inventoryItem.variants.find((v) => v.sku === variant.sku);
           if (!inventoryVariant) {
             throw new Error(`Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`);
           }
-
-          inventoryVariant.stock += item.quantity;
           if (inventoryVariant.reservedQuantity < item.quantity) {
             throw new Error(`Cannot release more than reserved quantity for variant: ${variant.optionLabel}`);
           }
+          inventoryVariant.stock += item.quantity;
           inventoryVariant.reservedQuantity -= item.quantity;
-        });
+        }
         inventoryItem.quantity = inventoryItem.variants.reduce((sum, v) => sum + v.stock, 0);
       } else {
         inventoryItem.quantity += item.quantity;
       }
+
+      // Save the updated inventory item
       await inventoryItem.save({ session });
     }
-    await session.commitTransaction();
-    session.endSession();
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     throw error;
   }
-};
+}
 
 
 module.exports = {
