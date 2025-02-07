@@ -32,7 +32,7 @@ function ProductionOrders() {
   const effectiveFirmId = role === "client_admin" ? selectedFirmId : firmId;
   console.log(effectiveFirmId);
   const fetchProductionOrders = async () => {
-    if (!effectiveFirmId) return; // Ensure firm ID exists before making API call
+    if (!effectiveFirmId) return; 
 
     try {
         const response = await getProductionOrdersmain(effectiveFirmId);
@@ -150,7 +150,7 @@ const handleCreateModal = () => {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
-        <div className="d-flex flex-wrap justify-content-between gap-2 mb-3 ">
+        <div className="d-flex flex-wrap justify-content-start gap-2 mb-3 ">
               <input
                 type="text"
                 value={searchTerm}
@@ -195,6 +195,8 @@ const handleCreateModal = () => {
                       }
                     }}
                   />
+                  <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchOrders} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+
                   <Button color="primary" onClick={handleCustomItemsPerPage} style={{padding:"8px" , fontSize:"10.5px" , height : "26.6px"}}>
                     Set
                   </Button>
@@ -332,8 +334,7 @@ const handleCreateModal = () => {
           selectedOrder={selectedOrder}
           handleUpdateStatus={handleUpdateStatus}
         />
-        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={refetchOrders} />
-
+        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={refetchOrders} firmId={effectiveFirmId} />
       </div>
     </React.Fragment>
   ); 

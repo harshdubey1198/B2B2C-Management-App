@@ -3,61 +3,69 @@ import { Button, Col, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, 
 import { createProductionOrder, getBoms } from '../../apiServices/service';
 import { toast } from 'react-toastify';
 
-function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
-  const [boms, setBoms] = useState([]); 
-  const [selectedBom, setSelectedBom] = useState(null); 
-  const [selectedBomData, setSelectedBomData] = useState(null); 
-  const [quantity, setQuantity] = useState(0); 
+function ProductionCreateModal({ modalOpen, setModalOpen, trigger, firmId }) {
+  const [boms, setBoms] = useState([]);
+  const [selectedBom, setSelectedBom] = useState(null);
+  const [selectedBomData, setSelectedBomData] = useState(null);
+  const [quantity, setQuantity] = useState(0);
+
   const authuser = JSON.parse(localStorage.getItem('authUser'))?.response;
-  const firmId = authuser?.adminId;
   const createdBy = authuser?._id;
 
-  const handleQuantityChange = (e) => { 
+  const handleQuantityChange = (e) => {
     const value = e.target.value;
     if (value >= 0) {
       setQuantity(value);
     }
   };
-  
 
   const fetchBoms = async () => {
+    if (!firmId) return; // Ensure firmId exists before fetching BOMs
+
     try {
-      const response = await getBoms();
+      const response = await getBoms(firmId);
       setBoms(response.data || []);
     } catch (error) {
-      console.error('Error fetching Boms:', error.message);
+      console.error('Error fetching BOMs:', error.message);
     }
   };
-
-  const createProduction = async () => {
-    if (selectedBom) {
-      try {
-        const response = await createProductionOrder({ bomId: selectedBom, quantity, firmId, createdBy });
-        if (response.message === 'productionorder created successfully') {
-        //   alert('Production order created successfully');
-          toast.success('Production order created successfully');
-          setModalOpen(false);
-          setSelectedBom(null);
-          setQuantity(0);
-          setSelectedBomData(null);
-          trigger();
-        }
-        else {
-          toast.error(response.error);
-        }
-      } catch (error) {
-        console.error('Error creating production order:', error.message);
-      }
-    } else {
-      alert('Please select a BOM');
-    }
-  };
-  
-  
 
   useEffect(() => {
     fetchBoms();
-  }, []);
+  }, [firmId]); // Fetch BOMs whenever firmId changes
+
+  const createProduction = async () => {
+    if (!selectedBom || quantity <= 0) {
+      toast.error('Please select a BOM and enter a valid quantity.');
+      return;
+    }
+
+    try {
+      const response = await createProductionOrder({
+        bomId: selectedBom,
+        quantity,
+        firmId,
+        createdBy,
+      });
+
+      if (response.message === 'productionorder created successfully') {
+        toast.success('Production order created successfully');
+        setModalOpen(false);
+        resetForm();
+        trigger();
+      } else {
+        toast.error(response.error);
+      }
+    } catch (error) {
+      console.error('Error creating production order:', error.message);
+    }
+  };
+
+  const resetForm = () => {
+    setSelectedBom(null);
+    setQuantity(0);
+    setSelectedBomData(null);
+  };
 
   const handleBomSelect = (bomId) => {
     setSelectedBom(bomId);
@@ -80,46 +88,49 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
               onChange={(e) => handleBomSelect(e.target.value)}
             >
               <option value="">Select BOM</option>
-              {boms.map((bom) => (
+              {/* {boms.map((bom) => (
                 <option key={bom._id} value={bom._id}>
                   {bom.productName}
                 </option>
-              ))}
+              ))} */}
+              {boms.length > 0 ? boms.map((bom) => (
+                <option key={bom._id} value={bom._id}>
+                  {bom.productName}
+                </option>
+              )) : <option value="">No BOMs found</option>}
+              
             </Input>
           </Col>
           <Col md={6}>
             <Label for="quantity">Quantity</Label>
             <Input
-              type="text"
+              type="number"
               name="quantity"
               id="quantity"
               value={quantity}
               onChange={handleQuantityChange}
-              onWheel={(e) => e.target.blur()}
-              onKeyDown={(e) => {
-                if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === '-' || e.key === 'e') {
-                  e.preventDefault(); 
-                }
-              }}
               placeholder="Enter quantity"
-              // min="0"
+              min="1"
             />
           </Col>
         </Row>
+
         {selectedBomData && (
           <>
-            <Row>
+            <Row className="mt-3">
               <Col md={6}>
                 <strong>Product Name:</strong> {selectedBomData.productName}
               </Col>
               <Col md={6}>
-                {selectedBomData.rawMaterials.length > 0 && (
+                {selectedBomData.rawMaterials?.length > 0 && (
                   <div>
                     <strong>Raw Materials:</strong>
                     <ul>
                       {selectedBomData.rawMaterials.map((rawMaterial, index) => (
                         <li key={index}>
-                          <strong>{rawMaterial.itemId.name}</strong> ({rawMaterial.itemId.qtyType}) - {rawMaterial.itemId.quantity} units
+                          <strong>{rawMaterial?.itemId?.name || "Unknown"}</strong> 
+                          ({rawMaterial?.itemId?.qtyType || "N/A"}) - 
+                          {rawMaterial?.quantity || 0} units
                         </li>
                       ))}
                     </ul>
@@ -127,7 +138,8 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                 )}
               </Col>
             </Row>
-            {quantity > 0 && selectedBomData.rawMaterials.length > 0 && (
+
+            {quantity > 0 && selectedBomData.rawMaterials?.length > 0 && (
               <div className="mt-4">
                 <h5>Raw Material Usage</h5>
                 <Table bordered>
@@ -146,29 +158,28 @@ function ProductionCreateModal({ modalOpen, setModalOpen , trigger }) {
                     {selectedBomData.rawMaterials.map((rawMaterial, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
-                        <td>{rawMaterial.itemId.name}</td>
+                        <td>{rawMaterial?.itemId?.name || "Unknown"}</td>
                         <td>
-                          {rawMaterial.variants.length > 0 ? (
+                          {rawMaterial?.variants?.length > 0 ? (
                             rawMaterial.variants.map((variant, index) => (
-                              <span key={index} value={variant._id}>
-                                {variant.optionLabel} 
-                                {/* {variant.price} */}
-                              </span>
+                              <span key={index}>{variant?.optionLabel || "N/A"}</span>
                             ))
                           ) : (
                             <span>-</span>
                           )}
                         </td>
-                        <td>{rawMaterial.itemId.qtyType}</td>
-                        <td>{rawMaterial.itemId.costPrice}</td>
-                        <td>{rawMaterial.variants.length > 0
+                        <td>{rawMaterial?.itemId?.qtyType || "N/A"}</td>
+                        <td>{rawMaterial?.itemId?.costPrice || "0.00"}</td>
+                        <td>
+                          {rawMaterial?.variants?.length > 0
                             ? rawMaterial.variants.reduce((acc, variant) => acc + (variant.quantity || 0), 0)
-                            : rawMaterial.quantity}
-                          </td>
-                        <td>{(rawMaterial.variants.length > 0
+                            : rawMaterial?.quantity || 0}
+                        </td>
+                        <td>
+                          {((rawMaterial?.variants?.length > 0
                             ? rawMaterial.variants.reduce((acc, variant) => acc + (variant.quantity || 0), 0)
-                            : rawMaterial.quantity) * quantity}
-                          </td>
+                            : rawMaterial?.quantity || 0) * quantity) || 0}
+                        </td>
                       </tr>
                     ))}
                   </tbody>

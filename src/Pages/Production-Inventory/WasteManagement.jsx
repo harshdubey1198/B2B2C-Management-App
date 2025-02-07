@@ -41,6 +41,11 @@ function WasteManagement() {
     fetchFirmWaste();
   }, [effectiveFirmId, trigger]);
 
+  const refetchPOs = () => {
+    setTrigger(!trigger);
+  };
+
+
   const renderStatusBadge = (status) => {
     switch (status) {
       case "created":
@@ -59,11 +64,13 @@ function WasteManagement() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Waste Management" />
 
+        <div className="col-12 mb-2" style={{padding:"0 12px"}}>
+        <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchPOs} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+
         {userRole === "client_admin" && (
-          <div className="col-12 mb-2" style={{padding:"0 12px"}}>
             <FirmSwitcher selectedFirmId={selectedFirmId} onSelectFirm={setSelectedFirmId} />
+          )}
           </div>
-        )}
 
         <div className="container-fluid">
           <div className="row">
