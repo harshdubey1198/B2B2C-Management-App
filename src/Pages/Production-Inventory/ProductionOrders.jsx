@@ -197,7 +197,7 @@ const handleCreateModal = () => {
                   />
                   <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchOrders} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
 
-                  <Button color="primary" onClick={handleCustomItemsPerPage} style={{padding:"8px" , fontSize:"10.5px" , height : "26.6px"}}>
+                  <Button color="primary" onClick={handleCustomItemsPerPage} style={{padding:"8px" ,lineHeight:"1", fontSize:"10.5px" , height : "26.6px"}}>
                     Set
                   </Button>
                   <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
@@ -290,8 +290,8 @@ const handleCreateModal = () => {
                             .join(' ')
                         )}
                       </td>
-                      <td>
                         {role === 'firm_admin' ? (
+                      <td>
                             order.status !== 'completed' ? (
                               <i
                                 className="bx bx-edit bx-sm"
@@ -300,8 +300,8 @@ const handleCreateModal = () => {
                               ></i>
                             ) : null
 
-                        ) : null}
                       </td>
+                        ) : null}
                     </tr>
                   );
                 })

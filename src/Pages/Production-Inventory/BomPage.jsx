@@ -414,7 +414,8 @@ const minimumSellingPrice = (costPrice) => {
              fetchCategories={fetchCategories}
              minimumSellingPrice={minimumSellingPrice}
              setSellingPrice={setSellingPrice}
-             />
+             firmId={effectiveFirmId}
+/>
       </div>
     </React.Fragment>
   );
