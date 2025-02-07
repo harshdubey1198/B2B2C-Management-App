@@ -33,7 +33,13 @@ function InventoryTable() {
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
   const firmId = authuser?.adminId;
     useEffect(() => {
-        if (!selectedFirmId) return;
+        if (!selectedFirmId){
+          setSelectedFirmId(firmId);
+
+        } 
+        
+          
+          
 
         const fetchInventoryData = async () => {
           setLoading(true);
