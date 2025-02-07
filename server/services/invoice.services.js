@@ -8,150 +8,6 @@ const { default: mongoose } = require("mongoose");
 
 const invoiceServices = {};
 
-// invoiceServices.createInvoice = async (invoiceData) => {
-//   const {
-//     customer,
-//     items,
-//     invoiceDate,
-//     dueDate,
-//     amountPaid,
-//     createdBy,
-//     firmId,
-//     invoiceType,
-//     invoiceSubType,
-//   } = invoiceData;
-
-//   let customerData;
-//   const existingCustomer = await Customer.findOne({
-//     email: customer.email,
-//     firmId,
-//   });
-//   if (existingCustomer) {
-//     customerData = {
-//       customerName: `${existingCustomer.firstName} ${existingCustomer.lastName}`,
-//       customerEmail: existingCustomer.email,
-//       customerPhone: existingCustomer.mobile,
-//       customerAddress: existingCustomer.address,
-//       firmId: existingCustomer.firmId,
-//     };
-//   } else {
-//     const newCustomer = new Customer({
-//       firstName: customer.firstName,
-//       lastName: customer.lastName,
-//       email: customer.email,
-//       mobile: customer.mobile,
-//       address: customer.address,
-//       firmId,
-//       createdBy,
-//     });
-
-//     const savedCustomer = await newCustomer.save();
-//     customerData = {
-//       customerName: `${savedCustomer.firstName} ${savedCustomer.lastName}`,
-//       customerEmail: savedCustomer.email,
-//       customerPhone: savedCustomer.mobile,
-//       customerAddress: savedCustomer.address,
-//       firmId: savedCustomer.firmId,
-//     };
-//   }
- 
-//   let totalAmount = 0;
-//   for (let item of items) {  
-//     const inventoryItem = await InventoryItem.findById(item.itemId);
-//     if (!inventoryItem) {
-//       throw new Error(`Item with ID ${item.itemId} not found in inventory`);
-//     }
-//         let priceToUse = item.sellingPrice;
-//     if (item.selectedVariant && item.selectedVariant.length > 0) {
-  
-//       if (item.selectedVariant[0].price) {
-//         priceToUse += item.selectedVariant[0].price; 
-//       }
-//     } else {
-//       console.log("No variant selected for item.");
-//     }
-  
-//     const itemQuantity = parseInt(item.quantity, 10);
-//     const itemTotal = priceToUse * itemQuantity;
-  
-//     // Fetch tax for the inventory item
-//     const tax = await Tax.findById(inventoryItem.tax.taxId);
-//     if (!tax) {
-//       throw new Error(`Tax with ID ${inventoryItem.tax.taxId} not found`);
-//     }
-    
-//     let totalTaxForItem = 0;
-//     inventoryItem.tax.components.forEach((selectedComponent) => {
-//       const taxComponent = tax.taxRates.find(
-//         (tc) => tc.taxType === selectedComponent.taxType
-//       );
-  
-//       if (!taxComponent) {
-//         throw new Error(
-//           `Selected tax component ${selectedComponent.taxType} not found in tax object`
-//         );
-//       }
-    
-//       // Calculate the tax for the item
-//       const taxAmount = (itemTotal * taxComponent.rate) / 100;
-//       console.log(`Tax amount for ${selectedComponent.taxType}:`, taxAmount);
-//       totalTaxForItem += taxAmount;
-//     });
-  
-//     // Calculate the item total with tax
-//     const itemTotalWithTax = Math.round(itemTotal + totalTaxForItem);  
-//     // Store the total for the item
-//     item.total = itemTotalWithTax;
-//     // Add the item total (with tax) to the overall invoice total
-//     totalAmount += itemTotalWithTax;
-//   }
-    
-//   const currentDate = new Date();
-//   const day = String(currentDate.getDate()).padStart(2, "0");
-//   const month = String(currentDate.getMonth() + 1).padStart(2, "0");
-//   const year = String(currentDate.getFullYear()).slice(-2);
-
-//   const lastInvoice = await Invoice.findOne({ firmId }).sort({ createdAt: -1 });
-
-//   let invoiceNumber;
-//   if (lastInvoice) {
-//     const lastInvoiceParts = lastInvoice.invoiceNumber.split("-");
-//     const lastInvoiceIncrement = parseInt(lastInvoiceParts[4], 10);
-//     invoiceNumber = `INV-${day}-${month}-${year}-${lastInvoiceIncrement + 1}`;
-//   } else {
-//     invoiceNumber = `INV-${day}-${month}-${year}-1`;
-//   }
-
-//   const amountDue = totalAmount - (amountPaid || 0);
-
-//   const newInvoice = new Invoice({
-//     invoiceNumber,
-//     customerName: customerData.customerName,
-//     customerEmail: customerData.customerEmail,
-//     customerPhone: customerData.customerPhone,
-//     customerAddress: customerData.customerAddress,
-//     invoiceType,
-//     invoiceSubType,
-//     amountPaid,
-//     amountDue,
-//     firmId,
-//     items,
-//     invoiceDate,
-//     dueDate,
-//     totalAmount,
-//     createdBy,
-//   });
-
-//   if (invoiceType === "Proforma") {
-//     await updateInventoryStock(items, true);
-//   } else if (invoiceType === "Tax Invoice") {
-//     await updateInventoryStock(items, false);
-//   }
-
-//   const savedInvoice = await newInvoice.save();
-//   return savedInvoice;
-// };
-
 invoiceServices.createInvoice = async (invoiceData) => {
   const session = await mongoose.startSession();
   session.startTransaction();
@@ -250,17 +106,6 @@ invoiceServices.rejectInvoice = async (invoiceId) => {
   }
 };
 
-// invoiceServices.getInvoices = async (adminId) => {
-//   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })
-//     .populate({ path: "items.itemId", populate: {path: "tax.taxId"} })
-//     .populate({ path: "firmId", select: "-password" })
-//     .populate({ path: "createdBy", select: "firstName lastName email" });
-
-//   if (invoices.length === 0) {
-//     throw new Error("No Invoices found");
-//   }
-//   return invoices;
-// };
 invoiceServices.getInvoices = async (adminId) => {
   const invoices = await Invoice.find({ firmId: adminId, deleted_at: null })
     .populate({ 
@@ -294,7 +139,6 @@ invoiceServices.getInvoices = async (adminId) => {
   return invoices;
 };
 
-
 invoiceServices.getInvoice = async (invoiceId) => {
   const invoice = await Invoice.findOne({ _id: invoiceId, deleted_at: null })
     .populate({ 
@@ -325,7 +169,6 @@ invoiceServices.getInvoice = async (invoiceId) => {
 
   return invoice;
 };
-
 
 invoiceServices.deleteInvoice = async (invoiceId) => {
   const existingInvoice = await Invoice.findOne({ _id: invoiceId });
