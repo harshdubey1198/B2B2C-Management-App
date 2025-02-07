@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Customer = require("../schemas/cutomer.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const Invoice = require("../schemas/invoice.schema");
@@ -182,10 +183,55 @@ const updateInventoryStock = async (items, isProforma, session) => {
   }
 };
 
+// ReleasedReservedStock
+const releaseReservedStock = async (items) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    for (let item of items) {
+      const inventoryItem = await InventoryItem.findById(item.itemId).session(session);
+      if (!inventoryItem) {
+        throw new Error(`Item with ID ${item.itemId} not found in inventory`);
+      }
+
+      if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+        if (!item.selectedVariant || item.selectedVariant.length === 0) {
+          throw new Error(`Missing selected variants for item ${inventoryItem.name}`);
+        }
+
+        item.selectedVariant.forEach((variant) => {
+          const inventoryVariant = inventoryItem.variants.find((v) => v.sku === variant.sku);
+          if (!inventoryVariant) {
+            throw new Error(`Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`);
+          }
+
+          inventoryVariant.stock += item.quantity;
+          if (inventoryVariant.reservedQuantity < item.quantity) {
+            throw new Error(`Cannot release more than reserved quantity for variant: ${variant.optionLabel}`);
+          }
+          inventoryVariant.reservedQuantity -= item.quantity;
+        });
+        inventoryItem.quantity = inventoryItem.variants.reduce((sum, v) => sum + v.stock, 0);
+      } else {
+        inventoryItem.quantity += item.quantity;
+      }
+      await inventoryItem.save({ session });
+    }
+    await session.commitTransaction();
+    session.endSession();
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
+};
+
+
 module.exports = {
   generateInvoiceNumber,
   handleCustomer,
   calculateInvoiceAmount,
   calculateTotalTax,
   updateInventoryStock,
+  releaseReservedStock,
 };
