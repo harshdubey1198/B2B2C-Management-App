@@ -69,8 +69,8 @@ const ViewFormat = forwardRef(
         const itemPrice = item.quantity * (item.sellingPrice + (item?.selectedVariant?.[0]?.price || 0));
         subtotal += itemPrice;
 
-        if (item?.itemId?.tax?.components?.length > 0) {
-          item.itemId.tax.components.forEach((taxComponent) => {
+        if (item?.itemId?.tax?.selectedTaxTypes?.length > 0) {
+          item.itemId.tax.selectedTaxTypes.forEach((taxComponent) => {
             totalTaxAmount += (itemPrice * taxComponent.rate) / 100;
           });
         }
@@ -238,7 +238,7 @@ const ViewFormat = forwardRef(
                             backgroundColor: "#f9f9f9",
                           }}
                         >
-                          {item.itemId.tax.components.map(
+                          {item.itemId.tax.selectedTaxTypes.map(
                             (taxComponent, idx) => (
                               <div key={idx} style={{ padding: "2px 0" }}>
                                 {taxComponent.taxType}: {taxComponent.rate}%
