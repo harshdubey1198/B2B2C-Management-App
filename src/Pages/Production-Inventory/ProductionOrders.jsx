@@ -139,23 +139,20 @@ function ProductionOrders() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
-        <div className="d-flex justify-content-between gap-2 mb-3 ">
-            <div className="d-flex align-items-center gap-2">
+        <div className="d-flex flex-wrap justify-content-between gap-2 mb-3 ">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={handleSearch}
                 placeholder="Search Production Orders" 
                 className="form-control"
-                style={{ width: "250px",maxHeight:"33px" }}
+                style={{ width: "250px",height : "26.6px",maxHeight:"33px" }}
               />
-            </div>
-            <div className="d-flex align-items-center gap-2">
-            <label htmlFor="itemsPerPageSelect">Items per page:</label>
+            <label htmlFor="itemsPerPageSelect" className='mb-0'>Items per page:</label>
                   <select
                     id="itemsPerPageSelect"
                     className="form-select"
-                    style={{ width: "auto" ,maxHeight:"33px"}}
+                    style={{ width: "auto" ,maxHeight:"30px" , padding:"2px 24px"}}
                     onChange={handleItemsPerPageChange}
                   >
                     <option value="10" >10</option>
@@ -165,7 +162,7 @@ function ProductionOrders() {
                     <option value="100">100</option>
                   </select>
   
-                  <label htmlFor="customItemsInput">Or enter custom:</label>
+                  <label htmlFor="customItemsInput" className='mb-0'>Or enter custom:</label>
                   <input
                     id="customItemsInput"
                     type="number"
@@ -173,18 +170,17 @@ function ProductionOrders() {
                     value={customItemsPerPage}
                     onChange={(e) => setCustomItemsPerPage(e.target.value)}
                     className="form-control"
-                    style={{ width: "100px",maxHeight:"33px" }} 
+                    style={{ width: "70px",maxHeight:"30px", padding:"2px 14px" }}  
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         handleCustomItemsPerPage();
                       }
                     }}
                   />
-                  <Button color="primary" onClick={handleCustomItemsPerPage}>
+                  <Button color="primary" onClick={handleCustomItemsPerPage} style={{padding:"8px" , fontSize:"10.5px" , height : "26.6px"}}>
                     Set
                   </Button>
                   <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
-              </div>
         </div>  
 
         <div className="table-responsive">

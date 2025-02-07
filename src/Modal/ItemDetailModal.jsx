@@ -322,13 +322,13 @@ useEffect(() => {
                       <strong>Tax:</strong>
                   </label>
                   <Select
-                    options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
-                    value={selectedTax
-                      ? { value: selectedTax._id, label: selectedTax.taxName }
-                      : null}
-                    onChange={handleTaxChange}
-                    placeholder="Select Tax"
-                  />
+  options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
+  value={selectedTax
+    ? { value: selectedTax._id, label: selectedTax.taxName }
+    : null}
+  onChange={handleTaxChange}
+  placeholder="Select Tax"
+/>
 
               </Col>
 
@@ -337,17 +337,17 @@ useEffect(() => {
                   <strong>Tax Type(s):</strong>
                 </label>
                 <Select
-                    isMulti
-                    options={availableTaxTypes}
-                    value={selectedTaxTypes
-                      .map(selectedType => {
-                        const found = availableTaxTypes.find(type => type.value === selectedType._id);
-                        return found ? { value: selectedType._id, label: found.label } : null;
-                      })
-                      .filter(Boolean)} // Remove null values
-                    onChange={handleTaxTypeChange} 
-                    placeholder="Select Tax Type"
-                  />
+  isMulti
+  options={availableTaxTypes}
+  value={selectedTaxTypes
+    .map(selectedType => {
+      const found = availableTaxTypes.find(type => type.value === selectedType._id);
+      return found ? { value: selectedType._id, label: found.label } : null;
+    })
+    .filter(Boolean)} // Remove null values
+  onChange={handleTaxTypeChange} 
+  placeholder="Select Tax Type"
+/>
               </Col>
             </Row>
             <Row>
