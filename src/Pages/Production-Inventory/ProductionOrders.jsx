@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getProductionOrders, updateProductionOrderQuantity } from '../../apiServices/service';
+import { getProductionOrders, getProductionOrdersmain, updateProductionOrderQuantity } from '../../apiServices/service';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import QuantityUpdateModal from '../../Modal/ProductionModals/quantityUpdateModal';
 import { updateProductionOrderStatus } from '../../apiServices/service';
@@ -8,6 +8,7 @@ import ProductionCreateModal from '../../Modal/ProductionModals/ProductionCreate
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
+import FirmSwitcher from '../Firms/FirmSwitcher';
 
 function ProductionOrders() {
   const [productionOrders, setProductionOrders] = useState([]);
@@ -20,35 +21,45 @@ function ProductionOrders() {
   const [statusModalOpen, setStatusModalOpen] = useState(false); 
   const [newNote, setNewNote] = useState('');
   const authuser = JSON.parse(localStorage.getItem('authUser'));
-  const [searchTerm, setSearchTerm] = useState('');
+  const firmId = authuser?.response?.adminId || '';
   const role = authuser?.response?.role;
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
-  const [trigger, setTrigger] = useState(false);
+  const [trigger, setTrigger] = useState(0);
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
+  const effectiveFirmId = role === "client_admin" ? selectedFirmId : firmId;
+  console.log(effectiveFirmId);
   const fetchProductionOrders = async () => {
+    if (!effectiveFirmId) return; // Ensure firm ID exists before making API call
+
     try {
-      const response = await getProductionOrders();
-      setProductionOrders(response.data || []);
-      setFilteredOrders(response.data || []);      
-      console.table(response.data); 
+        const response = await getProductionOrdersmain(effectiveFirmId);
+        setProductionOrders(response.data || []);
+        setFilteredOrders(response.data || []);
+        console.table(response.data);
     } catch (error) {
-      console.error('Error fetching production orders:', error.message);
+        console.error('Error fetching production orders:', error.message);
     }
-  };
+};
 
-  const handleCreateModal = () => {
-    setOpenCreateModal(true);
-  };
-
-  const toggleTrigger = () => {
-    setTrigger(!trigger);
-  };
-  useEffect(() => {
+useEffect(() => {
     fetchProductionOrders();
-  }, [trigger]);
+}, [effectiveFirmId, trigger]); 
 
-  const handleSearch = (e) => {
+const refetchOrders = () => {
+    setTrigger(prev => prev + 1);
+};
+
+const handleFirmSelection = (firmId) => {
+    setSelectedFirmId(firmId);
+    setTrigger(prev => prev + 1); 
+};
+
+const handleCreateModal = () => {
+    setOpenCreateModal(true);
+}; const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
@@ -148,6 +159,13 @@ function ProductionOrders() {
                 className="form-control"
                 style={{ width: "250px",height : "26.6px",maxHeight:"33px" }}
               />
+              {role==="client_admin" && (
+                  <FirmSwitcher
+                      selectedFirmId={selectedFirmId}
+                      onSelectFirm={setSelectedFirmId}
+                  />
+                      )}
+
                <label htmlFor="itemsPerPageSelect" className='mb-0'>Items per page:</label>
                   <select
                     id="itemsPerPageSelect"
@@ -314,7 +332,7 @@ function ProductionOrders() {
           selectedOrder={selectedOrder}
           handleUpdateStatus={handleUpdateStatus}
         />
-        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={toggleTrigger} />
+        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={refetchOrders} />
 
       </div>
     </React.Fragment>

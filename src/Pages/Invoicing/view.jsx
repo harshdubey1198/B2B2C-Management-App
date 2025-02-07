@@ -43,7 +43,7 @@ const ViewInvoices = () => {
 
                 const response = await axiosInstance.get(url);
                 setInvoices(response.data || []);
-                console.log(response?.data[0]?.items[0]?.itemId?.tax?.selectedTaxTypes);
+                // console.log(response?.data[0]?.items[0]?.itemId?.tax?.selectedTaxTypes);
                 setFilteredInvoices(response.data); 
             } catch (error) {
                 console.error("Error fetching invoices:", error);

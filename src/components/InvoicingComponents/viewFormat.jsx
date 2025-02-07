@@ -177,8 +177,8 @@ const ViewFormat = forwardRef(
           <table className="table table-bordered">
             <thead className="table-light ">
               <tr>
-                <th>Sr. no</th>
-                <th>Item Name</th>
+                <th>#</th>
+                <th>Item</th>
                 <th>Variant</th>
                 <th>Description</th>
                 {/* <th>HSN/SAC</th> */}
@@ -229,7 +229,7 @@ const ViewFormat = forwardRef(
                         (item.sellingPrice + (item?.selectedVariant?.[0]?.price || 0))}
                     </td>
                     <td>
-                      {item?.itemId?.tax?.components?.length > 0 ? (
+                      {item?.itemId?.tax?.selectedTaxTypes?.length > 0 ? (
                         <div
                           style={{
                             border: "1px solid #ccc",
