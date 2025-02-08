@@ -720,4 +720,53 @@ export const getTaxesmain = async (firmId) => {
     }
 };
 
+export const createSidebar = async (data) => {
+    try {
+        const response = await axiosInstance.post(`/sidebar/create`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// Get All Sidebars
+export const getAllSidebars = async () => {
+    try {
+        const response = await axiosInstance.get(`/sidebar/all`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// Get Sidebar by Role
+export const getSidebarByRole = async (role) => {
+    try {
+        const response = await axiosInstance.get(`/sidebar/${role}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// Update Sidebar by Role
+export const updateSidebar = async (role, data) => {
+    try {
+        const response = await axiosInstance.put(`/sidebar/update/${role}`, data);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+// Delete Sidebar by Role
+export const deleteSidebar = async (role) => {
+    try {
+        const response = await axiosInstance.delete(`/sidebar/delete/${role}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 export default axiosInstance;

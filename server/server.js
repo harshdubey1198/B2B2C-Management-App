@@ -35,6 +35,7 @@ const feedBackRouter = require("./routers/feedback.router")
 const bomRouter = require("./routers/bom.router")
 const productionOrderRouter = require("./routers/productionorder.router")
 const wasteInventoryRouter = require("./routers/wasteinventory.router")
+const sidebarRouter = require("./routers/sidebar.router")
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -57,6 +58,7 @@ app.use("/api/feedback", feedBackRouter);
 app.use("/api/bom", bomRouter);
 app.use("/api/productionorder", productionOrderRouter);
 app.use("/api/wasteinventory", wasteInventoryRouter); 
+app.use("/api/sidebar", sidebarRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to HRMS Servers!");
