@@ -158,7 +158,7 @@ function Vendor() {
             <th>Contact Person</th>
             <th>Phone</th>
             <th>Email</th>
-            <th>Actions</th>
+            <th className="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -172,16 +172,14 @@ function Vendor() {
             </tr>
           ) : (
             vendors.map((vendor, index) => (
-              <tr key={vendor._id}>
+              <tr key={vendor._id} onClick={() => handleEditClick(vendor)}>
                 <th scope="row">{index + 1}</th>
                 <td>{vendor.name}</td>
                 <td>{vendor.contactPerson}</td>
                 <td>{vendor.phone}</td>
                 <td>{vendor.email}</td>
-                <td>
-                  <Button color="secondary" size="sm" onClick={() => handleEditClick(vendor)}>Edit</Button>
-                  {" "}
-                  <Button color="danger" size="sm" onClick={() => handleDeleteClick(vendor)}>Delete</Button>
+                <td className="text-center">
+                    <i className="bx bx-trash" style={{ cursor: "pointer", fontSize:"24px" }} onClick={() => handleDeleteClick(vendor)}></i>
                 </td>
               </tr>
             ))

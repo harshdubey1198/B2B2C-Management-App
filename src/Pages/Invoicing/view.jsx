@@ -43,6 +43,7 @@ const ViewInvoices = () => {
 
                 const response = await axiosInstance.get(url);
                 setInvoices(response.data || []);
+                // console.log(response?.data[0]?.items[0]?.itemId?.tax?.selectedTaxTypes);
                 setFilteredInvoices(response.data); 
             } catch (error) {
                 console.error("Error fetching invoices:", error);
@@ -235,7 +236,7 @@ const ViewInvoices = () => {
                                                         <td style={{ minWidth: "110px" }}>
                                                             <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
                                                                 {invoice.items.map((item, itemIndex) =>
-                                                                    item.itemId.tax.components.map((tax, taxIndex) => (
+                                                                    item.itemId.tax.selectedTaxTypes.map((tax, taxIndex) => (
                                                                         <li key={`${itemIndex}-${taxIndex}`}>
                                                                             {tax.taxType} - {tax.rate}%
                                                                         </li>

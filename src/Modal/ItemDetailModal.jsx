@@ -46,16 +46,6 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     fetchVendors();
   }, []);
 
-  const selectedTaxId = selectedItem?.tax?.taxId || "";
-  const selectedTax = taxes.find((tax) => tax._id === selectedTaxId) || null;
-  
-  const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
-  
-  const availableTaxTypes = selectedTax ? selectedTax.taxRates.map(rate => ({
-    value: rate._id,
-    label: `${rate.taxType} (${rate.rate}%)`
-  })) : []; 
-
   const handleTaxChange = (selectedOption) => { 
     const selectedTax = taxes.find((tax) => tax._id === selectedOption.value);
 
@@ -68,8 +58,10 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
         setSelectedItem((prevState) => ({
             ...prevState,
             tax: {
-                taxId: selectedTax._id, 
-                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id) // Always update selectedTaxTypes when changing tax
+                taxId: String(selectedTax._id), 
+                selectedTaxTypes: prevState.tax?.selectedTaxTypes?.length 
+                    ? prevState.tax.selectedTaxTypes.map(type => type._id)  
+                    : selectedTax.taxRates.map(rate => rate._id)
             }
         }));
     } else {
@@ -81,19 +73,22 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
     }
 };
 
+const selectedTaxId = selectedItem?.tax?.taxId
+  ? typeof selectedItem.tax.taxId === "object"
+    ? selectedItem.tax.taxId._id
+    : selectedItem.tax.taxId
+  : "";
+  const selectedTax = selectedTaxId 
+  ? taxes.find(tax => tax._id === selectedTaxId)
+  : undefined;
+// console.log("selectedItem.tax:", selectedItem?.tax);
+// console.log("Extracted selectedTaxId:", selectedTaxId);
+// console.log("Taxes List:", taxes);
+// console.log("Filtered selectedTax:", selectedTax);
+
+// console.log("selected tax types",selectedItem?.tax?.selectedTaxTypes);
 
 
-useEffect(() => {
-    if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
-        setSelectedItem((prevState) => ({
-            ...prevState,
-            tax: {
-                ...prevState.tax,
-                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id)
-            }
-        }));
-    }
-}, [selectedTaxId]);
 const handleTaxTypeChange = (selectedTypes) => {
   const selectedTypeIds = selectedTypes ? selectedTypes.map(type => type.value) : [];
 
@@ -105,22 +100,34 @@ const handleTaxTypeChange = (selectedTypes) => {
     }
   }));
 };
+// console.log(selectedItem?.tax?.selectedTaxTypes, "selectedtaxttxttxtttttttttttt")
+const selectedTaxTypes = selectedItem?.tax?.selectedTaxTypes || [];
+// console.log("selected tax types",selectedTaxTypes);
+// console.log("selectedtaxxxxxx",selectedTax);
+const availableTaxTypes = selectedTax?.taxRates.map(rate => ({
+  value: rate._id,
+  label: `${rate.taxType} (${rate.rate}%)`
+})) || [];
 
-
-console.log("available tax types",availableTaxTypes);
+// console.log("available tax types",availableTaxTypes);
 
 
 useEffect(() => {
-    if (selectedTax && selectedItem?.tax?.selectedTaxTypes?.length === 0) {
-        setSelectedItem((prevState) => ({
-            ...prevState,
-            tax: {
-                ...prevState.tax,
-                selectedTaxTypes: selectedTax.taxRates.map(rate => rate._id)
-            }
-        }));
-    }
-}, [selectedTax]);
+  if (taxes.length > 0 && selectedTaxId) {
+    setSelectedItem((prevState) => ({
+      ...prevState,
+      tax: {
+        ...prevState.tax,
+        taxId: selectedTaxId,
+        selectedTaxTypes: prevState.tax?.selectedTaxTypes?.length
+          ? prevState.tax.selectedTaxTypes
+          : taxes.find(tax => tax._id === selectedTaxId)?.taxRates.map(rate => rate._id) || []
+      }
+    }));
+  }
+}, [taxes]); // Run only when `taxes` is updated
+
+
 
 
   return (
@@ -315,11 +322,14 @@ useEffect(() => {
                       <strong>Tax:</strong>
                   </label>
                   <Select
-                      options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
-                      value={selectedTax ? { value: selectedTax._id, label: selectedTax.taxName } : null}
-                      onChange={handleTaxChange}
-                      placeholder="Select Tax"
-                    />
+  options={taxes.map(tax => ({ value: tax._id, label: tax.taxName }))}
+  value={selectedTax
+    ? { value: selectedTax._id, label: selectedTax.taxName }
+    : null}
+  onChange={handleTaxChange}
+  placeholder="Select Tax"
+/>
+
               </Col>
 
               <Col md={6}>
@@ -327,15 +337,17 @@ useEffect(() => {
                   <strong>Tax Type(s):</strong>
                 </label>
                 <Select
-                  isMulti
-                  options={availableTaxTypes}
-                  value={selectedTaxTypes.map(id => ({
-                    value: id, 
-                    label: availableTaxTypes.find(type => type.value === id)?.label || "Unknown"
-                  }))} 
-                  onChange={handleTaxTypeChange} 
-                  placeholder="Select Tax Type"
-                />
+  isMulti
+  options={availableTaxTypes}
+  value={selectedTaxTypes
+    .map(selectedType => {
+      const found = availableTaxTypes.find(type => type.value === selectedType._id);
+      return found ? { value: selectedType._id, label: found.label } : null;
+    })
+    .filter(Boolean)} // Remove null values
+  onChange={handleTaxTypeChange} 
+  placeholder="Select Tax Type"
+/>
               </Col>
             </Row>
             <Row>
@@ -509,7 +521,6 @@ useEffect(() => {
                         type: selectedItem.type,
                         tax: selectedItem.tax,
                         ProductHsn: selectedItem.ProductHsn,
-                        selectedTaxTypes: selectedItem.tax.selectedTaxTypes,
                       })
                     }
                   >

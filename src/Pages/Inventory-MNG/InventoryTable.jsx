@@ -3,12 +3,12 @@ import {Table,Modal,ModalHeader,ModalBody,Button,Row,Col,} from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import { toast } from "react-toastify";
 import VariantModal from "./VariantModal";
-import FirmsTable from "../../components/InventoryComponents/firmsTable";
 import axiosInstance from "../../utils/axiosInstance";
 import ItemDetailModal from "../../Modal/ItemDetailModal";
 import { useNavigate } from "react-router-dom";
 import { getInventoryItems } from "../../apiServices/service";
 import { RiseLoader, ScaleLoader } from "react-spinners";
+import FirmSwitcher from "../Firms/FirmSwitcher";
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
   const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
@@ -18,24 +18,54 @@ function InventoryTable() {
   const [variantModalOpen, setVariantModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [selectedFirmId , setSelectedFirmId] = useState(null);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
-  const [variant, setVariant] = useState({
-    variationType: "",
-    optionLabel: "",
-    price: "",
-    stock: "",
-    sku: "",
-    barcode: "",
-  });
+  const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
+  const role = JSON.parse(localStorage.getItem("authUser")).response.role;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredInventoryData.slice(indexOfFirstItem, indexOfLastItem);
+  const [variantIndex, setVariantIndex] = useState(null);
+  const [trigger, setTrigger] = useState(0);
+  const token = JSON.parse(localStorage.getItem("authUser")).token;
+  const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
+  const authuser = JSON.parse(localStorage.getItem("authUser")).response;
+  const firmId = authuser?.adminId;
+    useEffect(() => {
+        if (!selectedFirmId){
+          setSelectedFirmId(firmId);
+
+        } 
+        
+          
+          
+
+        const fetchInventoryData = async () => {
+          setLoading(true);
+          try {
+            const response =  await getInventoryItems(selectedFirmId);
+            setInventoryData(response.data || []);
+          } catch (error) {
+            console.error("Error fetching inventory data:", error);
+            toast.error("Failed to fetch inventory items.");
+          }
+          setLoading(false);
+        };
+
+        fetchInventoryData();
+      }, [selectedFirmId, trigger]);
+
+  const refetchItems = () => {
+    setTrigger((prev) => prev + 1);
+  };
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const pageNumbers = [];
+  const pageNumbers = []; 
   for (let i = 1; i <= Math.ceil(filteredInventoryData.length / itemsPerPage); i++) {
     pageNumbers.push(i);
   }
+
+
   const handleItemsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
     setItemsPerPage(value);
@@ -51,50 +81,6 @@ function InventoryTable() {
       toast.error("Please enter a valid number of items per page.");
     }
   };
-  const [variantIndex, setVariantIndex] = useState(null);
-  const [trigger, setTrigger] = useState(0);
-  const token = JSON.parse(localStorage.getItem("authUser")).token;
-  const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
-  const authuser = JSON.parse(localStorage.getItem("authUser")).response;
-  const firmId = authuser?.adminId;
-  // useEffect(() => {
-  //   if(authuser.role === "firm_admin"  || authuser.role==="accountant" || authuser.role==="employee"){
-  //     const fetchInventoryData = async () => {
-  //       try {
-  //         const response = await axiosInstance.get(
-  //           `${process.env.REACT_APP_URL}/inventory/get-items/${userId}`
-  //         );
-  //         setInventoryData(response.data);
-          
-  //       } catch (error) {
-  //         console.error("Error fetching inventory data:", error);
-  //       }
-  //     };
-  
-  //     fetchInventoryData();
-  //   }
-  // }, [userId, trigger ]);
-
-  const fetchItems = async () => {
-    setLoading(true);
-    try {
-      const response = await getInventoryItems();
-      setInventoryData(response.data || []);
-    } catch (error) {
-      console.error("Error fetching inventory data:", error);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    fetchItems();
-  }, [trigger]);
-    
-
-  const refetchItems = () => {
-    setTrigger((prev) => prev + 1);
-  };
-
   const handleViewDetails = (item) => {
     setSelectedItem(item);
     console.log(item);
@@ -265,15 +251,22 @@ useEffect(() => {
           breadcrumbItem="Inventory Table"
         />
 
-      <div className="d-flex justify-content-end align-items-center gap-2 mb-3">
+      <div className="d-flex flex-wrap justify-content-start align-items-center gap-2 mb-3">
+
+            {role === "client_admin" ? (
+              <FirmSwitcher selectedFirmId={selectedFirmId} onSelectFirm={setSelectedFirmId} />
+            ) : null
+
+            }
+          
            <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchItems} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
 
-          <div className="d-flex align-items-center gap-2">
+          {/* <div className="d-flex align-items-center gap-2"> */}
           <label htmlFor="itemsPerPageSelect" className="m-0">Items per page:</label>
                 <select
                   id="itemsPerPageSelect"
                   className="form-select"
-                  style={{ width: "auto" ,maxHeight:"33px"}}
+                  style={{ width: "auto" ,maxHeight:"27.13px" , fontSize:"10.5px" , lineHeight:"1"} }
                   onChange={handleItemsPerPageChange}
                 >
                   <option value="10"  >10</option>
@@ -291,19 +284,22 @@ useEffect(() => {
                   value={customItemsPerPage}
                   onChange={(e) => setCustomItemsPerPage(e.target.value)}
                   className="form-control"
-                  style={{ width: "100px",maxHeight:"33px" }} 
+                  style={{ width: "100px",maxHeight:"27.13px" , fontSize:"10.5px" , lineHeight:"1" }} 
                 />
-                <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
+                <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
                   Set
                 </Button>
-            </div>
+            {/* </div> */}
 
-          <Button color="primary" className="p-2" style={{fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
+          {role !== "client_admin" ? (
+            <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
+          ) : null}
+          
           
           <select
             type="select"
             className="form-select"
-            style={{ width: "auto" ,maxHeight:"33px"}}
+            style={{ width: "auto" ,maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}}
             onChange={(e) => handleSortByType(e.target.value)}
           >
             <option value="">All Items</option>
@@ -319,9 +315,7 @@ useEffect(() => {
             <ScaleLoader color="#0d4251" />
           </div>
         ) : (
-          authuser.role === 'client_admin' ? (
-            <FirmsTable handleViewDetails={handleViewDetails} />
-          ) : (
+          
             <div className="table-responsive">
               <Table bordered className="mb-0">
                 <thead>
@@ -366,7 +360,8 @@ useEffect(() => {
               </Table>
             </div>
           )
-        )}
+        }
+
 
     <div className="pagination-controls d-flex gap-2 mt-2">
       {pageNumbers.map(number => (

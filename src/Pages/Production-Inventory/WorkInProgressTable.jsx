@@ -1,17 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { getProductionOrders } from '../../apiServices/service';
+import { getProductionOrdersmain } from '../../apiServices/service';
 import { Row } from 'reactstrap';
+import FirmSwitcher from '../Firms/FirmSwitcher';
 
 function WorkInProgressTable() {
   const [productionOrders, setProductionOrders] = useState([]);
   const [filterStatus, setFilterStatus] = useState('in_progress');
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [trigger, setTrigger] = useState(0);
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
+
+  const authuser = JSON.parse(localStorage.getItem('authUser')) || {};
+  const firmId = authuser?.response?.adminId || '';
+  const userRole = authuser?.response?.role || '';
+
+  const effectiveFirmId = userRole === "client_admin" ? selectedFirmId : firmId;
 
   const fetchProductionOrders = async () => {
+    if (!effectiveFirmId) return; 
+
     try {
-      const response = await getProductionOrders();
+      const response = await getProductionOrdersmain(effectiveFirmId);
       const filteredOrders =
         response.data?.filter((order) => order.status === filterStatus) || [];
       setProductionOrders(filteredOrders);
@@ -22,13 +33,17 @@ function WorkInProgressTable() {
 
   useEffect(() => {
     fetchProductionOrders();
-    setCurrentPage(1);
-  }, [filterStatus]);
+    setCurrentPage(1); 
+  }, [filterStatus, trigger, effectiveFirmId]);
+
+  const refetchOrders = () => {
+    setTrigger(prev => prev + 1); 
+  };
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = productionOrders.slice(indexOfFirstItem, indexOfLastItem);
-
+  // console.log(currentItems);
   const totalPages = Math.ceil(productionOrders.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
@@ -47,14 +62,18 @@ function WorkInProgressTable() {
             <div className="col-12">
               <div className="card">
                 <div className="card-body">
-                  <Row>
-                    <div className="mb-1 col-md-4 col-sm-6">
-                      <label htmlFor="filter-status" className="form-label">
+                  <div className='d-flex align-items-center justify-content-start gap-2 border-bottom pb-1'>
+                      <label htmlFor="filter-status" className="form-label m-0">
                         Filter by Status:
                       </label>
                       <select
                         id="filter-status"
-                        className="form-select w-50"
+                        style={{
+                            fontSize:"10.5px",
+                            lineHeight:"1",
+                            width:"fit-content",
+                        }}
+                        className="form-select"
                         value={filterStatus}
                         onChange={(e) => setFilterStatus(e.target.value)}
                       >
@@ -63,10 +82,20 @@ function WorkInProgressTable() {
                         <option value="cancelled">Cancelled</option>
                         <option value="completed">Completed</option>
                       </select>
-                    </div>
-                  </Row>
 
-                  <div className="table-responsive">
+                    {userRole === "client_admin" && (
+                      <FirmSwitcher
+                          selectedFirmId={selectedFirmId}
+                          onSelectFirm={(firmId) => {
+                            setSelectedFirmId(firmId);
+                            setTrigger(prev => prev + 1); 
+                          }}
+                      />
+                    )}
+                    <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchOrders} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+                  </div>
+
+                  <div className="table-responsive mt-3">
                     <table className="table table-striped">
                       <thead>
                         <tr>
@@ -83,32 +112,24 @@ function WorkInProgressTable() {
                             <td>{order.productionOrderNumber}</td>
                             <td>{order?.bomId?.productName}</td>
                             <td>
-                              <ul style={{paddingLeft:"0px"}}>
-                                {order?.rawMaterials.map(
-                                  (rawMaterial, index) => (
-                                    <li key={index} style={{listStyleType:"none"}}>
-                                      <strong>
-                                        {rawMaterial.itemId.name}
-                                      </strong>{' '}
-                                      ({rawMaterial.itemId.qtyType}) -{' '}
-                                      {rawMaterial.quantity} {rawMaterial.quantity > 1 ? 'units' : 'unit'}
-                                    </li>
-                                  )
-                                )}
+                              <ul style={{ paddingLeft: "0px" }}>
+                                {order?.rawMaterials.map((rawMaterial, index) => (
+                                  <li key={index} style={{ listStyleType: "none" }}>
+                                    <strong>
+                                      {rawMaterial?.itemId?.name || "Unknown Item"}
+                                    </strong>{' '}
+                                    ({rawMaterial?.itemId?.qtyType || "N/A"}) -{' '}
+                                    {rawMaterial?.quantity || 0} {rawMaterial?.quantity > 1 ? 'units' : 'unit'}
+                                  </li>
+                                ))}
                               </ul>
                             </td>
                             <td>{order.createdBy.firstName}</td>
                             <td>{order.status}</td>
                           </tr>
                         ))}
-                        {currentItems.length === 0 && (
-                          <tr>
-                            <td colSpan="5" className="text-center">
-                              No orders found for the selected status.
-                            </td>
-                          </tr>
-                        )}
                       </tbody>
+
                     </table>
                   </div>
 
@@ -118,9 +139,7 @@ function WorkInProgressTable() {
                         {[...Array(totalPages)].map((_, index) => (
                           <li
                             key={index}
-                            className={`page-item ${
-                              index + 1 === currentPage ? 'active' : ''
-                            }`}
+                            className={`page-item ${index + 1 === currentPage ? 'active' : ''}`}
                           >
                             <button
                               className="page-link"

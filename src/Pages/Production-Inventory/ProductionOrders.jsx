@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getProductionOrders, updateProductionOrderQuantity } from '../../apiServices/service';
+import { getProductionOrders, getProductionOrdersmain, updateProductionOrderQuantity } from '../../apiServices/service';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import QuantityUpdateModal from '../../Modal/ProductionModals/quantityUpdateModal';
 import { updateProductionOrderStatus } from '../../apiServices/service';
@@ -8,6 +8,7 @@ import ProductionCreateModal from '../../Modal/ProductionModals/ProductionCreate
 import { toast } from 'react-toastify';
 import { Button } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
+import FirmSwitcher from '../Firms/FirmSwitcher';
 
 function ProductionOrders() {
   const [productionOrders, setProductionOrders] = useState([]);
@@ -20,35 +21,45 @@ function ProductionOrders() {
   const [statusModalOpen, setStatusModalOpen] = useState(false); 
   const [newNote, setNewNote] = useState('');
   const authuser = JSON.parse(localStorage.getItem('authUser'));
-  const [searchTerm, setSearchTerm] = useState('');
+  const firmId = authuser?.response?.adminId || '';
   const role = authuser?.response?.role;
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
-  const [trigger, setTrigger] = useState(false);
+  const [trigger, setTrigger] = useState(0);
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
+  const effectiveFirmId = role === "client_admin" ? selectedFirmId : firmId;
+  console.log(effectiveFirmId);
   const fetchProductionOrders = async () => {
+    if (!effectiveFirmId) return; 
+
     try {
-      const response = await getProductionOrders();
-      setProductionOrders(response.data || []);
-      setFilteredOrders(response.data || []);      
-      console.table(response.data); 
+        const response = await getProductionOrdersmain(effectiveFirmId);
+        setProductionOrders(response.data || []);
+        setFilteredOrders(response.data || []);
+        console.table(response.data);
     } catch (error) {
-      console.error('Error fetching production orders:', error.message);
+        console.error('Error fetching production orders:', error.message);
     }
-  };
+};
 
-  const handleCreateModal = () => {
-    setOpenCreateModal(true);
-  };
-
-  const toggleTrigger = () => {
-    setTrigger(!trigger);
-  };
-  useEffect(() => {
+useEffect(() => {
     fetchProductionOrders();
-  }, [trigger]);
+}, [effectiveFirmId, trigger]); 
 
-  const handleSearch = (e) => {
+const refetchOrders = () => {
+    setTrigger(prev => prev + 1);
+};
+
+const handleFirmSelection = (firmId) => {
+    setSelectedFirmId(firmId);
+    setTrigger(prev => prev + 1); 
+};
+
+const handleCreateModal = () => {
+    setOpenCreateModal(true);
+}; const handleSearch = (e) => {
     setSearchTerm(e.target.value);
   };
 
@@ -139,23 +150,27 @@ function ProductionOrders() {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Production Orders" />
 
-        <div className="d-flex justify-content-between gap-2 mb-3 ">
-            <div className="d-flex align-items-center gap-2">
+        <div className="d-flex flex-wrap justify-content-start gap-2 mb-3 ">
               <input
                 type="text"
                 value={searchTerm}
                 onChange={handleSearch}
                 placeholder="Search Production Orders" 
                 className="form-control"
-                style={{ width: "250px",maxHeight:"33px" }}
+                style={{ width: "250px",height : "26.6px",maxHeight:"33px" }}
               />
-            </div>
-            <div className="d-flex align-items-center gap-2">
-            <label htmlFor="itemsPerPageSelect">Items per page:</label>
+              {role==="client_admin" && (
+                  <FirmSwitcher
+                      selectedFirmId={selectedFirmId}
+                      onSelectFirm={setSelectedFirmId}
+                  />
+                      )}
+
+               <label htmlFor="itemsPerPageSelect" className='mb-0'>Items per page:</label>
                   <select
                     id="itemsPerPageSelect"
                     className="form-select"
-                    style={{ width: "auto" ,maxHeight:"33px"}}
+                    style={{ width: "auto" ,maxHeight:"30px" , padding:"2px 24px"}}
                     onChange={handleItemsPerPageChange}
                   >
                     <option value="10" >10</option>
@@ -165,7 +180,7 @@ function ProductionOrders() {
                     <option value="100">100</option>
                   </select>
   
-                  <label htmlFor="customItemsInput">Or enter custom:</label>
+                  <label htmlFor="customItemsInput" className='mb-0'>Or enter custom:</label>
                   <input
                     id="customItemsInput"
                     type="number"
@@ -173,18 +188,19 @@ function ProductionOrders() {
                     value={customItemsPerPage}
                     onChange={(e) => setCustomItemsPerPage(e.target.value)}
                     className="form-control"
-                    style={{ width: "100px",maxHeight:"33px" }} 
+                    style={{ width: "70px",maxHeight:"30px", padding:"2px 14px" }}  
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         handleCustomItemsPerPage();
                       }
                     }}
                   />
-                  <Button color="primary" onClick={handleCustomItemsPerPage}>
+                  <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchOrders} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+
+                  <Button color="primary" onClick={handleCustomItemsPerPage} style={{padding:"8px" ,lineHeight:"1", fontSize:"10.5px" , height : "26.6px"}}>
                     Set
                   </Button>
                   <i className='bx bx-plus-circle bx-sm' style={{ cursor: 'pointer' }} onClick={handleCreateModal}></i>
-              </div>
         </div>  
 
         <div className="table-responsive">
@@ -274,8 +290,8 @@ function ProductionOrders() {
                             .join(' ')
                         )}
                       </td>
-                      <td>
                         {role === 'firm_admin' ? (
+                      <td>
                             order.status !== 'completed' ? (
                               <i
                                 className="bx bx-edit bx-sm"
@@ -284,8 +300,8 @@ function ProductionOrders() {
                               ></i>
                             ) : null
 
-                        ) : null}
                       </td>
+                        ) : null}
                     </tr>
                   );
                 })
@@ -318,8 +334,7 @@ function ProductionOrders() {
           selectedOrder={selectedOrder}
           handleUpdateStatus={handleUpdateStatus}
         />
-        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={toggleTrigger} />
-
+        <ProductionCreateModal modalOpen={openCreateModal} setModalOpen={setOpenCreateModal} trigger={refetchOrders} firmId={effectiveFirmId} />
       </div>
     </React.Fragment>
   ); 

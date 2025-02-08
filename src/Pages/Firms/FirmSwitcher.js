@@ -44,7 +44,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
 
   return (
     <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-      <DropdownToggle  style={{ backgroundColor: 'var(--bs-header-dark-bg)' , minWidth:'165px'}}>
+      <DropdownToggle  style={{ backgroundColor: 'var(--bs-header-dark-bg)' ,fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
         <span style={{ marginRight: '10px' }}>
           {firms.find(firm => firm._id === selectedFirmId)?.companyTitle }
         </span>
@@ -53,7 +53,7 @@ function FirmSwitcher({ selectedFirmId, onSelectFirm }) {
           ? <i className="mdi mdi-chevron-up"></i> 
           : <i className="mdi mdi-chevron-down"></i>}
       </DropdownToggle>
-      <DropdownMenu className='hd-nt'>
+      <DropdownMenu className='hd-nt' style={{width:"fit-content"}}>
         {firms.map(firm => (
           <DropdownItem
             key={firm._id}

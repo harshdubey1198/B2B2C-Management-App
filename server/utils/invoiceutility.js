@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const Customer = require("../schemas/cutomer.schema");
 const InventoryItem = require("../schemas/inventoryItem.schema");
 const Invoice = require("../schemas/invoice.schema");
@@ -82,9 +83,7 @@ const calculateInvoiceAmount = async (items, session) => {
       itemTotal,
       session
     );
-
-    const itemTotalWithTax = Math.round(itemTotal + totalTaxForItem);
-
+    const itemTotalWithTax = (itemTotal + totalTaxForItem);
     item.total = itemTotalWithTax;
     totalAmount += itemTotalWithTax;
   }
@@ -96,22 +95,20 @@ const calculateTotalTax = async (inventoryItem, itemTotal, session) => {
   if (!tax) {
     throw new Error(`Tax with ID ${inventoryItem.tax.taxId} not found`);
   }
-
+  
   let totalTaxForItem = 0;
-  inventoryItem.tax.components.forEach((selectedComponent) => {
-    const taxComponent = tax.taxRates.find(
-      (tc) =>
-        tc.taxType.toLowerCase() === selectedComponent.taxType.toLowerCase()
-    );
+  inventoryItem.tax.selectedTaxTypes.forEach((selectedComponent) => {
+    const taxComponent = tax.taxRates.find(tc => tc._id.equals(selectedComponent)); 
+
     if (!taxComponent) {
       throw new Error(
-        `Selected tax component ${selectedComponent.taxType} not found in tax object`
+        `Selected tax component ${selectedComponent} not found in tax object`
       );
     }
     const taxAmount = (itemTotal * taxComponent.rate) / 100;
     totalTaxForItem += taxAmount;
   });
-
+  console.log(totalTaxForItem, "formitem");
   return totalTaxForItem;
 };
 
@@ -186,10 +183,54 @@ const updateInventoryStock = async (items, isProforma, session) => {
   }
 };
 
+// ReleasedReservedStock
+const releaseReservedStock = async (items, session) => {
+  try {
+    const itemIds = items.map((item) => item.itemId);
+
+    const inventoryItems = await InventoryItem.find({ _id: { $in: itemIds } }).session(session);
+    if (inventoryItems.length === 0) {
+      throw new Error("No matching inventory items found");
+    }
+    for (let item of items) {
+      const inventoryItem = inventoryItems.find((inv) => inv._id.toString() === item.itemId.toString());
+      if (!inventoryItem) {
+        throw new Error(`Item with ID ${item.itemId} not found in inventory`);
+      }
+      if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+        if (!item.selectedVariant || item.selectedVariant.length === 0) {
+          throw new Error(`Missing selected variants for item ${inventoryItem.name}`);
+        }
+        for (let variant of item.selectedVariant) {
+          const inventoryVariant = inventoryItem.variants.find((v) => v.sku === variant.sku);
+          if (!inventoryVariant) {
+            throw new Error(`Variant with SKU ${variant.sku} not found for item: ${inventoryItem.name}`);
+          }
+          if (inventoryVariant.reservedQuantity < item.quantity) {
+            throw new Error(`Cannot release more than reserved quantity for variant: ${variant.optionLabel}`);
+          }
+          inventoryVariant.stock += item.quantity;
+          inventoryVariant.reservedQuantity -= item.quantity;
+        }
+        inventoryItem.quantity = inventoryItem.variants.reduce((sum, v) => sum + v.stock, 0);
+      } else {
+        inventoryItem.quantity += item.quantity;
+      }
+
+      // Save the updated inventory item
+      await inventoryItem.save({ session });
+    }
+  } catch (error) {
+    throw error;
+  }
+}
+
+
 module.exports = {
   generateInvoiceNumber,
   handleCustomer,
   calculateInvoiceAmount,
   calculateTotalTax,
   updateInventoryStock,
+  releaseReservedStock,
 };

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { createBom, getBoms, getBrands, getInventoryItems, getItemCategories, getItemSubCategories, getTaxes, getVendors } from '../../apiServices/service';
+import { createBom, getBoms, getBrandsmain, getInventoryItems, getItemCategoriesmain, getItemSubCategories, getTaxes, getVendorsmain } from '../../apiServices/service';
 import { Table, Button, Input} from 'reactstrap';
 import BomCreateModal from '../../Modal/ProductionModals/BomCreateModal';
+import FirmSwitcher from '../Firms/FirmSwitcher';
+import { toast } from 'react-toastify';
 
 function BomPage() {
   const [boms, setBoms] = useState([]);
@@ -21,9 +23,16 @@ function BomPage() {
   const [itemsPerPage] = useState(5); 
   const authuser = JSON.parse(localStorage.getItem('authUser')) || {};
   const firmId = authuser?.response?.adminId || '';
+  const userRole = authuser?.response?.role || '';
+  console.log("userRole", userRole);
   const createdBy = authuser?.response?._id || '';
   const [estimatedCost, setEstimatedCost] = useState(0);
   const [sellingPrice, setSellingPrice] = useState(0);
+  const [selectedFirmId, setSelectedFirmId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const trigger = 0;
+  const effectiveFirmId = userRole === "client_admin" ? selectedFirmId : firmId;
+  // console.log("effectiveFirmId", effectiveFirmId);
   // console.log("estimatedCost", estimatedCost);
   // console.log("sellingPrice", sellingPrice);
 
@@ -46,20 +55,24 @@ function BomPage() {
     // costPrice: estimatedCost,
   });
 
-  const fetchBoms = async () => {
+
+const fetchBoms = async () => {
+    setLoading(true);
     try {
-      const result = await getBoms();
-      setBoms(result.data || []);
-      setFilteredBoms(result.data);
-    //   console.log(result.data);
+        const result = await getBoms(effectiveFirmId);
+        setBoms(result.data || []);
+        setFilteredBoms(result.data);
     } catch (err) {
-      console.error(err);
+        console.error("Error fetching BOMs:", err);
+        // toast.error("Failed to fetch BOMs.");
     }
-  };
+    setLoading(false);
+};
+
 
   const fetchItems = async () => {
     try {
-      const result = await getInventoryItems();
+      const result = await getInventoryItems(effectiveFirmId);
       // console.log(result.data);
       setItems(result.data || []);
     } catch (err) {
@@ -69,7 +82,7 @@ function BomPage() {
 
   const fetchCategories = async () => {
     try {
-      const result = await getItemCategories();
+      const result = await getItemCategoriesmain(effectiveFirmId);
       const filterOnlyparent = result.data.filter((cat) => cat.parentId === null);
       setCategories(filterOnlyparent);
       // console.log(filterOnlyparent);
@@ -88,7 +101,7 @@ function BomPage() {
   };
   const fetchVendors = async () => { 
     try {
-      const result = await getVendors();
+      const result = await getVendorsmain(effectiveFirmId);
       setVendors(result.data || []);
       // console.log(result.data);
     } catch (err) {
@@ -97,7 +110,7 @@ function BomPage() {
   };
 const fetchBrands = async () => {
     try {
-      const result = await getBrands();
+      const result = await getBrandsmain(effectiveFirmId);
       setBrands(result.data || []);
     } catch (err) {
       console.error(err);
@@ -106,7 +119,7 @@ const fetchBrands = async () => {
   
   const fetchTaxes = async () => {
     try {
-      const result = await getTaxes();
+      const result = await getTaxes(effectiveFirmId);
       setTaxes(result.data || []);
     } catch (err) {
       console.error(err);
@@ -121,6 +134,12 @@ const fetchBrands = async () => {
     fetchTaxes();
     fetchBrands();
   }, []);
+
+  const refetchData = () => { 
+    fetchBoms();
+  };
+
+
 
   const toggleBomModal = () => setBomModal(!bomModal);
 
@@ -279,14 +298,34 @@ const minimumSellingPrice = (costPrice) => {
 
     toggleBomModal();
   };
+  useEffect(() => {
+    if (userRole === "client_admin" && !selectedFirmId) return;
+    fetchBoms();
+    fetchTaxes();
+    fetchItems();
+    fetchCategories();
+    fetchVendors();
+    fetchBrands();
+}, [trigger, selectedFirmId]);
 
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Bill Of Materials" />
-        <Button color="primary" onClick={toggleBomModal}>
-          Add BOM
-        </Button>
+        <div className='d-flex gap-2'>
+          {userRole!=="client_admin" && ( 
+            <Button color="primary" onClick={toggleBomModal} style={{fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
+            Add BOM
+          </Button>
+          )}
+          {userRole==="client_admin" && (
+            <FirmSwitcher
+            selectedFirmId={selectedFirmId}
+            onSelectFirm={setSelectedFirmId}
+            />
+          )}
+          <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchData} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+        </div>
           <div className='mt-3'>
             <Input
                 type="text"
@@ -389,7 +428,8 @@ const minimumSellingPrice = (costPrice) => {
              fetchCategories={fetchCategories}
              minimumSellingPrice={minimumSellingPrice}
              setSellingPrice={setSellingPrice}
-             />
+             firmId={effectiveFirmId}
+/>
       </div>
     </React.Fragment>
   );

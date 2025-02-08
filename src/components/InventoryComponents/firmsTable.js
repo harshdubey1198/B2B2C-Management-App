@@ -36,11 +36,6 @@ function FirmsTable({handleViewDetails}) {
   return (
     <div className="table-responsive">
       <div className="d-flex justify-content-between mb-4">
-        <p className="mm-active">
-          This is the Inventory management page you can see Inventory by Firms.
-        </p>
-      </div>
-      <div className="d-flex justify-content-between mb-4">
         <FirmSwitcher
           selectedFirmId={selectedFirmId}
           onSelectFirm={setSelectedFirmId}

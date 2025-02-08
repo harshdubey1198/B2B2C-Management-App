@@ -112,6 +112,16 @@ export const getFirmUsers = async () => {
     }
 };
 
+// ro get company for admin 
+export const getCompanyForAdmin = async () => {
+    try {   
+        const response =await axiosInstance.get(`/auth/getCompany/${id}}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
 // to get user id data using crmuser id 
 export const getCrmUserById = async () => {
     try {
@@ -546,10 +556,10 @@ export const getTaxes = async () => {
 
 
 
-export const getBoms = async () => {
+export const getBoms = async (firmId) => {
     try {
         const response = await axiosInstance.post(`/bom/get-bom`, {
-                firmId
+             firmId
         });
         return response.data;
     } catch (error) {
@@ -557,7 +567,7 @@ export const getBoms = async () => {
     }
 };
 
-export const getInventoryItems = async () => {  
+export const getInventoryItems = async (firmId) => {  
     try {
         const response = await axiosInstance.get(`/inventory/get-items/${firmId}`);
         return response.data;
@@ -627,7 +637,7 @@ export const updateProductionOrderStatus = async (id, data) => {
 };
 
 // to get firm wise wastage 
-export const getFirmWastage = async () => {
+export const getFirmWastage = async (firmId) => {
     try {
         const response = await axiosInstance.get(`/wasteinventory/get-wasteManagments/${firmId}`);
         return response.data;
@@ -664,6 +674,50 @@ export const updateCustomer = async (customerId, customerData) => {
     }
 };
 
+export const getItemCategoriesmain = async (firmId) => {
+    try {
+        const response = await axiosInstance.get(`/category/get-categories/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
 
+export const getVendorsmain = async (firmId) => {
+    try {
+        const response = await axiosInstance.get(`/vendor/get-vendors/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getBrandsmain = async (firmId) => {
+    try {
+        const response = await axiosInstance.get(`/brand/get-brands/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+
+export const getProductionOrdersmain = async (firmId) => {
+    try {
+        const response = await axiosInstance.post(`/productionorder/get-productionorders`, {
+            firmId
+        });
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
+export const getTaxesmain = async (firmId) => {
+    try {
+        const response = await axiosInstance.get(`/tax/get-taxes/${firmId}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+};
 
 export default axiosInstance;

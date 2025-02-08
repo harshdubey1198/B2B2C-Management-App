@@ -11,7 +11,7 @@ const FetchBrands = ({ firmId, onBrandsFetched, triggerBrand }) => {
         );
         onBrandsFetched(response.data || []);
       } catch (error) {
-        toast.error("Failed to fetch brands.");
+        // toast.error("Failed to fetch brands.");
         console.error(error.message);
       }
     };
