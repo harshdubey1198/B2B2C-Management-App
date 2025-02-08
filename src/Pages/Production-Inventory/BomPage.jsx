@@ -55,10 +55,6 @@ function BomPage() {
     // costPrice: estimatedCost,
   });
 
-  useEffect(() => {
-    if (userRole === "client_admin" && !selectedFirmId) return;
-    fetchBoms();
-}, [trigger, selectedFirmId]);
 
 const fetchBoms = async () => {
     setLoading(true);
@@ -76,7 +72,7 @@ const fetchBoms = async () => {
 
   const fetchItems = async () => {
     try {
-      const result = await getInventoryItems();
+      const result = await getInventoryItems(effectiveFirmId);
       // console.log(result.data);
       setItems(result.data || []);
     } catch (err) {
@@ -123,7 +119,7 @@ const fetchBrands = async () => {
   
   const fetchTaxes = async () => {
     try {
-      const result = await getTaxes();
+      const result = await getTaxes(effectiveFirmId);
       setTaxes(result.data || []);
     } catch (err) {
       console.error(err);
@@ -138,6 +134,12 @@ const fetchBrands = async () => {
     fetchTaxes();
     fetchBrands();
   }, []);
+
+  const refetchData = () => { 
+    fetchBoms();
+  };
+
+
 
   const toggleBomModal = () => setBomModal(!bomModal);
 
@@ -296,6 +298,15 @@ const minimumSellingPrice = (costPrice) => {
 
     toggleBomModal();
   };
+  useEffect(() => {
+    if (userRole === "client_admin" && !selectedFirmId) return;
+    fetchBoms();
+    fetchTaxes();
+    fetchItems();
+    fetchCategories();
+    fetchVendors();
+    fetchBrands();
+}, [trigger, selectedFirmId]);
 
   return (
     <React.Fragment>
@@ -305,6 +316,8 @@ const minimumSellingPrice = (costPrice) => {
           <Button color="primary" onClick={toggleBomModal} style={{fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
             Add BOM
           </Button>
+          <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchData} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+
           {userRole==="client_admin" && (
             <FirmSwitcher
                 selectedFirmId={selectedFirmId}

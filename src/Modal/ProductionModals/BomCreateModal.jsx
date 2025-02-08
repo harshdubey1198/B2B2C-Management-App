@@ -2,15 +2,18 @@ import React, { useEffect } from 'react'
 import { Button, Col, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 import Select from "react-select";
 
-function BomCreateModal ({ isOpen,toggle,  setSellingPrice, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands,taxes, taxId , selectedTaxTypes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModal, formData, setFormData, categories, subCategories, vendors, brands,taxes, taxId , selectedTaxTypes, items, setItems, setBomModal , fetchSubCategories, fetchItems, fetchBrands, fetchVendors, fetchTaxes, fetchCategories, fetchBoms, handleMaterialChange, handleVariantChange, addMaterialField, addVariantField, removeMaterialField, removeVariantField, saveBom , calculateTotalCostPrice }) {
+  const effectiveFirmId = firmId;
   useEffect(() => {
-    // it must be number not the string    
-    // setSellingPrice(formData.sellingPrice);
-    setFormData({ ...formData, sellingPrice: Number(formData.sellingPrice) });
-
-  }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, formData.taxId, formData.selectedTaxTypes , formData.vendor, formData.brand, formData.subCategoryId, formData.categoryId] );
-  
-  return (
+    setFormData(prevData => ({
+      ...prevData,
+      sellingPrice: Number(prevData.sellingPrice),
+    }));
+  }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, 
+      formData.taxId, formData.selectedTaxTypes, formData.vendor, 
+      formData.brand, formData.subCategoryId, formData.categoryId]);
+      console.log("gta",firmId);
+    return (
     <Modal isOpen={isOpen} toggle={toggle}>
     <ModalHeader toggle={toggleBomModal}>Add BOM</ModalHeader>
       <ModalBody>
