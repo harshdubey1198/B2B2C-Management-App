@@ -101,6 +101,7 @@ import RawMaterialTable from "../Pages/Production-Inventory/RawMaterialTable.jsx
 import WorkInProgressTable from "../Pages/Production-Inventory/WorkInProgressTable.jsx";
 import WasteManagement from "../Pages/Production-Inventory/WasteManagement.jsx";
 import BomPage from "../Pages/Production-Inventory/BomPage.jsx";
+import Sidebars from "../Pages/Sidebar/Sidebars.jsx";
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
@@ -119,6 +120,8 @@ const authProtectedRoutes = [
   // feedbacks
   {path:"/all-feedbacks", component: <AllFeedbacks />},
 
+  // sidebar
+  {path:"/all-sidebars", component: <Sidebars />},
 
   // invoicing
   { path: "/create-invoice", component: <CreateInvoice/> },
