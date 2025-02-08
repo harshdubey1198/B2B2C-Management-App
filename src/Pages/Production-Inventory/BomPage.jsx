@@ -313,17 +313,18 @@ const minimumSellingPrice = (costPrice) => {
       <div className="page-content">
         <Breadcrumbs title="Production & Inventory" breadcrumbItem="Bill Of Materials" />
         <div className='d-flex gap-2'>
-          <Button color="primary" onClick={toggleBomModal} style={{fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
+          {userRole!=="client_admin" && ( 
+            <Button color="primary" onClick={toggleBomModal} style={{fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
             Add BOM
           </Button>
-          <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchData} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
-
+          )}
           {userRole==="client_admin" && (
             <FirmSwitcher
-                selectedFirmId={selectedFirmId}
-                onSelectFirm={setSelectedFirmId}
+            selectedFirmId={selectedFirmId}
+            onSelectFirm={setSelectedFirmId}
             />
-                )}
+          )}
+          <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchData} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
         </div>
           <div className='mt-3'>
             <Input
