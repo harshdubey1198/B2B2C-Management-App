@@ -108,7 +108,6 @@ const calculateTotalTax = async (inventoryItem, itemTotal, session) => {
     const taxAmount = (itemTotal * taxComponent.rate) / 100;
     totalTaxForItem += taxAmount;
   });
-  console.log(totalTaxForItem, "formitem");
   return totalTaxForItem;
 };
 
