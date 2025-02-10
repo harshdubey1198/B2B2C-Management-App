@@ -32,11 +32,6 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     }
 
     const rawMaterials = calculateRawMaterials(bom, quantity);
-    // const totalCostPrice = await calculateRawMaterialsCost(rawMaterials, session)
-    // console.log(totalCostPrice,"totalcostprice")
-    // if(totalCostPrice > sellingPrice) {
-    //   throw new Error("Selling price should not be less than total cost price.");
-    // }
     let totalWastage = [];
 
     // Construct the waste data properly
@@ -69,7 +64,6 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       firmId,
       sellingPrice,
       createdBy,
-      // totalCostPrice,
       status: "created",
     };
 
