@@ -38,6 +38,14 @@
           ]
         },
         {
+          "label":"Sidebars",
+          "icon":"mdi mdi-navigation-outline",
+          "subItem":[
+            {"sublabel":"Manage Sidebars","link":"/all-sidebars"},
+            {"sublabel":"Create Sidebar","link":"/create-sidebar"}
+          ]
+        },
+        {
           "label": "Inventory",
           "icon": "mdi mdi-archive-outline",
           "subItem": [

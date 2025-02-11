@@ -46,16 +46,57 @@ SidebarServices.getSidebarByRole = async (role) => {
 // ✅ Update Sidebar
 SidebarServices.updateSidebar = async (role, updateData) => {
   try {
-    const updatedSidebar = await Sidebar.findOneAndUpdate({ role }, updateData, { new: true });
-    if (!updatedSidebar) {
-      throw new Error("Sidebar not found or update failed");
+    if (!role || !updateData.label) {
+      throw new Error("Role and sidebar label are required.");
     }
+
+    let updatedSidebar;
+
+    if (updateData.sublabel) {
+      // **UPDATE SUBITEM (MATCH USING `sublabel`)**
+      updatedSidebar = await Sidebar.findOneAndUpdate(
+        { role, "sidebar.label": updateData.label, "sidebar.subItem.sublabel": updateData.sublabel },
+        {
+          $set: {
+            "sidebar.$[sidebarItem].subItem.$[subItem].sublabel": updateData.newSublabel || updateData.sublabel,
+            "sidebar.$[sidebarItem].subItem.$[subItem].link": updateData.newLink || updateData.link
+          }
+        },
+        {
+          arrayFilters: [
+            { "sidebarItem.label": updateData.label },
+            { "subItem.sublabel": updateData.sublabel }
+          ],
+          new: true
+        }
+      );
+
+    } else {
+      // **UPDATE SIDEBAR ITEM (MATCH USING `label`)**
+      const updateFields = {};
+
+      if (updateData.newLabel) updateFields["sidebar.$.label"] = updateData.newLabel;
+      if (updateData.icon) updateFields["sidebar.$.icon"] = updateData.icon;
+      if (updateData.url) updateFields["sidebar.$.url"] = updateData.url;
+
+      updatedSidebar = await Sidebar.findOneAndUpdate(
+        { role, "sidebar.label": updateData.label },
+        { $set: updateFields },
+        { new: true }
+      );
+    }
+
+    if (!updatedSidebar) {
+      throw new Error("Sidebar item not found.");
+    }
+
     return updatedSidebar;
   } catch (error) {
     console.error("Error updating sidebar:", error);
-    throw new Error("Failed to update sidebar");
+    throw new Error(error.message || "Failed to update sidebar");
   }
 };
+
 
 // ✅ Delete Sidebar
 SidebarServices.deleteSidebar = async (role) => {

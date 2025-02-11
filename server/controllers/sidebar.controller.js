@@ -38,13 +38,27 @@ sidebarController.getSidebarByRole = async (req, res) => {
 // ✅ Update Sidebar
 sidebarController.updateSidebar = async (req, res) => {
   try {
-    const response = await SidebarServices.updateSidebar(req.params.role, req.body);
-    return res.status(200).json({ message: "Sidebar updated successfully", response });
+    const { role } = req.params;
+    const updateData = req.body;
+
+    if (!role || !updateData.label) {
+      return res.status(400).json({ message: "Role and sidebar label are required." });
+    }
+
+    const response = await SidebarServices.updateSidebar(role, updateData);
+
+    return res.status(200).json({
+      message: "Sidebar updated successfully",
+      response,
+      error: false
+    });
   } catch (error) {
     console.error("Error updating sidebar:", error);
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message || "Internal Server Error" });
   }
 };
+
+
 
 // ✅ Delete Sidebar
 sidebarController.deleteSidebar = async (req, res) => {

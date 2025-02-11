@@ -118,10 +118,11 @@ const authProtectedRoutes = [
   {path:"/manage-categories" , component:<ManageCategories/>},
 
   // feedbacks
-  {path:"/all-feedbacks", component: <AllFeedbacks />},
+  {path:"/all-feedbacks", component: < AllFeedbacks />},
 
   // sidebar
   {path:"/all-sidebars", component: <Sidebars />},
+  // {path:"/create-sidebar", component: < AllFeedbacks/>},
 
   // invoicing
   { path: "/create-invoice", component: <CreateInvoice/> },

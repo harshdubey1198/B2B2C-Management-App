@@ -27,6 +27,7 @@
     "metismenujs": "^1.4.0",
     "node-sass": "^9.0.0",
     "prop-types": "^15.8.1",
+    "raw-loader": "^4.0.2",
     "react": "^18.2.0",
     "react-apexcharts": "^1.7.0",
     "react-autosuggest": "^10.1.0",
