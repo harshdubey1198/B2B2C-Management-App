@@ -769,4 +769,24 @@ export const deleteSidebar = async (role) => {
     }
 };
 
+// Soft Delete Sidebar (Role, Label, Subitem)
+export const softDeleteSidebar = async (role, label = null, subItemLabel = null) => {
+    try {
+        const data = { role };
+        if (label) data.label = label;
+        if (subItemLabel) data.subItemLabel = subItemLabel;
+
+        const response = await axiosInstance.put(`/sidebar/soft-delete`, data);
+
+        if (response.data.updatedSidebar) {
+            return response.data.updatedSidebar; // Return updated sidebar
+        } else {
+            throw new Error("Failed to toggle soft delete status");
+        }
+    } catch (error) {
+        console.error("Error toggling soft delete status:", error);
+        return { message: "Error occurred while toggling soft delete status" };
+    }
+};
+
 export default axiosInstance;

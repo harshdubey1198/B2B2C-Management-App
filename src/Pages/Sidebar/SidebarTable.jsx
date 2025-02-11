@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Table, Button } from "reactstrap";
 
-const SidebarTable = ({ sidebarData, onEdit, onDeleteSidebar, onDeleteSubItem }) => {
+const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLabel, onToggleActiveSubItemLabel, onEdit }) => {
   const [openRoleIndex, setOpenRoleIndex] = useState(null);
   const [openSidebarIndex, setOpenSidebarIndex] = useState(null);
 
@@ -16,12 +16,12 @@ const SidebarTable = ({ sidebarData, onEdit, onDeleteSidebar, onDeleteSubItem })
 
   return (
     <div>
-      <Table  bordered>
+      <Table bordered>
         <thead>
           <tr className="bg-light text-dark">
-            <th style={{width:"33%"}}>Role</th>
-            <th style={{width:"43%"}}>Label</th>
-            <th style={{width:"100px"}} className="text-center">Actions</th>
+            <th style={{ width: "33%" }}>Role</th>
+            <th style={{ width: "43%" }}>Label</th>
+            <th style={{ width: "100px" }} className="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -30,8 +30,20 @@ const SidebarTable = ({ sidebarData, onEdit, onDeleteSidebar, onDeleteSubItem })
               {/* Role Header Row */}
               <tr onClick={() => toggleRole(roleIndex)}>
                 <td className="cursor-pointer bg-primary text-white d-flex justify-content-between align-items-center">
-                  <strong>{roleData.role.replace(/_/g, " ").replace(/\b\w/, (char) => char.toUpperCase())}</strong>
-                  <strong>{openRoleIndex === roleIndex ? <i className="bx bx-chevron-up"></i> : <i className="bx bx-chevron-down"></i>}</strong>
+                  <div className="d-flex align-items-center">
+                    <i
+                      className={`mdi ${roleData.deleted ? "mdi-toggle-switch-off text-secondary" : "mdi-toggle-switch text-success"}`}
+                      style={{ fontSize: "22px", cursor: "pointer", marginRight: "10px" }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleActiveRole(roleData.role, !roleData.deleted);
+                      }}
+                    ></i>
+                    <strong>{roleData.role.replace(/_/g, " ").replace(/\b\w/, (char) => char.toUpperCase())}</strong>
+                  </div>
+                  <strong>
+                    {openRoleIndex === roleIndex ? <i className="bx bx-chevron-up"></i> : <i className="bx bx-chevron-down"></i>}
+                  </strong>
                 </td>
                 <td></td>
                 <td></td>
@@ -40,43 +52,55 @@ const SidebarTable = ({ sidebarData, onEdit, onDeleteSidebar, onDeleteSubItem })
               {openRoleIndex === roleIndex &&
                 roleData.sidebar.map((item, sidebarIndex) => (
                   <React.Fragment key={sidebarIndex}>
-                    {/* Sidebar Item Row */}
                     <tr onClick={() => toggleSidebar(sidebarIndex)} className="cursor-pointer bg-info text-white">
                       <td></td>
                       <td className="d-flex justify-content-between align-items-center">
-                        {item.label}
+                        <div className="d-flex align-items-center" style={{fontWeight:"bolder"}}>
+                          <i
+                            className={`mdi ${item.deleted ? "mdi-toggle-switch-off text-secondary" : "mdi-toggle-switch text-success"}`}
+                            style={{ fontSize: "22px", cursor: "pointer", marginRight: "10px" }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onToggleActiveSidebarLabel(roleData.role, item.label, !item.deleted);
+                            }}
+                          ></i>
+                          {"#" + "  " + item.label}
+                        </div>
                         <div>
-                          <i style={{fontSize:"20px"}} className={item.icon || "mdi mdi-menu"}></i>
+                          <i style={{ fontSize: "20px" }} className={item.icon || "mdi mdi-menu"}></i>
                           {item.subItem && item.subItem.length > 0 && (
-                            <span className="ms-2" style={{ cursor: "pointer" , fontSize:"20px"}}>
+                            <span className="ms-2" style={{ cursor: "pointer", fontSize: "20px" }}>
                               {openSidebarIndex === sidebarIndex ? <i className="bx bx-chevron-up"></i> : <i className="bx bx-chevron-down"></i>}
                             </span>
                           )}
                         </div>
                       </td>
-                      <td className="text-center ">
+                      <td className="text-center">
                         <div className="d-flex justify-content-center gap-2">
-                            <Button color="danger" size="sm" onClick={() => onDeleteSidebar(roleData.role, item)}>
-                            <i className="bx bx-trash text-white"></i>
-                            </Button>
-                            <Button color="primary" size="sm" onClick={() => onEdit(roleData.role, item)}>
+                          <Button color="primary" size="sm" onClick={() => onEdit(roleData.role, item)}>
                             <i className="bx bx-pencil"></i>
-                            </Button>
+                          </Button>
                         </div>
                       </td>
                     </tr>
 
                     {openSidebarIndex === sidebarIndex &&
-                      item.subItem.length > 0 &&
                       item.subItem.map((sub, subIndex) => (
                         /* Subitem Row */
                         <tr key={subIndex} className="bg-success text-white">
                           <td></td>
-                          <td>{sub.sublabel}</td>
-                          <td className="text-center d-flex justify-content-center gap-2">
-                            <Button color="danger" size="sm" onClick={() => onDeleteSubItem(roleData.role, item, sub)}>
-                              <i className="bx bx-trash text-white"></i>
-                            </Button>
+                          <td className="d-flex align-items-center">
+                            <i
+                              className={`mdi ${sub.deleted ? "mdi-toggle-switch-off text-secondary" : "mdi-toggle-switch text-success"}`}
+                              style={{ fontSize: "22px", cursor: "pointer", marginRight: "10px" }}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onToggleActiveSubItemLabel(roleData.role, item.label, sub.sublabel, !sub.deleted);
+                              }}
+                            ></i>
+                            {"  " + "*" + "  " + sub.sublabel}
+                          </td>
+                          <td className="text-center">
                             <Button color="primary" size="sm" onClick={() => onEdit(roleData.role, item, sub)}>
                               <i className="bx bx-pencil"></i>
                             </Button>

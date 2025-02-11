@@ -1,20 +1,23 @@
 const mongoose = require("mongoose");
 
 const SidebarSchema = new mongoose.Schema({
-  role: { type: String, required: true, unique: true },
+  role: { type: String, required: true },
   sidebar: [
     {
-      label: { type: String, required: true },
-      icon: { type: String },
-      url: { type: String },
+      label: String,
+      icon: String,
+      url: String,
+      deleted: { type: Boolean, default: false }, 
       subItem: [
         {
-          sublabel: { type: String },
-          link: { type: String }
+          sublabel: String,
+          link: String,
+          deleted: { type: Boolean, default: false } 
         }
       ]
     }
-  ]
+  ],
+  deleted: { type: Boolean, default: false } 
 });
-const Sidebar = mongoose.model("Sidebar", SidebarSchema);
-module.exports = Sidebar;
+
+module.exports = mongoose.model("Sidebar", SidebarSchema);

@@ -70,5 +70,25 @@ sidebarController.deleteSidebar = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+sidebarController.softDeleteSidebar = async (req, res) => {
+  try {
+    const { role, label, subItemLabel } = req.body;
+
+    if (!role) {
+      return res.status(400).json({ message: "Role is required for deletion." });
+    }
+
+    const updatedSidebar = await SidebarServices.softDeleteSidebar(role, label, subItemLabel);
+
+    return res.status(200).json({ 
+      message: "Sidebar status toggled successfully", 
+      updatedSidebar 
+    });
+  } catch (error) {
+    console.error("Error toggling sidebar status:", error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 module.exports = sidebarController;

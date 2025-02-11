@@ -328,7 +328,7 @@
       ]
     },
     {
-      "role": "general_employee",
+      "role": "employee",
       "sidebar": [
         {
           "label": "Dashboard",

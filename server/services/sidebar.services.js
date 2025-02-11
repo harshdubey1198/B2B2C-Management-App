@@ -53,7 +53,6 @@ SidebarServices.updateSidebar = async (role, updateData) => {
     let updatedSidebar;
 
     if (updateData.sublabel) {
-      // **UPDATE SUBITEM (MATCH USING `sublabel`)**
       updatedSidebar = await Sidebar.findOneAndUpdate(
         { role, "sidebar.label": updateData.label, "sidebar.subItem.sublabel": updateData.sublabel },
         {
@@ -72,7 +71,6 @@ SidebarServices.updateSidebar = async (role, updateData) => {
       );
 
     } else {
-      // **UPDATE SIDEBAR ITEM (MATCH USING `label`)**
       const updateFields = {};
 
       if (updateData.newLabel) updateFields["sidebar.$.label"] = updateData.newLabel;
@@ -111,5 +109,53 @@ SidebarServices.deleteSidebar = async (role) => {
     throw new Error("Failed to delete sidebar");
   }
 };
+
+// ✅ Soft Delete Sidebar
+SidebarServices.softDeleteSidebar = async (role, label, subItemLabel) => {
+  try {
+    if (role && !label && !subItemLabel) {
+      const sidebar = await Sidebar.findOne({ role });
+      const newStatus = !sidebar.deleted; 
+
+      return await Sidebar.findOneAndUpdate(
+        { role },
+        { $set: { deleted: newStatus } },
+        { new: true }
+      );
+    }
+
+    if (role && label && !subItemLabel) {
+      const sidebar = await Sidebar.findOne({ role, "sidebar.label": label });
+      const itemIndex = sidebar.sidebar.findIndex(item => item.label === label);
+      if (itemIndex === -1) throw new Error("Sidebar item not found");
+
+      const newStatus = !sidebar.sidebar[itemIndex].deleted;
+
+      return await Sidebar.findOneAndUpdate(
+        { role, "sidebar.label": label },
+        { $set: { "sidebar.$.deleted": newStatus } },
+        { new: true }
+      );
+    }
+
+    if (role && label && subItemLabel) {
+      return await Sidebar.findOneAndUpdate(
+        { role, "sidebar.label": label },
+        { $set: { "sidebar.$.subItem.$[subItem].deleted": { $not: "$sidebar.$.subItem.$[subItem].deleted" } } },
+        {
+          arrayFilters: [{ "subItem.sublabel": subItemLabel }],
+          new: true
+        }
+      );
+    }
+
+    throw new Error("Invalid deletion parameters.");
+  } catch (error) {
+    console.error("Error toggling soft delete:", error);
+    throw new Error(error.message || "Failed to toggle soft delete status");
+  }
+};
+
+
 
 module.exports = SidebarServices;

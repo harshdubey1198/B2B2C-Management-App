@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import { getAllSidebars, createSidebar, updateSidebar } from "../../apiServices/service";
+import { getAllSidebars, createSidebar, updateSidebar, softDeleteSidebar } from "../../apiServices/service";
 import SidebarTable from "./SidebarTable";
 import SidebarModal from "../../Modal/Sidebar/SidebarModal";
 import SidebarCreateModal from "../../Modal/Sidebar/SidebarCreateModal";
@@ -24,6 +24,61 @@ function Sidebars() {
       console.error("Error fetching sidebar:", error);
     }
   };
+
+  const handleDeleteRole = async (role) => {
+    try {
+      const updatedSidebar = await softDeleteSidebar(role);
+      setSidebars(sidebars.map(item =>
+        item.role === role ? { ...item, deleted: updatedSidebar.deleted } : item
+      ));
+    } catch (error) {
+      console.error("Failed to toggle delete status for role:", error);
+    }
+  };
+  
+  const handleDeleteSidebarLabel = async (role, label) => {
+    try {
+      const updatedSidebar = await softDeleteSidebar(role, label);
+      setSidebars(sidebars.map(roleData =>
+        roleData.role === role
+          ? {
+              ...roleData,
+              sidebar: roleData.sidebar.map(item =>
+                item.label === label ? { ...item, deleted: updatedSidebar.sidebar.find(i => i.label === label)?.deleted } : item
+              ),
+            }
+          : roleData
+      ));
+    } catch (error) {
+      console.error("Failed to toggle delete status for sidebar label:", error);
+    }
+  };
+  
+  const handleDeleteSubItemLabel = async (role, label, subItemLabel) => {
+    try {
+      const updatedSidebar = await softDeleteSidebar(role, label, subItemLabel);
+      setSidebars(sidebars.map(roleData =>
+        roleData.role === role
+          ? {
+              ...roleData,
+              sidebar: roleData.sidebar.map(item =>
+                item.label === label
+                  ? {
+                      ...item,
+                      subItem: item.subItem.map(sub =>
+                        sub.sublabel === subItemLabel ? { ...sub, deleted: updatedSidebar.sidebar.find(i => i.label === label)?.subItem.find(s => s.sublabel === subItemLabel)?.deleted } : sub
+                      ),
+                    }
+                  : item
+              ),
+            }
+          : roleData
+      ));
+    } catch (error) {
+      console.error("Failed to toggle delete status for subitem:", error);
+    }
+  };
+  
 
   const handleEdit = (role, sidebarItem, subItem = null) => {
     setSelectedRole(role);
@@ -93,12 +148,17 @@ function Sidebars() {
       <div className="page-content">
         <Breadcrumbs title="Sidebar" breadcrumbItem="Sidebar" />
         
-        <div className="d-flex justify-content-between mb-3">
-          <h4>Manage Sidebars</h4>
+        <div className="d-flex justify-content-between mb-2">
           <Button color="primary" onClick={() => setCreateModalOpen(true)}>+ Create Sidebar</Button>
         </div>
 
-        <SidebarTable sidebarData={sidebars} onEdit={handleEdit} />
+        <SidebarTable 
+          sidebarData={sidebars} 
+          onEdit={handleEdit} 
+          onToggleActiveRole={handleDeleteRole} 
+          onToggleActiveSidebarLabel={handleDeleteSidebarLabel} 
+          onToggleActiveSubItemLabel={handleDeleteSubItemLabel} 
+        />
 
         <SidebarModal
           isOpen={modalOpen}

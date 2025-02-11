@@ -1,4 +1,3 @@
-// part three render and functioning without css
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { Link, useLocation } from "react-router-dom";
@@ -16,44 +15,47 @@ const Sidebar = (props) => {
   const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role;
   const [sidebarItems, setSidebarItems] = useState([]);
   const [openMenus, setOpenMenus] = useState({});
-
-  // Fetch sidebar data
   const fetchSidebar = async () => {
     try {
       const response = await getSidebarByRole(role);
       if (response?.response?.sidebar) {
-        setSidebarItems(response.response.sidebar);
+        const filteredSidebar = response.response.sidebar
+          .filter(item => !item.deleted)          .map(item => ({
+            ...item,
+            subItem: item.subItem
+              ? item.subItem.filter(sub => !sub.deleted)
+              : [],
+          }));
+  
+        setSidebarItems(filteredSidebar);
       }
     } catch (error) {
       console.error("Error fetching sidebar:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchSidebar();
   }, []);
 
-  // Initialize MetisMenu
   useEffect(() => {
     if (metisMenuRef.current) {
       new MetisMenu(metisMenuRef.current);
     }
   }, []);
 
-  // Handle menu toggle
   const toggleMenu = (index) => {
     setOpenMenus((prevState) => ({
       ...prevState,
-      [index]: !prevState[index], // Toggle menu state
+      [index]: !prevState[index], 
     }));
   };
 
-  // Auto-expand the active menu
   useEffect(() => {
     const activeMenus = {};
     sidebarItems.forEach((item, index) => {
       if (item.subItem?.some((sub) => sub.link === location.pathname)) {
-        activeMenus[index] = true; // Keep menu open if child is active
+        activeMenus[index] = true; 
       }
     });
     setOpenMenus(activeMenus);
