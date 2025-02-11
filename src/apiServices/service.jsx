@@ -776,7 +776,7 @@ export const softDeleteSidebar = async (role, label = null, subItemLabel = null)
         if (label) data.label = label;
         if (subItemLabel) data.subItemLabel = subItemLabel;
 
-        const response = await axiosInstance.put(`/sidebar/soft-delete`, data);
+        const response = await axiosInstance.put(`/sidebar/isActive`, data);
 
         if (response.data.updatedSidebar) {
             return response.data.updatedSidebar; // Return updated sidebar

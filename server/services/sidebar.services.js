@@ -115,7 +115,9 @@ SidebarServices.softDeleteSidebar = async (role, label, subItemLabel) => {
   try {
     if (role && !label && !subItemLabel) {
       const sidebar = await Sidebar.findOne({ role });
-      const newStatus = !sidebar.deleted; 
+      if (!sidebar) throw new Error("Role not found");
+
+      const newStatus = !sidebar.deleted;
 
       return await Sidebar.findOneAndUpdate(
         { role },
@@ -126,6 +128,8 @@ SidebarServices.softDeleteSidebar = async (role, label, subItemLabel) => {
 
     if (role && label && !subItemLabel) {
       const sidebar = await Sidebar.findOne({ role, "sidebar.label": label });
+      if (!sidebar) throw new Error("Sidebar not found");
+
       const itemIndex = sidebar.sidebar.findIndex(item => item.label === label);
       if (itemIndex === -1) throw new Error("Sidebar item not found");
 
@@ -139,12 +143,23 @@ SidebarServices.softDeleteSidebar = async (role, label, subItemLabel) => {
     }
 
     if (role && label && subItemLabel) {
+      const sidebar = await Sidebar.findOne({ role, "sidebar.label": label });
+      if (!sidebar) throw new Error("Sidebar not found");
+
+      const itemIndex = sidebar.sidebar.findIndex(item => item.label === label);
+      if (itemIndex === -1) throw new Error("Sidebar item not found");
+
+      const subItemIndex = sidebar.sidebar[itemIndex].subItem.findIndex(sub => sub.sublabel === subItemLabel);
+      if (subItemIndex === -1) throw new Error("SubItem not found");
+
+      const newStatus = !sidebar.sidebar[itemIndex].subItem[subItemIndex].deleted;
+
       return await Sidebar.findOneAndUpdate(
-        { role, "sidebar.label": label },
-        { $set: { "sidebar.$.subItem.$[subItem].deleted": { $not: "$sidebar.$.subItem.$[subItem].deleted" } } },
+        { role, "sidebar.label": label, "sidebar.subItem.sublabel": subItemLabel },
+        { $set: { "sidebar.$.subItem.$[subItem].deleted": newStatus } },
         {
           arrayFilters: [{ "subItem.sublabel": subItemLabel }],
-          new: true
+          new: true,
         }
       );
     }
@@ -155,6 +170,7 @@ SidebarServices.softDeleteSidebar = async (role, label, subItemLabel) => {
     throw new Error(error.message || "Failed to toggle soft delete status");
   }
 };
+
 
 
 

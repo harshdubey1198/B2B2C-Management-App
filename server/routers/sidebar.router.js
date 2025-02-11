@@ -13,7 +13,7 @@ router.put("/update/:role",   sidebarController.updateSidebar);
 
 router.delete("/delete/:role",  sidebarController.deleteSidebar);
 
-router.put("/soft-delete", sidebarController.softDeleteSidebar);
+router.put("/isActive", sidebarController.softDeleteSidebar);
 
 
 module.exports = router;
