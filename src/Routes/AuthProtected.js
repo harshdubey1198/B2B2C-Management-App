@@ -7,7 +7,7 @@ const AuthProtected = (props) => {
   const { userProfile, loading } = useProfile();
   const location = useLocation();
   const [allowedRoutes, setAllowedRoutes] = useState([]);
-  const [routesLoading, setRoutesLoading] = useState(true);
+  // const [routesLoading, setRoutesLoading] = useState(true);
 
   // Check if authUser is present in localStorage
   const authUser = JSON.parse(localStorage.getItem("authUser"));
@@ -53,18 +53,15 @@ const AuthProtected = (props) => {
         } catch (error) {
           console.error("Error fetching allowed routes:", error);
         } finally {
-          setRoutesLoading(false); // Ensure UI does not redirect until data is ready
+          // setRoutesLoading(false); // Ensure UI does not redirect until data is ready
         }
       } else {
-        setRoutesLoading(false);
+        // setRoutesLoading(false);
       }
     };
     fetchAllowedRoutes();
   }, [userProfile]);
 
-  if (loading || routesLoading) {
-    return <div>Loading...</div>; // Show loading indicator until data is fetched
-  }
 
   if (isLocked) {
     return <Navigate to="/auth-lock-screen" />;

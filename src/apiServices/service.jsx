@@ -779,7 +779,7 @@ export const softDeleteSidebar = async (role, label = null, subItemLabel = null)
         const response = await axiosInstance.put(`/sidebar/isActive`, data);
 
         if (response.data.updatedSidebar) {
-            return response.data.updatedSidebar; // Return updated sidebar
+            return response.data.updatedSidebar; 
         } else {
             throw new Error("Failed to toggle soft delete status");
         }

@@ -15,25 +15,26 @@ const Sidebar = (props) => {
   const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role;
   const [sidebarItems, setSidebarItems] = useState([]);
   const [openMenus, setOpenMenus] = useState({});
-
   const fetchSidebar = async () => {
     try {
       const response = await getSidebarByRole(role);
       if (response?.response?.sidebar) {
         const filteredSidebar = response.response.sidebar
-          .filter(item => !item.deleted) 
-          .map(item => ({
+          .filter(item => !item.deleted , item => !item.deleted==true)          .map(item => ({
             ...item,
-            subItem: item.subItem ? item.subItem.filter(sub => !sub.deleted) : [],
+            subItem: item.subItem
+              ? item.subItem.filter(sub => !sub.deleted , sub => !sub.deleted==true)
+              : [],
           }));
-
+  
         setSidebarItems(filteredSidebar);
+        console.log("Sidebar Items:", filteredSidebar);
       }
     } catch (error) {
       console.error("Error fetching sidebar:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchSidebar();
   }, []);
@@ -42,12 +43,12 @@ const Sidebar = (props) => {
     if (metisMenuRef.current) {
       new MetisMenu(metisMenuRef.current);
     }
-  }, [sidebarItems]);
+  }, []);
 
   const toggleMenu = (index) => {
     setOpenMenus((prevState) => ({
       ...prevState,
-      [index]: !prevState[index],
+      [index]: !prevState[index], 
     }));
   };
 
@@ -55,7 +56,7 @@ const Sidebar = (props) => {
     const activeMenus = {};
     sidebarItems.forEach((item, index) => {
       if (item.subItem?.some((sub) => sub.link === location.pathname)) {
-        activeMenus[index] = true;
+        activeMenus[index] = true; // Keep menu open if child is active
       }
     });
     setOpenMenus(activeMenus);
@@ -68,43 +69,45 @@ const Sidebar = (props) => {
           <div id="sidebar-menu">
             <ul className="metismenu list-unstyled" ref={metisMenuRef}>
               {sidebarItems.map((item, index) => (
-                <React.Fragment key={item._id}>
+                <React.Fragment key={index}>
+                  {item.isMainMenu ? (
+                    <li className="menu-title">{props.t(item.label)}</li>
+                  ) : (
                   <li className={openMenus[index] ? "mm-active mm-show" : ""}>
                     {item.subItem.length > 0 ? (
-                      <a
-                        href="#"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          toggleMenu(index);
-                        }}
-                        className="has-arrow"
-                        style={{
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "start",
-                        }}
-                      >
-                        <i className={item.icon} style={{ marginRight: "10px" }}></i>
-                        <span>{props.t(item.label)}</span>
-                      </a>
-                    ) : (
-                      <Link to={item.url}>
-                        <i className={item.icon} style={{ marginRight: "10px" }}></i>
-                        <span>{props.t(item.label)}</span>
-                      </Link>
-                    )}
+                       <a
+                       href="#"
+                       onClick={(e) => {
+                         e.preventDefault(); 
+                         toggleMenu(index);
+                       }}
+                       className={item.subItem.length > 0 ? "has-arrow" : ""}
+                       style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "start" }}
+                     >
+                     
+                          <i className={item.icon} style={{ marginRight: "10px" }}></i>
+                          <span >{props.t(item.label)}</span>
+                        </a>
+                      ) : (
+                        <Link to={item.url}>
+                          <i className={item.icon} style={{ marginRight: "10px" }}></i>
+                          <span>{props.t(item.label)}</span>
+                        </Link>
+                      )}
 
-                    {item.subItem.length > 0 && (
-                      <ul className="sub-menu" style={{ display: openMenus[index] ? "block" : "none" }}>
-                        {item.subItem.map((subItem) => (
-                          <li key={subItem._id}>
-                            <Link to={subItem.link}>{props.t(subItem.sublabel)}</Link>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </li>
+                      {item.subItem.length > 0 && (
+                        <ul className="sub-menu" style={{ display: openMenus[index] ? "block" : "none" }}>
+                          {item.subItem.map((subItem, subIndex) => (
+                            <li key={subIndex}>
+                              <Link to={subItem.link}>
+                                {props.t(subItem.sublabel)}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </li>
+                  )}
                 </React.Fragment>
               ))}
             </ul>

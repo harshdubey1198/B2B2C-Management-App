@@ -3,6 +3,9 @@
       "role": "super_admin",
       "sidebar": [
         {
+          "label": "Menu"
+        },
+        {
           "label": "Dashboard",
           "icon": "mdi mdi-home-variant-outline",
           "url": "/dashboard"
