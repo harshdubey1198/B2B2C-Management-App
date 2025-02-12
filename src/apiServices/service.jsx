@@ -630,7 +630,7 @@ export const updateProductionOrderQuantity = async (id, data) => {
 export const updateProductionOrderStatus = async (id, data) => {
     try {
         const response = await axiosInstance.put(`/productionorder/update-productionorderstatus/${id}`, data);
-        return response.data;
+        return response;
     } catch (error) {
         return error;
     }
