@@ -198,8 +198,10 @@ const InventoryItemForm = () => {
     setFormValues((prevState) => ({
       ...prevState,
       categoryId: value,
+      subcategoryId:"",
+      ProductHsn: prevState.ProductHsn ? prevState.ProductHsn : "",
     }));
-
+    setSubcategories([]); 
     const selectedCategory = categories.find((category) => category._id === value);
     if (selectedCategory) {
       const hsnNumber = hsnData.find((hsn) =>
@@ -208,7 +210,7 @@ const InventoryItemForm = () => {
       if (hsnNumber) {
         setFormValues((prevState) => ({
           ...prevState,
-          ProductHsn: hsnNumber.hsn,
+          ProductHsn: hsnNumber ? hsnNumber.hsn : "",
         }));
       } else {
         setFormValues((prevState) => ({
@@ -229,10 +231,12 @@ const InventoryItemForm = () => {
         const subcategoryData = response.data;
         if (subcategoryData.length === 0) {
           toast.info("This category doesn't have any subcategories.");
+        }else{
+          setSubcategories(subcategoryData);
         }
-        setSubcategories(subcategoryData);
+        
       } catch (error) {
-        toast.error("Failed to fetch subcategories.");
+        // toast.error("Failed to fetch subcategories.");
         console.error(error.message);
       }
     } else {
@@ -305,20 +309,24 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="subcategoryId">Subcategory</Label>
-                          <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange} >
-                            <option value="">Select Subcategory</option>
-                            {subcategories.length > 0 ? subcategories.map((subcategory) => (
-                              <option key={subcategory._id} value={subcategory._id}>  
-                                {subcategory.categoryName}
-                              </option>
-                            )) : <option value="">No Subcategories Available</option>}
+                        { 
+                            subcategories.length > 0 && (
+                              <Col md={6}>
+                                <FormGroup>
+                                  <Label htmlFor="subcategoryId">Subcategory</Label>
+                                  <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange}>
+                                    <option value="">Select Subcategory</option>
+                                    {subcategories.map((subcategory) => (
+                                      <option key={subcategory._id} value={subcategory._id}>
+                                        {subcategory.categoryName}
+                                      </option>
+                                    ))}
+                                  </Input>
+                                </FormGroup>
+                              </Col>
+                            )
+                        }
 
-                          </Input>
-                        </FormGroup>
-                      </Col>
                     </Row>
                     <Row>
                       <Col md={6}>
@@ -451,7 +459,8 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductHsn">HSN</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
+                          {/* <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} /> */}
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} onChange={(e) =>   setFormValues({ ...formValues, ProductHsn: e.target.value }) } />
                         </FormGroup>
                       </Col>
                       {formValues.taxId && (

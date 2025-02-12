@@ -91,11 +91,13 @@ const ViewCustomer = () => {
         setCurrentPage(1);
     };
 
-    const filteredData = customersData.filter((customer) =>
-        (filter.customerName === '' || (customer.firstName + ' ' + customer.lastName).toLowerCase().includes(filter.customerName.toLowerCase())) &&
-        (filter.country === '' || customer.address.country.toLowerCase().includes(filter.country.toLowerCase()))
-    );
-
+    const filteredData = customersData.length > 0 && (filter.customerName || filter.country)
+    ? customersData.filter((customer) =>
+        (!filter.customerName || (customer.firstName + ' ' + customer.lastName).toLowerCase().includes(filter.customerName.toLowerCase())) &&
+        (!filter.country || customer.address.country.toLowerCase().includes(filter.country.toLowerCase()))
+      )
+    : customersData; 
+  
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
