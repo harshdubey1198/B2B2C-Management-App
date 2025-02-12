@@ -13,7 +13,7 @@ function Sidebars() {
   const [selectedRole, setSelectedRole] = useState(null);
   const [selectedSidebarItem, setSelectedSidebarItem] = useState(null);
   const [selectedSubItem, setSelectedSubItem] = useState(null);
-
+  // console.log("Sidebar Role :", selectedRole);
   const fetchAllSidebars = async () => {
     try {
       const response = await getAllSidebars();

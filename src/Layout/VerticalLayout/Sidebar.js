@@ -11,7 +11,7 @@ const Sidebar = (props) => {
   const ref = useRef();
   const metisMenuRef = useRef();
   const location = useLocation();
-
+  const [updateTrigger, setUpdateTrigger] = useState(0); 
   const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role;
   const [sidebarItems, setSidebarItems] = useState([]);
   const [openMenus, setOpenMenus] = useState({});
@@ -38,6 +38,28 @@ const Sidebar = (props) => {
   useEffect(() => {
     fetchSidebar();
   }, []);
+
+  useEffect(() => {
+    fetchSidebar();
+  }, [updateTrigger]); 
+
+  useEffect(() => {
+    const handleSidebarUpdate = (event) => {
+      const { role: updatedRole } = event.detail;
+      if (role === updatedRole) {
+        console.log(`Sidebar update triggered for role: ${updatedRole}`);
+        setUpdateTrigger((prev) => prev + 1); 
+        setTimeout(() => {
+          setUpdateTrigger((prev) => prev + 1);
+        }, 500);
+      }
+    };
+
+    window.addEventListener("sidebarUpdatedForRole", handleSidebarUpdate);
+    return () => {
+      window.removeEventListener("sidebarUpdatedForRole", handleSidebarUpdate);
+    };
+  }, [role]);
 
   useEffect(() => {
     if (metisMenuRef.current) {

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Button } from "reactstrap";
+import { triggerSidebarUpdateForRole } from "../../utils/sidebarUtils";
 
 const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLabel, onToggleActiveSubItemLabel, onEdit }) => {
   const [openRoleIndex, setOpenRoleIndex] = useState(null);
@@ -31,14 +32,14 @@ const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLa
               <tr onClick={() => toggleRole(roleIndex)}>
                 <td className="cursor-pointer bg-primary text-white d-flex justify-content-between align-items-center">
                   <div className="d-flex align-items-center">
-                    <i
+                    {/* <i
                       className={`mdi ${roleData.deleted ? "mdi-toggle-switch-off text-secondary" : "mdi-toggle-switch text-success"}`}
                       style={{ fontSize: "22px", cursor: "pointer", marginRight: "10px" }}
                       onClick={(e) => {
                         e.stopPropagation();
                         onToggleActiveRole(roleData.role, !roleData.deleted);
                       }}
-                    ></i>
+                    ></i> */}
                     <strong>{roleData.role.replace(/_/g, " ").replace(/\b\w/, (char) => char.toUpperCase())}</strong>
                   </div>
                   <strong>
@@ -62,6 +63,7 @@ const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLa
                             onClick={(e) => {
                               e.stopPropagation();
                               onToggleActiveSidebarLabel(roleData.role, item.label, !item.deleted);
+                              triggerSidebarUpdateForRole(roleData.role);
                             }}
                           ></i>
                           {"#" + "  " + item.label}
@@ -96,6 +98,7 @@ const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLa
                               onClick={(e) => {
                                 e.stopPropagation();
                                 onToggleActiveSubItemLabel(roleData.role, item.label, sub.sublabel, !sub.deleted);
+                                triggerSidebarUpdateForRole(roleData.role);
                               }}
                             ></i>
                             {"  " + "*" + "  " + sub.sublabel}
