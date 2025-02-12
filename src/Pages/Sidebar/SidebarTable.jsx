@@ -66,7 +66,7 @@ const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLa
                               triggerSidebarUpdateForRole(roleData.role);
                             }}
                           ></i>
-                          {"#" + "  " + item.label}
+                          {"#" + "  " + (item.itemOrder || "") + " " + item.label}
                         </div>
                         <div>
                           <i style={{ fontSize: "20px" }} className={item.icon || "mdi mdi-menu"}></i>
@@ -101,7 +101,7 @@ const SidebarTable = ({ sidebarData, onToggleActiveRole, onToggleActiveSidebarLa
                                 triggerSidebarUpdateForRole(roleData.role);
                               }}
                             ></i>
-                            {"  " + "*" + "  " + sub.sublabel}
+                            {"  " + "*" + "  " + (sub.itemOrder || "") + " " + sub.sublabel}
                           </td>
                           <td className="text-center">
                             <Button color="primary" size="sm" onClick={() => onEdit(roleData.role, item, sub)}>
