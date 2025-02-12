@@ -14,6 +14,7 @@ function StatusUpdateModal({ modalOpen, setModalOpen, selectedOrder, handleUpdat
     if (newStatus && selectedOrder?._id) {
       handleUpdateStatus(selectedOrder._id, { status: newStatus, notes: newNote });
       setModalOpen(false);
+      setNewNote(''); 
     }
   };
 

@@ -30,7 +30,7 @@ function ProductionOrders() {
   const [trigger, setTrigger] = useState(0);
   const [selectedFirmId, setSelectedFirmId] = useState(null);
   const effectiveFirmId = role === "client_admin" ? selectedFirmId : firmId;
-  console.log(effectiveFirmId);
+  // console.log(effectiveFirmId);
   const fetchProductionOrders = async () => {
     if (!effectiveFirmId) return; 
 
@@ -38,7 +38,7 @@ function ProductionOrders() {
         const response = await getProductionOrdersmain(effectiveFirmId);
         setProductionOrders(response.data || []);
         setFilteredOrders(response.data || []);
-        console.table(response.data);
+        // console.table(response.data);
     } catch (error) {
         console.error('Error fetching production orders:', error.message);
     }
@@ -129,8 +129,12 @@ const handleCreateModal = () => {
 
   const handleUpdateStatus = async (id, data) => {
     try {
-      await updateProductionOrderStatus(id, data);
+      const response = await updateProductionOrderStatus(id, data);
       fetchProductionOrders(); 
+      if(response.status===200){
+        toast.success(response.data.message);
+        navigate('/inventory-table')
+      }
     } catch (error) {
       console.error('Error updating status:', error.message);
     }
@@ -291,16 +295,16 @@ const handleCreateModal = () => {
                         )}
                       </td>
                         {role === 'firm_admin' ? (
-                      <td>
-                            order.status !== 'completed' ? (
-                              <i
-                                className="bx bx-edit bx-sm"
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => handleOpenModal(order)}
-                              ></i>
-                            ) : null
+                          <td>
+                                {order.status !== 'completed' && order.status !== 'cancelled' ? (
+                                  <i
+                                    className="bx bx-edit bx-sm"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => handleOpenModal(order)}
+                                  ></i>
+                                ) : null}
 
-                      </td>
+                          </td>
                         ) : null}
                     </tr>
                   );
