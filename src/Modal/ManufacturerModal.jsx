@@ -78,7 +78,7 @@ const ManufacturerModal = ({ isOpen, toggle,manufacturerAdd, manufacturerToEdit,
       if (method === "put"){
         onManufacturerUpdated(response.data);
         }
-        setTriggerManufacurer((prev) => prev + 1)
+        else{setTriggerManufacurer((prev) => prev + 1)}
       toast.success(response.message);
       toggle();
       formReset();
