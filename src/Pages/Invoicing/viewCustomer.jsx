@@ -35,7 +35,7 @@ const ViewCustomer = () => {
         const fetchCustomers = async () => {
             try {
                 const response = await getCustomers();
-                setCustomersData(response.data);
+                setCustomersData(response.data || []);
             }
             catch (error) {
                 console.error(error);
