@@ -80,26 +80,33 @@ customerServices.deleteCustomer = async (customerId) => {
 
 // CUSTOMER UPDATE
 customerServices.updateCustomer = async (customerId, customerData) => {
-    const existingCustomer = await Customer.findOne({_id: customerId, deleted_at:null})
-    if (!existingCustomer) {
-        throw new Error('Customer not found');
-    }
+  try {
+      const existingCustomer = await Customer.findOne({ _id: customerId, deleted_at: null });
 
-    if (customerData.address) {
-      customerData.address = { 
-          ...existingCustomer.address,  
-          ...customerData.address      
-      };
-    }
-    const updatedCustomer = await Customer.findByIdAndUpdate(
-      customerId,
-      { 
-          $set: customerData  
-      },
-      { new: true }
-    );
-    return updatedCustomer
-}
+      if (!existingCustomer) {
+          throw new Error('Customer not found');
+      }
+
+      if (customerData.address) {
+          customerData.address = { 
+              ...existingCustomer.address.toObject(),  
+              ...customerData.address                 
+          };
+      }
+
+      const updatedCustomer = await Customer.findByIdAndUpdate(
+          customerId,
+          { $set: customerData }, 
+          { new: true, runValidators: true }  
+      );
+
+      return updatedCustomer;
+  } catch (error) {
+      console.error("Error updating customer:", error);
+      throw new Error(error.message || 'Failed to update customer');
+  }
+};
+
 
 
 module.exports = customerServices;

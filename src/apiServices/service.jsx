@@ -667,7 +667,7 @@ export const getCustomers = async () => {
 // update customer
 export const updateCustomer = async (customerId, customerData) => {
     try {
-        const response = await axiosInstance.put(`/customer/update-customer/${customerId}`, { customerId, customerData });
+        const response = await axiosInstance.put(`/customer/update-customer/${customerId}`,customerData );
         return response.data;
     } catch (error) {
         return error;
