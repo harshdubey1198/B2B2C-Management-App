@@ -54,6 +54,7 @@ const sliceDescription = (description) => {
 const ViewFormat = forwardRef(
   ({ invoiceData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};
+    // console.log("selectInvoice", invoiceData);
     // console.log("selectInvoice", selectInvoice.firmId.companyTitle);
     const items = invoiceData?.items || [];
     // console.log("items", items);
@@ -85,7 +86,7 @@ const ViewFormat = forwardRef(
     //   : "";
     // const isSameState = companyState === customerState?.toLowerCase();
 
-    const totalAmount = invoiceData?.totalAmount;
+    const totalAmount = invoiceData?.totalAmount || 0;
     // const taxAmount = (totalAmount * taxRate) / 100;
     // const amountDue = totalAmount + taxAmount;
     // const netReceived = amountDue;
@@ -122,7 +123,7 @@ const ViewFormat = forwardRef(
             {companyAddress.map((address, index) => (
               <div key={index}>
                 <p className="my-1">
-                  {address.h_no}, {address.nearby}, {address.district}
+                  {address.h_no || ""}, {address.nearby}, {address.district}
                 </p>
                 <p className="my-1">
                   {address.city}, {address.state}, {address.country},{" "}
@@ -157,7 +158,7 @@ const ViewFormat = forwardRef(
             <h4>Customer Details:</h4>
             <p className="my-1">{customerName}</p>
             <p className="my-1">
-              {invoiceData?.customerAddress.h_no},{" "}
+              {invoiceData?.customerAddress.h_no || ""},{" "}
               {invoiceData?.customerAddress.nearby},{" "}
               {invoiceData?.customerAddress.district}
             </p>

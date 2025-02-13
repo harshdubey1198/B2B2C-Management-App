@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,Row,Col, CardBody, Input } from 'reactstrap';
+import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,Row,Col, CardBody, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 // import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import { ScaleLoader } from "react-spinners";
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false); // 🟢 Modal state
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [viewInvoice, setViewInvoice] = useState(false);
@@ -93,6 +94,7 @@ const ViewInvoices = () => {
         try {
             const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
             setViewInvoice(response.data); 
+            setModalOpen(true);
         } catch (error) {
             console.error("Error fetching invoice for viewing:", error);
         }
@@ -309,6 +311,19 @@ const ViewInvoices = () => {
                     </div>
                 </div>
             )}
+              <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="lg">
+                <ModalHeader toggle={() => setModalOpen(!modalOpen)}>Invoice Preview</ModalHeader>
+                <ModalBody className='p-0'>
+                    {fetchInvoice ? (
+                        <ViewFormat invoiceData={viewInvoice} />
+                    ) : (
+                        <div className="text-center p-3">
+                            <ScaleLoader color="#0d4251" />
+                        </div>
+                    )}
+                </ModalBody>
+                
+            </Modal>
         </React.Fragment>
     );
     
