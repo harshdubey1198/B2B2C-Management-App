@@ -217,7 +217,7 @@ const ViewInvoices = () => {
                                                     <th>Client</th>
                                                     <th>Total</th>
                                                     <th>Due</th>
-                                                    <th>Taxes</th>
+                                                    {/* <th>Taxes</th> */}
                                                     <th>Date</th>
                                                     <th>Country</th>
                                                     <th>Status</th>
@@ -235,7 +235,7 @@ const ViewInvoices = () => {
                                                         <td style={{ color: invoice.amountDue > 0 ? "red" : "green" }}>
                                                             {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
                                                         </td>
-                                                        <td style={{ minWidth: "110px" }}>
+                                                        {/* <td style={{ minWidth: "110px" }}>
                                                             <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
                                                                 {invoice.items.map((item, itemIndex) =>
                                                                     item.itemId.tax.selectedTaxTypes.map((tax, taxIndex) => (
@@ -245,7 +245,7 @@ const ViewInvoices = () => {
                                                                     ))
                                                                 )}
                                                             </ul>
-                                                        </td>
+                                                        </td> */}
                                                         <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
                                                         <td>{invoice.customerAddress.country}</td>
                                                         <td>{invoice.approvalStatus?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>
@@ -260,7 +260,9 @@ const ViewInvoices = () => {
                                                             ></i>
                                                         </td>
                                                         {authuser.role === "firm_admin" && (
-                                                            <td>
+                                                            <td className='d-flex justify-content-center'
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            >
                                                                 {invoice.approvalStatus === "approved" ? (
                                                                     <i className="bx bx-x" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
                                                                 ) : (
