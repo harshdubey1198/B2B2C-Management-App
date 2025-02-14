@@ -10,15 +10,16 @@ const {
   validateRawMaterials,
   validateAndDeductRawMaterials,
   adjustInventoryStock,
-  calculateRawMaterialsCost
+  calculateRawMaterialsCost,
 } = require("../utils/productionorderutility");
 
 const ProductionOrderServices = {};
 
 ProductionOrderServices.createProductionOrder = async (body) => {
+  console.log(body, "body");
   const { bomId, quantity, firmId, createdBy } = body;
 
-  if (!bomId || !quantity || !firmId || !createdBy ) {
+  if (!bomId || !quantity || !firmId || !createdBy) {
     throw new Error("Missing required fields.");
   }
 
@@ -32,55 +33,91 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     }
 
     let rawMaterials = calculateRawMaterials(bom, quantity);
-    
-    const itemIds = rawMaterials.map(m => m.itemId);
-    const validItems = await InventoryItem.find({ _id: { $in: itemIds }, deleted_at: null }).session(session);
-    const validItemIds = new Set(validItems.map(item => item._id.toString()));
 
-    const deletedMaterials = rawMaterials.filter(material => !validItemIds.has(material.itemId.toString()));
+    const itemIds = rawMaterials.map((m) => m.itemId);
+    const validItems = await InventoryItem.find({
+      _id: { $in: itemIds },
+      deleted_at: null,
+    }).session(session);
+    const validItemIds = new Set(validItems.map((item) => item._id.toString()));
+
+    const deletedMaterials = rawMaterials.filter(
+      (material) => !validItemIds.has(material.itemId.toString())
+    );
     if (deletedMaterials.length > 0) {
-        const deletedItemNames = deletedMaterials.map(material => `ID: ${material.itemId}`).join(", ");
-        throw new Error(`Cannot proceed: The following raw materials are deleted - ${deletedItemNames}`);
+      const deletedItemNames = deletedMaterials
+        .map((material) => `ID: ${material.itemId}`)
+        .join(", ");
+      throw new Error(
+        `Cannot proceed: The following raw materials are deleted - ${deletedItemNames}`
+      );
     }
 
     let existingProduction = await ProductionOrder.findOne({
       bomId,
       firmId,
-      status: { $in: ["created", "in_progress"] }
+      status: { $in: ["created", "in_progress"] },
     }).session(session);
-
+    console.log(existingProduction, "creating");
     if (existingProduction) {
-        existingProduction.quantity += quantity;
-        rawMaterials.forEach(newMaterial => {
-            const existingMaterial = existingProduction.rawMaterials.find(material => 
-                material.itemId.toString() === newMaterial.itemId.toString()
-            );
-            if (existingMaterial) {
-                existingMaterial.quantity += newMaterial.quantity;
-                existingMaterial.wasteQuantity += newMaterial.wasteQuantity;
-            } else {
-                existingProduction.rawMaterials.push(newMaterial);
-            }
-        });
+      console.log(
+        `Existing Production Order Found. Previous Quantity: ${existingProduction.quantity}, New Quantity: ${quantity}`
+      );
 
-        await existingProduction.save({ session });
-        await validateAndDeductRawMaterials(rawMaterials, session);
-        await session.commitTransaction();
-        session.endSession();
-        return existingProduction;
+      existingProduction.quantity += parseInt(quantity, 10); // ✅ Convert to number to avoid string concatenation
+
+      rawMaterials.forEach((newMaterial) => {
+        const existingMaterial = existingProduction.rawMaterials.find(
+          (material) =>
+            material.itemId.toString() === newMaterial.itemId.toString()
+        );
+
+        if (existingMaterial) {
+          existingMaterial.quantity += newMaterial.quantity;
+          existingMaterial.wasteQuantity += !isNaN(newMaterial.wasteQuantity)
+            ? newMaterial.wasteQuantity
+            : 0;
+        } else {
+          newMaterial.wasteQuantity = !isNaN(newMaterial.wasteQuantity)
+            ? newMaterial.wasteQuantity
+            : 0;
+          existingProduction.rawMaterials.push(newMaterial);
+        }
+      });
+
+      console.log(
+        `Updated Production Order Quantity: ${existingProduction.quantity}`
+      );
+
+      await existingProduction.save({ session });
+      await validateAndDeductRawMaterials(rawMaterials, session);
+      await session.commitTransaction();
+      session.endSession();
+
+      return existingProduction; // ✅ Stop function execution here
     }
 
     const productionOrderNumber = await generateProductionOrderNumber(firmId);
-    const newProductionOrder = await ProductionOrder.create([{
-      productionOrderNumber,
-      bomId,
-      quantity,
-      rawMaterials,
-      firmId,
-      // sellingPrice,
-      createdBy,
-      status: "created"
-    }], { session });
+
+    console.log("Raw materials before saving:", rawMaterials);
+
+    const newProductionOrder = await ProductionOrder.create(
+      [
+        {
+          productionOrderNumber,
+          bomId,
+          quantity,
+          rawMaterials,
+          firmId,
+          // sellingPrice,
+          createdBy,
+          status: "created",
+        },
+      ],
+      { session }
+    );
+
+    console.log("Production order created successfully");
 
     await validateAndDeductRawMaterials(rawMaterials, session);
     await session.commitTransaction();
@@ -117,14 +154,14 @@ ProductionOrderServices.createProductionOrder = async (body) => {
 //       const materialVariants = material.variants.map((variant) => ({
 //         variantId: variant.variantId,
 //         optionLabel: variant.optionLabel,
-//         wasteQuantity: variant.wastageQuantity, 
+//         wasteQuantity: variant.wastageQuantity,
 //       }));
 
 //       totalWastage.push({
 //         itemId: material.itemId,
-//         wasteQuantity: material.wastageQuantity, 
+//         wasteQuantity: material.wastageQuantity,
 //         reason: "Production wastage",
-//         variants: materialVariants, 
+//         variants: materialVariants,
 //       });
 //     }
 
@@ -154,7 +191,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
 //       productionOrderId: newProductionOrder[0]._id,
 //       firmId,
 //       createdBy,
-//       rawMaterials: totalWastage, 
+//       rawMaterials: totalWastage,
 //     };
 
 //     await WasteManagement.create([wasteManagementData], { session });
@@ -311,162 +348,172 @@ ProductionOrderServices.getProductionOrderById = async (id) => {
 
 // UPDATE STATUS
 ProductionOrderServices.updateProductionOrder = async (id, body) => {
-    const { quantity: newQuantity, ...otherFields } = body;
-    const session = await mongoose.startSession();
-    session.startTransaction();
-  
-    try {
-      const existingOrder = await ProductionOrder.findById(id)
-        .populate("bomId")
-        .session(session);
-      if (!existingOrder) throw new Error("Production Order not found");
-  
-      if (existingOrder.status !== "created") {
-        throw new Error(
-          'Quantity can only be updated when the status is "created".'
-        );
-      }
-  
-      const { bomId, quantity: oldQuantity } = existingOrder;
-      const bom = await BOM.findById(bomId).session(session);
-      if (!bom) throw new Error("BOM not found for the production order");
-  
-      // Recalculate raw materials
-      const oldRawMaterials = calculateRawMaterials(bom, oldQuantity);
-      const newRawMaterials = calculateRawMaterials(bom, newQuantity);
-  
-      // Adjust inventory stock
-      await adjustInventoryStock(oldRawMaterials, newRawMaterials, session);
-  
-      // Update production order with new raw materials and quantity
-      otherFields.rawMaterials = newRawMaterials;
-      const updatedOrder = await ProductionOrder.findOneAndUpdate(
-        { _id: id },
-        { ...otherFields, quantity: newQuantity },
-        { new: true, session }
-      )
-        .populate("bomId", "productName")
-        .populate("rawMaterials.itemId", "name");
-  
-      await session.commitTransaction();
-      session.endSession();
-  
-      return updatedOrder;
-    } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
-      throw error;
+  const { quantity: newQuantity, ...otherFields } = body;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const existingOrder = await ProductionOrder.findById(id)
+      .populate("bomId")
+      .session(session);
+    if (!existingOrder) throw new Error("Production Order not found");
+
+    if (existingOrder.status !== "created") {
+      throw new Error(
+        'Quantity can only be updated when the status is "created".'
+      );
     }
+
+    const { bomId, quantity: oldQuantity } = existingOrder;
+    const bom = await BOM.findById(bomId).session(session);
+    if (!bom) throw new Error("BOM not found for the production order");
+
+    // Recalculate raw materials
+    const oldRawMaterials = calculateRawMaterials(bom, oldQuantity);
+    const newRawMaterials = calculateRawMaterials(bom, newQuantity);
+
+    // Adjust inventory stock
+    await adjustInventoryStock(oldRawMaterials, newRawMaterials, session);
+
+    // Update production order with new raw materials and quantity
+    otherFields.rawMaterials = newRawMaterials;
+    const updatedOrder = await ProductionOrder.findOneAndUpdate(
+      { _id: id },
+      { ...otherFields, quantity: newQuantity },
+      { new: true, session }
+    )
+      .populate("bomId", "productName")
+      .populate("rawMaterials.itemId", "name");
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return updatedOrder;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
-    const session = await mongoose.startSession();
-    session.startTransaction(); 
-    try {
-        const { status, notes } = body;
-        const order = await ProductionOrder.findById(id)
-            .populate('rawMaterials.itemId', 'name')
-            .populate('bomId')
-            .session(session);
-        if (!order) {
-            throw new Error('Production Order not found');
-        }
-
-        const allowedTransitions = {
-            created: ['in_progress', 'cancelled', 'completed'],
-            in_progress: ['completed', 'cancelled'],
-            completed: [],
-            cancelled: []
-        };
-
-        if (!allowedTransitions[order.status].includes(status)) {
-            throw new Error(`Invalid status transition from ${order.status} to ${status}`);
-        }
-
-        if (status === 'cancelled') {
-            for (const material of order.rawMaterials) {
-                const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
-                if (!inventoryItem) {
-                    throw new Error(`Raw material with ID ${material.itemId} not found`);
-                }
-
-                if (inventoryItem.variants && inventoryItem.variants.length > 0) {
-                    for (const variant of material.variants) {
-                        const variantIndex = inventoryItem.variants.findIndex(
-                            v => v._id.toString() === variant.variantId
-                        );
-                        if (variantIndex === -1) {
-                            throw new Error(
-                                `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
-                            );
-                        }
-                        inventoryItem.variants[variantIndex].stock += variant.quantity;
-                    }
-                    inventoryItem.quantity = inventoryItem.variants.reduce(
-                        (total, variant) => total + variant.stock,
-                        0
-                    );
-                } else {
-                    inventoryItem.quantity += material.quantity;
-                }
-                await inventoryItem.save({ session });
-            }
-        }
-        // **Step 2: Mark Waste Records as Cancelled**
-        if (status === 'cancelled') {
-          const wasteRecords = await WasteManagement.find({ productionOrderId: id }).session(session);
-          for (const waste of wasteRecords) {
-              waste.status = 'cancelled';
-              await waste.save({ session });
-          }
-        }
-
-        if (status === 'completed') {
-          const bom = order.bomId;
-          if (!bom) {
-              throw new Error('Associated BOM not found.');
-          }
-
-          const rawMaterialNames = order.rawMaterials.map(material => material.itemId?.name).filter(Boolean);
-          const description = `Manufactured product using: ${rawMaterialNames.join(', ')}`;
-
-          const finishedProduct = new InventoryItem({
-              name: bom.productName,
-              description,
-              quantity: order.quantity, 
-              qtyType: bom.qtyType, 
-              type: 'finished_good',
-              manufacturer: bom.manufacturer,
-              brand: bom.brand,
-              costPrice: bom.totalCostPrice,
-              sellingPrice: bom.sellingPrice,
-              categoryId: bom.categoryId,
-              subcategoryId: bom.subcategoryId,
-              ProductHsn: bom.ProductHsn,
-              firmId: order.firmId,
-              createdBy: order.createdBy,
-              vendor: bom.vendor,
-              tax: {
-                taxId: bom.tax?.taxId,
-                selectedTaxTypes: bom.tax?.selectedTaxTypes || []
-              },
-              deleted_at: null,
-          });
-          await finishedProduct.save({ session });
-        }
-
-        order.status = status;
-        order.notes.push(notes)
-        await order.save({ session });
-
-        await session.commitTransaction();
-        session.endSession();
-
-        return order;
-    } catch (error) {
-        await session.abortTransaction();
-        session.endSession();
-        throw error;
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    const { status, notes } = body;
+    const order = await ProductionOrder.findById(id)
+      .populate("rawMaterials.itemId", "name")
+      .populate("bomId")
+      .session(session);
+    if (!order) {
+      throw new Error("Production Order not found");
     }
+
+    const allowedTransitions = {
+      created: ["in_progress", "cancelled", "completed"],
+      in_progress: ["completed", "cancelled"],
+      completed: [],
+      cancelled: [],
+    };
+
+    if (!allowedTransitions[order.status].includes(status)) {
+      throw new Error(
+        `Invalid status transition from ${order.status} to ${status}`
+      );
+    }
+
+    if (status === "cancelled") {
+      for (const material of order.rawMaterials) {
+        const inventoryItem = await InventoryItem.findById(
+          material.itemId
+        ).session(session);
+        if (!inventoryItem) {
+          throw new Error(`Raw material with ID ${material.itemId} not found`);
+        }
+
+        if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+          for (const variant of material.variants) {
+            const variantIndex = inventoryItem.variants.findIndex(
+              (v) => v._id.toString() === variant.variantId
+            );
+            if (variantIndex === -1) {
+              throw new Error(
+                `Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}`
+              );
+            }
+            inventoryItem.variants[variantIndex].stock += variant.quantity;
+          }
+          inventoryItem.quantity = inventoryItem.variants.reduce(
+            (total, variant) => total + variant.stock,
+            0
+          );
+        } else {
+          inventoryItem.quantity += material.quantity;
+        }
+        await inventoryItem.save({ session });
+      }
+    }
+    // **Step 2: Mark Waste Records as Cancelled**
+    if (status === "cancelled") {
+      const wasteRecords = await WasteManagement.find({
+        productionOrderId: id,
+      }).session(session);
+      for (const waste of wasteRecords) {
+        waste.status = "cancelled";
+        await waste.save({ session });
+      }
+    }
+
+    if (status === "completed") {
+      const bom = order.bomId;
+      if (!bom) {
+        throw new Error("Associated BOM not found.");
+      }
+
+      const rawMaterialNames = order.rawMaterials
+        .map((material) => material.itemId?.name)
+        .filter(Boolean);
+      const description = `Manufactured product using: ${rawMaterialNames.join(
+        ", "
+      )}`;
+
+      const finishedProduct = new InventoryItem({
+        name: bom.productName,
+        description,
+        quantity: order.quantity,
+        qtyType: bom.qtyType,
+        type: "finished_good",
+        manufacturer: bom.manufacturer,
+        brand: bom.brand,
+        costPrice: bom.totalCostPrice,
+        sellingPrice: bom.sellingPrice,
+        categoryId: bom.categoryId,
+        subcategoryId: bom.subcategoryId,
+        ProductHsn: bom.ProductHsn,
+        firmId: order.firmId,
+        createdBy: order.createdBy,
+        vendor: bom.vendor,
+        tax: {
+          taxId: bom.tax?.taxId,
+          selectedTaxTypes: bom.tax?.selectedTaxTypes || [],
+        },
+        deleted_at: null,
+      });
+      await finishedProduct.save({ session });
+    }
+
+    order.status = status;
+    order.notes.push(notes);
+    await order.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return order;
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    throw error;
+  }
 };
 
 module.exports = ProductionOrderServices;

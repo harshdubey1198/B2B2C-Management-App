@@ -86,20 +86,34 @@ const generateProductionOrderNumber = async (firmId) => {
 };
 
 const calculateRawMaterials = (bom, productionQuantity) => {
-  return bom.rawMaterials.map((material) => {
-      const wastePercentage = material.wastePercentage ? Number(material.wastePercentage) : 0;
-      const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4));
+  return bom.rawMaterials.map((material, index) => {
+      console.log(`Processing Material ${index}:`, material);
 
-      const variants = material.variants.map((variant) => {
-          const variantWastePercentage = variant.wastePercentage ? Number(variant.wastePercentage) : 0;
+      const wastePercentage = !isNaN(material.wastePercentage) && material.wastePercentage !== undefined
+          ? Number(material.wastePercentage)
+          : 0;
+
+      const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4)) || 0;
+      
+      console.log(`Material Quantity: ${materialQuantity}, Waste Percentage: ${wastePercentage}`);
+
+      const variants = material.variants.map((variant, variantIndex) => {
+          console.log(`  Processing Variant ${variantIndex}:`, variant);
+
+          const variantWastePercentage = !isNaN(variant.wastePercentage) && variant.wastePercentage !== undefined
+              ? Number(variant.wastePercentage)
+              : 0;
+
           const variantWastageQuantity = parseFloat(
               ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
-          );
+          ) || 0;
+
+          console.log(`  Variant Waste Percentage: ${variantWastePercentage}, Variant Wastage Quantity: ${variantWastageQuantity}`);
 
           return {
               variantId: variant.variantId,
               optionLabel: variant.optionLabel,
-              quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
+              quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)) || 0,
               wastePercentage: variantWastePercentage,
               wastageQuantity: variantWastageQuantity,
           };
@@ -107,8 +121,17 @@ const calculateRawMaterials = (bom, productionQuantity) => {
 
       const totalVariantWastage = variants.reduce((sum, variant) => sum + variant.wastageQuantity, 0);
       const materialWastageQuantity = material.variants.length === 0
-          ? parseFloat(((materialQuantity * wastePercentage) / 100).toFixed(4))
-          : totalVariantWastage;
+    ? parseFloat(((materialQuantity * wastePercentage) / 100).toFixed(4))
+    : totalVariantWastage;
+
+// Ensure it's a number
+if (isNaN(materialWastageQuantity)) {
+    console.error(`Invalid wasteQuantity for material ${material.itemId}:`, materialWastageQuantity);
+    throw new Error(`Invalid wasteQuantity detected for material ${material.itemId}`);
+}
+
+
+      console.log(`Final Material Waste Quantity: ${materialWastageQuantity}`);
 
       return {
           itemId: material.itemId,
@@ -119,6 +142,8 @@ const calculateRawMaterials = (bom, productionQuantity) => {
       };
   });
 };
+
+
 // const calculateRawMaterials = (bom, productionQuantity) => {
 //     return bom.rawMaterials.map((material, index) => {
 
