@@ -16,9 +16,9 @@ const {
 const ProductionOrderServices = {};
 
 ProductionOrderServices.createProductionOrder = async (body) => {
-  const { bomId, quantity, firmId, createdBy, sellingPrice } = body;
+  const { bomId, quantity, firmId, createdBy } = body;
 
-  if (!bomId || !quantity || !firmId || !createdBy || !sellingPrice) {
+  if (!bomId || !quantity || !firmId || !createdBy ) {
     throw new Error("Missing required fields.");
   }
 
@@ -77,7 +77,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       quantity,
       rawMaterials,
       firmId,
-      sellingPrice,
+      // sellingPrice,
       createdBy,
       status: "created"
     }], { session });

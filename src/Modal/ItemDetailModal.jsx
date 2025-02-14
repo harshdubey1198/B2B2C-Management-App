@@ -487,7 +487,7 @@ useEffect(() => {
               )}
             </div>
 
-              {role==="client_admin" && role === "firm_admin" && role === "employee" && role ==="super_admin" ? (
+              {role==="client_admin" || role==="firm_admin" || role === "employee" || role ==="super_admin" ? ( 
                 <div className="d-flex justify-content-between mt-2 gap-2">
                 <Button
                     color="primary"
@@ -529,7 +529,7 @@ useEffect(() => {
                   Update Item
                 </Button>
             </div>
-              ) : null
+              ) : (<span>hi</span>)
           }
 
           </div>
