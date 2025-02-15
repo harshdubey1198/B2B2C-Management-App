@@ -136,7 +136,9 @@ function UserTable({ selectedFirmId, trigger }) {
 
   return (
     <div>
-      <h5 className="text-center card-title-heading m-0"><span>{companyTitle}</span></h5>
+      {companyTitle? <h5 className="text-center card-title-heading m-0"><span>{companyTitle}</span></h5> : null}
+
+
       <div className="table-responsive">
         <table className="table table-bordered mb-0">
           <thead className="table-light">
