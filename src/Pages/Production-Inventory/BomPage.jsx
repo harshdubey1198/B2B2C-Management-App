@@ -35,28 +35,7 @@ function BomPage() {
   const [loading, setLoading] = useState(false);
   const trigger = 0;
   const effectiveFirmId = userRole === "client_admin" ? selectedFirmId : firmId;
-  // console.log("effectiveFirmId", effectiveFirmId);
-  // console.log("estimatedCost", estimatedCost);
-  // console.log("sellingPrice", sellingPrice);
-
-
-
-  const [formData, setFormData] = useState({
-    productName: '',
-    rawMaterials: [],
-    wastagePercentage: 0,
-    firmId: firmId,
-    createdBy: createdBy,
-    categoryId: '',
-    subCategoryId: '',
-    vendor: '',
-    sellingPrice: 0,
-    brand: '',
-    qtyType: '',
-    taxId: '',
-    selectedTaxTypes: [],
-    // costPrice: estimatedCost,
-  });
+  const [formData, setFormData] = useState({productName: '',rawMaterials: [],wastagePercentage: 0,firmId: firmId,createdBy: createdBy,categoryId: '',subCategoryId: '',vendor: '',sellingPrice: 0,brand: '',qtyType: '',taxId: '',selectedTaxTypes: []});
 
 
 const fetchBoms = async () => {
@@ -67,7 +46,6 @@ const fetchBoms = async () => {
         setFilteredBoms(result.data);
     } catch (err) {
         console.error("Error fetching BOMs:", err);
-        // toast.error("Failed to fetch BOMs.");
     }
     setLoading(false);
 };
@@ -186,7 +164,6 @@ const fetchBrands = async () => {
     const materials = [...formData.rawMaterials];
     const variants = [...(materials[materialIndex].variants || [])];
     
-    // Add optionLabel dynamically if the field being updated is variantId
     if (field === 'variantId') {
       const selectedMaterial = items.find((item) => item._id === materials[materialIndex].itemId);
       const selectedVariant = selectedMaterial?.variants.find((v) => v._id === value);
@@ -237,10 +214,6 @@ const fetchBrands = async () => {
     materials[materialIndex].variants = variants;
     setFormData({ ...formData, rawMaterials: materials });
   };
-  
-  
-
-  //calculate the sum of costprice of all the materials
   const calculateTotalCostPrice = () => {
     let totalCost = 0;
 
@@ -248,7 +221,6 @@ const fetchBrands = async () => {
         const selectedMaterial = items.find(item => item._id === material.itemId);
         if (selectedMaterial) {
             let materialCost = selectedMaterial.costPrice;
-
             if (material.variants?.length > 0) {
                 material.variants.forEach(variant => {
                     const selectedVariant = selectedMaterial.variants.find(v => v._id === variant.variantId);
@@ -262,16 +234,13 @@ const fetchBrands = async () => {
             }
         }
     });
-
     return totalCost.toFixed(2);
 };
 
 
 const minimumSellingPrice = (costPrice) => {
   let minimumPrice = 0;
-  // without tax 
   minimumPrice = costPrice * 1;
-  // console.log("minimumPrice", minimumPrice);
   return minimumPrice.toFixed(2);
 };
 
@@ -284,19 +253,7 @@ const minimumSellingPrice = (costPrice) => {
         
         if (result.message==="bom created successfully"){
         fetchBoms();
-        setFormData({
-          productName: '',
-          rawMaterials: [],
-          wastagePercentage: 0,
-          createdBy: createdBy,
-          firmId: firmId,
-          categoryId: '',
-          subCategoryId: '',
-          sellingPrice: 0,
-          vendor: '',
-          brand: '',
-          
-        });}
+        setFormData({ productName: '', rawMaterials: [], wastagePercentage: 0, createdBy: createdBy, firmId: firmId, categoryId: '', subCategoryId: '', sellingPrice: 0, vendor: '', brand: ''});}
     } 
     catch(err){
         console.error(err);
@@ -322,25 +279,17 @@ const minimumSellingPrice = (costPrice) => {
         <div className='d-flex gap-2'>
           {userRole!=="client_admin" && ( 
             <Button color="primary" onClick={toggleBomModal} style={{fontSize:"10.5px",lineHeight:"1", minWidth:'105px'}}>
-            Add BOM
-          </Button>
+              Add BOM
+            </Button>
           )}
           {userRole==="client_admin" && (
-            <FirmSwitcher
-            selectedFirmId={selectedFirmId}
-            onSelectFirm={setSelectedFirmId}
-            />
+            <FirmSwitcher selectedFirmId={selectedFirmId} onSelectFirm={setSelectedFirmId} />
           )}
           <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchData} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
         </div>
           <div className='mt-3'>
-            <Input
-                type="text"
-                value={searchTerm}
-                onChange={handleSearch}
-                placeholder="Search by Product Name"
-            />
-            </div>
+            <Input type="text" value={searchTerm} onChange={handleSearch} placeholder="Search by Product Name" />
+           </div>
 
             <div className='table-responsive mt-2'>
             <Table bordered>
@@ -349,7 +298,6 @@ const minimumSellingPrice = (costPrice) => {
                     <th>BOM Name</th>
                     <th>Materials</th>
                     <th>Created By</th>
-                    {/* <th>Actions</th> */}
                 </tr>
                 </thead>
                 <tbody>
@@ -389,60 +337,18 @@ const minimumSellingPrice = (costPrice) => {
                     </tr>
                   )}
                 </tbody>
-
             </Table>
             </div>
 
             <div className="pagination-controls d-flex gap-2 mt-1 mb-3">
-            {pageNumbers.map((number) => (
-                <Button
-                key={number}
-                onClick={() => paginate(number)}
-                className={currentPage === number ? "btn-primary" : "btn-secondary"}
-                >
-                {number}
-                </Button>
-            ))}
-            </div>
-            
-            <BomCreateModal
-             isOpen={bomModal}
-             toggle={toggleBomModal}
-             formData={formData}
-             setFormData={setFormData}
-             saveBom={saveBom}
-             handleMaterialChange={handleMaterialChange}
-             handleVariantChange={handleVariantChange}
-             addMaterialField={addMaterialField}
-             removeMaterialField={removeMaterialField}
-             addVariantField={addVariantField} 
-             removeVariantField={removeVariantField}
-             calculateTotalCostPrice={calculateTotalCostPrice}
-             categories={categories} 
-             subCategories={subCategories}
-             vendors={vendors} 
-             brands={brands} 
-             taxes={taxes}
-             taxId={taxId} 
-             selectedTaxTypes={selectedTaxTypes}
-             items={items} 
-             fetchSubCategories={fetchSubCategories}
-             fetchBoms={fetchBoms}
-             fetchBrands={fetchBrands}
-             fetchVendors={fetchVendors}
-             fetchTaxes={fetchTaxes}
-             fetchItems={fetchItems}
-             fetchCategories={fetchCategories}
-             minimumSellingPrice={minimumSellingPrice}
-             setSellingPrice={setSellingPrice}
-             firmId={effectiveFirmId}
-              />
-              <BomDetailsModal
-                isOpen={bomDetailsModal}
-                toggle={() => setBomDetailsModal(!bomDetailsModal)}
-                selectedBom={selectedBom}
-              />
-
+               {pageNumbers.map((number) => (
+                  <Button key={number} onClick={() => paginate(number)} className={currentPage === number ? "btn-primary" : "btn-secondary"} >
+                    {number}
+                  </Button>
+                ))}
+              </div>
+            <BomCreateModal isOpen={bomModal} toggle={toggleBomModal} formData={formData} setFormData={setFormData} saveBom={saveBom} handleMaterialChange={handleMaterialChange} handleVariantChange={handleVariantChange} addMaterialField={addMaterialField} removeMaterialField={removeMaterialField} addVariantField={addVariantField}  removeVariantField={removeVariantField} calculateTotalCostPrice={calculateTotalCostPrice} categories={categories}  subCategories={subCategories} vendors={vendors}  brands={brands}  taxes={taxes} taxId={taxId}  selectedTaxTypes={selectedTaxTypes} items={items}  fetchSubCategories={fetchSubCategories} fetchBoms={fetchBoms} fetchBrands={fetchBrands} fetchVendors={fetchVendors} fetchTaxes={fetchTaxes} fetchItems={fetchItems} fetchCategories={fetchCategories} minimumSellingPrice={minimumSellingPrice} setSellingPrice={setSellingPrice} firmId={effectiveFirmId} />
+            <BomDetailsModal isOpen={bomDetailsModal} toggle={() => setBomDetailsModal(!bomDetailsModal)} selectedBom={selectedBom} />
       </div>
     </React.Fragment>
   );
