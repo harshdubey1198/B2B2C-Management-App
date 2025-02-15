@@ -5,9 +5,12 @@ import { Table, Button, Input} from 'reactstrap';
 import BomCreateModal from '../../Modal/ProductionModals/BomCreateModal';
 import FirmSwitcher from '../Firms/FirmSwitcher';
 import { toast } from 'react-toastify';
+import BomDetailsModal from '../../Modal/ProductionModals/BomDetailsModal';
 
 function BomPage() {
   const [boms, setBoms] = useState([]);
+  const [bomDetailsModal, setBomDetailsModal] = useState(false);
+  const [selectedBom, setSelectedBom] = useState(null);
   const [items, setItems] = useState([]);
   const [bomModal, setBomModal] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -139,7 +142,11 @@ const fetchBrands = async () => {
     fetchBoms();
   };
 
-
+  const toggleBomDetailsModal = (bom) => {
+    setSelectedBom(bom);
+    setBomDetailsModal(!bomDetailsModal);
+  };
+  
 
   const toggleBomModal = () => setBomModal(!bomModal);
 
@@ -348,7 +355,7 @@ const minimumSellingPrice = (costPrice) => {
                 <tbody>
                   {currentItems.length > 0 ? (
                     currentItems.map((bom, index) => (
-                      <tr key={index}>
+                      <tr key={index} onClick={() => toggleBomDetailsModal(bom)}>
                         <td>{bom.productName}</td>
                         <td>
                           <div className="d-flex flex-column">
@@ -429,7 +436,13 @@ const minimumSellingPrice = (costPrice) => {
              minimumSellingPrice={minimumSellingPrice}
              setSellingPrice={setSellingPrice}
              firmId={effectiveFirmId}
-/>
+              />
+              <BomDetailsModal
+                isOpen={bomDetailsModal}
+                toggle={() => setBomDetailsModal(!bomDetailsModal)}
+                selectedBom={selectedBom}
+              />
+
       </div>
     </React.Fragment>
   );
