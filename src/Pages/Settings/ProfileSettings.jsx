@@ -280,7 +280,7 @@ const ProfileSettings = () => {
                       />
                       {preview && (
                         // <div className="d-flex justify-content-center text-bg-light border-dashed p-4 my-4">
-                          <img src={preview} alt="Profile Preview" className="img-thumbnail mt-2" style={{ width: '98px', height: '98.81px' }} />
+                          <img src={preview} alt="Profile Preview" className="img-thumbnail mt-2" style={{ width: '198px', height: '198.28px' }} />
                         //</div>
                       )}
                       
