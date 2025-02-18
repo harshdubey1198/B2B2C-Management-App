@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
+import { ScaleLoader } from "react-spinners";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
@@ -20,57 +21,58 @@ const Pricing = () => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const role = authuser?.response?.role;
   const token = authuser?.token;
-  
+  const [loading , setLoading] = useState(false);
 
   useEffect(() => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+    setLoading(true);
+    
+    const fetchData = async () => {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+  
+      let startTime = Date.now();
+  
+      try {
+        if (role === "firm_admin") {
+          const response = await axiosInstance.get(
+            `${process.env.REACT_APP_URL}/plan/firmplan/${authuser.response.adminId}`
+          );
+          setSelectedPlanDetails(response?.data?.adminId?.planId);
+        } else {
+          setShowAllPlans(false);
+  
+          const allPlansResponse = await axiosInstance.get(
+            `${process.env.REACT_APP_URL}/plan/all`
+          );
+          setPlans(allPlansResponse.response);
+        }
+  
+        if (authuser?.response?.planId) {
+          const planResponse = await axios.get(
+            `${process.env.REACT_APP_URL}/plan/${authuser.response.planId}`,
+            config
+          );
+          setSelectedPlanDetails(planResponse.response);
+        }
+      } catch (error) {
+        console.log("Error fetching data:", error);
+      } finally {
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, 3000 - elapsedTime); // Ensure a minimum of 3 seconds
+  
+        setTimeout(() => {
+          setLoading(false);
+        }, remainingTime);
+      }
     };
-
-     if (role === "firm_admin") {
-      
-      axiosInstance
-      .get(`${process.env.REACT_APP_URL}/plan/firmplan/${authuser.response.adminId}`)
-      .then((response) => {
-        setSelectedPlanDetails(response?.data?.adminId?.planId);  
-        // console.log("Client admin's plan details:", response?.data?.adminId?.planId);
-      })
-      .catch((error) => {
-        console.log("Error fetching selected plan details:", error);
-      });
-  } else {
-    setShowAllPlans(true);
-    }
-
-
-if ( role !== "firm_admin") {
-    axiosInstance
-      .get(`${process.env.REACT_APP_URL}/plan/all`)
-      .then((response) => {
-        setPlans(response.response); 
-      })
-      .catch((error) => {
-        console.log("Error fetching plans:", error);
-      });
-
-    if (authuser?.response?.planId) {
-      axios
-        .get(`${process.env.REACT_APP_URL}/plan/${authuser.response.planId}`, config)
-        .then((response) => {
-          setSelectedPlanDetails(response.response); 
-        })
-        .catch((error) => {
-          console.log("Error fetching selected plan details:", error);
-        });
-    } else {
-      setShowAllPlans(true);
-    }
-  }
-   
+  
+    fetchData();
   }, [token]);
-
+  
+  
   const handlePaymentPlan = (plan) => {
    
     const data = {
@@ -104,35 +106,42 @@ if ( role !== "firm_admin") {
       <div className="page-content">
         <Container fluid>
           <Breadcrumbs title="Utility" breadcrumbItem="Pricing" />
-          {selectedPlanDetails && (
-            <Row className="justify-content-center">
-              <Col lg={8}>
-                <Card className="text-center mb-0">
-                  <CardBody>
-                    <h4 className="text-success">Your Current Plan</h4>
-                    <h5 className="font-size-16">{selectedPlanDetails.title}</h5>
-                    <p className="text-muted">{selectedPlanDetails.caption}</p>
-                    <p className="text-muted">Price: ₹{selectedPlanDetails.price} - {selectedPlanDetails.days} Days</p>
-                    <div className="plan-features mt-4 d-flex flex-column">
-                      <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
-                      {selectedPlanDetails.features.map((feature, index) => (
-                        <p key={index} className="text-start" style={{ position: "relative", left: "50%", transform: "translateX(-10%)", }} >
-                          <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
-                          {feature}
-                        </p>
-                      ))}
-                    </div>
-                    {/* <Button color="primary" onClick={() => navigate('/dashboard')}>
-                      Back to Dashboard
-                    </Button> */}
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-          )}
-        { plans.length > 0 && (
-          
+          {loading ? (
+            <div className="d-flex justify-content-center my-4">
+              <ScaleLoader color="#0d4251" />
+            </div>
+              ) : (
+                <>
+                  {selectedPlanDetails && (
+                    <Row className="justify-content-center">
+                      <Col lg={8}>
+                        <Card className="text-center mb-0">
+                          <CardBody>
+                            <h4 className="text-success">Your Current Plan</h4>
+                            <h5 className="font-size-16">{selectedPlanDetails.title}</h5>
+                            <p className="text-muted">{selectedPlanDetails.caption}</p>
+                            <p className="text-muted">
+                              Price: ₹{selectedPlanDetails.price} - {selectedPlanDetails.days} Days
+                            </p>
+                            <div className="plan-features mt-4 d-flex flex-column">
+                              <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
+                              {selectedPlanDetails.features.map((feature, index) => (
+                                <p key={index} className="text-start" style={{ position: "relative", left: "50%", transform: "translateX(-10%)", }}>
+                                  <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
+                                  {feature}
+                                </p>
+                              ))}
+                            </div>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    </Row>
+                  )}
+                </>
+              )}
 
+       
+        { plans.length > 0 && (
           <Row className="justify-content-center my-2">
             <Col lg={5} className="text-center">
             { role !== "super_admin" && role!=="firm_admin" && (
