@@ -94,6 +94,7 @@ const userSchema = new Schema(
         country: { type: String },
       },
     ],
+    notifications: [{ type: Schema.Types.ObjectId, ref: "notifications" }],
     firmDetails: {
       type: new Schema(
         {
