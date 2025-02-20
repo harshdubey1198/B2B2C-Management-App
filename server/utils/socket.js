@@ -21,11 +21,11 @@ const initializeSocket = (server) => {
         const user = await User.findById(userId).populate({
           path: "notifications",
           model: "Notification",
-          options: { sort: { date: -1 } }, 
+          options: { sort: { date: -1 } },
         });
 
         if (user) {
-          socket.emit("previousNotifications", user.notifications); 
+          socket.emit("previousNotifications", user.notifications);
         }
       } catch (error) {
         console.error("Error fetching previous notifications:", error);
@@ -79,6 +79,29 @@ const initializeSocket = (server) => {
         }
       } catch (error) {
         console.error("Error fetching updated notification:", error);
+      }
+    }
+
+    if (operationType === "delete") {
+      const deletedNotificationId = documentKey._id;
+
+      try {
+        const affectedUser = await User.findOne({ notifications: deletedNotificationId });
+
+        if (affectedUser) {
+          await User.updateOne(
+            { _id: affectedUser._id },
+            { $pull: { notifications: deletedNotificationId } }
+          );
+
+          console.log(`Deleted Notification ID ${deletedNotificationId} removed from user ${affectedUser._id}`);
+
+          io.to(affectedUser._id.toString()).emit("notificationDeleted", {
+            _id: deletedNotificationId,
+          });
+        }
+      } catch (error) {
+        console.error("Error handling deleted notification:", error);
       }
     }
   });

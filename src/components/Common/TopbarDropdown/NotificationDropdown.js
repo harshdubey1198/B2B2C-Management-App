@@ -5,10 +5,6 @@ import { Dropdown, DropdownToggle, DropdownMenu, Row, Col } from "reactstrap";
 import SimpleBar from "simplebar-react";
 import axios from "axios";
 
-// Importing icons
-import avatar3 from "../../../assets/images/users/avatar-3.jpg";
-import avatar4 from "../../../assets/images/users/avatar-4.jpg";
-
 // i18n
 import { withTranslation } from "react-i18next";
 import socket from "../../../utils/socket";
@@ -17,7 +13,6 @@ const NotificationDropdown = (props) => {
   const [menu, setMenu] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
-  // Get userId from localStorage safely
   const userData = JSON.parse(localStorage.getItem("authUser"));
   const userId = userData?.response?._id;
 
@@ -45,10 +40,17 @@ const NotificationDropdown = (props) => {
       );
     });
 
+    // **🔥 Listen for Deleted Notifications**
+    socket.on("notificationDeleted", (deletedNotif) => {
+      console.log("🚀 Notification Deleted:", deletedNotif);
+      setNotifications((prev) => prev.filter((notif) => notif._id !== deletedNotif._id));
+    });
+
     return () => {
       socket.off("previousNotifications");
       socket.off("newNotification");
       socket.off("notificationUpdated");
+      socket.off("notificationDeleted"); // Remove listener
       socket.disconnect();
     };
   }, [userId]);
@@ -83,11 +85,11 @@ const NotificationDropdown = (props) => {
             <Col>
               <h6 className="m-0">{props.t("Notifications")}</h6>
             </Col>
-            <div className="col-auto">
+            {/* <div className="col-auto">
               <Link to="/notifications" className="small">
                 View All
               </Link>
-            </div>
+            </div> */}
           </Row>
         </div>
 
@@ -100,16 +102,12 @@ const NotificationDropdown = (props) => {
                 key={notif._id}
                 className={`text-reset notification-item `}
                 onClick={() => markAsRead(notif._id)}
-                style={{ cursor: "pointer", padding: "5px 10px" , background: notif.isRead ? "#ddd" : "#fff"}}
+                style={{ cursor: "pointer", padding: "5px 10px", background: notif.isRead ? "#ddd" : "#fff" }}
               >
                 <div className="d-flex">
                   <div className="flex-shrink-0 me-3">
                     <div className="avatar-xs">
-                      <span
-                        className={`avatar-title rounded-circle font-size-16 ${
-                          notif.isRead ? "bg-secondary" : "bg-primary"
-                        }`}
-                      >
+                      <span className={`avatar-title rounded-circle font-size-16 ${notif.isRead ? "bg-secondary" : "bg-primary"}`}>
                         <i className="ri-notification-3-line"></i>
                       </span>
                     </div>
@@ -117,12 +115,9 @@ const NotificationDropdown = (props) => {
                   <div className="flex-grow-1">
                     <h6 className="mb-1">{notif.message}</h6>
                     <div className="font-size-12 text-muted">
-                      <p className="mb-1">
-                        {notif.isRead ? "Marked as read" : "Unread notification"}
-                      </p>
+                      <p className="mb-1">{notif.isRead ? "Marked as read" : "Unread notification"}</p>
                       <p className="mb-0">
-                        <i className="mdi mdi-clock-outline"></i>{" "}
-                        {new Date(notif.date).toLocaleString()}
+                        <i className="mdi mdi-clock-outline"></i> {new Date(notif.date).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -131,12 +126,6 @@ const NotificationDropdown = (props) => {
             ))
           )}
         </SimpleBar>
-
-        <div className="p-2 border-top d-grid">
-          <Link className="btn btn-sm btn-link font-size-14 text-center" to="/notifications">
-            <i className="mdi mdi-arrow-right-circle me-1"></i> {props.t("View More")}
-          </Link>
-        </div>
       </DropdownMenu>
     </Dropdown>
   );

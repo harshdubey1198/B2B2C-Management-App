@@ -28,18 +28,18 @@ const Dashboard = () => {
             {authuser.role === "client_admin" ? (
                   <div className="row d-flex">
                     <div className="col-lg-9 col-md-12 col-sm-12">
-                    <div className="row d-flex">
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
+                    <div className="row d-flex gap-2">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0 p-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/create-firm')}>
                           Create Firm 
                       </Button>
                     </div>
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0 p-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/pricing')}>
                           Pricing & plans 
                       </Button>
                     </div>
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0 p-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/view-invoices')}>
                           Invoices
                       </Button>  

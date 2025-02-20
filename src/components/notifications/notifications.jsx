@@ -22,8 +22,6 @@ const Notifications = () => {
     });
 
     socket.on("notificationUpdated", (updatedNotif) => {
-      console.log("🔄 Notification Update Received:", updatedNotif);
-      
       setNotifications((prev) =>
         prev.map((notif) =>
           notif._id === updatedNotif._id ? { ...notif, isRead: updatedNotif.isRead } : notif
@@ -31,10 +29,16 @@ const Notifications = () => {
       );
     });
 
+    socket.on("notificationDeleted", (deletedNotif) => {
+      console.log("🚀 Notification Deleted:", deletedNotif);
+      setNotifications((prev) => prev.filter((notif) => notif._id !== deletedNotif._id));
+    });
+
     return () => {
       socket.off("previousNotifications");
       socket.off("newNotification");
-      socket.off("notificationUpdated");  
+      socket.off("notificationUpdated");
+      socket.off("notificationDeleted"); 
       socket.disconnect();
     };
   }, [userId]);

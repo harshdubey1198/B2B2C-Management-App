@@ -1,19 +1,54 @@
-import React from "react";
-
+import React, { useEffect, useState } from "react";
 import logosm from "../../assets/images/logo-sm.png";
 import logodark from "../../assets/images/logo-dark.png";
 import logolight from "../../assets/images/logo-light.png";
 
-// import component
+// Import components
 import ProfileMenu from "./TopbarDropdown/ProfileMenu";
-
 import NotificationDropdown from "./TopbarDropdown/NotificationDropdown";
-
 import LanguageDropdown from "./TopbarDropdown/LanguageDropdown";
-
 import AppsDropdown from "./TopbarDropdown/AppsDropdown";
+import socket from "../../utils/socket";
 
 const TopBar = () => {
+  const [hasUnread, setHasUnread] = useState(false);
+  const userData = JSON.parse(localStorage.getItem("authUser"));
+  const userId = userData?.response?._id;
+
+  useEffect(() => {
+    if (!userId) return;
+
+    socket.connect();
+    socket.emit("joinRoom", userId);
+
+    // Listen for previous notifications
+    socket.on("previousNotifications", (prevNotifs) => {
+      setHasUnread(prevNotifs.some((notif) => !notif.isRead)); // Set red dot based on unread
+    });
+
+    // Listen for new notifications
+    socket.on("newNotification", (newNotif) => {
+      setHasUnread(true); // New notifications are unread by default
+    });
+
+    // Listen for updates to notifications (e.g., isRead changes)
+    socket.on("notificationUpdated", (updatedNotif) => {
+      setHasUnread((prev) => {
+        if (updatedNotif.isRead) {
+          return prev ? prevNotifs.some((notif) => !notif.isRead) : false;
+        }
+        return true;
+      });
+    });
+
+    return () => {
+      socket.off("previousNotifications");
+      socket.off("newNotification");
+      socket.off("notificationUpdated");
+      socket.disconnect();
+    };
+  }, [userId]);
+
   return (
     <React.Fragment>
       <header id="page-topbar">
@@ -46,19 +81,8 @@ const TopBar = () => {
             >
               <i className="ri-menu-2-line align-middle"></i>
             </button>
-
-            {/* <form className="app-search d-none d-lg-block">
-              <div className="position-relative">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Search..."
-                />
-                <span className="ri-search-line"></span>
-              </div>
-            </form> */}
           </div>
-          <div>Hari</div>
+
           <div className="d-flex">
             <LanguageDropdown />
             <AppsDropdown />
@@ -71,16 +95,11 @@ const TopBar = () => {
                 <i className="ri-fullscreen-line"></i>
               </button>
             </div>
-            <NotificationDropdown />
+
+            {/* Notification Dropdown */}
+            <NotificationDropdown hasUnread={hasUnread} />
+
             <ProfileMenu />
-            <div className="dropdown d-inline-block">
-              <button
-                type="button"
-                className="btn header-item noti-icon right-bar-toggle waves-effect"
-              >
-                <i className="mdi mdi-cog"></i>
-              </button>
-            </div>
           </div>
         </div>
       </header>

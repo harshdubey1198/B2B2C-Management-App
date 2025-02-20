@@ -125,7 +125,7 @@ export const masterAdminSidebarData = () => [
       { sublabel: "General Settings", link: "/preferences/general" },
       { sublabel: "Company Settings", link: "/firms-setting" },
       { sublabel: "Security Settings", link: "/preferences/security" },
-      { sublabel: "Notification Settings", link: "/preferences/notifications" },
+      // { sublabel: "Notification Settings", link: "/preferences/notifications" },
       { sublabel: "Integration Settings", link: "/preferences/integrations" },
       { sublabel: "Tax Settings", link: "/preferences/tax" },
       { sublabel: "Country-Specific Laws & Tax Settings", link: "/preferences/country-laws" },
