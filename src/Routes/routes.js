@@ -102,6 +102,7 @@ import WorkInProgressTable from "../Pages/Production-Inventory/WorkInProgressTab
 import WasteManagement from "../Pages/Production-Inventory/WasteManagement.jsx";
 import BomPage from "../Pages/Production-Inventory/BomPage.jsx";
 import Notifications from "../components/notifications/notifications.jsx";
+import InputSuggestions from "../Pages/TestingComponents/InputSuggestions.jsx";
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
@@ -149,6 +150,10 @@ const authProtectedRoutes = [
   {path:"/production/all-boms", component: <BomPage/>},
   {path:"/production/waste-management", component: <WasteManagement />},
   {path:"/production/settings", component: <ProductionSettings />},
+
+  // testing routes
+  {path:"/input-suggestions", component: <InputSuggestions />},
+  
 
   // firm
   {path:"/firms", component: <Firm />},

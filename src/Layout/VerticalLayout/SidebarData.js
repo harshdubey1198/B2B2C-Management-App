@@ -208,12 +208,15 @@ export const masterAdminSidebarData = () => [
       subItem: [
         // { sublabel: "Create Invoice", link: "/create-invoice" },
         { sublabel: "View Invoices", link: "/view-invoices" },
-        { sublabel: "Notifications", link: "/notifications" },
         // { sublabel: "Expenses", link: "/expenses" },
         // { sublabel: "Reports", link: "/reports" },
       ],
     },
-
+    {
+      label:"Input Suggestions",
+      icon:"mdi mdi-comment-account-outline",
+      // url:"/input-suggestions",
+    },
     // {
     //   label:"CRM",
     //   isMainMenu:true,
