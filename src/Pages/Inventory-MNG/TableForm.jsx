@@ -281,20 +281,6 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                  <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="name">Item Name</Label>
-                          <Input className="xyz" type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="description">Item Description</Label>
-                          <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                    </Row>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -314,19 +300,72 @@ const InventoryItemForm = () => {
                               <Col md={6}>
                                 <FormGroup>
                                   <Label htmlFor="subcategoryId">Subcategory</Label>
-                                  <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange}>
+                                  {/* <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange}>
                                     <option value="">Select Subcategory</option>
                                     {subcategories.map((subcategory) => (
                                       <option key={subcategory._id} value={subcategory._id}>
                                         {subcategory.categoryName}
                                       </option>
                                     ))}
-                                  </Input>
+                                  </Input> */}
+                                    <div className="d-flex align-items-center">
+                                        <Input 
+                                          type="select" 
+                                          id="subcategoryId" 
+                                          name="subcategoryId" 
+                                          value={formValues.subcategoryId} 
+                                          onChange={handleChange} 
+                                          className="form-control" 
+                                          style={{ flex: 1 ,appearance:"none" }}
+                                        >
+                                          <option value="">Select </option>
+                                          {subcategories.length > 0 ? (
+                                            subcategories.map((subcategory) => (
+                                              <option key={subcategory._id} value={subcategory._id}>
+                                                {subcategory.categoryName}
+                                              </option>
+                                            ))
+                                          ) : (
+                                            <option value="">No Subcategories Available</option>
+                                          )}
+                                        </Input>
+
+                                        {/* Refresh Icon for Reloading Subcategories */}
+                                        <i
+                                          className="bx bx-refresh"
+                                          style={{
+                                            fontSize: "22px",
+                                            fontWeight: "bold",
+                                            cursor: "pointer",
+                                            backgroundColor: "lightblue",
+                                            padding: "5px",
+                                            marginLeft: "8px",
+                                            borderRadius: "5px",
+                                          }}
+                                          onClick={() => handleCategory({ target: { value: formValues.categoryId } })}
+                                          title="Refresh Subcategories"
+                                        ></i>
+                                </div>
                                 </FormGroup>
+
                               </Col>
                             )
                         }
 
+                    </Row>
+                  <Row>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="name">Item Name</Label>
+                          <Input className="xyz" type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="description">Item Description</Label>
+                          <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
+                        </FormGroup>
+                      </Col>
                     </Row>
                     <Row>
                       <Col md={6}>
