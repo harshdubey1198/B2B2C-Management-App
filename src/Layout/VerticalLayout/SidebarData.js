@@ -212,11 +212,11 @@ export const masterAdminSidebarData = () => [
         // { sublabel: "Reports", link: "/reports" },
       ],
     },
-    {
-      label:"Input Suggestions",
-      icon:"mdi mdi-comment-account-outline",
-      // url:"/input-suggestions",
-    },
+    // {
+    //   label:"Input Suggestions",
+    //   icon:"mdi mdi-comment-account-outline",
+    //   url:"/input-suggestions",
+    // },
     // {
     //   label:"CRM",
     //   isMainMenu:true,

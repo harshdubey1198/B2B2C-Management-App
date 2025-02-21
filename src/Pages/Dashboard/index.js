@@ -93,7 +93,7 @@ const Dashboard = () => {
           {/* Latest Transaction Table */}
           {/* <LatestTransation /> */}
           <Row style={{marginBottom:"20px"}}>
-            <Col sm="12" md="6" lg="6">  
+            <Col sm="12" md="6" lg="6" className="p-0">  
               <Calendar />
             </Col>
             <Col sm="12" md="6" lg="6">
