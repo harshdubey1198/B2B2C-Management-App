@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import FetchManufacturers from './fetchManufacturers';
-import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
+import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Col, Row, Container } from 'reactstrap';
 import ManufacturerModal from '../../Modal/ManufacturerModal';
 import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-toastify';
@@ -92,19 +92,49 @@ const Manufacturers = () => {
           <FetchManufacturers onManufacturersFetched={handleManufacturersFetched} firmId={firmId} triggerManufacturer={triggerManufacturer} />
         </div>
 
-        {/* Search Input */}
-        <Input
-          type="text"
-          placeholder="Search by title , lead , email"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="my-3"
-        />
+        <Container className="mb-2">
+          <Row className="align-items-center">
+            <Col xs={9} md={9}>
+              <Input
+                type="text"
+                placeholder="Search by title, lead, email"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: "100%", padding: "10px" }}
+                className="my-3"
+              />
+            </Col>
 
-        <div className='relative h-35'>   
-          <i className='bx bx-refresh position-absolute' style={{ fontSize: "24px",right:"40px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px", borderRadius:"5px" }} onClick={() => setTriggerManufacturer((prev) => !prev)}></i>
-          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleManufacturerToAdd}></i>
-        </div>
+            <Col xs={3} md={3} className="d-flex justify-content-start">
+              <i
+                className="bx bx-refresh"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  borderRadius: "5px",
+                }}
+                onClick={() => setTriggerManufacturer((prev) => !prev)}
+              ></i>
+
+              <i
+                className="bx bx-plus"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  marginLeft: "8px",
+                  borderRadius: "5px",
+                }}
+                onClick={handleManufacturerToAdd}
+              ></i>
+            </Col>
+          </Row>
+        </Container>
 
         <div className='table-responsive relative'> 
           <Table bordered className='table table-centered table-nowrap mb-0'>

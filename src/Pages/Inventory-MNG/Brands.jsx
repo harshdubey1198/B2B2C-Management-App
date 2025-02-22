@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
-import { Container, Table, Modal, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
+import { Container, Table, Modal, ModalBody, ModalFooter, Button, Input, Row, Col } from 'reactstrap';
 import FetchBrands from './FetchBrands';
 import BrandModal from '../../Modal/BrandModal';
 import axiosInstance from '../../utils/axiosInstance';
@@ -22,6 +22,21 @@ const Brands = () => {
   const toggleDeleteModal = () => setIsDeleteModalOpen(!isDeleteModalOpen);
 
   const handleBrandsFetched = (fetchedBrands) => setBrands(fetchedBrands);
+  const fetchBrands = async () => {
+        try {
+          const response = await axiosInstance.get(
+            `${process.env.REACT_APP_URL}/brand/get-brands/${firmId}`
+          );
+          console.log(response.data || []);
+          setBrands(response.data || []);
+        } catch (error) {
+          // toast.error("Failed to fetch brands.");
+          console.error(error.message);
+        }
+      };
+  useEffect(()=>{
+    fetchBrands();
+  },[triggerBrand]);
 
   const handleBrandEdit = (brand) => {
     setBrandToEdit(brand);
@@ -37,6 +52,12 @@ const Brands = () => {
     setBrandToDelete(brand);
     toggleDeleteModal();
   };
+
+  const refetchBrands = () => {
+      setTriggerBrand((prev) => prev + 1)
+      console.log("triggerBrand", triggerBrand);
+    }
+
 
   const confirmDelete = async () => {
     if (!brandToDelete) return;
@@ -76,20 +97,46 @@ const Brands = () => {
           <FetchBrands onBrandsFetched={handleBrandsFetched} triggerBrand={setTriggerBrand} firmId={firmId} />
         </div>
 
-        <Container className="my-3">
-          <Input
-            type="text"
-            placeholder="Search by name or country"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            style={{ width: '100%', padding: '10px' }}
-          />
-        </Container>
-
-        <div className='relative h-35'>   
-          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px", marginLeft:"5px", borderRadius:"5px" }} onClick={handleBrandAdd}></i>
-        </div>
-        
+        <Container className="mb-2">
+          <Row className="align-items-center">
+            <Col xs={9} md={9}>
+              <Input
+                type="text"
+                placeholder="Search by name or country"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                style={{ width: "100%", padding: "10px" }}
+              />
+            </Col>
+            <Col xs={3} md={3} className="d-flex justify-content-start">
+              <i
+                className="bx bx-refresh"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  borderRadius: "5px",
+                }}
+                onClick={refetchBrands}
+              ></i>
+              <i
+                className="bx bx-plus"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  marginLeft: "8px",
+                  borderRadius: "5px",
+                }}
+                onClick={handleBrandAdd}
+              ></i>
+            </Col>
+          </Row>
+        </Container>        
         <div className='table-responsive'>
           <Table bordered className='table table-centered table-nowrap mb-0'>
             <thead className='thead-light'>

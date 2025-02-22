@@ -13,6 +13,7 @@ function Vendor() {
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [vendorToDelete, setVendorToDelete] = useState(null);
+  const [trigger, setTrigger] = useState(0);
   const [vendorData, setVendorData] = useState({
     name: "",
     contactPerson: "",
@@ -122,7 +123,11 @@ function Vendor() {
 
   useEffect(() => {
     authuser.role === "super_admin" ? setIsSuperAdmin(true) : fetchVendors();
-  }, []);
+  }, [trigger]);
+
+  const refetchVendors = () => {
+    setTrigger(trigger + 1);
+  };
 
   if (isSuperAdmin) {
     return (
@@ -136,18 +141,22 @@ function Vendor() {
   return (
     <div className="page-content">
       <Breadcrumbs title="Inventory Management" breadcrumbItem="Vendors" />
-      
-      <Button
-        color="primary"
-        onClick={() => {
-          setEditMode(false);
-          setVendorData({ name: "", contactPerson: "", phone: "", email: "", address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" } });
-          toggleModal();
-        }}
-        className="mb-4"
-      >
-        Add Vendor
-      </Button>
+
+     <div className="d-flex justify-content-start align-items-center gap-2 mb-2">
+        <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchVendors} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+          <Button
+            color="primary"
+            onClick={() => {
+              setEditMode(false);
+              setVendorData({ name: "", contactPerson: "", phone: "", email: "", address: { h_no: "", city: "", state: "", zip_code: "", country: "", nearby: "" } });
+              toggleModal();
+            }}
+            className="p-2"
+            style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}}
+          >
+            Add Vendor
+          </Button>
+     </div>
 
       {/* Vendor Table */}
       <Table responsive>
