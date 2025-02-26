@@ -35,8 +35,21 @@ function BomPage() {
   const [loading, setLoading] = useState(false);
   const trigger = 0;
   const effectiveFirmId = userRole === "client_admin" ? selectedFirmId : firmId;
-  const [formData, setFormData] = useState({productName: '',rawMaterials: [],wastagePercentage: 0,firmId: firmId,createdBy: createdBy,categoryId: '',subCategoryId: '',vendor: '',sellingPrice: 0,brand: '',qtyType: '',taxId: '',selectedTaxTypes: []});
-
+  const [formData, setFormData] = useState({
+    productName: '',
+    rawMaterials: [],
+    wastagePercentage: 0,
+    firmId: firmId,
+    createdBy: createdBy,
+    categoryId: '',
+    subcategoryId: '',
+    vendor: '',
+    sellingPrice: 0,
+    brand: '',
+    qtyType: '',
+    taxId: '',
+    selectedTaxTypes: []
+  });
 
 const fetchBoms = async () => {
     setLoading(true);
@@ -318,10 +331,10 @@ const minimumSellingPrice = (costPrice) => {
                                       <span className="badge bg-info me-1">
                                         Variant: {material.variants[0].optionLabel} - {material.variants[0].quantity}
                                       </span>
-                                      <span className="text-muted">(Total: {material.quantity || material.variants[0].quantity})</span>
+                                      <span className="text-muted">(Total: {material.quantity || material.variants[0].quantity}) </span>
                                     </>
                                   ) : (
-                                    <span>{material.quantity}</span>
+                                    <span className='d-flex text-left' style={{width:"61px"}}>{material.quantity} {material.itemId?.qtyType}</span>
                                   )}
                                 </span>
                               </div>

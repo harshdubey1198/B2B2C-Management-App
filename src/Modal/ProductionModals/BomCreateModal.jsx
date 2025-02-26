@@ -11,7 +11,9 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
     }));
   }, [formData.qtyType, formData.rawMaterials, formData.sellingPrice, 
       formData.taxId, formData.selectedTaxTypes, formData.vendor, 
-      formData.brand, formData.subCategoryId, formData.categoryId]);
+      formData.brand, formData.subcategoryId, formData.categoryId
+      , formData.productName, formData.qtyType, formData.estimatedCost
+    ]);
       console.log("gta",firmId);
     return (
     <Modal isOpen={isOpen} toggle={toggle}>
@@ -43,30 +45,31 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
               }}
             >
               <option value="">Select Category</option>
-              {categories.length > 0 ? (
-              categories.map((cat) => (
+              {categories?.length > 0 ? (
+                categories.map((cat) => (
                   <option key={cat._id} value={cat._id}>
-                  {cat.categoryName}
+                    {cat.categoryName}
                   </option>
-              ))
+                ))
               ) : (
-              <option disabled>No categories available</option>
+                <option disabled>No categories available</option>
               )}
           </Input>
           </FormGroup>
           </Col>
         {/* </Row>
         <Row> */}
+        {subCategories?.length > 0 && (
           <Col md={3}>
             <FormGroup>
               <Label for="subCategory">Sub Category</Label>
               <Input
                 type="select"
-                value={formData.subCategoryId}
-                onChange={(e) => setFormData({ ...formData, subCategoryId: e.target.value })}
+                value={formData.subcategoryId}
+                onChange={(e) => setFormData({ ...formData, subcategoryId: e.target.value })}
               >
                 <option value="">Select Subcategory</option>
-                {subCategories.length > 0 ? (
+                {subCategories?.length > 0 ? (
                   subCategories.map((subCat) => (
                     <option key={subCat._id} value={subCat._id}>
                       {subCat.categoryName}
@@ -78,6 +81,7 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
               </Input>
             </FormGroup>
           </Col>
+          )}
           <Col md={3}>
           <FormGroup>
           <Label for="vendor">Vendor</Label>
@@ -87,14 +91,14 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
               onChange={(e) => setFormData({ ...formData, vendor: e.target.value })}
           >
               <option value="">Select Vendor</option>
-              {vendors.length > 0 ? (
-              vendors.map((vendor) => (
+              {vendors?.length > 0 ? (
+                vendors.map((vendor) => (
                   <option key={vendor._id} value={vendor._id}>
-                  {vendor.name}
+                    {vendor.name}
                   </option>
-              ))
+                ))
               ) : (
-              <option disabled>No vendors available</option>
+                <option disabled>No vendors available</option>
               )}
           </Input>
           </FormGroup>
@@ -108,14 +112,14 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
               onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
           >
               <option value="">Select Brand</option>
-              {brands.length > 0 ? (
-              brands.map((brand) => (
+              {brands?.length > 0 ? (
+                brands.map((brand) => (
                   <option key={brand._id} value={brand._id}>
-                  {brand.name}
+                    {brand.name}
                   </option>
-              ))
+                ))
               ) : (
-              <option disabled>No brands available</option>
+                <option disabled>No brands available</option>
               )}
           </Input>
           </FormGroup>
@@ -171,7 +175,7 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
                 onChange={(e) => setFormData({ ...formData, taxId: e.target.value })}
               >
                 <option value="">Select Tax</option>
-                {taxes.length > 0 ? (
+                {taxes?.length > 0 ? (
                   taxes.map((tax) => (
                     <option key={tax._id} value={tax._id}>
                       {tax.taxName}
@@ -187,42 +191,37 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
             <FormGroup>
               <Label className="form-label">Select Tax Types</Label>
               <Select
-                isMulti 
-                name="selectedTaxTypes"
-                value={formData.selectedTaxTypes.map(id => ({
-                  value: id,
-                  label: taxes
-                    .find(tax => tax.taxRates.some(rate => rate._id === id))
-                    ?.taxRates.find(rate => rate._id === id)?.taxType + " - " +
-                    taxes.find(tax => tax.taxRates.some(rate => rate._id === id))
-                    ?.taxRates.find(rate => rate._id === id)?.rate + "%" 
-                }))}
-                onChange={(selectedOptions) => {
-                  const selectedIds = selectedOptions.map(option => option.value);
-                  console.log('Selected Tax Type IDs:', selectedIds);
+                  isMulti
+                  name="selectedTaxTypes"
+                  value={(formData.selectedTaxTypes || []).map(id => {
+                    const tax = taxes?.find(t => t.taxRates?.some(rate => rate._id === id));
+                    const taxRate = tax?.taxRates?.find(rate => rate._id === id);
+                    
+                    return {
+                      value: id,
+                      label: taxRate ? `${taxRate.taxType} - ${taxRate.rate}%` : "N/A"
+                    };
+                  })}
+                  onChange={(selectedOptions) => {
+                    const selectedIds = selectedOptions.map(option => option.value);
+                    console.log('Selected Tax Type IDs:', selectedIds);
 
-                  setFormData({
-                    ...formData,
-                    selectedTaxTypes: selectedIds,
-                  });
-                }}
-                options={taxes
-                  .filter(tax => tax._id === formData.taxId)
-                  .map(tax => (
-                    tax.taxRates.map(taxRate => ({
-                      value: taxRate._id,  
-                      label: `${taxRate.taxType} - ${taxRate.rate}%`,
-                    }))
-                  ))
-                  .flat() 
-                }
-              />
+                    setFormData({
+                      ...formData,
+                      selectedTaxTypes: selectedIds,
+                    });
+                  }}
+                  options={(taxes?.find(tax => tax._id === formData.taxId)?.taxRates || []).map(taxRate => ({
+                    value: taxRate._id,
+                    label: `${taxRate.taxType} - ${taxRate.rate}%`,
+                  }))}
+                />
             </FormGroup>
           </Col>
 
         </Row>
           <h6 className="text-primary">Materials</h6>
-          {formData.rawMaterials.map((material, materialIndex) => (
+          {formData.rawMaterials?.map((material, materialIndex) => (
               <Row key={materialIndex} className="mb-3">
                   <Col md={3}>
                   <Label>Material</Label>
@@ -325,7 +324,7 @@ function BomCreateModal ({ isOpen,toggle,  setSellingPrice,firmId, toggleBomModa
                           <Label>Waste (%)</Label>
                           <Input
                           type="number"
-                          value={variant.wastePercentage}
+                          value={variant.wastePercentage ?? 0}
                           onChange={(e) =>
                               handleVariantChange(materialIndex, variantIndex, 'wastePercentage', e.target.value) }
                           />

@@ -68,6 +68,7 @@ function InventoryTable() {
     const value = parseInt(e.target.value, 10);
     if (!isNaN(value) && value > 0) {
       setItemsPerPage(value);
+      setCustomItemsPerPage(value);
       setCurrentPage(1); 
     }
   };
@@ -204,7 +205,6 @@ function InventoryTable() {
         `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
         { ...updatedFields, type: selectedItem.type }
       ); 
-      // setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
       setSelectedItem((prev) => ({ ...prev, ...updatedFields ,type: selectedItem.type }));
       toast.success(response.message);
       setModalOpen(!modalOpen);
@@ -224,7 +224,6 @@ function InventoryTable() {
 
   const handleSortByType = (type) => {
 
-    // initially want all the data
     if (type === " ") {
       setFilteredInventoryData(inventoryData);
     }
@@ -263,7 +262,6 @@ useEffect(() => {
           
            <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchItems} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
 
-          {/* <div className="d-flex align-items-center gap-2"> */}
           <label htmlFor="itemsPerPageSelect" className="m-0">Items per page:</label>
                 <select
                   id="itemsPerPageSelect"
@@ -291,7 +289,6 @@ useEffect(() => {
                 <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
                   Set
                 </Button>
-            {/* </div> */}
 
           {role !== "client_admin" ? (
             <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>

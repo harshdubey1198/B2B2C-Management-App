@@ -22,6 +22,13 @@ const BomDetailsModal = ({ isOpen, toggle, selectedBom }) => {
               <th>Category</th>
               <td>{selectedBom.categoryId?.categoryName || 'N/A'}</td>
             </tr>
+            {selectedBom.subcategoryId && (
+              <tr>
+                <th>Subcategory</th>
+                <td>{selectedBom.subcategoryId?.categoryName || 'N/A'}</td>
+              </tr>
+            )}
+            
             <tr>
               <th>Vendor</th>
               <td>{selectedBom.vendor?.name || 'N/A'}</td>
@@ -33,6 +40,10 @@ const BomDetailsModal = ({ isOpen, toggle, selectedBom }) => {
             <tr>
               <th>Selling Price</th>
               <td>{selectedBom.sellingPrice}</td>
+            </tr>
+            <tr>
+              <th>Qty Type</th>
+              <td>{selectedBom.qtyType}</td>
             </tr>
             <tr>
               <th>Taxes</th>
