@@ -115,7 +115,7 @@ const InventoryItemForm = () => {
         const parentCategories = response.data.length > 0 ? response.data.filter(category => category.parentId === null) : [];
         setCategories(parentCategories);
       } catch (error) {        
-        toast.error("Failed to fetch categories.");
+        // toast.error("Failed to fetch categories.");
         console.error(error.message);
       }
     };

@@ -25,7 +25,7 @@ function InventoryTable() {
   const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role || "";
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredInventoryData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = inventoryData.slice(indexOfFirstItem, indexOfLastItem);
   const [variantIndex, setVariantIndex] = useState(null);
   const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
@@ -60,16 +60,16 @@ function InventoryTable() {
     setTrigger((prev) => prev + 1);
   };
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const pageNumbers = []; 
-  for (let i = 1; i <= Math.ceil(filteredInventoryData.length / itemsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const totalPages = Math.ceil(inventoryData.length / itemsPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 
   const handleItemsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
-    setItemsPerPage(value);
-    setCurrentPage(1); 
+    if (!isNaN(value) && value > 0) {
+      setItemsPerPage(value);
+      setCurrentPage(1); 
+    }
   };
 
   const handleCustomItemsPerPage = () => {
@@ -81,6 +81,7 @@ function InventoryTable() {
       toast.error("Please enter a valid number of items per page.");
     }
   };
+  
   const handleViewDetails = (item) => {
     setSelectedItem(item);
     console.log(item);
@@ -239,6 +240,7 @@ function InventoryTable() {
     setFilteredInventoryData(inventoryData);
   }, [inventoryData]);
   
+  
 useEffect(() => {
   handleSortByType(" ");
 },[]);
@@ -330,8 +332,8 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredInventoryData.length > 0 ? (
-                    filteredInventoryData.map((item, index) => {
+                    {currentItems.length > 0 ? (
+                      currentItems.map((item, index) => {
                       const rowClass =
                         item.type === "raw_material" ? "table-raw-materials" :
                         item.type === "finished_good" ? "table-row-blue" : "table-row-yellow";
