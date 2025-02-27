@@ -404,6 +404,7 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
       .populate("rawMaterials.itemId", "name")
       .populate("bomId")
       .session(session);
+
     if (!order) {
       throw new Error("Production Order not found");
     }
@@ -452,7 +453,8 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
         await inventoryItem.save({ session });
       }
     }
-    // **Step 2: Mark Waste Records as Cancelled**
+
+
     if (status === "cancelled") {
       const wasteRecords = await WasteManagement.find({
         productionOrderId: id,
@@ -476,29 +478,42 @@ ProductionOrderServices.updateProductionOrderStatus = async (id, body) => {
         ", "
       )}`;
 
-      const finishedProduct = new InventoryItem({
+    
+      let existingProduct = await InventoryItem.findOne({
         name: bom.productName,
-        description,
-        quantity: order.quantity,
-        qtyType: bom.qtyType,
-        type: "finished_good",
-        manufacturer: bom.manufacturer,
-        brand: bom.brand,
-        costPrice: bom.totalCostPrice,
-        sellingPrice: bom.sellingPrice,
-        categoryId: bom.categoryId,
-        subcategoryId: bom.subcategoryId,
-        ProductHsn: bom.ProductHsn,
-        firmId: order.firmId,
-        createdBy: order.createdBy,
-        vendor: bom.vendor,
-        tax: {
-          taxId: bom.tax?.taxId,
-          selectedTaxTypes: bom.tax?.selectedTaxTypes || [],
-        },
-        deleted_at: null,
-      });
-      await finishedProduct.save({ session });
+        firmId: order.firmId, 
+      }).session(session);
+
+      if (existingProduct) {
+
+        existingProduct.quantity += order.quantity;
+        await existingProduct.save({ session });
+      } else {
+
+        const finishedProduct = new InventoryItem({
+          name: bom.productName,
+          description,
+          quantity: order.quantity,
+          qtyType: bom.qtyType,
+          type: "finished_good",
+          manufacturer: bom.manufacturer,
+          brand: bom.brand,
+          costPrice: bom.totalCostPrice,
+          sellingPrice: bom.sellingPrice,
+          categoryId: bom.categoryId,
+          subcategoryId: bom.subcategoryId,
+          ProductHsn: bom.ProductHsn,
+          firmId: order.firmId,
+          createdBy: order.createdBy,
+          vendor: bom.vendor,
+          tax: {
+            taxId: bom.tax?.taxId,
+            selectedTaxTypes: bom.tax?.selectedTaxTypes || [],
+          },
+          deleted_at: null,
+        });
+        await finishedProduct.save({ session });
+      }
     }
 
     order.status = status;
