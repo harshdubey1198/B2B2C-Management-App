@@ -32,7 +32,23 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       throw new Error("BOM not found.");
     }
 
-    let rawMaterials = calculateRawMaterials(bom, quantity);
+    const rawMaterials = calculateRawMaterials(bom, quantity);
+    let totalWastage = [];
+
+    for (const material of rawMaterials) {
+      const materialVariants = material.variants.map((variant) => ({
+        variantId: variant.variantId,
+        optionLabel: variant.optionLabel,
+        wasteQuantity: variant.wastageQuantity || 0,
+      }));
+
+      totalWastage.push({
+        itemId: material.itemId,
+        wasteQuantity: material.wastageQuantity || 0,
+        reason: "Production wastage",
+        variants: materialVariants,
+      });
+    }
 
     const itemIds = rawMaterials.map((m) => m.itemId);
     const validItems = await InventoryItem.find({
@@ -58,13 +74,13 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       firmId,
       status: { $in: ["created", "in_progress"] },
     }).session(session);
-    console.log(existingProduction, "creating");
+
     if (existingProduction) {
       console.log(
         `Existing Production Order Found. Previous Quantity: ${existingProduction.quantity}, New Quantity: ${quantity}`
       );
 
-      existingProduction.quantity += parseInt(quantity, 10); // ✅ Convert to number to avoid string concatenation
+      existingProduction.quantity += parseInt(quantity, 10);
 
       rawMaterials.forEach((newMaterial) => {
         const existingMaterial = existingProduction.rawMaterials.find(
@@ -94,30 +110,36 @@ ProductionOrderServices.createProductionOrder = async (body) => {
       await session.commitTransaction();
       session.endSession();
 
-      return existingProduction; // ✅ Stop function execution here
+      return existingProduction;
     }
 
     const productionOrderNumber = await generateProductionOrderNumber(firmId);
 
-    console.log("Raw materials before saving:", rawMaterials);
+    const productionOrderData = {
+      productionOrderNumber,
+      bomId,
+      quantity,
+      rawMaterials,
+      firmId,
+      createdBy,
+      status: "created",
+    };
 
     const newProductionOrder = await ProductionOrder.create(
-      [
-        {
-          productionOrderNumber,
-          bomId,
-          quantity,
-          rawMaterials,
-          firmId,
-          // sellingPrice,
-          createdBy,
-          status: "created",
-        },
-      ],
+      [productionOrderData],
       { session }
     );
 
     console.log("Production order created successfully");
+
+    const wasteManagementData = {
+      productionOrderId: newProductionOrder[0]._id,
+      firmId,
+      createdBy,
+      rawMaterials: totalWastage,
+    };
+
+    await WasteManagement.create([wasteManagementData], { session });
 
     await validateAndDeductRawMaterials(rawMaterials, session);
     await session.commitTransaction();
@@ -129,6 +151,7 @@ ProductionOrderServices.createProductionOrder = async (body) => {
     throw error;
   }
 };
+
 // ProductionOrderServices.createProductionOrder = async (body) => {
 //   const { bomId, quantity, firmId, createdBy, sellingPrice } = body;
 //   if (!bomId || !quantity || !firmId || !createdBy || sellingPrice) {
