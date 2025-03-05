@@ -316,7 +316,11 @@ export const masterAdminSidebarData = () => [
           // {sublabel: "Production Settings", link:"/production/settings"},
       ],
     },
-
+    // {
+    //   label:"Input Suggestions",
+    //   icon:"mdi mdi-comment-account-outline",
+    //   url:"/input-suggestions",
+    // },
     {
       label: "Invoicing",
       icon: "mdi mdi-file-document-outline",

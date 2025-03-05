@@ -1,27 +1,3 @@
-// import React from "react";
-// import Breadcrumbs from "../../components/Common/Breadcrumb";
-// import CityInput from "../../components/addressHelpers/cityInput";
-
-// const InputSuggestions = () => {
-//   const handleCitySelection = (city, state, country) => {
-//     console.log("Selected City Details:", { city, state, country });
-//   };
-
-//   return (
-//     <React.Fragment>
-//       <div className="page-content">
-//         <Breadcrumbs title="Forms" breadcrumbItem="Input Suggestions" />
-
-//         <div className="container mt-4">
-//           <h4>Auto-fill State & Country by City</h4>
-//           <CityInput onChange={handleCitySelection} />
-//         </div>
-//       </div>
-//     </React.Fragment>
-//   );
-// };
-
-// export default InputSuggestions;
 import React, { useState } from "react";
 import Select from "react-select";
 import cityStateCountryData from "../../CommonData/Data/countries+states+cities.json";
@@ -33,6 +9,19 @@ const InputSuggestions = () => {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCountry, setSelectedCountry] = useState(null);
+
+  const allStates = cityStateCountryData.flatMap((country) =>
+    country.states.map((state) => ({
+      label: state.name,
+      value: state.name,
+      country: country.name,
+    }))
+  );
+
+  const allCountries = cityStateCountryData.map((country) => ({
+    label: country.name,
+    value: country.name,
+  }));
 
   const handleInputChange = (inputValue) => {
     setSearchTerm(inputValue);
@@ -58,7 +47,6 @@ const InputSuggestions = () => {
 
   const handleCityChange = (selectedOption) => {
     if (!selectedOption) {
-      // **If user clears input, reset all fields**
       setSelectedCity(null);
       setSelectedState(null);
       setSelectedCountry(null);
@@ -70,6 +58,24 @@ const InputSuggestions = () => {
     setSelectedCountry({ label: selectedOption.country, value: selectedOption.country });
   };
 
+  const handleStateChange = (selectedOption) => {
+    if (!selectedOption) {
+      setSelectedState(null);
+      return;
+    }
+
+    setSelectedState(selectedOption);
+
+    const matchedState = allStates.find((state) => state.value === selectedOption?.value);
+    if (matchedState) {
+      setSelectedCountry({ label: matchedState.country, value: matchedState.country });
+    }
+  };
+
+  const handleCountryChange = (selectedOption) => {
+    setSelectedCountry(selectedOption);
+  };
+
   return (
     <React.Fragment>
       <div className="page-content">
@@ -77,8 +83,6 @@ const InputSuggestions = () => {
 
         <div className="container mt-4">
           <h4>Auto-fill State & Country by City</h4>
-
-          {/* City Selection */}
           <div className="mb-3">
             <label className="form-label">Select City</label>
             <Select
@@ -91,16 +95,26 @@ const InputSuggestions = () => {
             />
           </div>
 
-          {/* State Auto-filled */}
           <div className="mb-3">
-            <label className="form-label">State</label>
-            <Select value={selectedState} isDisabled placeholder="State will be auto-filled" />
+            <label className="form-label">Select or Edit State</label>
+            <Select
+              options={allStates}
+              value={selectedState}
+              onChange={handleStateChange}
+              placeholder="Search or Select State..."
+              isClearable
+            />
           </div>
 
-          {/* Country Auto-filled */}
           <div className="mb-3">
-            <label className="form-label">Country</label>
-            <Select value={selectedCountry} isDisabled placeholder="Country will be auto-filled" />
+            <label className="form-label">Select or Edit Country</label>
+            <Select
+              options={allCountries}
+              value={selectedCountry}
+              onChange={handleCountryChange}
+              placeholder="Search or Select Country..."
+              isClearable
+            />
           </div>
         </div>
       </div>
