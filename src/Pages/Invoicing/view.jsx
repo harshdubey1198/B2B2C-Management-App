@@ -29,7 +29,17 @@ const ViewInvoices = () => {
         date: '',
         status: '',
     });
-    
+    // console.log(invoices[0].firmId.currency);
+    const currencyOptions = [
+        { value: "INR", label: "₹ INR" },
+        { value: "AED", label: "د.إ AED" },
+        { value: "SAR", label: "﷼ SAR" },
+        { value: "MYR", label: "RM MYR" },
+    ];
+    const getCurrencySymbol = (currencyCode) => {
+        const currency = currencyOptions.find((option) => option.value === currencyCode);
+        return currency ? currency.label.split(" ")[0] : currencyCode; 
+    };
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser")).response;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
@@ -240,21 +250,10 @@ const ViewInvoices = () => {
                                                     <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} style={{ cursor: "pointer" , fontSize:"12px"}}>
                                                         <td>{invoice.invoiceNumber}</td>
                                                         <td>{invoice.customerName}</td>
-                                                        <td>{invoice.totalAmount} ₹</td>
+                                                        <td>{invoice.totalAmount} {getCurrencySymbol(invoice.firmId.currency)}</td>
                                                         <td style={{ color: invoice.amountDue > 0 ? "red" : "green" }}>
-                                                            {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
+                                                            {invoice.amountDue > 0 ? `${invoice.amountDue} ${getCurrencySymbol(invoice.firmId.currency)}` : "Paid"}
                                                         </td>
-                                                        {/* <td style={{ minWidth: "110px" }}>
-                                                            <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
-                                                                {invoice.items.map((item, itemIndex) =>
-                                                                    item.itemId.tax.selectedTaxTypes.map((tax, taxIndex) => (
-                                                                        <li key={`${itemIndex}-${taxIndex}`}>
-                                                                            {tax.taxType} - {tax.rate}%
-                                                                        </li>
-                                                                    ))
-                                                                )}
-                                                            </ul>
-                                                        </td> */}
                                                         <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
                                                         <td>{invoice.customerAddress.country}</td>
                                                         <td>{invoice.approvalStatus?.replace(/[_-]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</td>

@@ -72,6 +72,12 @@ const userSchema = new Schema(
     gstin: { type: String },
     branchName: { type: String },
     accountHolder: { type: String },
+    currency : {
+        type: String,
+        enum: ["INR", "AED", "SAR", "MYR","USD"],
+        default: "INR",
+         // only indian , malaysian , saudi arabia , uae
+    },
     role: {
       type: String,
       enum: [ "super_admin", "client_admin", "firm_admin", "accountant", "employee", "firm"],

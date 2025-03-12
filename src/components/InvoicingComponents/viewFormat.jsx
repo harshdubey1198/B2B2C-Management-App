@@ -51,10 +51,26 @@ const sliceDescription = (description) => {
   return description || "";
 };
 
+const currencyOptions = [
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+  { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+  { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+];
+
+const getCurrencyDetails = (currencyCode) => {
+  const currency = currencyOptions.find((option) => option.code === currencyCode);
+  return currency ? currency.symbol : currencyCode; // Returns only the symbol
+};
+
 const ViewFormat = forwardRef(
   ({ invoiceData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};
-    // console.log("selectInvoice", invoiceData);
+    console.log("selectInvoice", invoiceData.firmId.currency);
+    const currency = getCurrencyDetails(selectInvoice.currency || "INR");
+    console.log("currency", currency);
+
     // console.log("selectInvoice", selectInvoice.firmId.companyTitle);
     const items = invoiceData?.items || [];
     // console.log("items", items);
@@ -101,7 +117,7 @@ const ViewFormat = forwardRef(
           <h2 className="text-white">{invoiceData?.invoiceType}</h2>
         </div>
 
-        <div className="row m-text-center p-4 m-0">
+        <div className="row m-text-center p-2 pt-3 pb-0 m-0">
           <div className="col-lg-6 col-md-6 col-sm-12 mb-4">
             {(invoiceData?.companyLogo || selectInvoice.avatar) && (
               <img
@@ -139,9 +155,8 @@ const ViewFormat = forwardRef(
             <p>
               <strong>Invoice Number:</strong> {invoiceData?.invoiceNumber}
             </p>
-            <p>
-              <strong>Amount Due:</strong> ₹ {invoiceData?.amountDue}
-            </p>
+            <p><strong>Amount Due:</strong> {currency} {invoiceData?.amountDue}</p>
+
             <p>
               <strong>Issue Date:</strong>{" "}
               {formatDate(invoiceData?.createdAt || selectInvoice.issueDate)}
@@ -153,7 +168,7 @@ const ViewFormat = forwardRef(
           </div>
         </div>
 
-        <div className="row p-4 m-0 border-bottom">
+        <div className="row p-1 pt-0 m-0 border-bottom">
           <div className="col-lg-6 col-md-6 col-sm-12 m-text-center">
             <h4>Customer Details:</h4>
             <p className="my-1">{customerName}</p>
@@ -301,38 +316,16 @@ const ViewFormat = forwardRef(
 
           <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
             <h5>Payment Summary</h5>
-            <p className="my-1">
-              <strong>Subtotal (Amount before Tax):</strong> ₹{" "}
-              {subtotal.toFixed(2)}
-            </p>
-            <p className="my-1">
-              <strong>Total Tax Amount:</strong> ₹ {totalTaxAmount.toFixed(2)}
-            </p>
-            <p className="my-1">
-              <strong>Grand Total (After Tax):</strong> ₹{" "}
-              {grandTotal.toFixed(2)}
+            <p className="my-1"><strong>Subtotal (Amount before Tax):</strong> {currency} {subtotal.toFixed(2)}</p>
+            <p className="my-1"><strong>Total Tax Amount:</strong> {currency} {totalTaxAmount.toFixed(2)}</p>
+            <p className="my-1"><strong>Grand Total (After Tax):</strong> {currency} {grandTotal.toFixed(2)}</p>
+            <p className="my-1"><strong>Amount Paid:</strong> {currency} {invoiceData?.amountPaid.toFixed(2)}</p>
+            <p className="my-1"><strong>Total:</strong> {currency} {totalAmount.toFixed(2)}</p>
+
+            <p className="my-1 value-in-words">
+              <strong>Total in Words:</strong> {convertNumberToWords(Number(totalAmount.toFixed(2)))} {selectInvoice.currency} Only
             </p>
 
-            {/* <p><strong>Net Amount:</strong> ₹ {totalAmount.toFixed(2)}</p> */}
-            {/* {isSameState ? (
-                        <>
-                            <p><strong>CGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
-                            <p><strong>SGST ({taxRate / 2}%):</strong> ₹ {taxAmount / 2}</p>
-                        </>
-                    ) : (
-                        <p><strong>IGST ({taxRate}%):</strong> ₹ {taxAmount}</p>
-                    )} */}
-            <p className="my-1">
-              <strong>Amount Paid:</strong> ₹{" "}
-              {invoiceData?.amountPaid.toFixed(2)}
-            </p>
-            <p className="my-1">
-              <strong>Total:</strong> ₹ {totalAmount.toFixed(2)}
-            </p>
-            <p className="my-1 value-in-words">
-              <strong>Total in Words:</strong>{" "}
-              {convertNumberToWords(Number(totalAmount.toFixed(2)))} Rupees Only
-            </p>
 
             {/* <p className="my-1 value-in-words"><strong>Value in Words:</strong> ₹ {convertNumberToWords(Number(amountDue.toFixed(2)))} ONLY</p>
                     <p className="my-1"><strong>Net Received:</strong> ₹ {netReceived.toFixed(2)}</p>

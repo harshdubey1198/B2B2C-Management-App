@@ -9,6 +9,7 @@ import FirmAddressForm from '../../components/FirmComponents/firmAddressForm';
 import axiosInstance from '../../utils/axiosInstance';
 import FirmTypeForm from '../../components/FirmComponents/firmTypeForm';
 import { validateEmail } from '../Utility/FormValidation';
+import Select from 'react-select';
 
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
@@ -29,6 +30,7 @@ function FirmSettings() {
     },
   };
 
+  console.log(firmDetails , "firm details");
 
   
   useEffect(() => {
@@ -39,6 +41,14 @@ function FirmSettings() {
 
     fetchAuthUser();
   }, []);
+
+  // currency dropdown for only indian , malaysian , saudi arabia , uae with symbols to showcase
+  const currencyOptions = [
+    { value: "INR", label: "₹ INR" },
+    { value: "AED", label: "د.إ AED" },
+    { value: "SAR", label: "﷼ SAR" },
+    { value: "MYR", label: "RM MYR" },
+  ];
 
   useEffect(() => {
     if (authUser?.response?.role === "client_admin") {
@@ -263,6 +273,19 @@ const handleSubmit = async (e) => {
                          
                         </FormGroup>
                       </div>
+                      <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                        <FormGroup>
+                          {/* currency select */}
+                          <Label for="currency">Currency</Label>
+                          <Select
+                            options={currencyOptions}
+                            // value={currencyOptions.find(option => option.value === firmDetails.currency)}
+                            value={currencyOptions.find(option => option.value === firmDetails.currency)}
+                            onChange={(selectedOption) => handleFieldChange("currency", selectedOption.value)}
+                          />
+                        </FormGroup>
+                      </div>
+                      
                       {/* <hr/> */}
                       <div
                       className='p-2 my-2 col-lg-3 col-md-3 col-sm-12 rounded'  
