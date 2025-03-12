@@ -101,6 +101,8 @@ import RawMaterialTable from "../Pages/Production-Inventory/RawMaterialTable.jsx
 import WorkInProgressTable from "../Pages/Production-Inventory/WorkInProgressTable.jsx";
 import WasteManagement from "../Pages/Production-Inventory/WasteManagement.jsx";
 import BomPage from "../Pages/Production-Inventory/BomPage.jsx";
+import SuccessPayment from "../Pages/AuthenticationPages/SuccessPayment.jsx";
+import FailurePayment from "../Pages/AuthenticationPages/FailurePayment.jsx";
 const authProtectedRoutes = [
   //dashboard
   { path: "/dashboard", component: <Dashboard /> },
@@ -282,6 +284,8 @@ const publicRoutes = [
   {path:"/login-forwarding" , component:<Redirectors />},
   {path:"/blogs" , component:<BlogsPage/>},
   {path:"/blogs/:blog_slug" , component:<BlogDetailPage/>},
+  {path:"/payment-success", component:<SuccessPayment/>},
+  {path:"/payment-failure", component:<FailurePayment/>},
 
   // // Authentication Inner Pages
   // { path: "/auth-login", component: <Login1 /> },
