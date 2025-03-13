@@ -1,5 +1,8 @@
 let paymentService = {}
-const Payment = require('../schemas/payment.schema')
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require("nodemailer");
+const Payment = require('../schemas/payment.schema');
+const Plan = require('../schemas/plans.schema');
 const User = require('../schemas/user.schema')
 
 paymentService.createPayment = async (body) => {
@@ -36,6 +39,98 @@ paymentService.createPayment = async (body) => {
         return Promise.reject('Error creating payments for plans.');
     }
 }
+
+// Create Checkout Session
+paymentService.createCheckoutSession = async (body) => {
+    try {
+        const { userId, planId } = body;
+        const user = await User.findById(userId);
+        if (!user) throw new Error("User not found");
+
+        const plan = await Plan.findById(planId);
+        if (!plan) throw new Error("Invalid Plan ID");
+
+        // ✅ Create Stripe Checkout Session
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            mode: 'payment',
+            customer_email: user.email,
+            line_items: [{
+                price_data: {
+                    currency: 'inr',
+                    product_data: { name: plan.title, description: plan.caption },
+                    unit_amount: plan.price * 100,
+                },
+                quantity: 1
+            }],
+            success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/payment-failure`,
+            metadata: { userId, planId }
+        });
+
+        return { checkoutUrl: session.url };
+    } catch (error) {
+        console.error("Error creating checkout session:", error);
+        throw new Error("Could not create checkout session");
+    }
+};
+
+//Webhook: Confirm Payment & Activate User
+paymentService.handleWebhook = async (req) => {
+    const sig = req.headers['stripe-signature'];
+
+    try {
+        const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+
+        if (event.type === 'checkout.session.completed') {
+            const session = event.data.object;
+            const { userId, planId } = session.metadata;
+
+            let user = await User.findById(userId);
+            if (!user) throw new Error("User not found");
+
+            const plan = await Plan.findById(planId);
+            if (!plan) throw new Error("Plan not found");
+
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + plan.days);
+
+            await Payment.create({
+                userId: user._id,
+                planId: plan._id,
+                amount: plan.price,
+                status: "completed",
+                expirationDate
+            });
+
+            user.isActive = true;
+            await user.save();
+
+            console.log(`User ${user.email} has been automatically approved after payment.`);
+        }
+    } catch (error) {
+        console.error("Webhook error:", error);
+        throw new Error(`Webhook Error: ${error.message}`);
+    }
+};
+
+//Verify Payment Using Session ID
+paymentService.verifyPayment = async (sessionId) => {
+    try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+        if (!session) throw new Error("Invalid session ID");
+
+        return {
+            status: session.payment_status,
+            amount: session.amount_total / 100,
+            currency: session.currency,
+            customer_email: session.customer_email,
+        };
+    } catch (error) {
+        console.error("Error verifying payment:", error);
+        throw new Error("Payment verification failed");
+    }
+};
 
 
 paymentService.getPayment = async (filters) => {
