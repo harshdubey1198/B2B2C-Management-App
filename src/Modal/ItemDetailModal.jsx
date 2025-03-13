@@ -143,7 +143,7 @@ useEffect(() => {
         {" "}
         {selectedItem?.name} Details{" "} ||
         Item Type : 
-        { " " + selectedItem?.type.replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) || " " }
+        {/* { " " + selectedItem?.type.replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) || " " } */}
 
       </ModalHeader>
       <ModalBody>

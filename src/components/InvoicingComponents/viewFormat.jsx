@@ -136,17 +136,18 @@ const ViewFormat = forwardRef(
             </p>
             <p className="my-1">Email : {selectInvoice?.email}</p>
             <p className="my-1">Phone : {selectInvoice?.companyMobile}</p>
-            {companyAddress.map((address, index) => (
-              <div key={index}>
-                <p className="my-1">
-                  {address.h_no || ""}, {address.nearby}, {address.district}
-                </p>
-                <p className="my-1">
-                  {address.city}, {address.state}, {address.country},{" "}
-                  {address.zip_code}
-                </p>
-              </div>
-            ))}
+              {companyAddress.map((address, index) => (
+                <div key={index}>
+                  <p className="my-1">
+                    {[address.h_no, address.nearby, address.district].filter(Boolean).join(", ")}
+                  </p>
+                  <p className="my-1">
+                    {[address.city, address.state, address.country, address.zip_code]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </p>
+                </div>
+              ))}
             <p className="my-1">
               <b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}
             </p>
@@ -173,15 +174,20 @@ const ViewFormat = forwardRef(
             <h4>Customer Details:</h4>
             <p className="my-1">{customerName}</p>
             <p className="my-1">
-              {invoiceData?.customerAddress.h_no || ""},{" "}
-              {invoiceData?.customerAddress.nearby},{" "}
-              {invoiceData?.customerAddress.district}
+              {[invoiceData?.customerAddress?.h_no, 
+                invoiceData?.customerAddress?.nearby, 
+                invoiceData?.customerAddress?.district]
+                .filter(Boolean)
+                .join(", ")}
             </p>
             <p className="my-1">
-              {invoiceData?.customerAddress.city},{" "}
-              {invoiceData?.customerAddress.state},{" "}
-              {invoiceData?.customerAddress.country},{" "}
-              {invoiceData?.customerAddress.zip_code}
+              {[invoiceData?.customerAddress?.city, 
+                invoiceData?.customerAddress?.state, 
+                invoiceData?.customerAddress?.country, 
+                invoiceData?.customerAddress?.zip_code]
+                .filter(Boolean)  
+                .join(", ")}
+
             </p>
             <p className="my-1">
               Phone : {invoiceData?.customerPhone} | Email :{" "}
@@ -234,7 +240,8 @@ const ViewFormat = forwardRef(
                     <td>{index + 1}</td>
                     <td>{item?.itemId?.name || "N/A"}</td>
                     <td>{item?.selectedVariant?.[0]?.optionLabel || "-"}</td>
-                    <td>{sliceDescription(item?.itemId?.description)}</td>
+                    {/* <td>{item?.itemId?.description}</td> */}
+                    <td dangerouslySetInnerHTML={{ __html: item?.itemId?.description }}></td>
                     {/* <td>{item.hsn}</td> */}
                     <td>{item.quantity}</td>
                     <td>
