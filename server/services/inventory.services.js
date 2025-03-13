@@ -95,29 +95,41 @@ inventoryServices.createItem = async (userId, body) => {
     return newItem;
 };
 
-// GET ALL INVENTORY ITEMS WITH VARIANTS
 inventoryServices.getAllItems = async (adminId) => {
-    const items = await InventoryItem.find({firmId:adminId, deleted_at: null})
-    .populate('categoryId')
-    .populate('subcategoryId')
-    .populate('vendor')
-    .populate({ path: 'createdBy', select: "firstName lastName email" })
-    .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
-    .populate('brand')
-    .populate('manufacturer')
-    .lean()
-    if(!items.length){
-        throw new Error('No items found')
+    const items = await InventoryItem.find({ firmId: adminId, deleted_at: null })
+        .populate('categoryId')
+        .populate('subcategoryId')
+        .populate('vendor')
+        .populate({ path: 'createdBy', select: "firstName lastName email" })
+        .populate({ path: "tax.taxId", select: "taxName taxRates" }) 
+        .populate('brand')
+        .populate('manufacturer')
+        .populate({ path: 'firmId', select: "currency" }) 
+        .lean();
+
+    if (!items.length) {
+        throw new Error('No items found');
     }
+
+    let firmCurrency = null;
+    if (items[0].firmId && items[0].firmId.currency) {
+        firmCurrency = items[0].firmId.currency;
+    }
+
     for (const item of items) {
         if (item.tax && item.tax.selectedTaxTypes?.length > 0 && item.tax.taxId?.taxRates) {
-            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate =>
-                item.tax.selectedTaxTypes.some(id => id.toString() === rate._id.toString())
-            );
+            const selectedTaxIds = new Set(item.tax.selectedTaxTypes.map(id => id.toString()));
+            item.tax.selectedTaxTypes = item.tax.taxId.taxRates.filter(rate => selectedTaxIds.has(rate._id.toString()));
         }
     }
-    return items
+
+    for (const item of items) {
+        delete item.firmId;
+    }
+
+    return { items, firmCurrency };
 };
+
 
 // GET SINGLE ITEM 
 inventoryServices.getItem = async (id) => {

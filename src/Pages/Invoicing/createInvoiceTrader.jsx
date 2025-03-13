@@ -160,10 +160,7 @@ const fetchInventoryItems = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validatePhone(invoiceData.customerPhone)) {
-      toast.error("Invalid Phone Number");
-      return;
-  }
+   
   const invoicePayload = {
     customer: {
       firstName: invoiceData.firstName, 

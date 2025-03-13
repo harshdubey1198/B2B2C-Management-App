@@ -13,7 +13,7 @@ const InventoryItemSchema = new Schema({
     supplier: { type: String },
     ProductHsn: { type: String },
     manufacturer: { type: String },
-    type: { type: String, enum: ['raw_material', 'finished_good'], required: true }, 
+    type: { type: String, enum: ['raw_material', 'finished_good'] }, 
     brand: { type: String },
     costPrice: { type: Number },
     sellingPrice: { type: Number },

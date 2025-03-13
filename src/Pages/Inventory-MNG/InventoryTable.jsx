@@ -11,6 +11,7 @@ import { RiseLoader, ScaleLoader } from "react-spinners";
 import FirmSwitcher from "../Firms/FirmSwitcher";
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
+  const [firmCurrency, setFirmCurrency] = useState(null); 
   const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
@@ -32,29 +33,39 @@ function InventoryTable() {
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
   const firmId = authuser?.adminId;
-    useEffect(() => {
-        if (!selectedFirmId){
-          setSelectedFirmId(firmId);
+  useEffect(() => {
+    if (!selectedFirmId) {
+        setSelectedFirmId(firmId);
+    }
 
-        } 
-        
-          
-          
-
-        const fetchInventoryData = async () => {
-          setLoading(true);
-          try {
-            const response =  await getInventoryItems(selectedFirmId);
+    const fetchInventoryData = async () => {
+        setLoading(true);
+        try {
+            const response = await getInventoryItems(selectedFirmId);
             setInventoryData(response.data || []);
-          } catch (error) {
+            setFirmCurrency(response.currency || "INR"); // Store the firm's currency
+        } catch (error) {
             console.error("Error fetching inventory data:", error);
             toast.error("Failed to fetch inventory items.");
-          }
-          setLoading(false);
-        };
+        }
+        setLoading(false);
+    };
 
-        fetchInventoryData();
-      }, [selectedFirmId, trigger]);
+    fetchInventoryData();
+}, [selectedFirmId, trigger]);
+const currencyOptions = [
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+  { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+  { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+];
+
+const getCurrencyDetails = (currencyCode) => {
+  const currency = currencyOptions.find((option) => option.code === currencyCode);
+  return currency ? currency.symbol : currencyCode;
+};
+
 
   const refetchItems = () => {
     setTrigger((prev) => prev + 1);
@@ -341,8 +352,8 @@ useEffect(() => {
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.quantity} {item.qtyType}</td>
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
-                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
-                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{getCurrencyDetails(firmCurrency)} {item.costPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{getCurrencyDetails(firmCurrency)} {item.sellingPrice?.toFixed(2)}</td>
                           <td>
                             {role === "accountant" ? null : (
                                 <i className="bx bx-edit" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(item)}></i>

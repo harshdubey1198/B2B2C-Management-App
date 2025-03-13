@@ -70,7 +70,11 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                         </div>
                     ))}
                     <p className="my-1">{invoiceData?.companyEmail}</p>
-                    <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
+                    <p className="my-1">
+                        {invoiceData?.gstin === null && (
+                        <b>GSTIN:</b>)
+                        }
+                         {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <p><strong>Invoice Number:</strong> INV-24-MAG</p>
@@ -118,7 +122,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                                     <td>{index + 1}</td>
                                     <td>{item?.name || 'N/A'}</td> 
                                     <td>{item?.selectedVariant?.[0]?.optionLabel || '-'}</td> 
-                                    <td>{sliceDescription(item?.description)}</td>
+                                    <td dangerouslySetInnerHTML={{ __html: item?.description }}></td>
                                     <td>
                                         {item?.taxComponents && item?.taxComponents.length > 0 ? (
                                             <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
@@ -145,9 +149,17 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
             <div className="row bg-light m-4">
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center ">
                     <h5>Bank Details</h5>
-                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice?.bankName || 'Your Bank Name'}</p>
-                    <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice?.accountNumber || 'Your Account Number'}</p>
-                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice?.ifscCode || 'Your IFSC Code'}</p>
+                    <p className="my-1"><strong>Bank Name: </strong> {invoiceData?.bankName || selectInvoice?.bankName || 'Your Bank Name'}</p>
+                    <p className="my-1"><strong>Account Number: </strong> {invoiceData?.accountNumber ||selectInvoice?.accountNumber || 'Your Account Number'}</p>
+                    <p className="my-1">
+                        <strong> Branch Name: </strong>
+                        {invoiceData?.branchName}
+                    </p>
+                    {(invoiceData?.ifscCode || selectInvoice?.ifscCode) && (
+                    <p className="my-1">
+                        <strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice?.ifscCode}
+                    </p>
+                    )}
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <h4>Summary:</h4>
