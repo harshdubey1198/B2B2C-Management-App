@@ -32,6 +32,7 @@ const InventoryItemSchema = new Schema({
         // }]
         selectedTaxTypes: [{ type: Schema.Types.ObjectId }]
     },
+    criticalStockAlerts: [{ type: Number }],
     variants: [{
         variationType: { type: String },
         optionLabel: { type: String },
