@@ -76,61 +76,126 @@ paymentService.createCheckoutSession = async (body) => {
 };
 
 //Webhook: Confirm Payment & Activate User
-paymentService.handleWebhook = async (req) => {
-    const sig = req.headers['stripe-signature'];
+// paymentService.handleWebhook = async (req) => {
+//     const sig = req.headers['stripe-signature'];
 
-    try {
-        const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+//     try {
+//         const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
 
-        if (event.type === 'checkout.session.completed') {
-            const session = event.data.object;
-            const { userId, planId } = session.metadata;
+//         if (event.type === 'checkout.session.completed') {
+//             const session = event.data.object;
+//             const { userId, planId } = session.metadata;
 
-            let user = await User.findById(userId);
-            if (!user) throw new Error("User not found");
+//             let user = await User.findById(userId);
+//             if (!user) throw new Error("User not found");
 
-            const plan = await Plan.findById(planId);
-            if (!plan) throw new Error("Plan not found");
+//             const plan = await Plan.findById(planId);
+//             if (!plan) throw new Error("Plan not found");
 
-            const expirationDate = new Date();
-            expirationDate.setDate(expirationDate.getDate() + plan.days);
+//             const expirationDate = new Date();
+//             expirationDate.setDate(expirationDate.getDate() + plan.days);
 
-            await Payment.create({
-                userId: user._id,
-                planId: plan._id,
-                amount: plan.price,
-                status: "completed",
-                expirationDate
-            });
+//             await Payment.create({
+//                 userId: user._id,
+//                 planId: plan._id,
+//                 amount: plan.price,
+//                 status: "completed",
+//                 expirationDate
+//             });
 
-            user.isActive = true;
-            await user.save();
+//             user.isActive = true;
+//             await user.save();
 
-            console.log(`User ${user.email} has been automatically approved after payment.`);
-        }
-    } catch (error) {
-        console.error("Webhook error:", error);
-        throw new Error(`Webhook Error: ${error.message}`);
-    }
-};
+//             console.log(`User ${user.email} has been automatically approved after payment.`);
+//         }
+//     } catch (error) {
+//         console.error("Webhook error:", error);
+//         throw new Error(`Webhook Error: ${error.message}`);
+//     }
+// };
 
 //Verify Payment Using Session ID
 paymentService.verifyPayment = async (sessionId) => {
     try {
+        console.log("Verifying Payment for session:", sessionId);
+
         const session = await stripe.checkout.sessions.retrieve(sessionId);
         if (!session) throw new Error("Invalid session ID");
+
+        console.log("Retrieved session from Stripe:", session);
+
+        if (session.payment_status !== "paid") {
+            console.log(" Payment status is NOT paid:", session.payment_status);
+            throw new Error("Payment not completed");
+        }
+
+        const { userId, planId } = session.metadata;
+
+        console.log("Extracted Metadata - userId:", userId, "planId:", planId);
+
+        let user = await User.findById(userId);
+        if (!user) {
+            console.log("User not found in DB:", userId);
+            throw new Error("User not found");
+        }
+
+        const plan = await Plan.findById(planId);
+        if (!plan) {
+            console.log(" Plan not found in DB:", planId);
+            throw new Error("Plan not found");
+        }
+
+        console.log("🔹 Storing payment in database...");
+        
+        // Calculate expiration date
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + plan.days);
+
+        // Store Payment in DB
+        const payment = await Payment.create({
+            userId: user._id,
+            planId: plan._id,
+            amount: plan.price,
+            status: "completed",
+            expirationDate
+        });
+
+        console.log("Payment saved in DB:", payment);
+
+        // Activate User
+        user.isActive = true;
+        await user.save();
+        console.log("User activated:", user.email);
 
         return {
             status: session.payment_status,
             amount: session.amount_total / 100,
             currency: session.currency,
             customer_email: session.customer_email,
+            message: "Payment verified and user activated"
         };
     } catch (error) {
         console.error("Error verifying payment:", error);
         throw new Error("Payment verification failed");
     }
 };
+
+// paymentService.verifyPayment = async (sessionId) => {
+//     try {
+//         const session = await stripe.checkout.sessions.retrieve(sessionId);
+//         if (!session) throw new Error("Invalid session ID");
+
+//         return {
+//             status: session.payment_status,
+//             amount: session.amount_total / 100,
+//             currency: session.currency,
+//             customer_email: session.customer_email,
+//         };
+//     } catch (error) {
+//         console.error("Error verifying payment:", error);
+//         throw new Error("Payment verification failed");
+//     }
+// };
 
 
 paymentService.getPayment = async (filters) => {
