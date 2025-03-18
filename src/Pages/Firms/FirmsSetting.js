@@ -14,6 +14,7 @@ import Select from 'react-select';
 function FirmSettings() {
   const [firmsData, setFirmsData] = useState([]);
   const [selectedFirmId, setSelectedFirmId] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(""); 
   const [firmDetails, setFirmDetails] = useState({
     address: [],
     firmDetails: { firmType: "", bankName: "", accountNumber: "", ifscCode: "", cifNumber: "", branchName: "", accountHolder: "", gstin: "", pan: "", partnershipDeed: "", llpAgreement: "", aoa: "", moa: "", digitalSignature: "", din: "", udyam: "",
@@ -49,7 +50,38 @@ function FirmSettings() {
     { value: "SAR", label: "﷼ SAR" },
     { value: "MYR", label: "RM MYR" },
   ];
+  const countryOptions = [
+    { value: "India", label: "🇮🇳 India" },
+    { value: "UAE", label: "🇦🇪 UAE" },
+    { value: "Saudi Arabia", label: "🇸🇦 Saudi Arabia" },
+    { value: "Malaysia", label: "🇲🇾 Malaysia" },
+  ];
 
+  const countryDocuments = {
+    India: ["PAN", "GSTIN", "Udyam Registration", "Shop & Establishment License"],
+    UAE: ["Trade License", "VAT Registration Certificate", "Chamber of Commerce Certificate"],
+    "Saudi Arabia": ["Commercial Registration (CR)", "Chamber of Commerce Certificate", "VAT Certificate"],
+    Malaysia: ["SSM Certificate", "LHDN Tax Registration", "Business Bank Account Statement"],
+  };
+
+  const handleCountryChange = (selectedOption) => {
+    setSelectedCountry(selectedOption.value);
+    setFirmDetails((prevDetails) => ({
+      ...prevDetails,
+      country: selectedOption.value,
+      // currency: currencyOptions[selectedOption.value]?.value || "INR",
+    }));
+  };
+  
+  const handleDocumentUpload = (docType, file) => {
+    setFirmDetails((prevDetails) => ({
+      ...prevDetails,
+      firmDetails: {
+        ...prevDetails.firmDetails,
+        [docType]: file,
+      },
+    }));
+  };
   useEffect(() => {
     if (authUser?.response?.role === "client_admin") {
       const fetchFirms = async () => {
@@ -285,7 +317,16 @@ const handleSubmit = async (e) => {
                           />
                         </FormGroup>
                       </div>
-                      
+                      <Col lg={3} md={6} sm={12}>
+                        <FormGroup>
+                          <Label for="country">Country</Label>
+                          <Select
+                            options={countryOptions}
+                            value={countryOptions.find((option) => option.value === selectedCountry)}
+                            onChange={handleCountryChange}
+                          />
+                        </FormGroup>
+                      </Col>
                       {/* <hr/> */}
                       <div
                       className='p-2 my-2 col-lg-3 col-md-3 col-sm-12 rounded'  
@@ -390,7 +431,20 @@ const handleSubmit = async (e) => {
                           />
                         </FormGroup>
                       </div>
-                      
+                      {/* Business Verification Documents */}
+                        <Row className="mt-3">
+                          <Col lg={12}>
+                            <h5>Business Verification Documents</h5>
+                            {selectedCountry &&
+                              countryDocuments[selectedCountry]?.map((doc) => (
+                                <FormGroup key={doc}>
+                                  <Label>{doc}</Label>
+                                  <Input type="file" onChange={(e) => handleDocumentUpload(doc, e.target.files[0])} />
+                                </FormGroup>
+                              ))}
+                          </Col>
+                        </Row>
+
                     </Row>
                   {firmDetails.address.length > 0 ? (
                         firmDetails.address.map((address, index) => (
