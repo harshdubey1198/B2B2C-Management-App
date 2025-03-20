@@ -75,10 +75,12 @@ const Dashboard = () => {
                       Create Invoice
                   </Button>
                   </div>
-              ) : authuser.role === "employee" ? (
-                  <Button color="primary" onClick={() => navigate('/create-invoice')}>
-                      Create Invoice
-                  </Button>
+              ) : authuser.role === "employee" ? (                 
+                  <div className="d-flex justify-content-evenly">
+                    <Button color="primary" onClick={() => navigate('/add-inventory')}>
+                        Create Inventory
+                    </Button>                  
+                  </div>
               ) : null}        
           </Row>
           <RolewiseDashboard/>

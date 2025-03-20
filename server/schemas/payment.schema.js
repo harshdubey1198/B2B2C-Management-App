@@ -7,7 +7,7 @@ const paymentSchema = new Schema({
     paymentDate: { type: Date, default: Date.now }, 
     amount: { type: Number, required: true }, 
     status: { type: String, enum: ['pending', 'completed', 'failed', 'expired'], default: 'pending' },
-    expirationDate: { type: Date, required: true }, 
+    expirationDate: { type: Date }, 
 }, {timestamps: true});
 
 const Payment = mongoose.model('Payment', paymentSchema);

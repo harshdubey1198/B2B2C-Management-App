@@ -141,7 +141,8 @@ const handleCriticalItemNotification = async (io, itemId) => {
 
             // **Find users linked to the item's firmId & adminId**
             const usersToNotify = await User.find({ 
-                adminId: item.firmId, 
+                adminId: item.firmId,
+                role: { $in: ["firm_admin", "employee"] } 
             });
 
             for (const user of usersToNotify) {
