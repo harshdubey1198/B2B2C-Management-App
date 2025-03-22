@@ -5,6 +5,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const VerifyOtp = () => {
+  const authuser = JSON.parse(localStorage.getItem("authUser"));
+  const storedPlanId = localStorage.getItem("planId");
+  const useremail = localStorage.getItem("email");
   const [otp, setOtp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -13,6 +16,13 @@ const VerifyOtp = () => {
   const [resendTimeout, setResendTimeout] = useState(null);
   const [showModal, setShowModal] = useState(false);  // State for showing modal
   const navigate = useNavigate();
+  // const token = authuser?.token;
+  // const config = {
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     Authorization: `Bearer ${token}`,
+  //   },
+  // };
 
   const email = localStorage.getItem("email");
 
@@ -36,38 +46,96 @@ const VerifyOtp = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
+  //   if (!otp) {
+  //     toast.error("Please enter OTP");
+  //     setError("OTP is required.");
+  //     return;
+  //   }
+
+  //   setIsSubmitting(true);
+  //   setError("");
+
+  //   const otpNumber = Number(otp);
+  //   const response = await axios
+  //     .post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
+  //       email,
+  //       otp: otpNumber,
+  //     })
+  //     .then((response) => {
+  //       toast.success(response.message);
+  //       const checkoutResponse = await axios.post(`${process.env.REACT_APP_URL}/payment/create-checkout-session`, {
+  //         email: useremail,  
+  //         planId: storedPlanId,  
+  //       });
+
+  //       // Step 3: Redirect the user to Stripe Checkout
+  //       window.location.href = checkoutResponse.data.checkoutUrl;
+  //       setShowModal(true); // Show the acknowledgment modal after successful verification
+  //     })
+  //     .catch((err) => {
+  //       const errorMessage = err.response?.message || "Invalid OTP";
+  //       toast.error(errorMessage);
+  //       setError(errorMessage);
+  //     })
+  //     .finally(() => {
+  //       setIsSubmitting(false);
+  //     });
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
     if (!otp) {
       toast.error("Please enter OTP");
       setError("OTP is required.");
       return;
     }
-
+  
     setIsSubmitting(true);
     setError("");
-
-    const otpNumber = Number(otp);
-    const response = axios
-      .post(`${process.env.REACT_APP_URL}/auth/verify-otp`, {
-        email,
-        otp: otpNumber,
-      })
-      .then((response) => {
-        toast.success(response.message);
-        setShowModal(true); // Show the acknowledgment modal after successful verification
-      })
-      .catch((err) => {
-        const errorMessage = err.response?.message || "Invalid OTP";
-        toast.error(errorMessage);
-        setError(errorMessage);
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
+  
+    try {
+      // Step 1: Verify OTP
+      const otpNumber = Number(otp);
+      const response = await axios.post(
+        `${process.env.REACT_APP_URL}/auth/verify-otp`,
+        {
+          email,
+          otp: otpNumber,
+        }
+      );
+  
+      toast.success(response.data.message || "OTP Verified Successfully!");
+  
+      // Step 2: Create Checkout Session
+      const checkoutResponse = await axios.post(
+        `${process.env.REACT_APP_URL}/payment/create-checkout-session`,
+        {
+          email: useremail,
+          planId: storedPlanId,
+        }
+      );
+  
+      if (checkoutResponse.data.checkoutUrl) {
+        window.location.href = checkoutResponse.data.checkoutUrl;
+      } else {
+        toast.error("Failed to retrieve checkout URL. Please try again.");
+      }
+  
+      // setShowModal(true);
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || "Invalid OTP or Payment Issue";
+      toast.error(errorMessage);
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
+  
   const handleResendOtp = () => {
     if (!email) {
       toast.error("Email not found. Please try again.");

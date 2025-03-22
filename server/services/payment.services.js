@@ -43,10 +43,9 @@ paymentService.createPayment = async (body) => {
 // Create Checkout Session
 paymentService.createCheckoutSession = async (body) => {
     try {
-        const { userId, planId } = body;
-        const user = await User.findById(userId);
+        const { email, planId } = body;
+        const user = await User.findOne({email});
         if (!user) throw new Error("User not found");
-
         const plan = await Plan.findById(planId);
         if (!plan) throw new Error("Invalid Plan ID");
 
@@ -65,7 +64,7 @@ paymentService.createCheckoutSession = async (body) => {
             }],
             success_url: `${process.env.FRONTEND_URL}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.FRONTEND_URL}/payment-failure`,
-            metadata: { userId, planId }
+            metadata: { userId: user._id.toString(), planId }
         });
 
         return { checkoutUrl: session.url };
@@ -117,35 +116,24 @@ paymentService.createCheckoutSession = async (body) => {
 //Verify Payment Using Session ID
 paymentService.verifyPayment = async (sessionId) => {
     try {
-        console.log("Verifying Payment for session:", sessionId);
-
         const session = await stripe.checkout.sessions.retrieve(sessionId);
         if (!session) throw new Error("Invalid session ID");
 
-        console.log("Retrieved session from Stripe:", session);
-
         if (session.payment_status !== "paid") {
-            console.log(" Payment status is NOT paid:", session.payment_status);
             throw new Error("Payment not completed");
         }
 
         const { userId, planId } = session.metadata;
-
-        console.log("Extracted Metadata - userId:", userId, "planId:", planId);
-
         let user = await User.findById(userId);
         if (!user) {
-            console.log("User not found in DB:", userId);
+            // console.log("User not found in DB:", userId);
             throw new Error("User not found");
         }
 
         const plan = await Plan.findById(planId);
         if (!plan) {
-            console.log(" Plan not found in DB:", planId);
             throw new Error("Plan not found");
         }
-
-        console.log("🔹 Storing payment in database...");
         
         // Calculate expiration date
         const expirationDate = new Date();
@@ -160,13 +148,9 @@ paymentService.verifyPayment = async (sessionId) => {
             expirationDate
         });
 
-        console.log("Payment saved in DB:", payment);
-
         // Activate User
         user.isActive = true;
         await user.save();
-        console.log("User activated:", user.email);
-
         return {
             status: session.payment_status,
             amount: session.amount_total / 100,
@@ -175,7 +159,6 @@ paymentService.verifyPayment = async (sessionId) => {
             message: "Payment verified and user activated"
         };
     } catch (error) {
-        console.error("Error verifying payment:", error);
         throw new Error("Payment verification failed");
     }
 };
