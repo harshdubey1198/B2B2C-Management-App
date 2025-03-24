@@ -10,7 +10,6 @@ const validateUserSubscription = async (clientAdmin, userRole) => {
                 : "Your account cannot be accessed due to an inactive subscription. Please contact your Client Admin."
         );
     }
-
     if (new Date() > new Date(latestPayment.expirationDate)) {
         clientAdmin.isActive = false;
         latestPayment.status = "expired";
