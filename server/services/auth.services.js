@@ -182,8 +182,14 @@ authService.userLogin = async (body) => {
         // await validateUserSubscription(clientAdmin, user.role);
         const subscriptionStatus = await validateUserSubscription(clientAdmin, user.role);
         if (subscriptionStatus.redirectTo) {
-            return subscriptionStatus;
+            return {
+                loginFailed: true,
+                error: subscriptionStatus.message,  
+                redirectTo: subscriptionStatus.redirectTo
+            };
         }
+        
+        
 
         if (user.role === "client_admin") {
             if (!user.isVerified) {
