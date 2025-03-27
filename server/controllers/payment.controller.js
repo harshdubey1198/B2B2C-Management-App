@@ -111,4 +111,18 @@ paymentController.deletePayment = async (req, res) => {
     }
 };
 
+paymentController.getAllPayments = async (req, res) => {
+  try {
+    const payment = await PaymentService.getAllPayments();
+    // return res.status(200).json({
+    //   message: "All Payments details fetched successfully",
+    //   data: payment,
+    // });
+    return res.status(200).json(createResult("All Payments details fetched successfully", payment));
+  } catch (error) {
+    console.error("Error fetching payment:", error.message || error);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
+
 module.exports = paymentController;

@@ -217,4 +217,38 @@ paymentService.deletePayment = async (paymentId) => {
     }
 };
 
+paymentService.getAllPayments = async () => {
+    try {
+    const payments = await Payment.find().sort({ paymentDate: 1 }); 
+
+    if (!payments || payments.length === 0) {
+        throw new Error("No payments found.")
+    }
+    let userPayments = {};
+    payments.forEach(payment => {
+        const userId = payment.userId.toString();
+        if (!userPayments[userId]) {
+            userPayments[userId] = {
+                userId,
+                totalPayments: 0,
+                currentPlan: payment.plan, 
+                payments: []
+            };
+        }
+
+        userPayments[userId].totalPayments += 1;
+        userPayments[userId].payments.push(payment);
+        userPayments[userId].currentPlan = payment.plan;
+    });
+
+    const paymentSummary = Object.values(userPayments);
+
+    return paymentSummary;
+} catch (error) {
+    console.error("Error fetching all payments:", error.message || error);
+    throw new Error("Unable to fetch payment details.")
+
+}
+}
+
 module.exports = paymentService
