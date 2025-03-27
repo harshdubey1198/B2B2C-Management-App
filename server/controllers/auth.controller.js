@@ -47,9 +47,10 @@ authController.login = async (req, res) => {
   try {
     const response = await authService.userLogin(req.body);
     const token = createSecretToken(response);
-    if (response.redirectTo) {
+    if (response.loginFailed) {
       if (response.loginFailed) {
-        return res.status(403).json(createResult(null, { redirectTo: response.redirectTo }, response.error));
+        return res.status(403).json(createResult(null, null, response.error));
+        // return res.status(403).json(createResult(null, { redirectTo: response.redirectTo }, response.error));
       }
     }
     return res.status(200).json(createResult("Login Successfully", { response, token }));

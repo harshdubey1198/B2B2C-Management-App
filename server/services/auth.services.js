@@ -184,8 +184,10 @@ authService.userLogin = async (body) => {
         if (subscriptionStatus.redirectTo) {
             return {
                 loginFailed: true,
-                error: subscriptionStatus.message,  
-                redirectTo: subscriptionStatus.redirectTo
+                error: {
+                    message: subscriptionStatus.message,
+                    redirectTo: subscriptionStatus.redirectTo
+                }
             };
         }
         
