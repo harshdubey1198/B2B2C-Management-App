@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { handleUserJoin, handleNewNotification, handleNotificationUpdate, handleNotificationDelete ,handleCriticalItemNotification} = require("../services/socket.services");
+const { handleUserJoin, handleNewNotification, handleDuePaymentNotification, handleNotificationUpdate, handleNotificationDelete, handleCriticalItemNotification} = require("../services/socket.services");
 const Notification = require("../schemas/notification.schema");
 const Item = require("../schemas/inventoryItem.schema");
 
@@ -21,7 +21,6 @@ const initializeSocket = (server) => {
   });
 
   const notificationChangeStream = Notification.watch();
-  
   notificationChangeStream.on("change", async (change) => {
     console.log("MongoDB Change Detected:", change);
     
@@ -35,20 +34,24 @@ const initializeSocket = (server) => {
       handleNotificationDelete(io, documentKey);
     }
   });
-};
 
-const inventoryChangeStream = Item.watch();
-inventoryChangeStream.on("change", async (change) => {
-    console.log("Inventory Change Detected:", JSON.stringify(change, null, 2)); 
+  const inventoryChangeStream = Item.watch();
+  inventoryChangeStream.on("change", async (change) => {
+    console.log("Inventory Change Detected:", JSON.stringify(change, null, 2));
 
     const { operationType, documentKey, updateDescription } = change;
 
-    if (operationType === "update" && updateDescription.updatedFields?.quantity !== undefined)
-      {
-        console.log(`Detected stock quantity update for item ${documentKey._id}:`, updateDescription.updatedFields);
-        await handleCriticalItemNotification(io, documentKey._id);
+    if (operationType === "update" && updateDescription.updatedFields?.quantity !== undefined) {
+      console.log(`Detected stock quantity update for item ${documentKey._id}:`, updateDescription.updatedFields);
+      await handleCriticalItemNotification(io, documentKey._id);
     }
-});
+  });
+
+  // setInterval(() => {
+  //   console.log("Running Due Payment Notification Check...");
+  //   handleDuePaymentNotification(io);
+  // }, 3600000); // 1 hour  // check it for notifications
+};
 
 const getSocketInstance = () => io;
 
