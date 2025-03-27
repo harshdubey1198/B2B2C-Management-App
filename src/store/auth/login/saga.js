@@ -5,6 +5,8 @@ import { postFakeLogin, postSocialLogin } from "../../../helpers/fakebackend_hel
 import { toast } from "react-toastify";
 
 function* loginUser({ payload: { user, history } }) {
+  localStorage.setItem("planemail", user.email);
+
   try {
     let response;
     if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {

@@ -4,19 +4,20 @@ import ukFlag from './assets/Country-Flags/gb-eng.png';
 import usaFlag from './assets/Country-Flags/us.png';
 import { useNavigate } from 'react-router-dom';
 import { getAllPlans } from '../../apiServices/service';
+import axios from 'axios';
 
 const PlanRenewal = () => {
     const [selectedFlag, setSelectedFlag] = useState(indianFlag);
     const [plans, setPlans] = useState([]);
     const [modal, setModal] = useState(false);
-    const toggleModal = () => setModal(!modal);
     const navigate = useNavigate();
+
     const updateFlag = (e) => {
       const selectedOption = e.target.options[e.target.selectedIndex];
       const flagSrc = selectedOption.getAttribute('data-flag');
       setSelectedFlag(flagSrc);
     };
-  
+
     const fetchPlans = async () => {
       try {
         const response = await getAllPlans();
@@ -24,27 +25,33 @@ const PlanRenewal = () => {
         if (response) {
           setPlans(response);
         }
-  
       } catch (error) {
         console.error('Error fetching plans:', error);
       }
     };
-  
-    console.log(plans);
+
     useEffect(() => {
       fetchPlans();
     }, []);
-  
-  
-     
-    const handlePlanSelection = (planId) => {
-      localStorage.setItem("planId", planId); 
-      toggleModal(); 
-      // setTimeout(() => {
-        navigate("/register"); 
-      // }, 3000); 
+
+    const handlePlanSelection = async (planId) => {
+      try {
+        const storedEmail = localStorage.getItem('planemail');
+        const response = await axios.post(`${process.env.REACT_APP_URL}/payment/create-checkout-session`, {
+          email: storedEmail,
+          planId: planId, 
+        });
+
+        if (response.data.checkoutUrl) {
+          window.location.href = response.data.checkoutUrl;
+        } else {
+          console.error('Failed to retrieve checkout URL.');
+        }
+      } catch (error) {
+        console.error('Error creating checkout session:', error);
+      }
     };
-  
+
     return (
       <div className="pricing-div">
         <h2>The Perfect Balance of Features and Affordability</h2>
@@ -63,7 +70,7 @@ const PlanRenewal = () => {
               className="p-2 rounded bg-none"
               onChange={updateFlag}
               style={{
-                minWidth:"100px"
+                minWidth: '100px',
               }}
             >
               <option value="india" data-flag={indianFlag}>India</option>
@@ -75,32 +82,32 @@ const PlanRenewal = () => {
             </div>
           </span>
         </span>
-  
+
         <div className="pricing-container">
-        {Array.isArray(plans) && plans.length > 0 ? (
-      plans.map((plan) => (
-        <div key={plan._id} className={`pricing-card ${plan.title === 'Gold' ? 'most-popular new-launch' : ''}`}>
-          <div className="card-title">{plan.title.toUpperCase()}</div>
-          <div className="card-subtitle">{plan.caption}</div>
-          <ul className="features">
-            {plan.features.map((feature, index) => (
-              <li key={index}>{feature}</li>
-            ))}
-          </ul>
-          <div className="price">
-            <del>₹{plan.price + 200}</del> ₹{plan.price}
-          </div>
-          <button onClick={() => handlePlanSelection(plan._id)} className="cta">
-            Start my Free Trial
-          </button>
-        </div>
-      ))
+          {Array.isArray(plans) && plans.length > 0 ? (
+            plans.map((plan) => (
+              <div key={plan._id} className={`pricing-card ${plan.title === 'Gold' ? 'most-popular new-launch' : ''}`}>
+                <div className="card-title">{plan.title.toUpperCase()}</div>
+                <div className="card-subtitle">{plan.caption}</div>
+                <ul className="features">
+                  {plan.features.map((feature, index) => (
+                    <li key={index}>{feature}</li>
+                  ))}
+                </ul>
+                <div className="price">
+                  <del>₹{plan.price + 200}</del> ₹{plan.price}
+                </div>
+                <button onClick={() => handlePlanSelection(plan._id)} className="cta">
+                  Start my Free Trial
+                </button>
+              </div>
+            ))
           ) : (
-            <div>No plans available</div> 
+            <div>No plans available</div>
           )}
         </div>
       </div>
     );
-}
+};
 
-export default PlanRenewal
+export default PlanRenewal;
