@@ -17,9 +17,9 @@ const planSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    maxUsers: { type: Number },
-    maxFirms: { type: Number },
-    features: [{ type: String }],
+    // maxUsers: { type: Number },
+    // maxFirms: { type: Number },
+    // features: [{ type: String }],
     days: {  
         type: Number,
         required: true,  
