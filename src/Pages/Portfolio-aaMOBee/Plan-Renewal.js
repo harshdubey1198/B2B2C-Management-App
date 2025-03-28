@@ -9,9 +9,9 @@ import axios from 'axios';
 const PlanRenewal = () => {
     const [selectedFlag, setSelectedFlag] = useState(indianFlag);
     const [plans, setPlans] = useState([]);
-    const [modal, setModal] = useState(false);
+    const [modal, setModal] = useState(false); const [currency, setCurrency] = useState({ code: 'INR', symbol: '₹' });
     const navigate = useNavigate();
-
+    const API_KEY = '2af10e3d2f3b47adbb7c510b25b20b12';
     const updateFlag = (e) => {
       const selectedOption = e.target.options[e.target.selectedIndex];
       const flagSrc = selectedOption.getAttribute('data-flag');
@@ -29,17 +29,30 @@ const PlanRenewal = () => {
         console.error('Error fetching plans:', error);
       }
     };
-
+    const fetchUserCurrency = async () => {
+      try {
+          const response = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${API_KEY}`);
+          // console.log(response);
+          const userCurrency = response.currency.code || { code: 'INR', symbol: '₹' };
+          setCurrency(userCurrency);
+          localStorage.setItem('planCurrency', JSON.stringify(userCurrency));
+          console.log(userCurrency);
+      } catch (error) {
+          console.error('Error fetching user location:', error);
+      }
+  };
     useEffect(() => {
       fetchPlans();
+      fetchUserCurrency();
     }, []);
-
+    
     const handlePlanSelection = async (planId) => {
       try {
         const storedEmail = localStorage.getItem('planemail');
         const response = await axios.post(`${process.env.REACT_APP_URL}/payment/create-checkout-session`, {
           email: storedEmail,
           planId: planId, 
+          currency: currency, 
         });
 
         if (response.data.checkoutUrl) {
