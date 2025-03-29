@@ -11,5 +11,6 @@ router.get('/get-payment', tokenVerification, paymentController.getPayment);
 router.put('/update-payment/:id', tokenVerification, paymentController.updatePayment);
 router.delete('/delete-payment/:id', tokenVerification, paymentController.deletePayment);
 router.get('/superadminn/all-payments', paymentController.getAllPayments);
+router.get('/payment-detail/:id', paymentController.getUserPayments);
 
 module.exports = router

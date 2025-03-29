@@ -1,9 +1,11 @@
 let paymentService = {}
+
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const nodemailer = require("nodemailer");
 const Payment = require('../schemas/payment.schema');
 const Plan = require('../schemas/plans.schema');
-const User = require('../schemas/user.schema')
+const User = require('../schemas/user.schema');
+const { default: axios } = require('axios');
 
 paymentService.createPayment = async (body) => {
     try {
@@ -43,11 +45,18 @@ paymentService.createPayment = async (body) => {
 // Create Checkout Session
 paymentService.createCheckoutSession = async (body) => {
     try {
-        const { email, planId } = body;
+        const { email, planId, currency } = body;
         const user = await User.findOne({email});
         if (!user) throw new Error("User not found");
         const plan = await Plan.findById(planId);
         if (!plan) throw new Error("Invalid Plan ID");
+
+        let price = plan.price * 100; // Default INR price
+
+        // Convert price if needed
+        if (currency.toLowerCase() !== "inr") {
+            price = await convertCurrency(plan.price, "INR", currency.toUpperCase()) * 100;
+        }
 
         // ✅ Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
@@ -56,9 +65,9 @@ paymentService.createCheckoutSession = async (body) => {
             customer_email: user.email,
             line_items: [{
                 price_data: {
-                    currency: 'inr',
+                    currency: currency.toLowerCase(),
                     product_data: { name: plan.title, description: plan.caption },
-                    unit_amount: plan.price * 100,
+                    unit_amount: price,
                 },
                 quantity: 1
             }],
@@ -73,6 +82,45 @@ paymentService.createCheckoutSession = async (body) => {
         throw new Error("Could not create checkout session");
     }
 };
+
+async function convertCurrency(amount, fromCurrency, toCurrency) {
+    fromCurrency = fromCurrency.toUpperCase();
+    toCurrency = toCurrency.toUpperCase();
+    console.log(`Converting ${amount} from ${fromCurrency} to ${toCurrency}`);
+
+    if (fromCurrency.toLowerCase() === toCurrency.toLowerCase()) return amount; 
+
+    try {
+        const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`);
+        const rate = response.data.rates[toCurrency];
+
+        if (!rate) {
+            console.error(`Exchange rate for ${toCurrency} not found.`);
+            return amount; // Fallback to the original amount instead of NaN
+        }
+
+        return Math.round(amount * rate);
+    } catch (error) {
+        console.error("Currency conversion failed:", error);
+        return amount; // Fallback to the original amount
+    }
+}
+
+
+// async function convertCurrency(amount, fromCurrency, toCurrency) {
+//     console.log(`Converting ${amount} from INR to ${toCurrency}`);
+
+//     if (fromCurrency === toCurrency) return amount; 
+
+//     try {
+//         const response = await axios.get(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`);
+//         const rate = response.data.rates[toCurrency];
+//         return Math.round(amount * rate);
+//     } catch (error) {
+//         console.error("Currency conversion failed:", error);
+//         throw new Error("Currency conversion error");
+//     }
+// }
 
 //Webhook: Confirm Payment & Activate User
 // paymentService.handleWebhook = async (req) => {
@@ -125,16 +173,21 @@ paymentService.verifyPayment = async (sessionId) => {
 
         const { userId, planId } = session.metadata;
         let user = await User.findById(userId);
-        if (!user) {
-            // console.log("User not found in DB:", userId);
-            throw new Error("User not found");
-        }
+        if (!user) throw new Error("User not found");
 
         const plan = await Plan.findById(planId);
-        if (!plan) {
-            throw new Error("Plan not found");
+        if (!plan) throw new Error("Plan not found");
+        console.log(`Plan Price: ${plan.price}, Type: ${typeof plan.price}`);
+
+        // Convert plan.price to session.currency
+        const convertedAmount = await convertCurrency(plan.price, "INR", session.currency);
+        console.log(`Converted Amount: ${convertedAmount}, Session Amount: ${session.amount_total / 100}`);
+
+        if (Math.abs(Math.round(session.amount_total / 100) - Math.round(convertedAmount)) > 1) {
+            throw new Error("Payment amount mismatch");
         }
         
+
         // Calculate expiration date
         const expirationDate = new Date();
         expirationDate.setDate(expirationDate.getDate() + plan.days);
@@ -143,14 +196,15 @@ paymentService.verifyPayment = async (sessionId) => {
         const payment = await Payment.create({
             userId: user._id,
             planId: plan._id,
-            amount: plan.price,
+            amount: session.amount_total / 100, 
+            currency: session.currency,
             status: "completed",
             expirationDate
         });
 
-        // Activate User
         user.isActive = true;
         await user.save();
+
         return {
             status: session.payment_status,
             amount: session.amount_total / 100,
@@ -159,6 +213,7 @@ paymentService.verifyPayment = async (sessionId) => {
             message: "Payment verified and user activated"
         };
     } catch (error) {
+        console.error("Payment verification failed:", error);
         throw new Error("Payment verification failed");
     }
 };
@@ -249,6 +304,24 @@ paymentService.getAllPayments = async () => {
     throw new Error("Unable to fetch payment details.")
 
 }
+}
+
+
+paymentService.getUserPayments = async (userId) => {
+    try {
+        const payments = await Payment.find({ userId })
+            .sort({ dateFrom: -1 })
+            .populate('planId', "title price days")
+            .select("amount currency paymentDate expirationDate paymentDate status")
+
+        if (!payments.length) {
+            throw new Error("No payment history found" );
+        }
+
+        return payments;
+    } catch (error) {
+        throw new Error("Error fetching payment history");
+    }
 }
 
 module.exports = paymentService

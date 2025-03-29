@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, CardBody, FormGroup, Label, Input, Button, M
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { fetchUserCurrency } from "../../utils/fetchUserCurrency";
 
 const VerifyOtp = () => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
@@ -14,6 +15,7 @@ const VerifyOtp = () => {
   const [isResending, setIsResending] = useState(false);
   const [canResend, setCanResend] = useState(true);
   const [resendTimeout, setResendTimeout] = useState(null);
+  const [currency, setCurrency] = useState({ code: 'INR', symbol: '₹' });
   const [showModal, setShowModal] = useState(false);  // State for showing modal
   const navigate = useNavigate();
   // const token = authuser?.token;
@@ -37,6 +39,15 @@ const VerifyOtp = () => {
       return () => clearTimeout(timeoutId);
     }
   }, [canResend]);
+
+  useEffect(() => {
+    const getCurrency = async () => {
+    const userCurrency = await fetchUserCurrency();
+      setCurrency(userCurrency);
+    };
+    getCurrency();
+  }, [])
+  
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -109,13 +120,13 @@ const VerifyOtp = () => {
       );
   
       toast.success(response.data.message || "OTP Verified Successfully!");
-  
       // Step 2: Create Checkout Session
       const checkoutResponse = await axios.post(
         `${process.env.REACT_APP_URL}/payment/create-checkout-session`,
         {
           email: useremail,
           planId: storedPlanId,
+          currency: currency,
         }
       );
   
