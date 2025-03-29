@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
 import { ScaleLoader } from "react-spinners";
+import { getPaymentDetails } from "../../apiServices/service";
+import PaymentHistoryModal from "../../Modal/paymentHistoryModal";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
@@ -22,6 +24,29 @@ const Pricing = () => {
   const role = authuser?.response?.role;
   const token = authuser?.token;
   const [loading , setLoading] = useState(false);
+  const [paymentHistory , setPaymentHistory] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const toggleModal = () => setModalOpen(!modalOpen);
+  
+  const handlePaymentHistory = async () => {
+    if (role === "client_admin") {
+      try {
+        const result = await getPaymentDetails();
+        const sortedPayments = result.data.sort(
+          (a, b) => new Date(b.paymentDate) - new Date(a.paymentDate)
+        );
+        setPaymentHistory(sortedPayments);
+        console.log(sortedPayments);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+  
+
+  useEffect(() => {
+    handlePaymentHistory()
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -132,6 +157,9 @@ const Pricing = () => {
                                 </p>
                               ))}
                             </div>
+                            {role === "client_admin" && (
+                              <Button color="info" onClick={toggleModal}>Show Payment History</Button>
+                              )}
                           </CardBody>
                         </Card>
                       </Col>
@@ -146,7 +174,7 @@ const Pricing = () => {
             <Col lg={5} className="text-center">
             { role !== "super_admin" && role!=="firm_admin" && (
               <Button
-                color="secondary"
+                color="primary"
                 onClick={() => setShowAllPlans(!showAllPlans)}
               >
                 {showAllPlans ? "Hide All Plans" : "Show All Plans"}
@@ -156,31 +184,12 @@ const Pricing = () => {
           </Row>
         )
 } 
-
-          {/* {role === "firm_admin" && (
-            <Row className="justify-content-center">
-              <Col lg={8} className="text-center">
-                <Card>
-                  <CardBody>
-                    <h4 className="text-success">Your Client Admin's Plan</h4>
-                    <h5 className="font-size-16">{clientAdmin?.title}</h5>
-                    <p className="text-muted">{clientAdmin?.caption}</p>
-                    <p className="text-muted">Price: ${clientAdmin?.price}/month</p>
-                    <div className="plan-features mt-4">
-                      <h5 className="text-left font-size-15 mb-4">Plan Features :</h5>
-                      {clientAdmin?.features.map((feature, index) => (
-                        <p key={index}>
-                          <i className="mdi mdi-checkbox-marked-circle-outline font-size-16 align-middle text-primary me-2"></i>
-                          {feature}
-                        </p>
-                      ))}
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-          )} */}
-
+        
+        <PaymentHistoryModal
+          isOpen={modalOpen}
+          toggle={toggleModal}
+          paymentHistory={paymentHistory}
+        />
           {role!=="firm_admin" && showAllPlans && (
             <Row className="justify-content-center">
               <div className="text-center mb-2">
@@ -220,15 +229,15 @@ const Pricing = () => {
                             </p>
                           ))}
                         </div>
-                        { role !== "super_admin" && role!=="firm_admin" && (
+                        {/* { role !== "super_admin" && role!=="firm_admin" && (
                             <Button
                               color="primary"
                               className="mt-4"
                               onClick={() => handlePaymentPlan(plan)}
                             >
                               Choose Plan
-                            </Button>
-                          )}
+                            </Button>x
+                          )} */}
 
                       </div>
                     </CardBody>
