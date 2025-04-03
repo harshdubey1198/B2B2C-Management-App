@@ -203,6 +203,7 @@ paymentService.verifyPayment = async (sessionId) => {
         });
 
         user.isActive = true;
+        user.planId = plan._id;
         await user.save();
 
         return {
