@@ -13,7 +13,8 @@ const ItemDetailModal = ({ setVariantIndex, setVariant, setVariantModalOpen, set
   const [taxes, setTaxes] = useState([]);
   const [selectedTaxComponents, setSelectedTaxComponents] = useState([]);
   const [selectedTaxRates, setSelectedTaxRates] = useState([]);
-
+  const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role || "";
+  // console.log("role", role);  
   const handleBrandsFetched = (fetchedBrands) => {
     setBrands(fetchedBrands);
   };
@@ -142,7 +143,7 @@ useEffect(() => {
         {" "}
         {selectedItem?.name} Details{" "} ||
         Item Type : 
-        { " " + selectedItem?.type.replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) || " " }
+        {/* { " " + selectedItem?.type.replace(/_/g, " ") .replace(/\b\w/g, (char) => char.toUpperCase()) || " " } */}
 
       </ModalHeader>
       <ModalBody>
@@ -486,47 +487,50 @@ useEffect(() => {
               )}
             </div>
 
-              <div className="d-flex justify-content-between mt-2 gap-2">
-                  <Button
-                      color="primary"
-                      onClick={() => {
-                        setVariantModalOpen(true);
-                        setVariant({
-                          variationType: "",
-                          optionLabel: "",
-                          price: "",
-                          stock: "",
-                          sku: "",
-                          barcode: "",
-                        });
-                        setVariantIndex(null);
-                      }}
-                    >
-                    Add Variant
-                  </Button>
-                  <Button
-                    className=" ml-2"
+              {role==="client_admin" || role==="firm_admin" || role === "employee" || role ==="super_admin" ? ( 
+                <div className="d-flex justify-content-between mt-2 gap-2">
+                <Button
                     color="primary"
-                    onClick={() =>
-                      updateItem({
-                        name: selectedItem.name,
-                        description: selectedItem.description,
-                        qtyType: selectedItem.qtyType,
-                        quantity: selectedItem.quantity,
-                        manufacturer: selectedItem.manufacturer,
-                        brand: selectedItem.brand,
-                        costPrice: selectedItem.costPrice,
-                        sellingPrice: selectedItem.sellingPrice,
-                        vendor:selectedItem.vendor,
-                        type: selectedItem.type,
-                        tax: selectedItem.tax,
-                        ProductHsn: selectedItem.ProductHsn,
-                      })
-                    }
+                    onClick={() => {
+                      setVariantModalOpen(true);
+                      setVariant({
+                        variationType: "",
+                        optionLabel: "",
+                        price: "",
+                        stock: "",
+                        sku: "",
+                        barcode: "",
+                      });
+                      setVariantIndex(null);
+                    }}
                   >
-                    Update Item
-                  </Button>
-              </div>
+                  Add Variant
+                </Button>
+                <Button
+                  className=" ml-2"
+                  color="primary"
+                  onClick={() =>
+                    updateItem({
+                      name: selectedItem.name,
+                      description: selectedItem.description,
+                      qtyType: selectedItem.qtyType,
+                      quantity: selectedItem.quantity,
+                      manufacturer: selectedItem.manufacturer,
+                      brand: selectedItem.brand,
+                      costPrice: selectedItem.costPrice,
+                      sellingPrice: selectedItem.sellingPrice,
+                      vendor:selectedItem.vendor,
+                      type: selectedItem.type,
+                      tax: selectedItem.tax,
+                      ProductHsn: selectedItem.ProductHsn,
+                    })
+                  }
+                >
+                  Update Item
+                </Button>
+            </div>
+              ) : (<span>hi</span>)
+          }
 
           </div>
         )}

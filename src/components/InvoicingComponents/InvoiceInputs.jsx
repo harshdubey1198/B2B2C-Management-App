@@ -4,7 +4,7 @@ import useDebounce from "../../Hooks/UseDebounceHook";
 // import axios from "axios";
 import axiosInstance from "../../utils/axiosInstance";
 
-const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
+const InvoiceInputs = ({ invoiceData, handleInputChange , companyData, setInvoiceData }) => {
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const firmId = authuser?.response?.adminId;
   const suggestionsRef = useRef(null); 
@@ -13,6 +13,19 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   // const debouncedSearchTerm = useDebounce(searchKey, 500);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const currencyOptions = [
+    { code: "INR", symbol: "₹", name: "Indian Rupee" },
+    { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+    { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+    { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+    { code: "USD", symbol: "$", name: "US Dollar" },
+  ];
+  
+  const getCurrencyDetails = (currencyCode) => {
+    const currency = currencyOptions.find((option) => option.code === currencyCode);
+    return currency ? currency.symbol : currencyCode;
+  };
+  const currency = getCurrencyDetails(companyData?.currency || "INR");
 
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
@@ -436,7 +449,7 @@ const InvoiceInputs = ({ invoiceData, handleInputChange , setInvoiceData }) => {
   </Col>
 </Row>
                 <div className="invoice-total">
-                  <h4>Final Invoice Amount : ₹ {invoiceData.items.reduce((acc, item) => acc + (item.total || 0), 0).toFixed(2)}</h4>
+                  <h4>Final Invoice Amount : {currency} {invoiceData.items.reduce((acc, item) => acc + (item.total || 0), 0).toFixed(2)}</h4>
                 </div>
     </div>
   );

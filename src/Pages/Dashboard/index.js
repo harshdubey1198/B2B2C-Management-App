@@ -18,7 +18,7 @@ const Dashboard = () => {
       <div className="page-content">
         <Container fluid={true}>
           <Breadcrumbs title="aaMOBee" breadcrumbItem="Dashboard" />
-          <Row className="mb-4">
+          <Row className="mb-2">
             {/* Order Stats */}
             {/* <OrderStatus /> */}
             {/* Notifications */}
@@ -29,17 +29,17 @@ const Dashboard = () => {
                   <div className="row d-flex">
                     <div className="col-lg-9 col-md-12 col-sm-12">
                     <div className="row d-flex">
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/create-firm')}>
-                          Create Firm
+                          Create Firm 
                       </Button>
                     </div>
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/pricing')}>
                           Pricing & plans 
                       </Button>
                     </div>
-                    <div className="col-lg-3 col-md-3 col-sm-12 mb-3">
+                    <div className="col-lg-3 col-md-3 col-sm-12 mb-0">
                       <Button className="w-100 cust-btn-primary" color="primary" onClick={() => navigate('/view-invoices')}>
                           Invoices
                       </Button>  

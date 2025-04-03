@@ -47,8 +47,8 @@ function ProductionCreateModal({ modalOpen, setModalOpen, trigger, firmId }) {
         firmId,
         createdBy,
       });
-
-      if (response.message === 'productionorder created successfully') {
+        // console.log(response);  
+      if (response.message === 'Production order created successfully') {
         toast.success('Production order created successfully');
         setModalOpen(false);
         resetForm();

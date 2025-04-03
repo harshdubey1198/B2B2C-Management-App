@@ -11,6 +11,7 @@ import { RiseLoader, ScaleLoader } from "react-spinners";
 import FirmSwitcher from "../Firms/FirmSwitcher";
 function InventoryTable() {
   const [inventoryData, setInventoryData] = useState([]);
+  const [firmCurrency, setFirmCurrency] = useState(null); 
   const [filteredInventoryData, setFilteredInventoryData] = useState(inventoryData); 
   const navigate = useNavigate();
   const [selectedItem, setSelectedItem] = useState(null);
@@ -22,54 +23,65 @@ function InventoryTable() {
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [customItemsPerPage, setCustomItemsPerPage] = useState("");
   const [variant, setVariant] = useState({ variationType: "", optionLabel: "", price: "", stock: "", sku: "", barcode: "", });
-  const role = JSON.parse(localStorage.getItem("authUser")).response.role;
+  const role = JSON.parse(localStorage.getItem("authUser"))?.response?.role || "";
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredInventoryData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = inventoryData.slice(indexOfFirstItem, indexOfLastItem);
   const [variantIndex, setVariantIndex] = useState(null);
   const [trigger, setTrigger] = useState(0);
   const token = JSON.parse(localStorage.getItem("authUser")).token;
   const userId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
   const authuser = JSON.parse(localStorage.getItem("authUser")).response;
   const firmId = authuser?.adminId;
-    useEffect(() => {
-        if (!selectedFirmId){
-          setSelectedFirmId(firmId);
+  useEffect(() => {
+    if (!selectedFirmId) {
+        setSelectedFirmId(firmId);
+    }
 
-        } 
-        
-          
-          
-
-        const fetchInventoryData = async () => {
-          setLoading(true);
-          try {
-            const response =  await getInventoryItems(selectedFirmId);
+    const fetchInventoryData = async () => {
+        setLoading(true);
+        try {
+            const response = await getInventoryItems(selectedFirmId);
             setInventoryData(response.data || []);
-          } catch (error) {
+            setFirmCurrency(response.currency || "INR"); // Store the firm's currency
+        } catch (error) {
             console.error("Error fetching inventory data:", error);
             toast.error("Failed to fetch inventory items.");
-          }
-          setLoading(false);
-        };
+        }
+        setLoading(false);
+    };
 
-        fetchInventoryData();
-      }, [selectedFirmId, trigger]);
+    fetchInventoryData();
+}, [selectedFirmId, trigger]);
+const currencyOptions = [
+  { code: "INR", symbol: "₹", name: "Indian Rupee" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+  { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+  { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+  { code: "USD", symbol: "$", name: "US Dollar" },
+];
+
+const getCurrencyDetails = (currencyCode) => {
+  const currency = currencyOptions.find((option) => option.code === currencyCode);
+  return currency ? currency.symbol : currencyCode;
+};
+
 
   const refetchItems = () => {
     setTrigger((prev) => prev + 1);
   };
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const pageNumbers = []; 
-  for (let i = 1; i <= Math.ceil(filteredInventoryData.length / itemsPerPage); i++) {
-    pageNumbers.push(i);
-  }
+  const totalPages = Math.ceil(inventoryData.length / itemsPerPage);
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
 
   const handleItemsPerPageChange = (e) => {
     const value = parseInt(e.target.value, 10);
-    setItemsPerPage(value);
-    setCurrentPage(1); 
+    if (!isNaN(value) && value > 0) {
+      setItemsPerPage(value);
+      setCustomItemsPerPage(value);
+      setCurrentPage(1); 
+    }
   };
 
   const handleCustomItemsPerPage = () => {
@@ -81,6 +93,7 @@ function InventoryTable() {
       toast.error("Please enter a valid number of items per page.");
     }
   };
+  
   const handleViewDetails = (item) => {
     setSelectedItem(item);
     console.log(item);
@@ -203,7 +216,6 @@ function InventoryTable() {
         `${process.env.REACT_APP_URL}/inventory/update-item/${selectedItem._id}`,
         { ...updatedFields, type: selectedItem.type }
       ); 
-      // setSelectedItem((prev) => ({ ...prev, ...updatedFields }));
       setSelectedItem((prev) => ({ ...prev, ...updatedFields ,type: selectedItem.type }));
       toast.success(response.message);
       setModalOpen(!modalOpen);
@@ -223,7 +235,6 @@ function InventoryTable() {
 
   const handleSortByType = (type) => {
 
-    // initially want all the data
     if (type === " ") {
       setFilteredInventoryData(inventoryData);
     }
@@ -238,6 +249,7 @@ function InventoryTable() {
   useEffect(() => {
     setFilteredInventoryData(inventoryData);
   }, [inventoryData]);
+  
   
 useEffect(() => {
   handleSortByType(" ");
@@ -261,7 +273,6 @@ useEffect(() => {
           
            <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchItems} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
 
-          {/* <div className="d-flex align-items-center gap-2"> */}
           <label htmlFor="itemsPerPageSelect" className="m-0">Items per page:</label>
                 <select
                   id="itemsPerPageSelect"
@@ -289,7 +300,6 @@ useEffect(() => {
                 <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleCustomItemsPerPage}>
                   Set
                 </Button>
-            {/* </div> */}
 
           {role !== "client_admin" ? (
             <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={handleAddItemPage}> Add Item </Button>
@@ -330,8 +340,8 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredInventoryData.length > 0 ? (
-                    filteredInventoryData.map((item, index) => {
+                    {currentItems.length > 0 ? (
+                      currentItems.map((item, index) => {
                       const rowClass =
                         item.type === "raw_material" ? "table-raw-materials" :
                         item.type === "finished_good" ? "table-row-blue" : "table-row-yellow";
@@ -342,10 +352,12 @@ useEffect(() => {
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.description}</td>
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.quantity} {item.qtyType}</td>
                           <td className={rowClass} onClick={() => handleViewDetails(item)}>{item.brand?.name}</td>
-                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.costPrice?.toFixed(2)}</td>
-                          <td className={rowClass} onClick={() => handleViewDetails(item)}>₹ {item.sellingPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{getCurrencyDetails(firmCurrency)} {item.costPrice?.toFixed(2)}</td>
+                          <td className={rowClass} onClick={() => handleViewDetails(item)}>{getCurrencyDetails(firmCurrency)} {item.sellingPrice?.toFixed(2)}</td>
                           <td>
-                            <i className="bx bx-edit" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(item)}></i>
+                            {role === "accountant" ? null : (
+                                <i className="bx bx-edit" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleViewDetails(item)}></i>
+                            )}
                             <i className="bx bx-trash" style={{ fontSize: "22px", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleDeleteInventory(item)}></i>
                           </td>
                         </tr>

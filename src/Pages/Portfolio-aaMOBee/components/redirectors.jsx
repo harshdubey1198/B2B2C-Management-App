@@ -58,17 +58,18 @@ function Redirectors() {
             </div>
           ) : (
             <Row className="desktop-view text-center">
-              <Col className="col" style={{ backgroundImage: `url(https://res.cloudinary.com/harshdubey1198/image/upload/v1738647908/invoicing_fz6n7g.jpg)` }}>
+              <Col className="col">
                 <Button
                   color="primary"
-                  className="custom-button"
+                  className="custom-button-2"
                   onClick={handleLogin}
                 >
                   Login <br /> (Inventory, Firm, Invoicing)
                 </Button>
               </Col>
-              <Col className="col" style={{ backgroundImage: `url(https://res.cloudinary.com/harshdubey1198/image/upload/v1738647651/crm-leads_tuo9pt.jpg)` }}>
+              <Col className="col">
                 <Button
+                  color="primary"
                   className="custom-button-2"
                   onClick={handleCRMLogin}
                 >

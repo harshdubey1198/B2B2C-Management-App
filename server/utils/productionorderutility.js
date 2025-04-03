@@ -68,7 +68,13 @@ const generateProductionOrderNumber = async (firmId) => {
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(currentDate.getDate()).padStart(2, '0');
 
-    const lastOrder = await ProductionOrder.findOne({ firmId: firmId }).sort({ createdAt: -1 });
+    const lastOrder = await ProductionOrder.findOne({
+      firmId: firmId,
+      createdAt: { 
+        $gte: new Date(`${year}-${month}-${day}T00:00:00.000Z`),
+        $lt: new Date(`${year}-${month}-${day}T23:59:59.999Z`)
+      }
+    }).sort({ createdAt: -1 });
 
     if (lastOrder) {
         const lastOrderParts = lastOrder.productionOrderNumber.split('-');
@@ -80,55 +86,114 @@ const generateProductionOrderNumber = async (firmId) => {
 };
 
 const calculateRawMaterials = (bom, productionQuantity) => {
-    return bom.rawMaterials.map((material, index) => {
+  return bom.rawMaterials.map((material, index) => {
+      console.log(`Processing Material ${index}:`, material);
 
-        const wastePercentage = material.wastePercentage !== undefined 
-            ? Number(material.wastePercentage) 
-            : 0;
+      const wastePercentage = !isNaN(material.wastePercentage) && material.wastePercentage !== undefined
+          ? Number(material.wastePercentage)
+          : 0;
 
-        // Calculate item-level quantity
-        const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4));
+      const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4)) || 0;
+      
+      console.log(`Material Quantity: ${materialQuantity}, Waste Percentage: ${wastePercentage}`);
 
-        // Calculate variant-level wastage and total variant wastage
-        const variants = material.variants.map((variant, variantIndex) => {
-            const variantWastePercentage = variant.wastePercentage !== undefined
-                ? Number(variant.wastePercentage)
-                : 0;
+      const variants = material.variants.map((variant, variantIndex) => {
+          console.log(`  Processing Variant ${variantIndex}:`, variant);
 
-            const variantWastageQuantity = parseFloat(
-                ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
-            );
+          const variantWastePercentage = !isNaN(variant.wastePercentage) && variant.wastePercentage !== undefined
+              ? Number(variant.wastePercentage)
+              : 0;
 
-            return {
-                variantId: variant.variantId,
-                optionLabel: variant.optionLabel,
-                quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
-                wastePercentage: variantWastePercentage,
-                wastageQuantity: variantWastageQuantity,
-            };
-        });
+          const variantWastageQuantity = parseFloat(
+              ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
+          ) || 0;
 
-        // Sum up variant wastage if variants exist
-        const totalVariantWastage = variants.reduce(
-            (sum, variant) => sum + variant.wastageQuantity, 0
-        );
+          console.log(`  Variant Waste Percentage: ${variantWastePercentage}, Variant Wastage Quantity: ${variantWastageQuantity}`);
 
-        // Calculate item-level wastage only if no variants exist
-        const materialWastageQuantity = material.variants.length === 0
-            ? parseFloat(
-                ((materialQuantity * wastePercentage) / 100).toFixed(4)
-              )
-            : totalVariantWastage;
+          return {
+              variantId: variant.variantId,
+              optionLabel: variant.optionLabel,
+              quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)) || 0,
+              wastePercentage: variantWastePercentage,
+              wastageQuantity: variantWastageQuantity,
+          };
+      });
 
-        return {
-            itemId: material.itemId,
-            quantity: materialQuantity,
-            wastePercentage,
-            wastageQuantity: materialWastageQuantity, 
-            variants, 
-        };
-    });
+      const totalVariantWastage = variants.reduce((sum, variant) => sum + variant.wastageQuantity, 0);
+      const materialWastageQuantity = material.variants.length === 0
+    ? parseFloat(((materialQuantity * wastePercentage) / 100).toFixed(4))
+    : totalVariantWastage;
+
+// Ensure it's a number
+if (isNaN(materialWastageQuantity)) {
+    console.error(`Invalid wasteQuantity for material ${material.itemId}:`, materialWastageQuantity);
+    throw new Error(`Invalid wasteQuantity detected for material ${material.itemId}`);
+}
+
+
+      console.log(`Final Material Waste Quantity: ${materialWastageQuantity}`);
+
+      return {
+          itemId: material.itemId,
+          quantity: materialQuantity,
+          wastePercentage,
+          wastageQuantity: materialWastageQuantity,
+          variants,
+      };
+  });
 };
+
+
+// const calculateRawMaterials = (bom, productionQuantity) => {
+//     return bom.rawMaterials.map((material, index) => {
+
+//         const wastePercentage = material.wastePercentage !== undefined 
+//             ? Number(material.wastePercentage) 
+//             : 0;
+
+//         // Calculate item-level quantity
+//         const materialQuantity = parseFloat((material.quantity * productionQuantity).toFixed(4));
+
+//         // Calculate variant-level wastage and total variant wastage
+//         const variants = material.variants.map((variant, variantIndex) => {
+//             const variantWastePercentage = variant.wastePercentage !== undefined
+//                 ? Number(variant.wastePercentage)
+//                 : 0;
+
+//             const variantWastageQuantity = parseFloat(
+//                 ((variant.quantity * productionQuantity * variantWastePercentage) / 100).toFixed(4)
+//             );
+
+//             return {
+//                 variantId: variant.variantId,
+//                 optionLabel: variant.optionLabel,
+//                 quantity: parseFloat((variant.quantity * productionQuantity).toFixed(4)),
+//                 wastePercentage: variantWastePercentage,
+//                 wastageQuantity: variantWastageQuantity,
+//             };
+//         });
+
+//         // Sum up variant wastage if variants exist
+//         const totalVariantWastage = variants.reduce(
+//             (sum, variant) => sum + variant.wastageQuantity, 0
+//         );
+
+//         // Calculate item-level wastage only if no variants exist
+//         const materialWastageQuantity = material.variants.length === 0
+//             ? parseFloat(
+//                 ((materialQuantity * wastePercentage) / 100).toFixed(4)
+//               )
+//             : totalVariantWastage;
+
+//         return {
+//             itemId: material.itemId,
+//             quantity: materialQuantity,
+//             wastePercentage,
+//             wastageQuantity: materialWastageQuantity, 
+//             variants, 
+//         };
+//     });
+// };
 
 // CALCULATE RAW MATERIAL COST 
 const calculateRawMaterialsCost = async (rawMaterials, session) => {
@@ -166,7 +231,18 @@ const calculateRawMaterialsCost = async (rawMaterials, session) => {
 }
 
 // Validate raw materials
-const validateRawMaterials = async (rawMaterials, session) => {
+const validateAndDeductRawMaterials = async (rawMaterials, session) => {
+    const itemIds = rawMaterials.map(m => m.itemId);
+    const validItems = await InventoryItem.find({ _id: { $in: itemIds }, deleted_at: null }).session(session);
+    const validItemIds = new Set(validItems.map(item => item._id.toString()));
+
+    const deletedMaterials = rawMaterials.filter(material => !validItemIds.has(material.itemId.toString()));
+
+    if (deletedMaterials.length > 0) {
+        const deletedItemNames = deletedMaterials.map(material => `ID: ${material.itemId}`).join(", ");
+        throw new Error(`Cannot proceed: The following raw materials are deleted - ${deletedItemNames}`);
+    }
+
     for (const material of rawMaterials) {
         const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
         if (!inventoryItem) {
@@ -176,58 +252,85 @@ const validateRawMaterials = async (rawMaterials, session) => {
         let totalQuantityRequired = material.quantity;
         for (const variant of material.variants) {
             const matchingVariant = inventoryItem.variants.find((v) => v._id.toString() === variant.variantId.toString());
-            if (!matchingVariant) {
-                throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}.`);
-            }
-            if (matchingVariant.stock < variant.quantity) {
-                throw new Error(`Insufficient stock for variant ${variant.optionLabel}. Required: ${variant.quantity}, Available: ${matchingVariant.stock}`);
+            if (!matchingVariant || matchingVariant.stock < variant.quantity) {
+                throw new Error(`Insufficient stock for variant ${variant.optionLabel}.`);
             }
             totalQuantityRequired -= variant.quantity;
         }
+
         if (inventoryItem.quantity < totalQuantityRequired) {
-            throw new Error(
-                `Insufficient stock for ${inventoryItem.name}. Required: ${totalQuantityRequired}, Available: ${inventoryItem.quantity}`
-            );
+            throw new Error(`Insufficient stock for ${inventoryItem.name}.`);
         }
+
+        await InventoryItem.updateOne(
+            { _id: material.itemId },
+            { $inc: { quantity: -totalQuantityRequired } },
+            { session }
+        );
     }
 };
+// const validateRawMaterials = async (rawMaterials, session) => {
+//     for (const material of rawMaterials) {
+//         const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
+//         if (!inventoryItem) {
+//             throw new Error(`Raw material with ID ${material.itemId} not found.`);
+//         }
 
-const deductRawMaterials = async (rawMaterials, session) => {
-    for (const material of rawMaterials) {
-        const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
-        if (!inventoryItem) {
-            throw new Error(`Item with ID ${material.itemId} not found.`);
-        }
+//         let totalQuantityRequired = material.quantity;
+//         for (const variant of material.variants) {
+//             const matchingVariant = inventoryItem.variants.find((v) => v._id.toString() === variant.variantId.toString());
+//             if (!matchingVariant) {
+//                 throw new Error(`Variant with ID ${variant.variantId} not found for item ${inventoryItem.name}.`);
+//             }
+//             if (matchingVariant.stock < variant.quantity) {
+//                 throw new Error(`Insufficient stock for variant ${variant.optionLabel}. Required: ${variant.quantity}, Available: ${matchingVariant.stock}`);
+//             }
+//             totalQuantityRequired -= variant.quantity;
+//         }
+//         if (inventoryItem.quantity < totalQuantityRequired) {
+//             throw new Error(
+//                 `Insufficient stock for ${inventoryItem.name}. Required: ${totalQuantityRequired}, Available: ${inventoryItem.quantity}`
+//             );
+//         }
+//     }
+// };
 
-        if (inventoryItem.variants && inventoryItem.variants.length > 0) {
-            for (const variant of material.variants) {
-                await InventoryItem.updateOne(
-                    { _id: material.itemId, "variants._id": variant.variantId },
-                    { $inc: { "variants.$.stock": -variant.quantity } },
-                    { session }
-                );
-            }
+// const deductRawMaterials = async (rawMaterials, session) => {
+//     for (const material of rawMaterials) {
+//         const inventoryItem = await InventoryItem.findById(material.itemId).session(session);
+//         if (!inventoryItem) {
+//             throw new Error(`Item with ID ${material.itemId} not found.`);
+//         }
 
-            const updatedItem = await InventoryItem.findById(material.itemId).session(session);
-            const totalVariantStock = updatedItem.variants.reduce(
-                (sum, variant) => sum + variant.stock,
-                0
-            );
+//         if (inventoryItem.variants && inventoryItem.variants.length > 0) {
+//             for (const variant of material.variants) {
+//                 await InventoryItem.updateOne(
+//                     { _id: material.itemId, "variants._id": variant.variantId },
+//                     { $inc: { "variants.$.stock": -variant.quantity } },
+//                     { session }
+//                 );
+//             }
 
-            await InventoryItem.findByIdAndUpdate(
-                material.itemId,
-                { quantity: totalVariantStock },
-                { session }
-            );
-        } else {
-            await InventoryItem.findByIdAndUpdate(
-                material.itemId,
-                { $inc: { quantity: -material.quantity } },
-                { session }
-            );
-        }
-    }
-};
+//             const updatedItem = await InventoryItem.findById(material.itemId).session(session);
+//             const totalVariantStock = updatedItem.variants.reduce(
+//                 (sum, variant) => sum + variant.stock,
+//                 0
+//             );
+
+//             await InventoryItem.findByIdAndUpdate(
+//                 material.itemId,
+//                 { quantity: totalVariantStock },
+//                 { session }
+//             );
+//         } else {
+//             await InventoryItem.findByIdAndUpdate(
+//                 material.itemId,
+//                 { $inc: { quantity: -material.quantity } },
+//                 { session }
+//             );
+//         }
+//     }
+// };
 
 const adjustInventoryStock = async (oldRawMaterials, newRawMaterials, session) => {
     for (const newMaterial of newRawMaterials) {
@@ -294,8 +397,9 @@ module.exports = {
     generateProductionOrderNumber,
     calculateRawMaterials,
     calculateRawMaterialsCost,
-    validateRawMaterials,
-    deductRawMaterials,
+    // validateRawMaterials,
+    // deductRawMaterials,
+    validateAndDeductRawMaterials,
     adjustInventoryStock,
     calculateBomRawMaterialsCost,
     adjustStock,

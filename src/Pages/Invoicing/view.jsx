@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,Row,Col, CardBody, Input } from 'reactstrap';
+import { Table, Button, Alert, Pagination, PaginationItem, PaginationLink, Card,Row,Col, CardBody, Input, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { useReactToPrint } from 'react-to-print';
 // import PrintFormat from '../../components/InvoicingComponents/printFormat';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import { ScaleLoader } from "react-spinners";
 
 const ViewInvoices = () => {
     const [invoices, setInvoices] = useState([]);
+    const [modalOpen, setModalOpen] = useState(false); 
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [viewInvoice, setViewInvoice] = useState(false);
@@ -28,7 +29,17 @@ const ViewInvoices = () => {
         date: '',
         status: '',
     });
-    
+    // console.log(invoices[0].firmId.currency);
+    const currencyOptions = [
+        { value: "INR", label: "₹ INR" },
+        { value: "AED", label: "د.إ AED" },
+        { value: "SAR", label: "﷼ SAR" },
+        { value: "MYR", label: "RM MYR" },
+    ];
+    const getCurrencySymbol = (currencyCode) => {
+        const currency = currencyOptions.find((option) => option.value === currencyCode);
+        return currency ? currency.label.split(" ")[0] : currencyCode; 
+    };
     const printRef = useRef();
     const authuser = JSON.parse(localStorage.getItem("authUser")).response;
     const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
@@ -93,11 +104,12 @@ const ViewInvoices = () => {
         try {
             const response = await axiosInstance.get(`${process.env.REACT_APP_URL}/invoice/get-invoice/${invoiceId}`);
             setViewInvoice(response.data); 
+            setModalOpen(true);
         } catch (error) {
             console.error("Error fetching invoice for viewing:", error);
         }
     };
-
+    const refetchInvoices = () => setTrigger(prev => prev + 1);
     const handlePrint = useReactToPrint({
         content: () => printRef.current,
         onAfterPrint: () => setViewInvoice(null),
@@ -147,7 +159,7 @@ const ViewInvoices = () => {
         <React.Fragment>
             <div className='page-content'>
                 <Breadcrumbs title="Invoicing" breadcrumbItem="View Invoices" />
-                <div className="d-flex justify-content-between mb-4">
+                <div className="d-flex justify-content-between ">
                     {authuser.role === "client_admin" && (
                         <FirmSwitcher
                             selectedFirmId={selectedFirmId}
@@ -178,7 +190,7 @@ const ViewInvoices = () => {
                                         }}
                                     />
                                 </Col>
-                                <Col md={4}>
+                                <Col md={3}>
                                     <Input
                                         type="date"
                                         placeholder="Date of Invoice"
@@ -186,7 +198,7 @@ const ViewInvoices = () => {
                                         onChange={(e) => setFilter({ ...filter, date: e.target.value })}
                                     />
                                 </Col>
-                                <Col md={4}>
+                                <Col md={3} sm={6} xs={6}>
                                     <Input
                                         type="select"
                                         value={filter.status}
@@ -200,6 +212,15 @@ const ViewInvoices = () => {
                                         ))}
                                     </Input>
                                 </Col>
+
+                                <Col md={1} sm={6} xs={1} className="d-flex justify-content-center align-items-center">
+                                    <i 
+                                        className="bx bx-refresh"
+                                        style={{ fontSize: "26px", fontWeight: "bold", cursor: "pointer" }}
+                                        onClick={refetchInvoices}
+                                    ></i>
+                                </Col>
+
                             </Row>
                         </div>
                         {filteredInvoices.length === 0 ? (
@@ -210,39 +231,28 @@ const ViewInvoices = () => {
                                     <div className="table-responsive">
                                         <Table bordered>
                                             <thead className="table-light">
-                                                <tr>
-                                                    <th>Inv ID</th>
+                                                <tr style={{fontSize:"12px"}}>
+                                                    <th>ID</th>
                                                     <th>Client</th>
                                                     <th>Total</th>
                                                     <th>Due</th>
-                                                    <th>Taxes</th>
+                                                    {/* <th>Taxes</th> */}
                                                     <th>Date</th>
                                                     <th>Country</th>
                                                     <th>Status</th>
                                                     <th>Actions</th>
                                                     {authuser.role === "firm_admin" && <th className='d-flex justify-content-center'>Approvals</th>}
-                                                    {authuser.role === "firm_admin" && <th>Proforma Status</th>}
+                                                    {authuser.role === "firm_admin" && <th style={{fontSize:"10.5px"}}>Proforma Status</th>}
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 {currentInvoices.map((invoice) => (
-                                                    <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} style={{ cursor: "pointer" }}>
+                                                    <tr key={invoice._id} onClick={() => fetchInvoice(invoice._id)} style={{ cursor: "pointer" , fontSize:"12px"}}>
                                                         <td>{invoice.invoiceNumber}</td>
                                                         <td>{invoice.customerName}</td>
-                                                        <td>{invoice.totalAmount} ₹</td>
+                                                        <td>{invoice.totalAmount} {getCurrencySymbol(invoice.firmId.currency)}</td>
                                                         <td style={{ color: invoice.amountDue > 0 ? "red" : "green" }}>
-                                                            {invoice.amountDue > 0 ? `${invoice.amountDue} ₹` : "Paid"}
-                                                        </td>
-                                                        <td style={{ minWidth: "110px" }}>
-                                                            <ul style={{ paddingLeft: "0.5rem", listStyle: "none" }}>
-                                                                {invoice.items.map((item, itemIndex) =>
-                                                                    item.itemId.tax.selectedTaxTypes.map((tax, taxIndex) => (
-                                                                        <li key={`${itemIndex}-${taxIndex}`}>
-                                                                            {tax.taxType} - {tax.rate}%
-                                                                        </li>
-                                                                    ))
-                                                                )}
-                                                            </ul>
+                                                            {invoice.amountDue > 0 ? `${invoice.amountDue} ${getCurrencySymbol(invoice.firmId.currency)}` : "Paid"}
                                                         </td>
                                                         <td>{`${new Date(invoice.invoiceDate).getDate().toString().padStart(2, '0')}-${(new Date(invoice.invoiceDate).getMonth() + 1).toString().padStart(2, '0')}-${new Date(invoice.invoiceDate).getFullYear()}`}</td>
                                                         <td>{invoice.customerAddress.country}</td>
@@ -258,7 +268,9 @@ const ViewInvoices = () => {
                                                             ></i>
                                                         </td>
                                                         {authuser.role === "firm_admin" && (
-                                                            <td>
+                                                            <td className='d-flex justify-content-center'
+                                                            onClick={(e) => e.stopPropagation()}
+                                                            >
                                                                 {invoice.approvalStatus === "approved" ? (
                                                                     <i className="bx bx-x" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }} onClick={() => handleApproveStatus(invoice, "rejected")}></i>
                                                                 ) : (
@@ -309,6 +321,19 @@ const ViewInvoices = () => {
                     </div>
                 </div>
             )}
+              <Modal isOpen={modalOpen} toggle={() => setModalOpen(!modalOpen)} size="lg">
+                <ModalHeader toggle={() => setModalOpen(!modalOpen)}>Invoice Preview</ModalHeader>
+                <ModalBody className='p-0'>
+                    {fetchInvoice ? (
+                        <ViewFormat invoiceData={viewInvoice} />
+                    ) : (
+                        <div className="text-center p-3">
+                            <ScaleLoader color="#0d4251" />
+                        </div>
+                    )}
+                </ModalBody>
+                
+            </Modal>
         </React.Fragment>
     );
     

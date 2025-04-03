@@ -243,6 +243,7 @@ async function updateFirm(firmId, body) {
         firm.ifscCode = body.ifscCode || firm.ifscCode;
         firm.cifNumber = body.cifNumber || firm.cifNumber;
         firm.gstin = body.gstin || firm.gstin;
+        firm.currency = body.currency || firm.currency;
         firm.branchName = body.branchName || firm.branchName;
         firm.accountHolder = body.accountHolder || firm.accountHolder;
 

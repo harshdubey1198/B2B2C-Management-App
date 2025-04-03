@@ -1,10 +1,11 @@
 const WasteManagement = require("../schemas/wasteinventory.schema");
+const ProductionOrder = require("../schemas/productionorder.shcema");
 
 const wasteManagmentServices = {};
 
 wasteManagmentServices.getwasteManagments = async (firmId) => {
     const data = await WasteManagement.find({firmId: firmId, deleted_at: null})
-    .populate("productionOrderId")
+    .populate({ path: "productionOrderId", select: "productionOrderNumber status createdAt" ,model: ProductionOrder })
     .populate({ path: "rawMaterials.itemId" })
     .populate({ path: "firmId", select: "email companyTitle" })
     .populate({ path: "createdBy", select: "firstName lastName email" });
@@ -18,7 +19,8 @@ wasteManagmentServices.getwasteManagments = async (firmId) => {
 wasteManagmentServices.getwasteManagmentById = async (wasteManagmentId) => {
     const wasteManagment = await WasteManagement.findOne({_id: wasteManagmentId, deleted_at: null})
     .populate("productionOrderId")
-    .populate({ path: "rawMaterials.itemId" })
+    .populate({ path: "rawMaterials.itemId" }) 
+    .populate({ path: "rawMaterials.variants.variantId" }) 
     .populate({ path: "firmId", select: "email companyTitle" })
     .populate({ path: "createdBy", select: "firstName lastName email" });
     if(!wasteManagment){

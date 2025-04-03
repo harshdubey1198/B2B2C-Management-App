@@ -28,7 +28,7 @@ const CategoryManager = () => {
   const config = { headers: { Authorization: `Bearer ${token}` } };
   const createdBy = JSON.parse(localStorage.getItem("authUser")).response._id;
   const firmId = JSON.parse(localStorage.getItem("authUser")).response.adminId;
-
+  const [trigger , setTrigger] = useState(0);
   const toggleModal = () => setModal(!modal);
 
   const fetchCategories = async () => {
@@ -43,7 +43,13 @@ const CategoryManager = () => {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [trigger]);
+
+  const refetchCategories = () => {
+    setTrigger(trigger + 1);
+  };
+
+
 
   useEffect(() => {
     let updatedCategories = categories;
@@ -182,24 +188,28 @@ const CategoryManager = () => {
               <Card>
                 <CardBody>
                   <div className='d-flex align-items-center flex-column flex-md-row custom-gap'>
+                    <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchCategories} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
                     <Input
                         type="text"
                         placeholder="Search by Category Name or Description"
                         value={searchTerm}
                         onChange={handleSearch}
                         className="my-1 input-width"
+                        style={{ width: "233px",maxHeight:"27.13px" , fontSize:"10.5px" , lineHeight:"1" }}
                       />
 
                     <FormGroup check>
                       <Label check>
                         <Input type="checkbox" checked={showOnlyParents} onChange={handleFilterToggle} />
-                        Show Only Parent Categories
+                        <span style={{ width: "233px",maxHeight:"27.13px" , fontSize:"10.5px" , lineHeight:"1" }}>
+                          Show Only Parent Categories
+                          </span>
                       </Label>
                     </FormGroup>
                     {/* <Button color="link" onClick={handleSortToggle}>
                       Sort by Name ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})
                     </Button> */}
-                  <Button color="primary" onClick={openAddCategoryModal}>
+                  <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={openAddCategoryModal}>
                     Add Category
                   </Button>
                   </div>

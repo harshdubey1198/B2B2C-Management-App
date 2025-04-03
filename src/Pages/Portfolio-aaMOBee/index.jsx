@@ -11,8 +11,11 @@ import Testimonial from './components/testimonial';
 import FaqSection from './components/faqSection';
 import ClientSection from './components/clientSection';
 import RiseaaMOBee from './components/riseaaMOBee';
+import { useNavigate } from 'react-router-dom';
 
 function Index() {
+  const navigate = useNavigate();
+  const authuser = JSON.parse(localStorage.getItem('authUser')) || null ; 
   useEffect(() => {
     const links = [
       "https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css",
@@ -47,6 +50,12 @@ function Index() {
       if (script) document.body.removeChild(script);
     };
   }, []);
+
+  useEffect( ()=>{
+    if(authuser!==null){
+      navigate('/dashboard');
+    }
+  },[])
 
   return (
     <div>

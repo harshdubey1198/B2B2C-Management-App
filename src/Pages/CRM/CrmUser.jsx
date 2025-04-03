@@ -1,19 +1,7 @@
 import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  Table,
-} from "reactstrap";
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Table, } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
-import {
-  getRoles,
-  createCrmUser,
-  getCrmUsers,
-  updateCrmUser,
-} from "../../apiServices/service";
+import { getRoles, createCrmUser, getCrmUsers, updateCrmUser, } from "../../apiServices/service";
 import { toast } from "react-toastify";
 
 function CrmUser() {
@@ -21,6 +9,9 @@ function CrmUser() {
   const [users, setUsers] = useState([]);
   const [modal, setModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [trigger, setTrigger] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   const [newUser, setNewUser] = useState({
     firstName: "",
     lastName: "",
@@ -29,6 +20,7 @@ function CrmUser() {
     roleId: "",
     isActive: true,
   });
+  
 
   const fetchRoles = async () => {
     try {
@@ -78,7 +70,9 @@ function CrmUser() {
     }
   };
 
+  const NumberOfTotalUsers = users.length;
   
+   
   useEffect(() => {
     fetchRoles();
     fetchCrmUsers();
@@ -140,11 +134,29 @@ function CrmUser() {
     }
   };
 
+  const refetchUsers = () => {
+    setTrigger((prev) => prev + 1);
+  }
+  useEffect(() => {
+    fetchCrmUsers();
+  },[trigger]);
+  const totalUsers = filteredUsers.length;
+  const totalPages = Math.ceil(totalUsers / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstItem, indexOfLastItem);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
+  const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const lastPage = () => setCurrentPage(totalPages);
+  const firstPage = () => setCurrentPage(1);
+
   return (
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="CRM" breadcrumbItem="CRM Users" />
-        <div className="mb-3">
+        <div className="mb-2">
           <input
             type="text"
             className="form-control"
@@ -154,13 +166,17 @@ function CrmUser() {
           />
         </div>
         <div className="container">
-          <div className="d-flex justify-content-between mb-4">
-            <p className="mm-active">
+          <div className="d-flex justify-content-between align-items-center mb-2">
+            <p className="mm-active mb-0">
               This is the CRM user page. Here you can manage CRM users.
             </p>
-            <Button color="primary" onClick={toggleModal}>
-              Add User
-            </Button>
+           <div className="d-flex">
+              <span className="badge bg-primary rounded-pill d-flex align-items-center">
+              Total Users :  {NumberOfTotalUsers}
+              </span>
+              <i className="bx bx-refresh bx-lg" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={refetchUsers}></i>
+              <i className="bx bx-plus bx-lg" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleModal}></i>              
+            </div>
           </div>
           <div className="table-responsive">
             <Table>
@@ -177,33 +193,8 @@ function CrmUser() {
                   <th>Actions</th>
                 </tr>
               </thead>
-              {/* <tbody>
-                {users.map((user, index) => (
-                  <tr key={user._id}>
-                    <td>{index + 1}</td>
-                    <td>{user.firstName}</td>
-                    <td>{user.lastName}</td>
-                    <td>{user.email}</td>
-                    <td>{user.mobile}</td>
-                    <td>{user?.roleId?.roleName}</td>
-                    <td>
-                      {user.isActive ? 'Active' : 'Inactive'}
-                    </td>
-                    <td className='flex flex-wrap'>
-                      <i className="bx bx-edit" style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer", marginLeft: "5px" }} onClick={() => handleEditUser(user)}></i>
-                    </td>
-                  </tr>
-                ))}
-                {users.length === 0 && (
-                  <tr>
-                    <td colSpan="9" className="text-center">
-                      No users available.
-                    </td>
-                  </tr>
-                )}
-              </tbody> */}
               <tbody>
-                {filteredUsers.map((user, index) => (
+                {currentUsers.map((user, index) => (
                   <tr key={user._id}>
                     <td>{index + 1}</td>
                     <td>{user.firstName}</td>
@@ -236,6 +227,14 @@ function CrmUser() {
               </tbody>
             </Table>
           </div>
+          {totalPages > 1 && (
+            <div className="pagination-controls d-flex gap-2 mt-2">
+              <Button onClick={firstPage} disabled={currentPage === 1} className="btn-secondary">« First</Button>
+              <Button onClick={prevPage} disabled={currentPage === 1} className="btn-secondary">‹ Prev</Button>
+              <Button onClick={nextPage} disabled={currentPage === totalPages} className="btn-secondary">Next ›</Button>
+              <Button onClick={lastPage} disabled={currentPage === totalPages} className="btn-secondary">Last »</Button>
+            </div>
+          )}
           <Modal isOpen={modal} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>
               {newUser._id ? "Update User" : "Add New User"}

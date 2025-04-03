@@ -17,12 +17,13 @@ inventoryController.createItem = async (req, res) => {
 // GET ALL ITEMS WITH VARIANTS
 inventoryController.getAllItems = async (req, res) => {
     try {
-        const items = await inventoryServices.getAllItems(req.params.id);
-        return res.status(200).json(createResult("Inventory items fetched successfully", items));
+        const { items, firmCurrency } = await inventoryServices.getAllItems(req.params.id);
+        return res.status(200).json({ message: "Inventory items fetched successfully", data: items,  currency: firmCurrency,  error: null});
     } catch (error) {
-        return res.status(500).json(createResult(null, null, error.message));
+        return res.status(500).json({ message: null, data: null, currency: null, error: error.message});
     }
 };
+
 
 // GET SINGLE ITEM
 inventoryController.getItem = async (req, res) => {

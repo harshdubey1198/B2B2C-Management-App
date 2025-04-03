@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import FetchManufacturers from './fetchManufacturers';
-import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input } from 'reactstrap';
+import { Table, Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Col, Row, Container } from 'reactstrap';
 import ManufacturerModal from '../../Modal/ManufacturerModal';
 import axiosInstance from '../../utils/axiosInstance';
 import { toast } from 'react-toastify';
@@ -15,7 +15,8 @@ const Manufacturers = () => {
   const [manufacturerToDelete, setManufacturerToDelete] = useState(null);
   const [manufacturerToEdit, setManufacturerToEdit] = useState(null);
   const [manufacturerToAdd, setManufacturerToAdd] = useState(null);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search query
+  const [searchQuery, setSearchQuery] = useState(''); 
+  const [triggerManufacturer, setTriggerManufacturer] = useState(false); 
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -26,7 +27,7 @@ const Manufacturers = () => {
   };
 
   const handleManufacturersFetched = (fetchedManufacturers) => {
-    setManufacturers(fetchedManufacturers);
+    setManufacturers(fetchedManufacturers || []);
   };
 
   const handleManufacturerEdit = (manufacturer) => {
@@ -47,7 +48,8 @@ const Manufacturers = () => {
   const confirmDeleteManufacturer = async () => {
     try {
       await axiosInstance.delete(`${process.env.REACT_APP_URL}/manufacturer/delete-manufacturer/${manufacturerToDelete._id}`);
-      setManufacturers((prevManufacturers) => prevManufacturers.filter((m) => m._id !== manufacturerToDelete._id));
+      // setManufacturers((prevManufacturers) => prevManufacturers.filter((m) => m._id !== manufacturerToDelete._id));
+      setTriggerManufacturer((prev) => !prev);
       toast.success('Manufacturer deleted successfully');
     } catch (error) {
       console.error('Error deleting manufacturer:', error);
@@ -71,35 +73,70 @@ const Manufacturers = () => {
     toggleModal();
   };
 
-  // Filter manufacturers based on search query for title, lead, or phone
-  const filteredManufacturers = manufacturers.filter((manufacturer) =>
-    manufacturer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    manufacturer.contactPerson.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    manufacturer.phone.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredManufacturers = manufacturers.length > 0 
+  ? manufacturers.filter((manufacturer) =>
+      manufacturer?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      manufacturer?.contactPerson?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      manufacturer?.email?.toLowerCase().includes(searchQuery.toLowerCase())
+      // || manufacturer?.phone?.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  : [];
+
+  
 
   return (
     <React.Fragment>
       <div className="page-content">
         <div className="container-fluid">
           <Breadcrumbs title="Inventory Management" breadcrumbItem="Manufacturer" />
-          <FetchManufacturers onManufacturersFetched={handleManufacturersFetched} firmId={firmId} />
+          <FetchManufacturers onManufacturersFetched={handleManufacturersFetched} firmId={firmId} triggerManufacturer={triggerManufacturer} />
         </div>
 
-        {/* Search Input */}
-        <Input
-          type="text"
-          placeholder="Search by title, lead, or phone"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="my-3"
-        />
+        <Container className="mb-2">
+          <Row className="align-items-center">
+            <Col xs={9} md={9}>
+              <Input
+                type="text"
+                placeholder="Search by title, lead, email"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ width: "100%", padding: "10px" }}
+                className="my-3"
+              />
+            </Col>
 
-        <div className='relative h-35'>   
-          <i className='bx bx-plus ab-right' style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={handleManufacturerToAdd}></i>
-        </div>
+            <Col xs={3} md={3} className="d-flex justify-content-start">
+              <i
+                className="bx bx-refresh"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  borderRadius: "5px",
+                }}
+                onClick={() => setTriggerManufacturer((prev) => !prev)}
+              ></i>
 
-        <div className='table-responsive relative'>
+              <i
+                className="bx bx-plus"
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  backgroundColor: "lightblue",
+                  padding: "5px",
+                  marginLeft: "8px",
+                  borderRadius: "5px",
+                }}
+                onClick={handleManufacturerToAdd}
+              ></i>
+            </Col>
+          </Row>
+        </Container>
+
+        <div className='table-responsive relative'> 
           <Table bordered className='table table-centered table-nowrap mb-0'>
             <thead className='thead-light'>
               <tr>
@@ -142,6 +179,7 @@ const Manufacturers = () => {
         manufacturerToEdit={manufacturerToEdit}
         manufacturerAdd={manufacturerToAdd}
         onManufacturerUpdated={handleManufacturerUpdated}
+        setTriggerManufacurer={setTriggerManufacturer}
       />
 
       <Modal isOpen={isDeleteModalOpen} toggle={toggleDeleteModal}>

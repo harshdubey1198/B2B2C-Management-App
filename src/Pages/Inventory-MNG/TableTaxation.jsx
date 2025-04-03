@@ -13,7 +13,7 @@ function TaxationTable() {
   const token = authuser.token;
   const userId = authuser.response._id;
   const firmId = authuser.response.adminId;
-
+  const [trigger, setTrigger] = useState(0);
   const toggleModal = () => setModalOpen(!modalOpen);
   const config = {
     headers: {
@@ -66,7 +66,11 @@ function TaxationTable() {
 
   useEffect(() => {
     fetchTaxes();
-  }, []);
+  }, [trigger]);
+
+  const refetchTaxes = () => {
+    setTrigger(trigger + 1);
+  };  
 
   return (
     <React.Fragment>
@@ -75,9 +79,9 @@ function TaxationTable() {
         <Col lg="12">
           <Card>
             <CardBody>
-              <div className="d-flex justify-content-between">
-                <h4 className="card-title">Taxation Table</h4>
-                <Button color="primary" onClick={() => { setSelectedTax(null); toggleModal(); }}>
+              <div className="d-flex justify-content-start gap-2">
+              <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={refetchTaxes} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
+              <Button color="primary" className="p-2" style={{maxHeight:"27.13px",fontSize:"10.5px" , lineHeight:"1"}} onClick={() => { setSelectedTax(null); toggleModal(); }}>
                   Add New Tax
                 </Button>
               </div>

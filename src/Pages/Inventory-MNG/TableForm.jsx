@@ -115,7 +115,7 @@ const InventoryItemForm = () => {
         const parentCategories = response.data.length > 0 ? response.data.filter(category => category.parentId === null) : [];
         setCategories(parentCategories);
       } catch (error) {        
-        toast.error("Failed to fetch categories.");
+        // toast.error("Failed to fetch categories.");
         console.error(error.message);
       }
     };
@@ -198,8 +198,10 @@ const InventoryItemForm = () => {
     setFormValues((prevState) => ({
       ...prevState,
       categoryId: value,
+      subcategoryId:"",
+      ProductHsn: prevState.ProductHsn ? prevState.ProductHsn : "",
     }));
-
+    setSubcategories([]); 
     const selectedCategory = categories.find((category) => category._id === value);
     if (selectedCategory) {
       const hsnNumber = hsnData.find((hsn) =>
@@ -208,7 +210,7 @@ const InventoryItemForm = () => {
       if (hsnNumber) {
         setFormValues((prevState) => ({
           ...prevState,
-          ProductHsn: hsnNumber.hsn,
+          ProductHsn: hsnNumber ? hsnNumber.hsn : "",
         }));
       } else {
         setFormValues((prevState) => ({
@@ -229,10 +231,12 @@ const InventoryItemForm = () => {
         const subcategoryData = response.data;
         if (subcategoryData.length === 0) {
           toast.info("This category doesn't have any subcategories.");
+        }else{
+          setSubcategories(subcategoryData);
         }
-        setSubcategories(subcategoryData);
+        
       } catch (error) {
-        toast.error("Failed to fetch subcategories.");
+        // toast.error("Failed to fetch subcategories.");
         console.error(error.message);
       }
     } else {
@@ -277,20 +281,6 @@ const InventoryItemForm = () => {
                     Add Inventory Item
                   </h4>
                   <form onSubmit={handleSubmit}>
-                  <Row>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="name">Item Name</Label>
-                          <Input className="xyz" type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                      <Col md={6}>
-                        <FormGroup>
-                          <Label htmlFor="description">Item Description</Label>
-                          <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
-                        </FormGroup>
-                      </Col>
-                    </Row>
                     <Row>
                       <Col md={6}>
                         <FormGroup>
@@ -305,18 +295,75 @@ const InventoryItemForm = () => {
                           </Input>
                         </FormGroup>
                       </Col>
+                        { 
+                            subcategories.length > 0 && (
+                              <Col md={6}>
+                                <FormGroup>
+                                  <Label htmlFor="subcategoryId">Subcategory</Label>
+                                  {/* <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange}>
+                                    <option value="">Select Subcategory</option>
+                                    {subcategories.map((subcategory) => (
+                                      <option key={subcategory._id} value={subcategory._id}>
+                                        {subcategory.categoryName}
+                                      </option>
+                                    ))}
+                                  </Input> */}
+                                    <div className="d-flex align-items-center">
+                                        <Input 
+                                          type="select" 
+                                          id="subcategoryId" 
+                                          name="subcategoryId" 
+                                          value={formValues.subcategoryId} 
+                                          onChange={handleChange} 
+                                          className="form-control" 
+                                          style={{ flex: 1 ,appearance:"none" }}
+                                        >
+                                          <option value="">Select </option>
+                                          {subcategories.length > 0 ? (
+                                            subcategories.map((subcategory) => (
+                                              <option key={subcategory._id} value={subcategory._id}>
+                                                {subcategory.categoryName}
+                                              </option>
+                                            ))
+                                          ) : (
+                                            <option value="">No Subcategories Available</option>
+                                          )}
+                                        </Input>
+
+                                        {/* Refresh Icon for Reloading Subcategories */}
+                                        <i
+                                          className="bx bx-refresh"
+                                          style={{
+                                            fontSize: "22px",
+                                            fontWeight: "bold",
+                                            cursor: "pointer",
+                                            backgroundColor: "lightblue",
+                                            padding: "5px",
+                                            marginLeft: "8px",
+                                            borderRadius: "5px",
+                                          }}
+                                          onClick={() => handleCategory({ target: { value: formValues.categoryId } })}
+                                          title="Refresh Subcategories"
+                                        ></i>
+                                </div>
+                                </FormGroup>
+
+                              </Col>
+                            )
+                        }
+
+                    </Row>
+                  <Row>
                       <Col md={6}>
                         <FormGroup>
-                          <Label htmlFor="subcategoryId">Subcategory</Label>
-                          <Input type="select" id="subcategoryId" name="subcategoryId" value={formValues.subcategoryId} onChange={handleChange} >
-                            <option value="">Select Subcategory</option>
-                            {subcategories.length > 0 ? subcategories.map((subcategory) => (
-                              <option key={subcategory._id} value={subcategory._id}>  
-                                {subcategory.categoryName}
-                              </option>
-                            )) : <option value="">No Subcategories Available</option>}
-
-                          </Input>
+                          <Label htmlFor="name">Item Name</Label>
+                          <Input className="xyz" type="text" id="name" name="name" placeholder="Enter item name" value={formValues.name} onChange={handleChange} />
+                        </FormGroup>
+                      </Col>
+                      <Col md={6}>
+                        <FormGroup>
+                          <Label htmlFor="description">Item Description</Label>
+                          <Input type="text" id="description" name="description" placeholder="Enter item description" value={formValues.description} onChange={handleChange} />
                         </FormGroup>
                       </Col>
                     </Row>
@@ -451,7 +498,8 @@ const InventoryItemForm = () => {
                       <Col md={6}>
                         <FormGroup>
                           <Label htmlFor="ProductHsn">HSN</Label>
-                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} />
+                          {/* <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} /> */}
+                          <Input type="text" id="ProductHsn" name="ProductHsn" placeholder="Enter HSN" value={formValues.ProductHsn} onChange={(e) =>   setFormValues({ ...formValues, ProductHsn: e.target.value }) } />
                         </FormGroup>
                       </Col>
                       {formValues.taxId && (

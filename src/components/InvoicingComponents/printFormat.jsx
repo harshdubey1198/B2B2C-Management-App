@@ -1,34 +1,18 @@
 import React, { forwardRef } from 'react';
 import '../../assets/scss/bootstrap.scss';
-
-// const convertNumberToWords = (num) => {
-//     const a = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
-//     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
-//     const g = ['Hundred', 'Thousand', 'Million', 'Billion', 'Trillion'];
-
-//     const convert = (n) => {
-//         if (n < 20) return a[n];
-//         if (n < 100) return b[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + a[n % 10] : '');
-//         if (n < 1000) return a[Math.floor(n / 100)] + ' ' + g[0] + (n % 100 !== 0 ? ' and ' + convert(n % 100) : '');
-
-//         for (let i = 0; i < g.length; i++) {
-//             const divisor = Math.pow(1000, i + 1);
-//             if (n < divisor) {
-//                 return convert(Math.floor(n / Math.pow(1000, i))) + ' ' + g[i] + (n % Math.pow(1000, i) !== 0 ? ' ' + convert(n % Math.pow(1000, i)) : '');
-//             }
-//         }
-//     };
-
-//     const [whole, decimal] = num.toString().split('.').map(Number);
-//     let words = convert(whole);
-    
-//     if (decimal) {
-//         words += ` Rupees and ${convert(decimal)} Paise`;
-//     }
-
-//     return words.trim();
-// };
-
+const currencyOptions = [
+    { code: "INR", symbol: "₹", name: "Indian Rupee" },
+    { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+    { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+    { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+    { code: "USD", symbol: "$", name: "US Dollar" },
+  ];
+  
+  const getCurrencyDetails = (currencyCode) => {
+    const currency = currencyOptions.find((option) => option.code === currencyCode);
+    return currency ? currency.symbol : currencyCode;
+  };
+  
 const sliceDescription = (description) => {
     if (description && description.length > 50) {
         return description.slice(0, 50) + '...';
@@ -38,6 +22,9 @@ const sliceDescription = (description) => {
 
 const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
     const selectInvoice = invoiceData?.firmId || {};  
+    console.log(companyData);
+    const currency = getCurrencyDetails(companyData.currency || "INR");  
+    
     const items = invoiceData?.items || []; 
     const companyAddress = companyData?.address || [];
 
@@ -83,13 +70,17 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                         </div>
                     ))}
                     <p className="my-1">{invoiceData?.companyEmail}</p>
-                    <p className="my-1"><b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}</p>
+                    <p className="my-1">
+                        {invoiceData?.gstin === null && (
+                        <b>GSTIN:</b>)
+                        }
+                         {invoiceData?.gstin || selectInvoice.gstin}</p>
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <p><strong>Invoice Number:</strong> INV-24-MAG</p>
                     <p><strong>Issue Date:</strong> {invoiceData?.issueDate || selectInvoice.issueDate}</p>
                     <p><strong>Due Date:</strong> {invoiceData?.dueDate || selectInvoice.dueDate}</p>
-                    <p><strong>Amount Due:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
+                    <p><strong>Amount Due:</strong> {currency} {(grandTotal - amountPaid).toFixed(2)}</p>
                 </div>
             </div>
 
@@ -131,7 +122,7 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
                                     <td>{index + 1}</td>
                                     <td>{item?.name || 'N/A'}</td> 
                                     <td>{item?.selectedVariant?.[0]?.optionLabel || '-'}</td> 
-                                    <td>{sliceDescription(item?.description)}</td>
+                                    <td dangerouslySetInnerHTML={{ __html: item?.description }}></td>
                                     <td>
                                         {item?.taxComponents && item?.taxComponents.length > 0 ? (
                                             <ul style={{ listStyle: 'none', paddingLeft: 0 }}>
@@ -158,17 +149,25 @@ const PrintFormat = forwardRef(({ invoiceData, companyData }, ref) => {
             <div className="row bg-light m-4">
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center ">
                     <h5>Bank Details</h5>
-                    <p className="my-1"><strong>Bank Name:</strong> {invoiceData?.bankName || selectInvoice?.bankName || 'Your Bank Name'}</p>
-                    <p className="my-1"><strong>Account Number:</strong> {invoiceData?.accountNumber ||selectInvoice?.accountNumber || 'Your Account Number'}</p>
-                    <p className="my-1"><strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice?.ifscCode || 'Your IFSC Code'}</p>
+                    <p className="my-1"><strong>Bank Name: </strong> {invoiceData?.bankName || selectInvoice?.bankName || 'Your Bank Name'}</p>
+                    <p className="my-1"><strong>Account Number: </strong> {invoiceData?.accountNumber ||selectInvoice?.accountNumber || 'Your Account Number'}</p>
+                    <p className="my-1">
+                        <strong> Branch Name: </strong>
+                        {invoiceData?.branchName}
+                    </p>
+                    {(invoiceData?.ifscCode || selectInvoice?.ifscCode) && (
+                    <p className="my-1">
+                        <strong>IFSC Code:</strong> {invoiceData?.ifscCode || selectInvoice?.ifscCode}
+                    </p>
+                    )}
                 </div>
                 <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
                     <h4>Summary:</h4>
-                    <p className="my-1"><strong>Subtotal:</strong> ₹ {subtotal?.toFixed(2)}</p>
-                    <p className="my-1"><strong>Tax:</strong> ₹ {totalTaxAmount?.toFixed(2)}</p>
-                    <p className="my-1"><strong>Grand Total:</strong> ₹ {grandTotal?.toFixed(2)}</p>
-                    <p className="my-1"><strong>Amount Paid:</strong> ₹ {amountPaid?.toFixed(2)}</p>
-                    <p className="my-1"><strong>Balance:</strong> ₹ {(grandTotal - amountPaid).toFixed(2)}</p>
+                    <p className="my-1"><strong>Subtotal:</strong> {currency} {subtotal?.toFixed(2)}</p>
+                    <p className="my-1"><strong>Tax:</strong> {currency} {totalTaxAmount?.toFixed(2)}</p>
+                    <p className="my-1"><strong>Grand Total:</strong> {currency} {grandTotal?.toFixed(2)}</p>
+                    <p className="my-1"><strong>Amount Paid:</strong> {currency} {amountPaid?.toFixed(2)}</p>
+                    <p className="my-1"><strong>Balance:</strong> {currency} {(grandTotal - amountPaid).toFixed(2)}</p>
                     {/* <p className="my-1"><strong>Amount in Words:</strong> {totalInWords}</p> */}
                 </div>
             </div>

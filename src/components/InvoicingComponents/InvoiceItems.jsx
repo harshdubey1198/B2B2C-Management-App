@@ -3,12 +3,25 @@ import { FormGroup, Label, Input, Spinner } from 'reactstrap';
 import axiosInstance from '../../utils/axiosInstance';
 import Select from "react-select";
 
-const InvoiceItems = ({ items, removeItem, setInvoiceData }) => {
+const InvoiceItems = ({ items, removeItem, setInvoiceData , companyData }) => {
   const [inventoryItems, setInventoryItems] = useState([]);
   const [loading, setLoading] = useState(true);
   // const [error, setError] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const firmId = authuser?.response?.adminId;
+  const currencyOptions = [
+    { code: "INR", symbol: "₹", name: "Indian Rupee" },
+    { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+    { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
+    { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
+    { code: "USD", symbol: "$", name: "US Dollar" },
+  ];
+  
+  const getCurrencyDetails = (currencyCode) => {
+    const currency = currencyOptions.find((option) => option.code === currencyCode);
+    return currency ? currency.symbol : currencyCode;
+  };
+  const currency = getCurrencyDetails(companyData?.currency || "INR");
 
   useEffect(() => {
     const fetchInventoryItems = async () => {
@@ -384,9 +397,9 @@ const totalAfterTax = totalPrice - totalTax;
       <div className="summary-panel bg-light p-3 my-3">
           <h5 className="mb-3">Invoice Summary</h5>
           <p><strong>Total Items:</strong> {totalItems}</p>
-          <p><strong>Total Price (Before Tax):</strong> ₹ {totalAfterTax.toFixed(2)}</p>
-          <p><strong>Total Tax:</strong> ₹ {totalTax.toFixed(2)}</p>
-          <p><strong>Total After Tax:</strong> ₹ {totalPrice.toFixed(2)}</p> 
+          <p><strong>Total Price (Before Tax):</strong> {currency} {totalAfterTax.toFixed(2)}</p>
+          <p><strong>Total Tax:</strong> {currency} {totalTax.toFixed(2)}</p>
+          <p><strong>Total After Tax:</strong> {currency} {totalPrice.toFixed(2)}</p> 
       </div>
 
     </div>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardBody, Col } from "reactstrap";
+import { Button, Card, CardBody, Col, Input } from "reactstrap";
 import Breadcrumbs from "../../components/Common/Breadcrumb";
 import axios from "axios";
 import UserTable from "../../components/FirmComponents/userTable";
@@ -16,7 +16,7 @@ function UserManage() {
   const [defaultFirm, setDefaultFirm] = useState(null);
   const authuser = JSON.parse(localStorage.getItem("authUser"));
   const [trigger, setTrigger] = useState(0);
-
+  const [searchQuery, setSearchQuery] = useState("");
   const [formValues, setFormValues] = useState({
     adminId:"",
     firstName: "",
@@ -58,6 +58,8 @@ function UserManage() {
     setModalOpen(!modalOpen);
   };
 
+
+  
   const availableRoles =
     authuser.response.role === "client_admin"
       ? clientAdminRoles
@@ -67,19 +69,20 @@ function UserManage() {
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="aaMOBee" breadcrumbItem="Firm Users" />
-        <div className="d-flex justify-content-between mb-4">
-          <p className="mm-active">
-            This is the user management page. Here you can manage users.
-          </p>
-        </div>
-        <div className="d-flex mb-4" style={{justifyContent:"flex-end" , gap:"15px"}}>
-          <Button color="primary" onClick={toggleModal}>
-            Add User
-          </Button>
+        <div className="d-flex mb-1" style={{justifyContent:"flex-end" , gap:"15px"}}>
+          <Input
+              type="text"
+              placeholder="Search Users..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: "250px", maxHeight: "32px", fontSize: "14px" }}
+            />
+          <i className="bx bx-refresh bx-lg" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={() => setTrigger((prev) => prev + 1)}></i>
+          <i className="bx bx-plus bx-lg" style={{ fontSize: "24px", fontWeight: "bold", cursor: "pointer", backgroundColor:"lightblue" , padding:"2px",marginLeft:"5px" , borderRadius:"5px" }} onClick={toggleModal}></i>
           {authuser?.response.role === "client_admin" && (
             <FirmSwitcher
             selectedFirmId={selectedFirmId}
-            onSelectFirm={setSelectedFirmId}
+            onSelectFirm={setSelectedFirmId} 
             />
           )}
         </div>
@@ -87,7 +90,7 @@ function UserManage() {
           <Card>
             <CardBody className="p-0 m-0">
               
-                <UserTable selectedFirmId={selectedFirmId} trigger={trigger} />
+                <UserTable selectedFirmId={selectedFirmId} trigger={trigger} searchQuery={searchQuery} />
              
             </CardBody>
           </Card>

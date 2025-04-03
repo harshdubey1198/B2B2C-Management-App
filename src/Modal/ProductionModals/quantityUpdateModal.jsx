@@ -10,7 +10,7 @@ function QuantityUpdateModal({
   const [isEditMode, setIsEditMode] = useState(false);
   const [newQuantity, setNewQuantity] = useState(selectedOrder?.quantity || '');
   const [newNote, setNewNote] = useState(selectedOrder?.notes || '');
-  console.log(selectedOrder, 'selectedOrder');
+  // console.log(selectedOrder, 'selectedOrder');
   const handleSave = () => {
     const updatedData = { quantity: newQuantity, notes: newNote };
     handleUpdateQuantity(selectedOrder._id, updatedData);
@@ -40,7 +40,13 @@ function QuantityUpdateModal({
                   required
                 />
               ) : (
-                selectedOrder?.notes
+                // selectedOrder?.notes
+                // array has objects came 
+                selectedOrder?.notes.map((note, index) => (
+                  <div key={index}>
+                    {index+1}  {note.toUpperCase()} 
+                  </div>
+                ))
               )}
             </div>
           </Col>

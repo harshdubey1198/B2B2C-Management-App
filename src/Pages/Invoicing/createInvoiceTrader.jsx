@@ -160,10 +160,7 @@ const fetchInventoryItems = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!validatePhone(invoiceData.customerPhone)) {
-      toast.error("Invalid Phone Number");
-      return;
-  }
+   
   const invoicePayload = {
     customer: {
       firstName: invoiceData.firstName, 
@@ -286,13 +283,15 @@ return (
                 addItem={addItem}
                 removeItem={removeItem}
                 setInvoiceData={setInvoiceData}
-              />
+                companyData={companyData}
+                />
                
               <h3 className='my-4'>Invoice Items</h3>
               <InvoiceItems
                 items={invoiceData.items}
                 fakeItems={fakeItems}
                 removeItem={removeItem}
+                companyData={companyData}
                 setInvoiceData={setInvoiceData}
               />
               <FormGroup>
