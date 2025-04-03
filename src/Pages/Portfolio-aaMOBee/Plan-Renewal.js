@@ -57,7 +57,7 @@ const PlanRenewal = () => {
         const response = await axios.post(`${process.env.REACT_APP_URL}/payment/create-checkout-session`, {
           email: storedEmail,
           planId: planId, 
-          currency: "AED", 
+          currency: currency, 
         });
 
         if (response.data.checkoutUrl) {
