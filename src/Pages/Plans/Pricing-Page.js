@@ -11,7 +11,6 @@ import PaymentHistoryModal from "../../Modal/paymentHistoryModal";
 
 const Pricing = () => {
   document.title = "Pricing | aaMOBee";
-
   const [plans, setPlans] = useState([]); 
   const [selectedPlanDetails, setSelectedPlanDetails] = useState(null); 
   const [showAllPlans, setShowAllPlans] = useState(false); 
@@ -27,7 +26,7 @@ const Pricing = () => {
   const [paymentHistory , setPaymentHistory] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const toggleModal = () => setModalOpen(!modalOpen);
-  
+
   const handlePaymentHistory = async () => {
     if (role === "client_admin") {
       try {
@@ -36,7 +35,7 @@ const Pricing = () => {
           (a, b) => new Date(b.paymentDate) - new Date(a.paymentDate)
         );
         setPaymentHistory(sortedPayments);
-        console.log(sortedPayments);
+        // console.log(sortedPayments);
       } catch (error) {
         console.log(error);
       }

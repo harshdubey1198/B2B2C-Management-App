@@ -2,6 +2,20 @@ import React, { useState } from "react";
 import { Modal, ModalHeader, ModalBody, Button, Table, } from "reactstrap";
 
 const PaymentHistoryModal = ({ isOpen, toggle, paymentHistory }) => {
+    const currencySymbols = {
+        usd: "$",
+        eur: "€",
+        inr: "₹",
+        gbp: "£",
+        jpy: "¥",
+        aud: "A$",
+        cad: "C$",
+        chf: "CHF",
+        cny: "¥",
+        aed: "د.إ",
+        sar: "﷼",
+      };
+
   return (
     <Modal isOpen={isOpen} toggle={toggle} size="lg">
       <ModalHeader toggle={toggle}>Payment History</ModalHeader>
@@ -34,7 +48,7 @@ const PaymentHistoryModal = ({ isOpen, toggle, paymentHistory }) => {
                         >
                         <td>{index + 1}</td>
                         <td>{payment.planId?.title}</td>
-                        <td>₹{payment.amount}</td>
+                        <td>{currencySymbols[payment.currency] || payment.currency}{payment.amount}</td>
                         <td>{new Date(payment.paymentDate).toLocaleDateString("en-GB")}</td>
                         <td>{new Date(payment.expirationDate).toLocaleDateString("en-GB")}</td>
                         {isExpired && (
