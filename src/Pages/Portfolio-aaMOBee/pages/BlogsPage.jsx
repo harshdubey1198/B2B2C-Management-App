@@ -11,7 +11,7 @@ function BlogsPage() {
   const fetchBlogs = async () => {
     try {
       const response = await getBlogs();
-      setBlogs(response.data); // Assuming response.data contains the array of blogs
+      setBlogs(response.data || []); // Assuming response.data contains the array of blogs
       console.log(response.data);
     } catch (error) {
       console.error(error);

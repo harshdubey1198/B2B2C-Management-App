@@ -22,7 +22,7 @@ export const masterAdminSidebarData = () => [
     subItem:[
       {sublabel:"Create New Plan",link:"/create-plan"},
       {sublabel:"Manage Plans",link:"/manage-plan"},
-      {sublabel:"All Plans",link:"/pricing"},
+      // {sublabel:"All Plans",link:"/pricing"},
     ]
   },
   {

@@ -20,7 +20,7 @@ function CreateBlog() {
   const fetchBlogCategories = async () => {
     try {
       const response = await getBlogCategories();
-      setCategories(response.data); 
+      setCategories(response.data || []); 
     } catch (error) {
       console.log(error);
     }

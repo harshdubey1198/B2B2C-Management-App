@@ -34,14 +34,14 @@ const PaymentHistoryModal = ({ isOpen, toggle, paymentHistory }) => {
                 </thead>
                 <tbody>
                     {paymentHistory.map((payment, index) => {
-                    const isExpired = new Date(payment.expirationDate) < new Date();
+                    const isExpired = new Date(payment.expirationDate) < new Date() || payment.status === "expired";
                     const isActive = new Date(payment.expirationDate) > new Date();
                     
                     return (
                         <tr
                         key={payment._id}
                         style={{
-                            backgroundColor: isExpired ? "transparent" : "rgba(0, 255, 0, 0.2)", // Green for active plans
+                            backgroundColor: isExpired ? "transparent" : "rgba(0, 255, 0, 0.2)", 
                             fontWeight: isExpired ? "bold" : "normal",
                             position: "relative",
                         }}
