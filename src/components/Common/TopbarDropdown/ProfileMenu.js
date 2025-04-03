@@ -56,10 +56,15 @@ const ProfileMenu = props => {
             src={userImage}
             alt="Header Avatar"
           />
-          <span className="d-none d-xl-inline-block ms-2 me-2">{username}</span>
-          <i className="mdi mdi-chevron-down d-none d-xl-inline-block" />
+          {/* <span className="d-none d-xl-inline-block ms-2 me-2">{username}</span> */}
+          {/* <i className="mdi mdi-chevron-down d-none d-xl-inline-block" /> */}
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
+          {/* username show here */}
+          <DropdownItem className="text-center p-0" disabled>
+            <span className="text-primary" style={{fontSize:"14px" , fontWeight:"600"}} >{username}</span>
+          </DropdownItem>
+          <div className="dropdown-divider" />
           <DropdownItem >
             <Link to="/profile-settings" className="dropdown-item my-0 px-0">
             {" "}
@@ -67,15 +72,6 @@ const ProfileMenu = props => {
             {props.t("Profile")}{" "}
             </Link>
           </DropdownItem>
-          {/* <DropdownItem tag="a" href="#">
-            <i className="ri-wallet-2-line align-middle me-2" />
-            {props.t("My Wallet")}
-          </DropdownItem> */}
-          {/* <DropdownItem tag="a" href="#">
-            <span className="badge bg-success float-end mt-1">11</span>
-            <i className="ri-settings-2-line align-middle me-2" />
-            {props.t("Settings")}
-          </DropdownItem> */}
           <DropdownItem tag="a" href="auth-lock-screen">
             <i className="ri-lock-unlock-line align-middle me-2" />
             {props.t("Lock screen")}

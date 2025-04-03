@@ -30,8 +30,8 @@ function SelfProfiling() {
                         </div>
                     </div>
                     
-                <Row>
-                    <Col lg={6} sm={12} className="mb-3 d-flex justify-content-center align-items-center">
+                <Row className='d-flex justify-content-center align-items-center mt-2'> 
+                    <Col lg={3} sm={12} className="mb-3 d-flex justify-content-center align-items-center">
                     <img src={authuser?.avatar} alt="profile" className="avatar-xl" />
                     </Col>
                     <Col lg={6} sm={12} className="mb-3">

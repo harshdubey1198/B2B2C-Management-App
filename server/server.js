@@ -2,39 +2,47 @@ const dotenv = require("dotenv");
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const connectDB = require("./config/db.config")
+const connectDB = require("./config/db.config");
 const path = require("path");
+const http = require("http");
+const { initializeSocket } = require("./utils/socket"); // Import socket initializer
 
 dotenv.config();
 const app = express();
+const server = http.createServer(app); // Create HTTP server
 
 app.use(cors()); 
 app.use(bodyParser.urlencoded({ limit: '10mb', extended: false }));
 app.use(bodyParser.json({ limit: '10mb' }));
 
-connectDB()
+connectDB();
 
+// Initialize Socket.IO
+initializeSocket(server);
+
+// Import Routes
 const userRoute = require("./routers/auth.router");
 const planRoute = require("./routers/plan.router");
 const paymentRoute = require("./routers/payment.router");
-const categoryRoute = require("./routers/category.router")
-const inventoryRoute = require("./routers/inventory.router")
-const customerRoute = require("./routers/customer.router")
-const invoiceRoute = require("./routers/invoice.router")
-const vendorRoute = require("./routers/vendor.router")
-const taxRouter = require("./routers/tax.router")
-const brandRouter = require("./routers/brand.router")
-const manufacturerRouter = require("./routers/manufacturer.router")
-const roleRouter = require("./routers/role.router")
-const leadRouter = require("./routers/lead.router")
-const taskRouter = require("./routers/task.router")
-const crmUserRouter = require("./routers/crmuser.router")
-const blogCategoryRouter = require("./routers/blogcategory.router")
-const blogRouter = require("./routers/blog.router")
-const feedBackRouter = require("./routers/feedback.router")
-const bomRouter = require("./routers/bom.router")
-const productionOrderRouter = require("./routers/productionorder.router")
-const wasteInventoryRouter = require("./routers/wasteinventory.router")
+const categoryRoute = require("./routers/category.router");
+const inventoryRoute = require("./routers/inventory.router");
+const customerRoute = require("./routers/customer.router");
+const invoiceRoute = require("./routers/invoice.router");
+const vendorRoute = require("./routers/vendor.router");
+const taxRouter = require("./routers/tax.router");
+const brandRouter = require("./routers/brand.router");
+const manufacturerRouter = require("./routers/manufacturer.router");
+const roleRouter = require("./routers/role.router");
+const leadRouter = require("./routers/lead.router");
+const taskRouter = require("./routers/task.router");
+const crmUserRouter = require("./routers/crmuser.router");
+const blogCategoryRouter = require("./routers/blogcategory.router");
+const blogRouter = require("./routers/blog.router");
+const feedBackRouter = require("./routers/feedback.router");
+const bomRouter = require("./routers/bom.router");
+const productionOrderRouter = require("./routers/productionorder.router");
+const wasteInventoryRouter = require("./routers/wasteinventory.router");
+const notificationRouter = require("./routers/notification.router");
 
 app.use("/api/auth", userRoute);
 app.use("/api/plan", planRoute);
@@ -57,20 +65,17 @@ app.use("/api/feedback", feedBackRouter);
 app.use("/api/bom", bomRouter);
 app.use("/api/productionorder", productionOrderRouter);
 app.use("/api/wasteinventory", wasteInventoryRouter); 
+app.use("/api/notification", notificationRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to HRMS Servers!");
 });
 
-// console.log(path.join(__dirname, "../build"));
-
-// Serve static files from the build folder
-// const buildpath = path.join(__dirname, "../build");
-
 app.all("*", function (req, res) {
   res.status(404).send("aaMOBee Servers!");
 });
 
-const server = app.listen(process.env.PORT, process.env.IP, () => {
-  console.log(`Server started at ${process.env.PORT}!`);
+// Start the server with HTTP (for Socket.IO support)
+server.listen(process.env.PORT || 5000, () => {
+  console.log(`Server started at port ${process.env.PORT || 5000}`);
 });
