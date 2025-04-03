@@ -1,18 +1,20 @@
-import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
+import { call, put, takeEvery, takeLatest,delay } from "redux-saga/effects";
 import { LOGIN_USER, LOGOUT_USER, SOCIAL_LOGIN } from "./actionTypes";
 import { apiError, loginSuccess, logoutUserSuccess ,setAuthError } from "./actions";
 import { postFakeLogin, postSocialLogin } from "../../../helpers/fakebackend_helper";
 import { toast } from "react-toastify";
 
 function* loginUser({ payload: { user, history } }) {
+  localStorage.setItem("planemail", user.email);
+
   try {
     let response;
     if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
       response = yield call(fetchLogin, user);
-      history("/dashboard");
       localStorage.setItem("authUser", JSON.stringify(response.data));
       yield put(loginSuccess(response));
       toast.success(response.message);
+      history("/dashboard");
     } else if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
       response = yield call(postFakeLogin, {
         email: user.email,
@@ -20,15 +22,24 @@ function* loginUser({ payload: { user, history } }) {
       });
       localStorage.setItem("authUser", JSON.stringify(response));
       yield put(loginSuccess(response));
+      history("/dashboard");
     }
-    history("/dashboard");
   } catch (error) {
-    const errorMessage = error?.message || error?.error || "Login failed";
-    console.log("Error message:", errorMessage);
-    yield put(setAuthError(errorMessage)); 
+    // console.log("Error Response:", error.error.message.message);
+    // console.log("Error Response:", error.error.message.redirectTo);
+
+    const errorMessage = error?.message || error?.error?.message || error?.error?.message?.message || "Login failed";
+    const redirectTo = error?.error?.message?.redirectTo;
+    yield put(setAuthError(errorMessage));
     toast.error(errorMessage);
+    toast.error(error.error.message.message);
+    if (redirectTo) {
+      yield delay(3000);
+      history(redirectTo);
+    }   
   }
 }
+
 
 function fetchLogin(user) {
   let apiUrl = `${process.env.REACT_APP_URL}/auth/login`;
@@ -53,8 +64,9 @@ function fetchLogin(user) {
   })
     .then((response) => {
       if (!response.ok) {
-        return response.json().then((error) => {
-          throw new Error(error.error || "Login failed");
+        return response.json().then((data) => {
+          throw { error: { message: data.error, redirectTo: data.data?.redirectTo } };
+
         });
       }
       return response.json();

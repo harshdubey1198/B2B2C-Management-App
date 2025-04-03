@@ -6,6 +6,7 @@ const paymentSchema = new Schema({
     planId: { type: mongoose.Schema.Types.ObjectId, ref: 'Plan', required: true },  
     paymentDate: { type: Date, default: Date.now }, 
     amount: { type: Number, required: true }, 
+    currency: { type: String},
     status: { type: String, enum: ['pending', 'completed', 'failed', 'expired'], default: 'pending' },
     expirationDate: { type: Date }, 
 }, {timestamps: true});

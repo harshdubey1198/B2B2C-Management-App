@@ -1,4 +1,5 @@
 const PaymentService = require("../services/payment.services");
+const { createResult } = require("../utils/utills");
 
 const paymentController = {};
 
@@ -13,6 +14,42 @@ paymentController.createPayment = async (req, res) => {
     return res.status(500).json({ message: error });
   }
 };
+
+paymentController.createCheckoutSession = async (req, res) => {
+  try {
+    const response = await PaymentService.createCheckoutSession(req.body);
+    return res.status(200).json(createResult("Session created Succefully", response));
+  } catch (error) {
+    console.log("error creating session", error);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
+
+paymentController.handleWebhook = async (req, res) => {
+  try {
+    await PaymentService.handleWebhook(req);
+    return res.status(200).json(createResult("Webhook handled successfully"));
+  } catch (error) {
+    console.log("Webhook handling error:", error);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
+
+paymentController.verifyPayment = async (req, res) => {
+  try {
+      const sessionId = req.query.session_id;
+      if (!sessionId) {
+        return res.status(200).json(createResult("Session ID is required"));
+      }
+
+      const paymentDetails = await PaymentService.verifyPayment(sessionId);
+      return res.status(200).json(createResult("Payment verified", paymentDetails));
+  } catch (error) {
+      console.error("Error verifying payment:", error);
+      return res.status(500).json(createResult(null, null, error.message));
+  }
+};
+
 
 paymentController.getPayment = async (req, res) => {
   try {
@@ -72,6 +109,27 @@ paymentController.deletePayment = async (req, res) => {
         console.error("Error deleting payment:", error.message || error);
         return res.status(500).json({ message: 'Unable to delete payment' });
     }
+};
+
+paymentController.getAllPayments = async (req, res) => {
+  try {
+    const payment = await PaymentService.getAllPayments();
+    return res.status(200).json(createResult("All Payments details fetched successfully", payment));
+  } catch (error) {
+    console.error("Error fetching payment:", error.message || error);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
+
+
+paymentController.getUserPayments = async (req, res) => {
+  try {
+    const payment = await PaymentService.getUserPayments(req.params.id);
+    return res.status(200).json(createResult("Payments details fetched successfully", payment));
+  } catch (error) {
+    console.error("Error fetching payment:", error.message || error);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
 };
 
 module.exports = paymentController;

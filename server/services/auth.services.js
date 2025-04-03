@@ -179,7 +179,19 @@ authService.userLogin = async (body) => {
             throw new Error('Associated Client Admin not found');
         }
 
-        await validateUserSubscription(clientAdmin, user.role);
+        // await validateUserSubscription(clientAdmin, user.role);
+        const subscriptionStatus = await validateUserSubscription(clientAdmin, user.role);
+        if (subscriptionStatus.redirectTo) {
+            return {
+                loginFailed: true,
+                error: {
+                    message: subscriptionStatus.message,
+                    redirectTo: subscriptionStatus.redirectTo
+                }
+            };
+        }
+        
+        
 
         if (user.role === "client_admin") {
             if (!user.isVerified) {

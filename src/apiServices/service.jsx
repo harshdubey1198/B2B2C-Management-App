@@ -720,4 +720,13 @@ export const getTaxesmain = async (firmId) => {
     }
 };
 
+export const getPaymentDetails = async () => {
+    try {
+        const response = await axiosInstance.get(`/payment/payment-detail/${id}`);
+        return response.data;
+    } catch (error) {
+        return error;
+    }
+}
+
 export default axiosInstance;
