@@ -95,26 +95,25 @@ const ProfileSettings = () => {
       setPreview(URL.createObjectURL(file));
     }
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
-    const updatedData = {};
+    const updatedData = new FormData();
   
     if (crmUsers.includes(role)) {
-      if (formData.firstName) updatedData.firstName = formData.firstName;
-      if (formData.lastName) updatedData.lastName = formData.lastName;
-      if (formData.email) updatedData.email = formData.email;
-      if (formData.mobile) updatedData.mobile = formData.mobile;
+      if (formData.firstName) updatedData.append('firstName', formData.firstName);
+      if (formData.lastName) updatedData.append('lastName', formData.lastName);
+      if (formData.email) updatedData.append('email', formData.email);
+      if (formData.mobile) updatedData.append('mobile', formData.mobile);
     } else {
-      updatedData.firstName = formData.firstName;
-      updatedData.lastName = formData.lastName;
-      updatedData.email = formData.email;
-      updatedData.mobile = formData.mobile;
+      updatedData.append('firstName', formData.firstName);
+      updatedData.append('lastName', formData.lastName);
+      updatedData.append('email', formData.email);
+      updatedData.append('mobile', formData.mobile);
     }
   
     if (formData.avatar instanceof File) {
-      updatedData.avatar = formData.avatar;
+      updatedData.append('avatar', formData.avatar);
     }
   
     try {
@@ -122,12 +121,14 @@ const ProfileSettings = () => {
       if (mainUsers.includes(role)) {
         response = await axiosInstance.put(
           `${process.env.REACT_APP_URL}/auth/update/${authUser?.response._id}`,
-          updatedData
+          updatedData,
+          { headers: { 'Content-Type': 'multipart/form-data' } } 
         );
       } else if (crmUsers.includes(role)) {
         response = await axiosInstance.put(
           `/crmuser/update-crmsuser/${authUser?.response._id}`,
-          updatedData
+          updatedData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
         );
       }
   
@@ -135,7 +136,7 @@ const ProfileSettings = () => {
       setPreview(response.data.avatar);
     } catch (error) {
       console.error('Failed to update profile:', error);
-      // toast.error('Failed to update profile');
+      toast.error('Failed to update profile');
     }
   };
   

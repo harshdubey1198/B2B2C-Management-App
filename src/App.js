@@ -4,10 +4,20 @@ import "./assets/scss/theme.scss";
 import fakeBackend from "./helpers/AuthType/fakeBackend";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import socket from "./utils/socket";
 fakeBackend();
 
 function App() {
+  useEffect(() => {
+    socket.connect();
+    socket.on("connect", () => {
+      console.log(`User and socket connected: ${socket.id}`);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     // Create custom cursor element

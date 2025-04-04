@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-} from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, } from 'reactstrap';
 import { createRole, updateRoleById } from '../../apiServices/service';
+import { toast } from 'react-toastify';
 
 const RoleModal = ({ isOpen, toggle, roleToEdit, fetchRoles }) => {
     const [roleName, setRoleName] = useState('');
@@ -34,7 +25,9 @@ const RoleModal = ({ isOpen, toggle, roleToEdit, fetchRoles }) => {
                 response = await createRole(payload);
             }
             
-            alert(response.message || 'Role saved successfully');
+            // alert(response.message || 'Role saved successfully');
+            toast.success(response.message || 'Role saved successfully');
+            setRoleName('');
             fetchRoles();
             toggle();
         } catch (error) {
