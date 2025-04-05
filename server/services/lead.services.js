@@ -276,6 +276,35 @@ leadService.getLeadById = async (leadId) => {
   lead.notes = lead.notes.filter((note) => !note.deleted_at);
   return lead;
 };
+leadService.getLeadByFirmId = async (firmId) => {
+  const lead = await Lead.find({ firmId: firmId, deleted_at: null })
+    .populate({
+      path: "notes.createdBy",
+      select: "firstName lastName email",
+    })
+    .populate({
+      path: "assignmentHistory.assignedBy",  // Populate assignedBy with name details
+      select: "firstName lastName",     
+      populate: {
+        path: "roleId",                    
+        select: "roleName",             
+      },     
+    })
+    .populate({
+      path: "assignmentHistory.assignedTo",  // Populate assignedTo with name details
+      select: "firstName lastName",          
+      populate: {
+        path: "roleId",                       
+        select: "roleName",                
+      },
+    })
+    .lean();
+  if (!lead) {
+    throw new Error("No lead found.");
+  }
+  // lead.notes = lead.notes.filter((note) => !note.deleted_at);
+  return lead;
+};
 
 leadService.updateLead = async (leadId, data) => {
   const updatedLead = await Lead.findOneAndUpdate({ _id: leadId }, data, {

@@ -102,6 +102,17 @@ leadController.getLeadById = async (req, res) => {
     return res.status(500).json(createResult(null, null, error.message));
   }
 };
+leadController.getLeadByFirmId = async (req, res) => {
+  try {
+    const getLead = await leadService.getLeadByFirmId(req.params.id);
+    return res
+      .status(200)
+      .json(createResult("lead fetched Succefully", getLead));
+  } catch (error) {
+    console.log("error getting lead", error.message);
+    return res.status(500).json(createResult(null, null, error.message));
+  }
+};
 
 leadController.updateLead = async (req, res) => {
   try {

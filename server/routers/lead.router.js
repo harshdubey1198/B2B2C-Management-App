@@ -6,6 +6,7 @@ const leadController = require("../controllers/lead.controller");
 router.post("/create-lead", tokenVerification, leadController.createLead);
 router.get("/get-leads", leadController.getAllLeads);
 router.get("/get-lead/:id", leadController.getLeadById);
+router.get("/get-lead-by-firm/:id", leadController.getLeadByFirmId);
 router.put("/update-lead/:id", tokenVerification, leadController.updateLead);
 router.delete("/delete-lead/:id", tokenVerification, leadController.deleteLead);
 router.delete(
