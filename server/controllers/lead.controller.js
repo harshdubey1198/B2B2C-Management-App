@@ -43,7 +43,9 @@ leadController.importLeads = async (req, res) => {
       }
 
       // Process the CSV file (buffer) in the service
-      const leads = await leadService.importLeads(req.files.file[0].buffer, firmId);
+      // const leads = await leadService.importLeads(req.files.file[0].buffer, firmId);
+      const file = req.files.file[0];
+      const leads = await leadService.importLeads(file.buffer, firmId, file.originalname);
 
       return res.status(200).json(
         createResult("Leads imported successfully", {
