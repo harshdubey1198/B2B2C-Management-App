@@ -178,6 +178,20 @@ const FirmUserCreateForm = ({ isOpen, toggle, setTrigger, formValues, setFormVal
               </FormGroup>
             </Col>
           </Row> */}
+             <FormGroup>
+                          <Label>Gender</Label>
+                          <Input
+                            type="select"
+                            name="gender"
+                            value={formValues.gender}
+                            onChange={handleChange}
+                          >
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="prefer not to say">Other</option>
+                          </Input>
+                        </FormGroup>
           <Row>
             <Col md={6}>
               <FormGroup>

@@ -68,7 +68,7 @@ app.use("/api/wasteinventory", wasteInventoryRouter);
 app.use("/api/notification", notificationRouter);
 
 app.get("/", (req, res) => {
-  res.send("Welcome to HRMS Servers!");
+  res.send("Welcome to aaMOBee Main Server!");
 });
 
 app.all("*", function (req, res) {
