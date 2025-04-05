@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/header';
 import { getBlogBySlug, getBlogs } from '../../../apiServices/service';
 
@@ -8,7 +8,7 @@ function BlogDetailPage() {
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [blogs, setBlogs] = useState([]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchBlogDetails = async () => {
       try {
@@ -169,7 +169,9 @@ function BlogDetailPage() {
                     cursor: 'pointer',
                     borderBottom: '1px solid #ccc',
                     paddingBottom: '10px',
+                    // backgroundColor: 'red',
                   }}
+                  onClick={() => navigate(`/blogs/${latestBlog.blog_slug}`)}
                 >
                   <img
                     src={latestBlog.blogImage}

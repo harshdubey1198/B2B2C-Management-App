@@ -8,11 +8,14 @@ import {
 import { getRole } from "../../utils/roleUtils";
 import { Table, Button } from "reactstrap";
 import TaskEditModal from "../../Modal/crm-modals/taskReassignModal";
+import TaskDetailedTableModal from "../../Modal/crm-modals/taskDetailedTableModal";
 
 function TaskManagement() {
   const [tasks, setTasks] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [mainModalOpen, setMainModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  // console.log("selectedTask", selectedTask);
   const [users, setUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterField, setFilterField] = useState("date");
@@ -29,7 +32,9 @@ function TaskManagement() {
       console.error("Error fetching tasks:", error);
     }
   };
-
+  const handleRefetchTasks =() => {
+    fetchTasks();
+  };
   const filteredTasks = tasks.filter((task) => {
     if (!searchTerm.trim()) return true; // If no search term, show all tasks
   
@@ -95,15 +100,16 @@ function TaskManagement() {
     <React.Fragment>
       <div className="page-content">
         <Breadcrumbs title="CRM" breadcrumbItem="Task Management" />
-        <div className="search-bar mb-3">
+        <div className="search-bar mb-3 d-flex align-items-center justify-content-start gap-3">
           <input
             type="text"
             className="form-control"
             placeholder="Search by Date, Assigned To, or Status..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{ width: "300px", marginBottom: "20px" }}
+            style={{ width: "300px" }}
           />
+           <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",color: "black",transition: "color 0.3s ease"}} onClick={handleRefetchTasks} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
         </div>
 
 
@@ -121,61 +127,12 @@ function TaskManagement() {
                 <th>Actions</th>
               </tr>
             </thead>
-            {/* <tbody>
-              {tasks.map((task, index) => (
-                <tr key={task._id}>
-                  <td>{index + 1}</td>
-                  <td>{task.remarks[0].message}</td>
-                  <td>
-                    {new Date(task.createdAt).toLocaleDateString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                    <br />
-                    {new Date(task.dueDate).toLocaleDateString("en-IN", {
-                      timeZone: "Asia/Kolkata",
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: true,
-                    })}
-                  </td>
-                  <td>{task.status}</td>
-                  <td>{task.priority}</td>
-                  <td>
-                    {task.assignedTo?.map((user) => (
-                      <div key={user._id}>
-                        {user.firstName} {user.lastName}
-                      </div>
-                    )) || "N/A"}
-                  </td>
-                  <td>
-                    {task.assignedBy?.firstName +
-                      " " +
-                      task.assignedBy?.lastName}
-                  </td>
-                  <td>
-                    <Button
-                      color="primary"
-                      size="sm"
-                      onClick={() => handleEditClick(task)}
-                    >
-                      Edit
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody> */}
             <tbody>
               {filteredTasks.map((task, index) => (
-                <tr key={task._id}>
+                <tr key={task._id} onClick={() => {
+                  setMainModalOpen(true);
+                  setSelectedTask(task);}
+                } style={{ cursor: "pointer" }}>
                   <td>{index + 1}</td>
                   <td>{task.remarks[0].message}</td>
                   <td>
@@ -232,6 +189,14 @@ function TaskManagement() {
           users={users}
           handleUpdateTask={handleUpdateTask}
         />
+        <TaskDetailedTableModal
+          isOpen={mainModalOpen}
+          toggle={() => setMainModalOpen(!mainModalOpen)}
+          task={selectedTask}
+          loading={false}
+          onUpdate={handleUpdateTask}
+        />
+
       </div>
     </React.Fragment>
   );

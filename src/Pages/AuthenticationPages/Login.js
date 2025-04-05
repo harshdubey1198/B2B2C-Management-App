@@ -4,7 +4,7 @@ import logolight from "../../assets/images/logo-light.png";
 import logodark from "../../assets/images/logo-dark.png";
 import {Row,Col,CardBody,Card,Container,Form,Input,Label} from "reactstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import withRouter from "../../components/Common/withRouter";
 import { loginUser } from "../../store/actions";
 import { createSelector } from "reselect";
@@ -12,6 +12,10 @@ import { checkEmptyFields, validateEmail } from "../Utility/FormValidation";
 import { toast } from "react-toastify";
 
 const Login = (props) => {
+  const navigate = useNavigate();
+  const currentPath = window.location.pathname;
+
+
   document.title = "Login | aaMOBee";
   const dispatch = useDispatch();
   const [formValues, setFormValues] = useState({
@@ -33,6 +37,15 @@ const Login = (props) => {
       setRememberMe(true);
     }
   }, []);
+
+  const handleCrmLogin = () => {
+    navigate("/crm/login");
+  };
+  const handleMainLogin = () => { 
+    navigate("/login");
+  };
+  const isCrmLoginPage = currentPath === '/crm/login';
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -94,8 +107,8 @@ const Login = (props) => {
             <Col lg={6} md={8} xl={6}>
               <Card>
                 <CardBody className="p-4">
-                  <div>
-                    <div className="text-center">
+                  <div className="">
+                    <div className="text-center position-relative">
                       <Link to="/">
                         <img
                           src={logodark}
@@ -110,9 +123,10 @@ const Login = (props) => {
                           className="auth-logo logo-light mx-auto"
                         />
                       </Link>
+                      <a href="/" className="mdi mdi-home-outline cursor-pointer" style={{position:"absolute", fontSize:"34px "  , right: "30px",top: "50%",transform: "translate(50%, -50%)" }}></a>
                     </div>
                     <h4 className="font-size-22 fw-bold text-dark text-center my-4">
-                      Login 
+                      {isCrmLoginPage ? "CRM " : ""} Login
                     </h4>
                     <Form className="form-horizontal" onSubmit={handleSubmit}>
                       {/* {error && <Alert color="danger">{error}</Alert>} */}
@@ -202,8 +216,9 @@ const Login = (props) => {
                     Register{" "}
                   </Link>{" "}
                 </p>
-                <p className="text-black border-top py-3">
+                <p className="position-relative text-black border-top py-3">
                   © {new Date().getFullYear()} aaMOBee.
+                  <button onClick={isCrmLoginPage ? handleMainLogin : handleCrmLogin} className="btn btn-primary waves-effect waves-light " style={{position:"absolute" ,right:"20px" , height:"20px" , fontSize:"14px", lineHeight:"1", padding:"2px 10px" }}>{isCrmLoginPage ? "Main User ➡️" : "CRM User ➡️"}</button>
                 </p>
               </div>
               </Card>

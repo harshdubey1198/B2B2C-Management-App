@@ -64,6 +64,15 @@ function CrmUser() {
       fetchCrmUsers();
       const updatedUsers = [...users, { ...user, id: Date.now() }];
       setUsers(updatedUsers);
+      setNewUser({
+        firstName: "",
+        lastName: "",
+        email: "",
+        mobile: "",
+        roleId: "",
+        isActive: true,
+      });
+      
       localStorage.setItem("crmUsers", JSON.stringify(updatedUsers));
     } catch (error) {
       alert(error.message || "Failed to save user");

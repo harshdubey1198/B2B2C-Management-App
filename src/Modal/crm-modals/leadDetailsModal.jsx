@@ -45,8 +45,12 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                     <Col xs="12" md="4" key={key}>
                       <FormGroup>
                         <Label for={key}>
-                          {key.replace(/([A-Z])/g, " $1").trim()}
+                          {key
+                            .replace(/([A-Z])/g, " $1") 
+                            .replace(/\b\w/g, char => char.toUpperCase()) 
+                            .trim()}
                         </Label>
+
                         <Input
                           type={key.toLowerCase().includes("email") ? "email" : "text"}
                           name={key}
@@ -160,7 +164,7 @@ function LeadDetailsModal({ isOpen, toggle, lead, loading, onUpdate }) {
                         formData.notes.map((note) => (
                           <div key={note._id} style={{ marginBottom: "10px" }}>
                             <div className="d-flex justify-content-between">
-                            <strong>{note.message}</strong>
+                            <strong style={{maxWidth:"60%" ,marginBottom:"5px",borderRadius:"5px", boxShadow:"#0000001a 0px 1px 3px",background:"#f8f9fa" , padding:"5px"}}>{note.message}</strong>
                             <strong style={{color: '1c7f9b'}}>
                              - {note.createdBy.firstName} {note.createdBy.lastName}
                             </strong>

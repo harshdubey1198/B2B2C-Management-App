@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { assignLeadsToEmployee, getAllTasks, getCrmUsers, getTasksByAssignee, updateLeadStatus, updateTask } from '../../apiServices/service';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Input, Label, Card, CardBody, Row, Col } from 'reactstrap';
 import Breadcrumbs from '../../components/Common/Breadcrumb';
 import { toast } from 'react-toastify';
 import { getRole } from '../../utils/roleUtils';
@@ -27,6 +27,7 @@ function AllTasks() {
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [LowerRoleUsers, setLowerRoleUsers] = useState([]);
   const [lowerUserTaskModal, setLowerUserTaskModal] = useState(false);
+  const [ leadMainDetailModal, setLeadMainDetailModal] = useState(false);
   const role = getRole();
 
   const fetchTasks = async () => {
@@ -48,6 +49,7 @@ function AllTasks() {
 
 
       setTasks(filteredTasks);
+      console.log("Filtered Tasks:", filteredTasks.leadIds);
     } catch (error) {
       setMessage(error.message);
     }
@@ -55,7 +57,7 @@ function AllTasks() {
 
   const toggleModal = () => setModal(!modal);
   const toggleLowerUserTaskModal = () => setLowerUserTaskModal(!lowerUserTaskModal);
-
+  const toggleLeadMainDetailModal = () => setLeadMainDetailModal(!leadMainDetailModal);
   const handleUpdate = (task, lead) => {
     if (lead) {
       setSelectedLead(lead); 
@@ -164,7 +166,7 @@ const getRandomColor = () => {
     try {
       const result = await getCrmUsers();
       setLowerRoleUsers(result.data || []);
-      console.log("Lower role users:", LowerRoleUsers);
+      // console.log("Lower role users:", LowerRoleUsers);
     } catch (error) {
       console.error('Failed to get lower role users:', error);
     }
@@ -182,7 +184,7 @@ const getRandomColor = () => {
     }
     
     setFilteredUsers(filteredUsers);
-    console.log("Filtered users:", filteredUsers);
+    // console.log("Filtered users:", filteredUsers);
   };
 
   useEffect(() => {
@@ -207,7 +209,7 @@ const getRandomColor = () => {
     });
 };
 
-console.log("Selected Leads:", selectedLeads);
+// console.log("Selected Leads:", selectedLeads);
   
 const handleAssignTask = async () => {
   if (selectedLeads.length === 0) {
@@ -324,7 +326,14 @@ const handleAssignTask = async () => {
                                 key={`${task._id}-${leadIndex}`}
                                 style={{
                                     backgroundColor: getLeadColor(task.leadIds),
+                                    cursor: 'pointer',
                                 }}
+                                onClick={
+                                  ()=>{
+                                    setLeadMainDetailModal(!leadMainDetailModal);
+                                    setSelectedLead(lead);
+                                  }
+                                }
                                 >
                                   { (role !== "Telecaller") && (
                                     <td>
@@ -337,7 +346,7 @@ const handleAssignTask = async () => {
                                     </td>
                                     )
                                   }
-                                <td>{index + 1}</td>
+                                <td>{leadIndex + 1}</td>
                                 <td>{lead.firstName} {lead.lastName}</td>
                                 <td>{task.assignedBy?.firstName} {task.assignedBy?.lastName} </td>
                                 <td>{new Date(task.dueDate).toLocaleString("en-IN", {
@@ -353,7 +362,9 @@ const handleAssignTask = async () => {
                                 <td>
                                     <button
                                     className='btn btn-primary btn-sm'
-                                    onClick={() => handleUpdate(task, lead)}
+                                    onClick={(e) => {handleUpdate(task, lead)
+                                      e.stopPropagation();
+                                    }}
                                     >
                                     Update
                                     </button>
@@ -361,7 +372,7 @@ const handleAssignTask = async () => {
                                 <td>
                                 <button
                                     className="btn btn-secondary btn-sm ml-2"
-                                    onClick={() => handleUpdateTask(task)}
+                                    onClick={(e) =>{e.stopPropagation(); handleUpdateTask(task)}}
                                   >
                                     Update
                                   </button>
@@ -411,6 +422,49 @@ const handleAssignTask = async () => {
           </div>
         </div>
       </div>
+
+      <Modal isOpen={leadMainDetailModal} toggle={toggleLeadMainDetailModal}>
+        <ModalHeader toggle={toggleLeadMainDetailModal}>Lead Details</ModalHeader>
+        <ModalBody>
+          {selectedLead && (
+              <Card className="shadow-sm border-0 mb-3">
+                <CardBody>
+                  <Row>
+                    {[
+                      { label: 'First Name', value: selectedLead.firstName },
+                      { label: 'Last Name', value: selectedLead.lastName },
+                      { label: 'Email', value: selectedLead.email },
+                      { label: 'Mobile Number', value: selectedLead.mobileNumber },
+                      { label: 'Phone Number', value: selectedLead.phoneNumber },
+                      { label: 'Platform', value: selectedLead.platform },
+                      { label: 'Ad Name', value: selectedLead.adName },
+                      { label: 'Form Name', value: selectedLead.formName },
+                      { label: 'Status', value: selectedLead.status }
+                    ].map((field, index) => (
+                      <Col md="6" className="mb-3" key={index}>
+                        <div style={{ 
+                          background: "#f8f9fa", 
+                          padding: "12px 15px", 
+                          borderRadius: "8px", 
+                          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+                        }}>
+                          <strong style={{ color: "#343a40", fontSize: "0.9rem" }}>
+                            {field.label}:
+                          </strong>
+                          <div style={{ color: "#495057", marginTop: "4px" }}>
+                            {field.value || "-"}
+                          </div>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                </CardBody>
+              </Card>
+            )}
+        </ModalBody>
+      </Modal>
+
+
 {/* note update of lead modal */}
       <Modal isOpen={modal} toggle={toggleModal}>
             <ModalHeader toggle={toggleModal}>Update Lead Details</ModalHeader>

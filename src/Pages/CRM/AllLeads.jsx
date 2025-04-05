@@ -44,6 +44,10 @@ function AllLeads() {
         }
     };
 
+    const handleRefetchLeads = () => {
+        fetchLeads();
+    };
+
     const fetchCrmUsers = async () => {
         try {
           const result = await getCrmUsers();
@@ -301,6 +305,8 @@ function AllLeads() {
                 </div>
 
                 <div className="filter-panel" style={{ float: "right", marginTop: "-50px", position: "relative" }}>
+                <i className='bx bx-refresh cursor-pointer'  style={{fontSize: "24.5px",fontWeight: "bold",marginRight: "10px"
+                ,color: "black",transition: "color 0.3s ease"}} onClick={handleRefetchLeads} onMouseEnter={(e) => e.target.style.color = "green"}  onMouseLeave={(e) => e.target.style.color = "black"}></i>
                     <i
                         className="mdi mdi-filter"
                         style={{
@@ -394,12 +400,15 @@ function AllLeads() {
                        <tbody>
                             {Array.isArray(filteredLeads) && filteredLeads.length > 0 ? (
                                 filteredLeads.map((lead) => (
-                                    <tr key={lead._id}>
+                                    <tr key={lead._id}  onClick={() => toggleModal(lead._id, "view")} style={{ cursor: "pointer" }}>
                                         <td>
                                                 <input
                                                     type="checkbox"
                                                     checked={selectedLeads.includes(lead._id)}
-                                                    onClick={() => handleLeadSelection(lead._id)}
+                                                    onClick={(e) => {
+                                                        handleLeadSelection(lead._id);
+                                                        e.stopPropagation();
+                                                    }}
                                                 />
                                         </td>
                                         <td>{lead.firstName + " " + lead.lastName}</td>
@@ -431,20 +440,21 @@ function AllLeads() {
                                         </td>
                                         <td>{lead.status}</td>
                                         <td>
-                                            <i
-                                                className="bx bx-show"
-                                                style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                                onClick={() => toggleModal(lead._id, "view")}
-                                            ></i>
+                                          
                                             <i
                                                 className="bx bx-edit"
                                                 style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                                onClick={() => toggleModal(lead._id, "edit")}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    toggleModal(lead._id, "edit")}}
                                             ></i>
                                             <i
                                                 className="bx bx-trash"
                                                 style={{ fontSize: "22px", fontWeight: "bold", cursor: "pointer" }}
-                                                onClick={() => handleDeleteLeads(lead._id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteLeads(lead._id)}
+                                            }
                                             ></i>
                                         </td>
                                     </tr>
