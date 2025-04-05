@@ -44,7 +44,7 @@ const leadSchema = new Schema(
       default: null,
     },
     isOrganic: {
-      type: Boolean,
+      type: String,
       default: false,
     },
     platform: {
@@ -65,11 +65,16 @@ const leadSchema = new Schema(
     },
     status: {
       type: String,
+      default: 'new',
       // enum : ['invalidRequest' , 'noResponse ','budgetIssue' , 'notInterested' , 'recall'  , 'contacted', 'falseData', 'lost', 'converted'],
     },
     dueDate: {
       type: Date,
       default: null,
+    },
+    firmId : {
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: 'User', 
     },
     notes: [
       {
@@ -85,6 +90,7 @@ const leadSchema = new Schema(
       assignedTo: { type: mongoose.Schema.Types.ObjectId, ref: 'CRMUser' },  // Who is assigned to
       assignedAt: { type: Date, default: Date.now },  // When it was assigned
     }],
+   
     deleted_at: { 
       type: Date, 
       default: null 

@@ -29,7 +29,12 @@ leadController.importLeads = async (req, res) => {
           .status(400)
           .json(createResult(null, null, `File upload error: ${err.message}`));
       }
-
+      const { firmId } = req.body;
+      if (!firmId) {
+        return res
+          .status(400)
+          .json(createResult(null, null, "firmId is required"));
+      }
       // Validate file existence
       if (!req.files || !req.files.file || req.files.file.length === 0) {
         return res
@@ -38,7 +43,7 @@ leadController.importLeads = async (req, res) => {
       }
 
       // Process the CSV file (buffer) in the service
-      const leads = await leadService.importLeads(req.files.file[0].buffer);
+      const leads = await leadService.importLeads(req.files.file[0].buffer, firmId);
 
       return res.status(200).json(
         createResult("Leads imported successfully", {

@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 const LeadImportModal = ({ isOpen, toggle }) => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  let firmId = "67ee693d20139d610280ff86";
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -20,11 +20,13 @@ const LeadImportModal = ({ isOpen, toggle }) => {
 
     const formData = new FormData();
     formData.append("file", file);
+    formData.append('firmId', firmId);
 
     setLoading(true);
     try {
       const response = await uploadLeads(formData);
-      if (response.status === "success") {
+      if (response.message === "Leads imported successfully") {
+        console.log(response);
         toast.success("Leads imported successfully!");
         toggle();
       } else {

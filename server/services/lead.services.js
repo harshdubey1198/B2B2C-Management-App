@@ -79,23 +79,24 @@ leadService.createLead = async (body) => {
   return newLead;
 };
 
-leadService.importLeads = async (fileBuffer) => {
+leadService.importLeads = async (fileBuffer, firmId) => {
   try {
     // Parse the CSV buffer into JSON
     const leads = await csvtojson().fromString(fileBuffer.toString());
-
-    const processedLeads = leads.map((lead) => ({
-      ...lead,
-      isOrganic: lead.isOrganic === "TRUE", // Convert "TRUE" to true and "FALSE" to false
-      status: "new",
-    }));
 
     if (leads.length === 0) {
       throw new Error("No data found in the file.");
     }
 
-    // Insert valid leads into the database
-    const savedLeads = await Lead.insertMany(leads);
+    // Add status and firmId properly
+    const processedLeads = leads.map((lead) => ({
+      ...lead,
+      status: "new",
+      firmId: firmId, 
+    }));
+
+    // Insert processedLeads (not leads) into database
+    const savedLeads = await Lead.insertMany(processedLeads);
 
     return savedLeads;
   } catch (error) {
