@@ -50,6 +50,8 @@ function TaxationModal({ isOpen, toggle, config, userId, tax, onTaxCreatedOrUpda
       const response = await axios[method](endpoint, payload, config);
       onTaxCreatedOrUpdated(response.data);
       toggle();
+      setTaxName('');
+      setTaxRates([{ taxType: '', rate: 0 }]);
       toast.success(response.message);
     } catch (error) {
       console.error('Error creating or updating tax:', error);

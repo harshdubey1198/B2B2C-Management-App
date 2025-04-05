@@ -20,14 +20,15 @@ export function validateEmail(email) {
 }
 
 
-export function validatePhone(phone){
-    const validRegex = /^(?!.*(\d)\1{9})[6-9]\d{9}$/;
-    if (phone.match(validRegex)) {
+export function validatePhone(phone) {
+    const validRegex = /^\+?\d{10,}$/;
+    if (phone.match(validRegex) && !/(.)\1{9}/.test(phone.replace('+', ''))) {
         return true;
     } else {
         return false;
     }
 }
+
 
 export function validatePassword(password){
     const validRegex = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;

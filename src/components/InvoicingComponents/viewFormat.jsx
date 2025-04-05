@@ -53,7 +53,7 @@ const sliceDescription = (description) => {
 
 const currencyOptions = [
   { code: "INR", symbol: "₹", name: "Indian Rupee" },
-  { code: "AED", symbol: "د.إ", name: "UAE Dirham" },
+  { code: "AED", symbol: "AED", name: "UAE Dirham" },
   { code: "SAR", symbol: "﷼", name: "Saudi Riyal" },
   { code: "MYR", symbol: "RM", name: "Malaysian Ringgit" },
   { code: "USD", symbol: "$", name: "US Dollar" },
@@ -148,9 +148,12 @@ const ViewFormat = forwardRef(
                   </p>
                 </div>
               ))}
-            <p className="my-1">
-              <b>GSTIN:</b> {invoiceData?.gstin || selectInvoice.gstin}
-            </p>
+            {(invoiceData?.gstin || selectInvoice?.gstin) && (
+              <p className="my-1">
+                  <b>GSTIN:</b> {invoiceData?.gstin || selectInvoice?.gstin}
+              </p>
+            )}
+
           </div>
           <div className="col-lg-6 col-md-6 col-sm-12 m-text-center text-end">
             <p>
